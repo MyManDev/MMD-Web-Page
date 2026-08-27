@@ -62,6 +62,9 @@ export const siteSchema = z.object({
   wordmark: z.literal("MyManDev"),
   canonicalUrl: httpsUrl,
   repoUrl: httpsUrl,
+  /** NOTICE dosyasindaki telif satirinin yili. Footer cumleyi bundan kurar,
+      metni ikinci kez yazmaz. */
+  copyrightYear: z.number().int(),
   nav: z
     .array(
       z.object({
