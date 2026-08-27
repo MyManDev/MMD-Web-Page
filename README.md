@@ -1,2 +1,2 @@
 # MMD-Web-Page-
-Design,architecture and implementation of Myman Development web page.
+Design,architecture and implementation of MyManDev web page.

@@ -1,0 +1,33 @@
+# Paylasilan yuzeyler iki bolge sahibinin de onayini ister.
+# docs/working-agreement.md §1
+#
+# GitHub kullanici adlarini doldurun; placeholder halde birakilirsa CODEOWNERS calismaz.
+
+# Varsayilan: degisiklik iki tarafa da bildirilir
+*                                @IBRAHIM_HANDLE @TUNAY_HANDLE
+
+# Bolge A — vitrin ve icerik
+/components/sections/hero/       @IBRAHIM_HANDLE
+/components/sections/projects/   @IBRAHIM_HANDLE
+/content/projects.ts             @IBRAHIM_HANDLE
+/content/team.ts                 @IBRAHIM_HANDLE
+
+# Bolge B — kabuk ve teslim
+/components/sections/nav/        @TUNAY_HANDLE
+/components/sections/team/       @TUNAY_HANDLE
+/components/sections/about/      @TUNAY_HANDLE
+/components/sections/footer/     @TUNAY_HANDLE
+/app/not-found.tsx               @TUNAY_HANDLE
+
+# Paylasilan yuzeyler — her iki onay
+/app/tokens.css                  @IBRAHIM_HANDLE @TUNAY_HANDLE
+/app/globals.css                 @IBRAHIM_HANDLE @TUNAY_HANDLE
+/app/layout.tsx                  @IBRAHIM_HANDLE @TUNAY_HANDLE
+/app/page.tsx                    @IBRAHIM_HANDLE @TUNAY_HANDLE
+/components/ui/                  @IBRAHIM_HANDLE @TUNAY_HANDLE
+/content/schema.ts               @IBRAHIM_HANDLE @TUNAY_HANDLE
+/content/site.ts                 @IBRAHIM_HANDLE @TUNAY_HANDLE
+/content/index.ts                @IBRAHIM_HANDLE @TUNAY_HANDLE
+/.github/                        @IBRAHIM_HANDLE @TUNAY_HANDLE
+/docs/                           @IBRAHIM_HANDLE @TUNAY_HANDLE
+/CLAUDE.md                       @IBRAHIM_HANDLE @TUNAY_HANDLE
