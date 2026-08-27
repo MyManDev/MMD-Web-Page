@@ -163,8 +163,16 @@ Metin **paylaşılan karar alanı: metin bekliyor.** `metrics` boşsa satır **r
 boş çerçeve veya "—" gösterilmez.
 
 Ekran görüntüsü: gerçek uygulamadan. Yoksa blok yayınlanmaz — placeholder görsel konmaz
-(`CLAUDE.md` kural 6). `next/image` `unoptimized`, elle üretilmiş webp, `width`/`height`
-verilir ki CLS oluşmasın.
+(`CLAUDE.md` kural 6). Düz `<img>`, elle üretilmiş webp, `width`/`height` verilir ki CLS
+oluşmasın.
+
+**`next/image` kullanılmıyor** ve bu ölçülerek seçildi. Statik export + `images.unoptimized`
+altında ne optimizasyon ne srcset üretiyor, ama sayfaya **5.5 KiB client JS** ekliyor:
+132.1 → 137.6 KiB. Payload kapısının kalan payı o anda 17.9 KiB'dı, yani bedeli payın üçte biri
+ve karşılığı sıfır. `architecture.md` §8 "eşik yükseltilmez — aşarsa geri dönüp azaltılır" diyor;
+burada eşiğe dayanmadan önce azaltıldı. CLS'i `width`/`height` ile `--aspect-screenshot` kutusu
+birlikte karşılıyor; `loading="lazy"` ve `decoding="async"` elle veriliyor ve
+`@next/next/no-img-element` uyarısı tek satırda, gerekçesiyle susturulur.
 
 #### 3.3.2 N proje — yığın
 
