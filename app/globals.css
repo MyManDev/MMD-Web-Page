@@ -1,0 +1,71 @@
+/* Reset ve taban stiller. Renk yok - renkler token siniflari uzerinden gelir
+   (app/tokens.css). Olculer ve gerekceler: docs/design-spec.md */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ONAY BEKLIYOR - docs/design-spec.md §10.1.
+   Onaylandiginda app/tokens.css'e tasinir; onaylanana kadar token degil.
+   Burada duruyor cunku scroll-margin-top hesabi bu degere bagli. */
+:root {
+  --nav-height: 56px;
+}
+
+@media (width >= 1024px) {
+  :root {
+    --nav-height: 64px;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Sticky navbar hedef basligi kapatmasin. design-spec.md §7.3 / §10.5 */
+:target,
+section[id] {
+  scroll-margin-top: calc(var(--nav-height) + 24px);
+}
+
+/* Gorunur focus gostergesi - sert kapi (architecture.md §8).
+   outline kullanilir, box-shadow degil: Windows yuksek kontrast modunda
+   box-shadow kayboluyor. design-spec.md §7.2 */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* prefers-reduced-motion tek yerde ele alinir, her component'te tekrar edilmez.
+   architecture.md §4.4 / design-spec.md §6.1 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    /* 0ms degil 0.01ms: bazi tarayicilar 0'da transitionend olayini
+       hic uretmiyor ve olayi bekleyen kod asili kaliyor. */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

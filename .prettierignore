@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+Design/
+
+# Next tarafindan uretilir
+next-env.d.ts

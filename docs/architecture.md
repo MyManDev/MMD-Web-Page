@@ -386,6 +386,12 @@ JS dosyalarının gzip'lenmiş toplamı. Sayfaların en büyüğü **153.600 byt
 düşer. Ölçüm yalnızca `out/`'a bakar: her HTML'in `<script src>` ve JS `<link rel="preload">`
 referansları toplanır, build manifest'ine bağımlı değildir.
 
+**`nomodule` script'leri toplama sayılmaz.** Modern tarayıcılar onları hiç indirmez; yalnızca
+eski tarayıcılar indirir. Ölçümün sorusu "kullanıcı bu sayfayı açtığında ne kadar JS iniyor"
+olduğu için bunları saymak ölçümü kendi tanımına aykırı hale getirirdi. Görünmez de olmasınlar
+diye raporda ayrı sütunda yazılırlar. Faz 0'da Next.js'in polyfill chunk'ı bu sınıfa giriyor ve
+tek başına 38.7 KiB — sayılsaydı boş sayfa eşiği aşardı.
+
 Sayfa başına ölçülür çünkü eşiğin cevapladığı soru _"kullanıcı bu sayfayı açtığında ne kadar JS
 iniyor?"_ — `out/` altındaki bütün dosyaların toplamı bu soruyu cevaplamaz ve route sayısıyla
 birlikte büyür, yani eşik zamanla anlamını yitirirdi. Paylaşılan chunk'lar onu yükleyen her sayfaya

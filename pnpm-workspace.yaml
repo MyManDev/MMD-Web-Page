@@ -1,0 +1,10 @@
+# unrs-resolver: eslint-config-next'in resolver zincirinde kullanilan native
+# ikili. Build script'i calismazsa resolver WASM'a dusuyor. Transitif bir
+# bagimlilik, yeni bir paket degil.
+allowBuilds:
+  unrs-resolver: true
+
+# pnpm 11 yeni yayinlanan surumleri varsayilan olarak bekletiyor; package.json'da
+# tam surum sabitledigimiz icin bu surum acikca haric tutuluyor.
+minimumReleaseAgeExclude:
+  - "@types/node@26.4.0"
