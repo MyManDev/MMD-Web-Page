@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+build/
+
+# test ciktilari
+playwright-report/
+test-results/
+coverage/
+
+# ortam
+.env*
+!.env.example
+
+*.tsbuildinfo
+.DS_Store
+Thumbs.db

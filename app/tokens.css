@@ -1,0 +1,24 @@
+/* Renklerin TEK kaynagi. Hicbir component'te literal hex veya rgb() yok.
+   Degerler ve gerekceler: docs/architecture.md §4.1 ve §4.3 */
+
+@import "tailwindcss";
+
+@theme {
+  --color-page: #203033;
+  --color-surface: #111b1d;
+  --color-surface-2: #2a3a34;
+  --color-border: #486354;
+  --color-accent: #78df7b;
+  --color-text: #f2f5f3;
+  --color-text-muted: #a9b8b2;
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --radius-card: 14px;
+  --radius-sm: 8px;
+
+  --spacing-section: 80px;
+  --spacing-section-lg: 128px;
+  --container-content: 1180px;
+}
