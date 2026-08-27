@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 
 /**
  * Sayfadaki tek gercek aksiyon yuzeyi.
- * Durum matrisi: docs/design-spec.md §2.1. Olculer onay bekliyor: §10.9.
+ * Durum matrisi: docs/design-spec.md §2.1. Yukseklik 44px: mobil dokunma
+ * hedefi esigi; deger app/tokens.css'te --height-button.
  *
  * href varsa <a>, yoksa <button>. external ise yeni sekme + rel guvenligi.
  */
@@ -15,7 +16,7 @@ type ButtonProps = {
 };
 
 const base =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-sm px-5 font-mono text-xs tracking-[0.08em] uppercase transition-colors duration-150 ease-out";
+  "inline-flex h-[var(--height-button)] items-center justify-center gap-2 rounded-sm px-5 font-mono text-xs tracking-[0.08em] uppercase transition-colors duration-150 ease-out";
 
 const variants = {
   primary: "bg-accent text-page hover:bg-accent/90",

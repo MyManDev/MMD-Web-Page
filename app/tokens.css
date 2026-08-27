@@ -21,4 +21,33 @@
   --spacing-section: 80px;
   --spacing-section-lg: 128px;
   --container-content: 1180px;
+
+  /* docs/design-spec.md'de onaylanan olculer. Birden fazla yerde kullanilan
+     veya breakpoint'e gore degisen her olcu burada yasar. */
+  --spacing-gutter: 24px;
+  --spacing-gutter-lg: 32px;
+  --spacing-card: 24px;
+  --spacing-card-lg: 32px;
+
+  --height-nav: 56px;
+  --height-nav-lg: 64px;
+  --height-button: 44px;
+  --height-nav-link: 40px;
+  --height-tag: 24px;
+
+  --radius-pill: 999px;
+  --width-prose: 65ch;
+  --aspect-screenshot: 16 / 10;
+}
+
+/* Navbar yuksekligi breakpoint'e gore degistigi icin @theme disinda,
+   :root uzerinde tanimlanir - scroll-margin-top hesabi buna bagli. */
+:root {
+  --nav-height: var(--height-nav);
+}
+
+@media (width >= 1024px) {
+  :root {
+    --nav-height: var(--height-nav-lg);
+  }
 }
