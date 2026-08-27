@@ -1,19 +1,25 @@
 import { Container } from "@/components/ui";
+import { Nav } from "@/components/sections/nav";
 import { site } from "@/content";
 
 /**
- * BOS - bolumler Faz 3'te gelir (working-agreement.md §6).
- * Burada yalnizca landmark iskeleti ve wordmark var; wordmark uydurulmus bir
- * metin degil, architecture.md §7'de karar verilmis deger.
+ * Bolumler Faz 3'te tek tek geliyor. Su an yalnizca Navigation var; Hero,
+ * Projects, Team ve About kendi issue'larinda eklenecek.
+ *
+ * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
+ * yalnizca tek sayfada anlamli, 404'te degil.
  */
 export default function Home() {
   return (
-    <main id="main">
-      <Container>
-        <h1 className="py-section font-sans text-[40px] leading-[1.05] font-semibold tracking-[-0.02em] lg:text-[64px]">
-          {site.wordmark}
-        </h1>
-      </Container>
-    </main>
+    <>
+      <Nav site={site} />
+      <main id="main">
+        <Container>
+          <h1 className="py-section font-sans text-[40px] leading-[1.05] font-semibold tracking-[-0.02em] lg:text-[64px]">
+            {site.wordmark}
+          </h1>
+        </Container>
+      </main>
+    </>
   );
 }
