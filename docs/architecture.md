@@ -378,9 +378,18 @@ Eşikler **implementasyondan önce** yazıldı. Sonradan seçilen eşik, eşiğe
 | LCP (mobil, kısıtlı bağlantı) | < 2.0 s | Raporlanır |
 | CLS | < 0.05 | Raporlanır |
 
-**Payload kapısının koşucusu:** `scripts/check-bundle-size.mjs`, script adı `size`. `out/`
-altındaki tüm JS dosyalarının gzip'lenmiş toplamını ölçer ve 150 KB eşiğini aşarsa sıfırdan farklı
-kod döner. `build`'den sonra koşar, çünkü ölçtüğü şey build çıktısıdır. Faz 0'da yazılır.
+**Payload kapısının koşucusu:** `scripts/check-bundle-size.mjs`, script adı `size`. `build`'den
+sonra koşar, çünkü ölçtüğü şey build çıktısıdır. Faz 0'da yazılır.
+
+**Ne ölçülür:** `out/` altındaki **her HTML sayfası için ayrı ayrı**, o sayfanın yüklediği benzersiz
+JS dosyalarının gzip'lenmiş toplamı. Sayfaların en büyüğü **153.600 byte'ı (150 KiB)** aşarsa kapı
+düşer. Ölçüm yalnızca `out/`'a bakar: her HTML'in `<script src>` ve JS `<link rel="preload">`
+referansları toplanır, build manifest'ine bağımlı değildir.
+
+Sayfa başına ölçülür çünkü eşiğin cevapladığı soru *"kullanıcı bu sayfayı açtığında ne kadar JS
+iniyor?"* — `out/` altındaki bütün dosyaların toplamı bu soruyu cevaplamaz ve route sayısıyla
+birlikte büyür, yani eşik zamanla anlamını yitirirdi. Paylaşılan chunk'lar onu yükleyen her sayfaya
+tam olarak sayılır; kullanıcı da öyle indiriyor.
 
 **Neden ikiye ayrıldı.** Optimizer'da var olmayan bir kapının hiç olmamasından kötü olduğu
 ölçülmüştü. axe, payload ve klavye testleri deterministik — kapı olabilirler. Lighthouse skorları

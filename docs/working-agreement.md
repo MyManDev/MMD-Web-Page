@@ -167,7 +167,7 @@ Her PR'da, istisnasız. Yerelde tek komut: `pnpm gates`.
 | tipler | `pnpm typecheck` | strict tip kontrolü |
 | test | `pnpm test` | şema + `lib/` |
 | build | `pnpm build` | derleme; içerik şeması burada da patlar |
-| payload | `pnpm size` | `out/` altındaki JS'in gzip toplamı < 150 KB (`architecture.md` §8) |
+| payload | `pnpm size` | en ağır sayfanın JS'i gzip < 150 KiB (`architecture.md` §8) |
 | E2E + a11y | `pnpm e2e` | davranış, erişilebilirlik, 404 |
 | review | — | görsel regresyon, metin ve isim kararları (§3.1) |
 
