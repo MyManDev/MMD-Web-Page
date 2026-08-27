@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { projectSchema, siteSchema, teamMemberSchema } from "@/content/schema";
 import { projects, site, team } from "@/content";
@@ -65,8 +67,24 @@ describe("content/index loader", () => {
     expect(site.nav).toHaveLength(4);
   });
 
-  it("projects ve team V1'de bos - gercek icerik Faz 3'te", () => {
-    expect(projects).toEqual([]);
+  it("projects tek gercek kaydi tasiyor", () => {
+    expect(projects).toHaveLength(1);
+    expect(projects.at(0)?.slug).toBe("football-squad-optimizer");
+  });
+
+  /**
+   * Sema `screenshot`'in "/" ile basladigini dogruluyor, dosyanin VAR OLDUGUNU
+   * degil. Var olmayan bir yola isaret eden kayit build'i gecer ve sitede kirik
+   * gorsel cikar - bu test o araligi kapatiyor.
+   */
+  it("her projenin ekran goruntusu public/ altinda gercekten duruyor", () => {
+    for (const project of projects) {
+      const file = join(process.cwd(), "public", project.screenshot);
+      expect(existsSync(file), `${project.slug}: ${project.screenshot} bulunamadi`).toBe(true);
+    }
+  });
+
+  it("team hala bos - biyografiler yazilmadi (#16)", () => {
     expect(team).toEqual([]);
   });
 });
