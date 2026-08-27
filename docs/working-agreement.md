@@ -135,6 +135,13 @@ Son madde bu ekibin eklediği kısım ve bir UI projesinde optimizer'dakinden da
 yeri düzeltip üç yeri bozmanın tek panzehiri, "bu PR Hero ve Team layout'una dokunmadı" cümlesini
 yazmak zorunda olmaktır.
 
+**Trailer yazılmaz.** Commit mesajının sonuna `Co-Authored-By:` satırı, araç imzası, oturum linki
+veya "generated with" türü bir ibare eklenmez. Bunlar GitHub'da co-author olarak görünür ve
+deponun katkıcı listesine gerçek olmayan bir isim sokar. Yazar, commit'i atan kişidir; kullanılan
+editör, ajan veya araç commit mesajının konusu değildir.
+
+Aynı kural PR ve issue gövdeleri için de geçerli.
+
 ### 3.3 PR gövdesi
 
 Aynı üçü + **preview linki** + görsel değişiklik varsa önce/sonra görüntüsü (mobil dahil).
