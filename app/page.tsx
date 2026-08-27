@@ -1,9 +1,10 @@
 import { Container } from "@/components/ui";
+import { Footer } from "@/components/sections/footer";
 import { Nav } from "@/components/sections/nav";
 import { site } from "@/content";
 
 /**
- * Bolumler Faz 3'te tek tek geliyor. Su an yalnizca Navigation var; Hero,
+ * Bolumler Faz 3'te tek tek geliyor. Su an Navigation ve Footer var; Hero,
  * Projects, Team ve About kendi issue'larinda eklenecek.
  *
  * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
@@ -20,6 +21,7 @@ export default function Home() {
           </h1>
         </Container>
       </main>
+      <Footer site={site} />
     </>
   );
 }

@@ -45,6 +45,13 @@ describe("siteSchema", () => {
     expect(() => siteSchema.parse({ ...site, wordmark: "myman.dev" })).toThrow();
   });
 
+  it("copyrightYear zorunlu ve tam sayi", () => {
+    const withoutYear: Record<string, unknown> = { ...site };
+    delete withoutYear.copyrightYear;
+    expect(() => siteSchema.parse(withoutYear)).toThrow();
+    expect(() => siteSchema.parse({ ...site, copyrightYear: 2026.5 })).toThrow();
+  });
+
   it("bolum numarasi iki haneli olmali", () => {
     expect(() =>
       siteSchema.parse({ ...site, nav: [{ id: "hero", number: "1", label: "Hero" }] }),

@@ -8,6 +8,7 @@ export const site: Site = {
   wordmark: "MyManDev",
   canonicalUrl: "https://mymandev.com",
   repoUrl: "https://github.com/MyManDev/MMD-Web-Page",
+  copyrightYear: 2026,
   nav: [
     { id: "hero", number: "01", label: "Hero" },
     { id: "projects", number: "02", label: "Projects" },
