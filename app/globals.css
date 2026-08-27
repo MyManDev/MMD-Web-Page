@@ -7,19 +7,6 @@
   box-sizing: border-box;
 }
 
-/* ONAY BEKLIYOR - docs/design-spec.md §10.1.
-   Onaylandiginda app/tokens.css'e tasinir; onaylanana kadar token degil.
-   Burada duruyor cunku scroll-margin-top hesabi bu degere bagli. */
-:root {
-  --nav-height: 56px;
-}
-
-@media (width >= 1024px) {
-  :root {
-    --nav-height: 64px;
-  }
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -37,7 +24,7 @@ svg {
   max-width: 100%;
 }
 
-/* Sticky navbar hedef basligi kapatmasin. design-spec.md §7.3 / §10.5 */
+/* Sticky navbar hedef basligi kapatmasin. design-spec.md §7.3 */
 :target,
 section[id] {
   scroll-margin-top: calc(var(--nav-height) + 24px);

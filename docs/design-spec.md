@@ -13,8 +13,6 @@ uyguladığımızı** yazar. Kararların kendisi orada; burada tekrar edilmez.
 ifadesi paylaşılan karar alanıdır (`CLAUDE.md` kural 5). Hepsinin yeri ayrıldı, içi
 **metin bekliyor** olarak işaretlendi.
 
-§10'daki değerler **öneridir ve onay bekler**; §1–§9 kesinleşmiş sayıları kullanır.
-
 ---
 
 ## 1 · Kapsayıcı ve ızgara
@@ -27,6 +25,9 @@ Tek `Container` primitive'i bütün bölümlerin genişliğini belirler: `max-wi
 | `< 640` (mobil)     | 1     | tek kolon, kenar padding 20px                         |
 | `640–1023` (tablet) | 2     | eşit iki kolon                                        |
 | `≥ 1024` (desktop)  | 12    | 12 kolonluk ızgara, bölümler bunun üstünde konumlanır |
+
+Izgara boşluğu (gutter) ve kart iç boşluğu: **24px mobil / 32px `≥ lg`** — `architecture.md`
+§4.3'teki yatay padding değerleriyle aynı iki sayı, yeni bir ölçü ailesi doğurmuyor.
 
 Bölüm arası dikey boşluk §4.3'teki iki değerden gelir: mobilde küçük olan, `lg` ve üstünde büyük
 olan. Ara breakpoint'lerde arada bir değer **uydurulmaz**, `lg`'de sıçrar.
@@ -51,6 +52,10 @@ Değişiklikleri iki bölge sahibinin de onayını ister.
 | `SectionLabel` | `number`, `children`                                                          | —                                           | `01`–`04` bölüm numarası + etiket. Mono rolü. Bölüm başlıklarının üstünde.                                                     |
 | `Button`       | `variant: 'primary' \| 'ghost'`, `href?`, `external?`, `children`, `iconEnd?` | default · hover · focus · active · disabled | `href` varsa `<a>`, yoksa `<button>`. `external` ise `target="_blank"` + `rel="noopener noreferrer"` + görünür dış link ikonu. |
 | `Tag`          | `children`                                                                    | —                                           | Statik. Tech tag'leri. Tıklanabilir değil, `<li>` olarak dizilir.                                                              |
+
+`Button` ölçüsü: yükseklik 44px (mobil dokunma hedefi eşiği), yatay padding 20px,
+`radius-sm`. `Tag`: yükseklik 24px, yatay padding 10px, `surface-2` zemin, `radius-sm`.
+`NavLink`: yükseklik 40px, yatay padding 16px, `radius-pill` — sayfadaki tek pill yüzeyi.
 
 **`Button` durum matrisi**
 
@@ -97,7 +102,7 @@ Sticky, sayfanın en üstünde, `position: sticky; top: 0`. **Scroll listener yo
 
 |           | Mobil               | `≥ lg`                                         |
 | --------- | ------------------- | ---------------------------------------------- |
-| Yükseklik | §10.1               | §10.1                                          |
+| Yükseklik | 56px                | 64px                                           |
 | Sol       | wordmark `MyManDev` | wordmark                                       |
 | Orta      | —                   | dört nav linki, pill radius                    |
 | Sağ       | menü düğmesi        | GitHub aksiyonu (`ghost` Button, ikon + metin) |
@@ -108,9 +113,12 @@ Zemin **saydam değil**. Referans mockup'ta blur'lu saydam bar vardı; altından
 okunurluğu bozuyor ve `backdrop-filter` mobilde bedava değil. Düz `surface` zemin seçildi.
 
 **Aktif link tespiti:** tek bir `IntersectionObserver`, yalnızca `Nav` içinde. Başka hiçbir yerde
-scroll dinlenmez. Gözlem eşiği ve kök marjı §10.2.
+scroll dinlenmez. Gözlem ayarı: `rootMargin: '-<navbar>px 0px -55% 0px'`, `threshold: 0`.
+Alt marj −%55, bir bölümün ekranın üst yarısına girdiği anda aktif sayılmasını sağlıyor;
+aksi halde iki bölüm aynı anda aktif görünüyor.
 
-**Mobil menü:** menü düğmesi `aria-expanded` taşır ve `MobileMenu`'yü `aria-controls` ile
+**Mobil menü** `< lg` (1024px) altında devreye girer: dört nav linki + wordmark + GitHub
+aksiyonu `md` genişlikte sıkışıyor. Menü düğmesi `aria-expanded` taşır ve `MobileMenu`'yü `aria-controls` ile
 işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Klavye davranışı §7.4.
 
 ### 3.2 Hero — Bölge A
@@ -118,7 +126,7 @@ işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Kl
 |             | Mobil              | `md`    | `≥ lg`                        |
 | ----------- | ------------------ | ------- | ----------------------------- |
 | Kolon       | 1                  | 1       | 2 — metin solda, görsel sağda |
-| Kolon oranı | —                  | —       | §10.3                         |
+| Kolon oranı | —                  | —       | 7 / 5, arada 1 kolon boşluk   |
 | Görsel      | metnin **altında** | altında | sağda, dikey ortalı           |
 | Hizalama    | sola               | sola    | sola                          |
 
@@ -145,7 +153,7 @@ Kart değil, kendi başına bir bölüm gibi duran tam genişlikte blok.
 | --------------- | ---------------------------- | -------------------------------------------- |
 | Yapı            | tek kolon                    | 2 kolon — solda metin, sağda ekran görüntüsü |
 | Ekran görüntüsü | metnin altında, tam genişlik | sağ kolon                                    |
-| En-boy          | §10.4                        | §10.4                                        |
+| En-boy          | 16 / 10                      | 16 / 10                                      |
 
 Blok içi sıra: `SectionLabel 02` → proje adı (Display M) → özet (Body) → tech tag'leri (`Tag`
 listesi, mono) → `MetricRow` → aksiyonlar (GitHub `ghost`, Live Demo `primary`).
@@ -163,7 +171,7 @@ verilir ki CLS oluşmasın.
 İçerik dosyasına ikinci proje eklendiğinde devreye girer. **CSS `position: sticky` + z-index**,
 scroll listener yok.
 
-- Her kart `position: sticky; top: <navbar yüksekliği + §10.5>`.
+- Her kart `position: sticky; top: calc(var(--nav-height) + 24px)`.
 - `z-index` kart sırasıyla artar; sonraki kart öncekinin üstüne biner.
 - Yığın kabının yüksekliği kart sayısıyla büyür: kart başına bir viewport yüksekliği.
 
@@ -193,7 +201,7 @@ Kart içi: ad (Display M) → rol (mono, `text-muted`) → kısa biyografi (Body
 
 ### 3.5 About — Bölge B
 
-Tek kolon, okunabilirlik için metin genişliği sınırlı (§10.6). `SectionLabel 04` → başlık
+Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `SectionLabel 04` → başlık
 (Display L) → manifesto (Body) → çalışma prensipleri listesi (Body S).
 
 - Manifesto ve prensipler: **metin bekliyor**
@@ -271,7 +279,7 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 
 §4.5: ara ton gerektiğinde yeni hex **uydurulmaz**, mevcut token'ın opaklığı kullanılır
 (`color-mix` veya Tailwind `/60`). Bu belgede opaklık gereken tek yer `primary` Button hover'ı
-(`accent/90`) ve `Tag` zemini (§10.7).
+(`accent/90`) ve `Tag` zemini (`surface-2`).
 
 ---
 
@@ -328,7 +336,7 @@ sayfada tek `h1` (Hero başlığı), bölüm başlıkları `h2`, kart başlıkla
 ### 7.2 Focus göstergesi
 
 Tek bir global `:focus-visible` kuralı: accent renkli halka + zeminden ayıran offset. Kalınlık
-ve offset §10.8.
+`outline: 2px solid var(--color-accent)`, `outline-offset: 2px`.
 
 `outline: none` hiçbir yerde tek başına yazılmaz. Halka `outline` ile çizilir (`box-shadow`
 değil), çünkü Windows yüksek kontrast modunda `box-shadow` kaybolur.
@@ -348,7 +356,7 @@ DOM sırası = görsel sıra. Hiçbir yerde pozitif `tabindex` yok.
 7. Footer: linkler
 
 **Sticky navbar focus'u kapatmamalı.** Anchor hedefine atlandığında hedef başlık sabit bar'ın
-altında kalır. Çözüm: her `<section>`a `scroll-margin-top` (§10.5). Bu bir E2E kapısıdır —
+altında kalır. Çözüm: her `<section>`a `scroll-margin-top: calc(var(--nav-height) + 24px)`. Bu bir E2E kapısıdır —
 `architecture.md` §8'deki "klavye ile tüm bölüm ve aksiyonlar erişilebilir" satırı bunu kapsar.
 
 ### 7.4 Mobil menü klavye davranışı
@@ -396,24 +404,3 @@ numaralanmasın.
 - **Piksel hassasiyetinde görsel ince ayar** — Draw.io ve review aşamasında.
 
 ---
-
-## 10 · Öneri — onay bekliyor
-
-`architecture.md` §4'te karşılığı **olmayan** değerler. Onaylanana kadar `tokens.css`'e
-girmezler; onaylandığında buradan silinip ilgili bölüme taşınırlar.
-
-| #     | Değer                        | Öneri                                                              | Gerekçe                                                                                                                                                    |
-| ----- | ---------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 10.1  | Navbar yüksekliği            | 56px mobil / 64px `≥ lg`                                           | 64px, 8px'lik ritme oturuyor ve pill nav linkleri için 40px'lik hedef + 12px dikey nefes bırakıyor. Mobilde 56px, viewport'un dikey alanı pahalı.          |
-| 10.2  | `IntersectionObserver` ayarı | `rootMargin: '-<navbar>px 0px -55% 0px'`, `threshold: 0`           | Üst marj navbar'ı düşer; alt −%55, bir bölümün ekranın üst yarısına girdiği anda aktif sayılmasını sağlar. Aksi halde iki bölüm aynı anda aktif görünüyor. |
-| 10.3  | Hero kolon oranı (`≥ lg`)    | 7 / 5 (12 kolonda), arada 1 kolon boşluk                           | Display XL başlık 7 kolonda 2–3 satıra oturuyor; 6/6 başlığı gereksiz kırıyor, 8/4 görseli eziyor.                                                         |
-| 10.4  | Ekran görüntüsü en-boy       | 16 / 10                                                            | Gerçek uygulama ekran görüntüsü geniş; 16/9 mobilde fazla basık, 4/3 dikeyde çok yer yiyor. Sabit oran CLS'i sıfırlar.                                     |
-| 10.5  | `scroll-margin-top`          | navbar yüksekliği + 24px                                           | Hedef başlık bar'ın hemen altına yapışmasın; 24px §4.3'teki ritimle uyumlu. Sticky yığının `top` değeri de bu.                                             |
-| 10.6  | About metin genişliği        | `65ch`                                                             | Uzun gövde metninde satır başına 60–75 karakter okunabilirlik aralığı. Container genişliğini değiştirmez, yalnızca paragrafı sınırlar.                     |
-| 10.7  | `Tag` biçimi                 | yükseklik 24px, yatay padding 10px, zemin `surface-2`, `radius-sm` | Mono 12px etiket için en küçük rahat hedef. Tıklanabilir olmadığı için 44px dokunma hedefi gerekmiyor.                                                     |
-| 10.8  | Focus halkası                | `outline: 2px solid accent`, `outline-offset: 2px`                 | 2px koyu zeminde net görünüyor; offset halkayı elemanın kendi kenarından ayırıyor, `border` ile karışmıyor.                                                |
-| 10.9  | Button ölçüsü                | yükseklik 44px, yatay padding 20px, `radius-sm`                    | 44px mobil dokunma hedefi eşiği. Sayfadaki tek gerçek aksiyon yüzeyi bu.                                                                                   |
-| 10.10 | Izgara boşluğu (gutter)      | 24px mobil / 32px `≥ lg`                                           | §4.3'teki yatay padding değerleriyle aynı iki sayı; yeni bir ölçü ailesi doğurmuyor.                                                                       |
-| 10.11 | Kart iç boşluğu              | 24px mobil / 32px `≥ lg`                                           | Aynı gerekçe. `radius-card` 14px ile birlikte içerik kenardan yeterince uzak.                                                                              |
-| 10.12 | Nav link hedefi              | yükseklik 40px, yatay padding 16px, `radius-pill`                  | Pill radius §4.3'te tanımlı ama hangi elemana ait olduğu yazılı değildi; nav linkleri tek pill yüzeyi.                                                     |
-| 10.13 | Mobil menü kırılma noktası   | `lg` (1024px)                                                      | Dört nav linki + wordmark + GitHub aksiyonu `md` (768px) genişlikte sıkışıyor. `architecture.md` §2 "mobilde kompakt menü" diyor ama eşiği vermiyor.       |
