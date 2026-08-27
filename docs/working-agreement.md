@@ -2,8 +2,8 @@
 
 Bu belge **nasıl çalıştığımızı** yazar. Ne inşa ettiğimiz [`architecture.md`](architecture.md)'de.
 
-Düzen, *Nasıl Çalıştık — Football Squad Optimizer* belgesinden süzülerek taşındı, kopyalanarak
-değil. O belgenin kendi uyarısı geçerli: *"Küçük işlerde fazla ağırdır."* Burada ön-kayıt
+Düzen, _Nasıl Çalıştık — Football Squad Optimizer_ belgesinden süzülerek taşındı, kopyalanarak
+değil. O belgenin kendi uyarısı geçerli: _"Küçük işlerde fazla ağırdır."_ Burada ön-kayıt
 dokümanları, parmak izi dondurma ve ölçüm artifact indeksi yok — bu projede ölçülecek bir tahmin
 iddiası yok. Kalanların hepsi bedava taşındı.
 
@@ -14,12 +14,12 @@ iddiası yok. Kalanların hepsi bedava taşındı.
 Sahiplik = **inceleme yetkisi**, dışlayıcı erişim değil. Herkes her şeyi okur ve her şeye değişiklik
 önerebilir; sahip, o bölgenin tutarlı kalmasından sorumlu kişidir.
 
-| | Bölge A — Vitrin ve içerik | Bölge B — Kabuk ve teslim |
-|---|---|---|
-| **Sahip** | İbrahim | Tunay |
-| **Sahip olduğu soru** | Ürünlerimiz sitede doğru ve etkileyici görünüyor mu? | Site kendini doğru sunuyor, kendini doğru taşıyor mu? |
-| **Kapsam** | Hero, Projects bölümü, proje kartı ve etkileşimi, `content/` ve Zod şeması, proje görselleri | Navigation (sticky navbar, anchor scroll, aktif link, mobil menü), Team, About, Footer, 404, SEO/metadata/OG/sitemap/robots, CI ve deployment bakımı |
-| **Kendi testleri** | Şema testleri, Projects E2E | Navigation E2E, a11y taraması, 404 E2E |
+|                       | Bölge A — Vitrin ve içerik                                                                   | Bölge B — Kabuk ve teslim                                                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sahip**             | İbrahim                                                                                      | Tunay                                                                                                                                                |
+| **Sahip olduğu soru** | Ürünlerimiz sitede doğru ve etkileyici görünüyor mu?                                         | Site kendini doğru sunuyor, kendini doğru taşıyor mu?                                                                                                |
+| **Kapsam**            | Hero, Projects bölümü, proje kartı ve etkileşimi, `content/` ve Zod şeması, proje görselleri | Navigation (sticky navbar, anchor scroll, aktif link, mobil menü), Team, About, Footer, 404, SEO/metadata/OG/sitemap/robots, CI ve deployment bakımı |
+| **Kendi testleri**    | Şema testleri, Projects E2E                                                                  | Navigation E2E, a11y taraması, 404 E2E                                                                                                               |
 
 Ayrım katmana göre değil, **sayfanın hangi işini yaptığına** göre. İkisi de React yazıyor, ikisi de
 içerik ve test yazıyor: A tarafında Zod şeması var, B tarafında Team layout'u var. Kimse "sadece
@@ -116,7 +116,7 @@ gövdesi disiplini (§3.3) aynen uygulanır.
 
 **İki kişi aktif olduğu andan itibaren:** required approving reviews = **1**, istisnasız.
 
-Gerekçe: optimizer'da zorunlu review sıfırdı çünkü *"kapı, kapılardır"* — davranışın test
+Gerekçe: optimizer'da zorunlu review sıfırdı çünkü _"kapı, kapılardır"_ — davranışın test
 edilebilir olduğu bir sistemde doğru. Burada **kapılar görsel regresyonu göremez.** `next build`
 geçer, Hero mobilde kırılmıştır. Ayrıca metin, isim ve marka kararları paylaşılan yüzey; onları tek
 kişi merge etmez.
@@ -160,16 +160,16 @@ bir sürüm yaşar; daha uzun yaşarsa kalıcılaşır ve eski sınır hiç ölm
 
 Her PR'da, istisnasız. Yerelde tek komut: `pnpm gates`.
 
-| Kapı | Komut | Neyi tutar |
-|---|---|---|
-| lint | `pnpm lint` | stil, Next kuralları, hooks, `next/image` |
-| format | `pnpm format` | biçim |
-| tipler | `pnpm typecheck` | strict tip kontrolü |
-| test | `pnpm test` | şema + `lib/` |
-| build | `pnpm build` | derleme; içerik şeması burada da patlar |
-| payload | `pnpm size` | en ağır sayfanın JS'i gzip < 150 KiB (`architecture.md` §8) |
-| E2E + a11y | `pnpm e2e` | davranış, erişilebilirlik, 404 |
-| review | — | görsel regresyon, metin ve isim kararları (§3.1) |
+| Kapı       | Komut            | Neyi tutar                                                  |
+| ---------- | ---------------- | ----------------------------------------------------------- |
+| lint       | `pnpm lint`      | stil, Next kuralları, hooks, `next/image`                   |
+| format     | `pnpm format`    | biçim                                                       |
+| tipler     | `pnpm typecheck` | strict tip kontrolü                                         |
+| test       | `pnpm test`      | şema + `lib/`                                               |
+| build      | `pnpm build`     | derleme; içerik şeması burada da patlar                     |
+| payload    | `pnpm size`      | en ağır sayfanın JS'i gzip < 150 KiB (`architecture.md` §8) |
+| E2E + a11y | `pnpm e2e`       | davranış, erişilebilirlik, 404                              |
+| review     | —                | görsel regresyon, metin ve isim kararları (§3.1)            |
 
 **`lint-imports`'un tek karşılığı:** component'ler `content/` dosyalarını doğrudan okumaz, yalnızca
 `content/index.ts` üzerinden erişir. V1'de yazılı kural + review; ihlal tekrarlarsa mekanik hale
@@ -200,12 +200,12 @@ Bir madde gerçek işe dönüştüğünde listeden silinir ve issue'ya taşını
 
 ## 6 · Teslim sırası
 
-| Aşama | İçerik | Kim |
-|---|---|---|
-| **1. Design lock** | Draw.io: design system, component envanteri, Home desktop/mobil, Projects (tek proje + gelecekteki çok proje), Team, About, responsive/navigation. Logo SVG. | ortak |
-| **2. Faz 0** | Repo iskeleti, sürüm sabitleme, `tokens.css`, layout, UI primitive'leri, kapılar, Actions, Cloudflare Pages, domain. Boş sayfa canlıda. | tek PR, Ertuğrul |
-| **3. Bölge işi** | A: Hero + Projects + içerik. B: Navigation + Team + About + Footer + SEO. Paralel, çakışmasız. | İbrahim / Tunay |
-| **4. Production** | Gerçek görseller, metinler, testler, eşik ölçümü, yayın. | ortak |
+| Aşama              | İçerik                                                                                                                                                       | Kim              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| **1. Design lock** | Draw.io: design system, component envanteri, Home desktop/mobil, Projects (tek proje + gelecekteki çok proje), Team, About, responsive/navigation. Logo SVG. | ortak            |
+| **2. Faz 0**       | Repo iskeleti, sürüm sabitleme, `tokens.css`, layout, UI primitive'leri, kapılar, Actions, Cloudflare Pages, domain. Boş sayfa canlıda.                      | tek PR, Ertuğrul |
+| **3. Bölge işi**   | A: Hero + Projects + içerik. B: Navigation + Team + About + Footer + SEO. Paralel, çakışmasız.                                                               | İbrahim / Tunay  |
+| **4. Production**  | Gerçek görseller, metinler, testler, eşik ölçümü, yayın.                                                                                                     | ortak            |
 
 Claude Code 2. aşamada devreye girer. 1. aşamada işi yok.
 
@@ -223,7 +223,7 @@ zorunlu bir adım.
    `wip/<yer>-<YYYY-MM-DD>` dalına push edilir (`wip/ev-2026-08-27`). `wip/` dalları kapılardan muaf
    ve asla `main`'e merge edilmez; ertesi gün düzgün bir `feature/` dalına toplanır.
 2. **`HANDOFF.md` repo kökünde ve tek durum kaydıdır.** Geçmiş git log'unda yaşar; bu dosya
-   *şu anki durumu* tutar ve her devirde üzerine yazılır. İkinci bir kopya, tarih klasörü veya
+   _şu anki durumu_ tutar ve her devirde üzerine yazılır. İkinci bir kopya, tarih klasörü veya
    günlük dosyası tutulmaz.
 3. **Gün sonu:** `/handoff` → dosya güncellenir, commit'lenir, push edilir.
 4. **Gün başı:** `git pull` → `/pickup` → ajan `HANDOFF.md` + git durumunu okur, planı söyler,
@@ -246,6 +246,7 @@ zorunlu bir adım.
 ## 8 · Kontrol listeleri
 
 ### Bir işe başlamadan
+
 - [ ] `git pull` yapıldı, `HANDOFF.md` okundu.
 - [ ] Bu bir issue mı? Gözlem, kanıt ve önerilen şekil yazılı mı?
 - [ ] Hangi bölgeye düşüyor?
@@ -254,6 +255,7 @@ zorunlu bir adım.
 - [ ] Aynı dosyada başkası çalışıyor mu? Öyleyse önce söylendi mi?
 
 ### PR açmadan önce
+
 - [ ] `pnpm gates` yerelde geçiyor.
 - [ ] Tek konu. Refactor'da görsel değişiklik yok; içerik PR'ında component yok; doküman PR'ında kaynak yok.
 - [ ] `app/tokens.css` dışında renk yok.
@@ -263,6 +265,7 @@ zorunlu bir adım.
 - [ ] Görsel değişiklik varsa önce/sonra görüntüsü, mobil dahil.
 
 ### Yayına almadan önce
+
 - [ ] Sert kapılar geçiyor; raporlanan Lighthouse sayılarına bakıldı.
 - [ ] Klavye ile tüm sayfa gezilebiliyor, focus görünür.
 - [ ] `prefers-reduced-motion` açıkken sayfa kullanılabilir.
@@ -272,11 +275,13 @@ zorunlu bir adım.
 - [ ] OG görseli ve metadata gerçek URL'de doğru görünüyor.
 
 ### Gün sonunda
+
 - [ ] Her şey commit'li veya `wip/` dalında push'lu.
 - [ ] `/handoff` koşturuldu, `HANDOFF.md` push edildi.
 - [ ] Kalıcı bir karar alındıysa `architecture.md` §9'a satır eklendi.
 
 ### Bir kayıt yazarken
+
 - [ ] Bu olgu başka yerde yazılı mı? Öyleyse link ver, ikinci kayıt yazma.
 - [ ] Belge bir dosya, fonksiyon, token veya komut adı veriyorsa, o hâlâ var mı?
 - [ ] Kapsam daraltıldıysa neyin dışarıda bırakıldığı yazılı mı?
