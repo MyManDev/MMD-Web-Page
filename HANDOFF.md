@@ -5,43 +5,42 @@
 
 **Tarih:** 2026-08-27
 **Yer:** iş
-**Aşama:** 2 — Faz 0 (bkz. `docs/working-agreement.md` §6). Aşama 1 (Design lock) kapandı.
+**Aşama:** 3 — Bölge işi (bkz. `docs/working-agreement.md` §6). Aşama 1 ve Faz 0 kapandı.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`415efef` + bu devir commit'i)
+- Dal: `main` (`6e4cd45` — Faz 0 merge edildi)
 - Commit'lenmemiş değişiklik: yok
-- Yerel kurulum: `pnpm` **global değil**, `C:\Users\123456\AppData\Roaming\npm` altında; git kimliği
-  ve credential helper repo-yerel (aşağıdaki tuzaklar).
+- `pnpm gates` merge edilmiş `main` üzerinde uçtan uca geçiyor; CI'da da yeşil
+  (`gates` · `e2e` · `lighthouse`).
 
 ## Açık PR'lar
 
-- **#21 — `feature/phase-0-skeleton`** · Faz 0 iskeleti. Kapılar yerelde ve CI'da geçti
-  (`gates`, `e2e`, `lighthouse` üçü de yeşil). **Bilerek merge edilmedi:** baştan sona yeni
-  bağımlılık getiriyor, insan onayı gerekiyor.
+- yok
 
 ## Sıradaki tek iş
 
-**PR #21'i incele ve merge et.** Merge edilmeden başka hiçbir iş başlayamaz: bütün Faz 3
-issue'ları ona bağlı, ve `gates` / `e2e` status check adları ancak o merge edildiğinde var oluyor.
-Merge sonrası branch protection açılabilir.
+**#6 — `docs/design-spec.md` §10'daki 13 ölçü önerisini onayla ve `app/tokens.css`'e taşı.**
+Bu issue diğer bütün Faz 3 issue'larını (#7–#14) engelliyor: ölçüler kesinleşmeden bölüm
+component'i yazılmamalı, yoksa her component kendi sayısını uydurur.
 
 ## Bitmemiş iş
 
-- **`docs/design-spec.md` §10 — 13 ölçü önerisi onay bekliyor** (#6). Navbar yüksekliği, focus
-  halkası, Hero kolon oranı, gutter, kart iç boşluğu... Onaylanmadan bölüm component'i yazılmamalı;
-  yazılırsa her component kendi sayısını uydurur.
-- **`--nav-height`** şu an `app/globals.css`'te "ONAY BEKLIYOR" yorumuyla duruyor. §10.1
-  onaylanınca `app/tokens.css`'e taşınacak.
-- **`@tunayaslan`'ın repoya yazma yetkisi yok.** Hesap gerçek (API ile doğrulandı) ama yetki
-  doğrulanamadı. Yetkisiz bir CODEOWNERS sahibini GitHub **sessizce yok sayar** — satır
-  uygulanıyormuş gibi görünür, uygulanmaz.
-- **Branch protection kapalı.** Faz 0 merge edildikten sonra açılacak, önce değil.
+- **Branch protection'a status check eklenmedi.** `gates` ve `e2e` işleri artık gerçekten var;
+  `main protect` ruleset'i şu an yalnızca `deletion` + `non_fast_forward` tutuyor. Zorunlu check'ler
+  eklenebilir.
+- **`@tunayaslan`'ın repoya yazma yetkisi yok.** Hesap gerçek ama yetki doğrulanamadı. Yetkisiz bir
+  CODEOWNERS sahibini GitHub **sessizce yok sayar**.
+- **Katkıcı listesi kenar çubuğunda hâlâ üç isim gösteriyor.** `main`, `/contributors` API'si ve
+  Insights sayfası temiz; kalıntı `refs/pull/*/head` ref'lerinde ve GitHub önbelleğinde.
+  Bu ref'ler sunucu tarafında, silinemiyor. GitHub Support'a talep açıldı.
+- **`--nav-height`** hâlâ `app/globals.css`'te "ONAY BEKLIYOR" yorumuyla; #6 ile `tokens.css`'e
+  taşınacak.
 
 ## Alınan kararlar
 
 Bu devirde alınan kalıcı kararların hepsi `docs/architecture.md` §9'daki karar kaydında.
-Burada tekrar edilmiyor. (Faz 0 kararlarının satırları PR #21 içinde.)
+Burada tekrar edilmiyor.
 
 ## Tuzaklar ve notlar
 
@@ -55,6 +54,8 @@ Burada tekrar edilmiyor. (Faz 0 kararlarının satırları PR #21 içinde.)
   `npm install -g pnpm` ile kuruldu; PATH'e `%APPDATA%\npm` eklemek gerekebiliyor.
 - **`gh` token'ında `workflow` scope'u olmalı**, yoksa `.github/workflows/` içeren dal push
   edilemiyor (`gh auth refresh -h github.com -s workflow`).
+- **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2). Bu kural bir kez ihlal
+  edildi ve geçmişi yeniden yazmak gerekti; `refs/pull/*` kalıntısı geri alınamadı.
 - Ev makinesinde ilk kurulum `gh auth login` + repo-yerel credential helper gerektiriyor
   (`git config --local credential.https://github.com.helper` — **önce boş değer, sonra gh çağrısı**).
   GCM'de `fatssy` hesabı önbellekte, silinmedi.
