@@ -10,4 +10,495 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram name="Akış - Sayfa yapısı" id="flow">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="flow-0" />
+        <mxCell id="1" parent="flow-0" />
+        <mxCell id="flow-1" value="Sayfa akışı - tek sayfa, dört bölüm, anchor + smooth scroll" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-2" value="Header linkleri yeni sayfa açmaz (architecture.md §2). Ölçüler design-spec.md §3." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="800" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-3" value="HEADER · Navigation
+sticky, top:0, z-index 40
+wordmark · 4 link · GitHub" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="110" width="460" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-4" value="MAIN · 01 Hero   #hero
+başlık · alt cümle · Projects CTA + About CTA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="270" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-5" style="endArrow=block;html=1;rounded=0;strokeColor=#666666;" edge="1" parent="1" source="flow-3" target="flow-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-6" value="MAIN · 02 Projects   #projects
+V1: tek blok - mimari N proje" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="460" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-7" style="endArrow=block;html=1;rounded=0;strokeColor=#666666;" edge="1" parent="1" source="flow-4" target="flow-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-8" value="MAIN · 03 Team   #team
+2 kart" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="650" width="460" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-9" style="endArrow=block;html=1;rounded=0;strokeColor=#666666;" edge="1" parent="1" source="flow-6" target="flow-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-10" value="MAIN · 04 About   #about
+manifesto + prensipler" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="820" width="460" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-11" style="endArrow=block;html=1;rounded=0;strokeColor=#666666;" edge="1" parent="1" source="flow-8" target="flow-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-12" value="FOOTER · contentinfo
+wordmark · telif · GitHub" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="990" width="460" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-13" style="endArrow=block;html=1;rounded=0;strokeColor=#666666;" edge="1" parent="1" source="flow-10" target="flow-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-14" value="Landmark&#x27;lar
+header -&gt; banner
+main -&gt; main
+footer -&gt; contentinfo
+
+h1 yalnızca Hero&#x27;da.
+Bölüm başlıkları h2,
+kart başlıkları h3." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="110" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-15" value="Aktif link tespiti
+tek IntersectionObserver,
+yalnızca Nav içinde.
+
+Başka hiçbir yerde
+scroll listener yok.
+(CLAUDE.md kural 3)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="340" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-16" value="scroll-margin-top
+her section&#x27;a uygulanır
+= navbar + 24px
+
+Sticky bar hedef başlığı
+kapatmasın." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="570" width="260" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-17" value="Skip link: body&#x27;nin ilk odaklanabilir elemani, #main&#x27;e atlar.
+Normalde görünmez, focus alınca görünür. z-index 60." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1140" width="460" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Desktop - Home (&gt;=1024)" id="desk">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="2350" math="0" shadow="0">
+      <root>
+        <mxCell id="desk-0" />
+        <mxCell id="1" parent="desk-0" />
+        <mxCell id="desk-1" value="Desktop - viewport 1280 · içerik 1180 · 12 kolon" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-2" value="Kutular yapıyı gösterir, piksel hassasiyetinde mockup değildir." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="900" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;verticalAlign=top;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="1280" height="2130" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-4" value="viewport 1280" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="66" y="96" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-5" value="NAVBAR - sticky, z 40, zemin surface, alt 1px border
+wordmark (sol) · 4 pill link (orta) · GitHub ghost (sağ)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="1280" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-6" value="64px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1356" y="96" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-7" value="bölüm arası boşluk 128px (lg)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="116" y="194" width="400" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-8" value="HERO - sol kolon (7/12)
+SectionLabel 01
+Display XL başlık - METİN BEKLİYOR
+Body alt cümle - METİN BEKLİYOR
+[primary Projects CTA] [ghost About CTA]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="110" y="282" width="660" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-9" value="HERO görseli
+sağ kolon (5/12)
+dikey ortalı" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="870" y="282" width="420" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-10" value="1 kolon
+boşluk" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="775" y="472" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-11" value="7/5 oran
+(öneri §10.3)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1356" y="288" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="830" width="1280" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-13" value="PROJECTS bloğu - zemin surface, tam genişlik" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="76" y="838" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-14" value="SectionLabel 02
+Proje adı (Display M)
+Özet (Body)
+[Tag][Tag][Tag][Tag] mono
+MetricRow - METİN BEKLİYOR
+[ghost GitHub] [primary Live Demo]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="110" y="870" width="560" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-15" value="Ekran görüntüsü
+16/10 · gerçek uygulamadan
+width+height verilir (CLS=0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="730" y="870" width="560" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-16" value="SectionLabel 03 · 2 kolon · gutter 32px (öneri §10.10)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1444" width="500" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-17" value="TEAM kart 1
+ad (Display M) · rol (mono)
+biyografi - METİN BEKLİYOR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1478" width="580" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-18" value="TEAM kart 2
+ad · rol
+biyografi - METİN BEKLİYOR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="710" y="1478" width="580" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-19" value="ABOUT - tek kolon
+SectionLabel 04 · Display L başlık
+manifesto - METİN BEKLİYOR
+prensipler - METİN BEKLİYOR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1906" width="780" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-20" value="metin genişliği 65ch
+(öneri §10.6)
+Container genisligini değiştirmez" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="1916" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-21" value="FOOTER - zemin surface, üstte 1px border
+wordmark (sol) · telif · GitHub (sağ) - tamamı mono" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="2294" width="1280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="desk-22" value="Yeşil disiplini (design-spec.md §5.1) - bölüm başına TEK odak:
+Navigation -&gt; aktif link · Hero -&gt; primary CTA · Projects -&gt; Live Demo
+Team / About / Footer -&gt; yeşil YOK" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="2444" width="800" height="110" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Mobil - Home (&lt;640)" id="mob">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="2600" math="0" shadow="0">
+      <root>
+        <mxCell id="mob-0" />
+        <mxCell id="1" parent="mob-0" />
+        <mxCell id="mob-1" value="Mobil - viewport 390 · tek kolon · kenar padding 20px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;verticalAlign=top;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="70" width="390" height="2400" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-3" value="viewport 390" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="66" y="76" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-4" value="NAVBAR 56px
+wordmark · [menü]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="70" width="390" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-5" value="56px
+bölüm arası boşluk 80px (mobil)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="76" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-6" value="HERO - tek kolon
+SectionLabel 01
+Display XL 40px - METİN BEKLİYOR
+alt cümle - METİN BEKLİYOR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="206" width="390" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-7" value="360px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="212" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-8" value="[primary Projects CTA] tam genişlik
+[ghost About CTA] tam genişlik" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="566" width="390" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-9" value="Aksiyonlar mobilde alt alta
+ve tam genişlik; sm&#x27;den
+itibaren yan yana" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="572" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-10" value="HERO görseli - metnin ALTINDA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="706" width="390" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-11" value="Desktop&#x27;ta sağ kolonda,
+mobilde alt satırda" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="712" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-12" value="PROJECTS · SectionLabel 02
+proje adı · ozet
+[Tag][Tag]
+MetricRow - METİN BEKLİYOR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1026" width="390" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-13" value="300px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="1032" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-14" value="Ekran görüntüsü 16/10
+tam genişlik" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1326" width="390" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-15" value="240px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="1332" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-16" value="[ghost GitHub]
+[primary Live Demo]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1566" width="390" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-17" value="110px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="1572" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-18" value="TEAM kart 1 - tek kolon" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1756" width="390" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-19" value="200px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="1762" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-20" value="TEAM kart 2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1956" width="390" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-21" value="200px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="1962" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-22" value="ABOUT - tek kolon
+metin - METİN BEKLİYOR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="2236" width="390" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-23" value="240px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="2242" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-24" value="FOOTER - dikey
+wordmark / telif / GitHub" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="2556" width="390" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-25" value="140px" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="2562" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mob-26" value="Projects yığını mobilde YOK.
+&lt; lg altında düz liste.
+
+Gerekçe: viewport yüksekliği
+yığını taşımıyor; sticky kart
+ekranın çoğunu yiyor.
+(design-spec.md §3.3.2)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="466" y="1150" width="320" height="240" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Projects - V1 (tek proje)" id="pv1">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1350" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="pv1-0" />
+        <mxCell id="1" parent="pv1-0" />
+        <mxCell id="pv1-1" value="Projects - V1 durumu: tek proje bloğu, yığın yok" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-2" value="architecture.md §3 kararı: V1&#x27;de yığın yok. Tek kartla üst üste gelecek bir şey olmadığı icin davranış anlamını yitiriyor." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="1100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="1180" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-4" value="tam genislikte blok - kart degil, kendi başına bir bölüm gibi durur" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="76" y="120" width="600" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-5" value="SectionLabel 02
+
+Proje adı - Display M
+Özet - Body
+
+[Python][OR-Tools CP-SAT][ML][React]
+
+MetricRow - dürüst sayı
+METİN BEKLİYOR
+
+[ghost GitHub] [primary Live Demo]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="160" width="520" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-6" value="Ekran görüntüsü - 16/10
+gerçek uygulamadan, mockup&#x27;tan degil" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="680" y="160" width="520" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-7" value="Kart N proje alacak şekilde yazılır.
+Props: project, index, total.
+V1&#x27;de total = 1 -&gt; sticky hiç uygulanmaz,
+kap normal akışa döner." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="620" width="560" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="pv1-8" value="metrics boşsa MetricRow render EDİLMEZ.
+Bos çerçeve, tire veya placeholder yok.
+
+Ekran görüntüsü yoksa blok yayınlanmaz.
+(CLAUDE.md kural 6)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="660" y="620" width="580" height="180" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Projects - N proje (sticky yığın)" id="pvn">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1350" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="pvn-0" />
+        <mxCell id="1" parent="pvn-0" />
+        <mxCell id="pvn-1" value="Projects - N proje: sticky + z-index yığını (&gt;= lg)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-2" value="CSS position:sticky + z-index. Scroll listener YOK (CLAUDE.md kural 3). İçerik dosyasına ikinci proje eklendiğinde devreye girer." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="1200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;verticalAlign=top;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="700" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-4" value="yığın kabı - yükseklik = kart sayısı x viewport yüksekliği" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="66" y="116" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-5" value="Kart 1 - sticky, top: navbar + 24px, z-index 10" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="170" width="620" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-6" value="Kart 2 - sticky, top: navbar + 24px, z-index 11" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="260" width="620" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-7" value="Kart 3 - sticky, top: navbar + 24px, z-index 12" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="350" width="620" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-8" value="z-index kart sırasıyla artar (10 + index).
+Sonraki kart öncekinin ÜSTÜNE biner.
+Önceki kart top değerinde yapışıp kalir." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="170" width="480" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-9" value="Alttaki kartın focus&#x27;u:
+kartlar inert DEĞİL, DOM&#x27;da normal sırada.
+Üste binen kart alttakini görsel olarak
+kapatırsa, focus&#x27;lanan kart :focus-within ile
+z-index sırasını geçici kazanir." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="320" width="480" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-10" value="prefers-reduced-motion: reduce
+-&gt; position: static, düz liste.
+Yigin tamamen devre dışı." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="510" width="480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-11" value="&lt; lg (mobil / tablet)
+-&gt; yığın yok, düz liste.
+Viewport yüksekliği yığını taşımıyor." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="660" width="480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="pvn-12" value="design-spec.md §3.3.2 - architecture.md §3&#x27;un açık bıraktığı dört sorunun cevabı burada:
+mobil davranış · prefers-reduced-motion · alttaki kartın klavye erişimi · yığın yüksekliği" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1040" width="1200" height="110" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Navigation - sticky bar ve mobil menü" id="nav">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="nav-0" />
+        <mxCell id="1" parent="nav-0" />
+        <mxCell id="nav-1" value="Navigation - Bölge B" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-2" value="Yükseklikler öneri (design-spec.md §10.1). Kırılma noktası lg = 1024 (öneri §10.13)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="1100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="1280" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-4" value="MyManDev (wordmark)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="76" y="120" width="220" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-5" value="01 Hero" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="470" y="112" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-6" value="02 Projects" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="600" y="112" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-7" value="03 Team" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="740" y="112" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-8" value="04 About" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="870" y="112" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-9" value="[ghost] GitHub" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="112" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-10" value="Desktop &gt;= lg - yükseklik 64px, zemin surface (saydam DEĞİL),
+alt kenar 1px border, nav linkleri pill radius,
+link hedefi 40px (öneri §10.12)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="180" width="620" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-11" value="Zemin neden saydam degil: blur&#x27;lu bar altindan geçen metnin
+okunurluğunu bozuyor ve backdrop-filter mobilde bedava degil.
+Düz surface zemin seçildi. (design-spec.md §3.1)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="180" width="640" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="310" width="390" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-13" value="MyManDev" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="76" y="328" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-14" value="[=]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="380" y="318" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-15" value="Mobil &lt; lg - yükseklik 56px, orta kolon yok,
+sağda menü düğmesi (aria-expanded + aria-controls)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="620" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-16" value="MOBİL MENÜ - AÇIK
+tam ekran örtü, zemin surface, z-index 50
+
+01 Hero
+02 Projects
+03 Team
+04 About
+
+[ghost] GitHub" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=middle;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="460" width="390" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-17" value="Klavye davranışı (design-spec.md §7.4):
+
+· açılınca focus ilk linke geçer
+· focus menü içinde döner (trap)
+· arkadaki sayfa inert
+· Escape kapatır ve focus&#x27;u
+  menü düğmesine GERİ VERİR
+· açıkken sayfa scroll&#x27;u kilitli" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="490" y="460" width="520" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-18" value="Aktif link:
+· renk accent (bölümün tek yesili)
+· aria-current doğru
+
+Renk tek başına bilgi taşımaz -
+ikisi birlikte." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="460" width="360" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="nav-19" value="Geçişler: NavLink hover 150ms color · menü açılış/kapanış 200ms opacity + translateY.
+prefers-reduced-motion altında menü anında açılır/kapanır." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="490" y="810" width="910" height="110" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>
