@@ -7,10 +7,11 @@ kendi repolarında yaşar; bu repo yalnızca vitrin.
 
 - Ne inşa ediyoruz, hangi stack, hangi eşikler → [`docs/architecture.md`](docs/architecture.md)
 - Nasıl çalışıyoruz, dal/PR/kapı düzeni, devir protokolü → [`docs/working-agreement.md`](docs/working-agreement.md)
+- Hangi component, hangi ölçü, hangi durum, hangi breakpoint → [`docs/design-spec.md`](docs/design-spec.md)
 - Bugün nerede kaldık → [`HANDOFF.md`](HANDOFF.md)
 
-Bir işe başlamadan önce `HANDOFF.md`'yi oku. Mimari veya süreç sorusu varsa yukarıdaki iki belgeye
-git, buradaki özete güvenme.
+Bir işe başlamadan önce `HANDOFF.md`'yi oku. Mimari, süreç veya tasarım sorusu varsa yukarıdaki
+belgelere git, buradaki özete güvenme.
 
 ---
 
