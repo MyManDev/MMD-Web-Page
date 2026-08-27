@@ -3,8 +3,8 @@
 Bu belge **ne inşa ettiğimizi** ve hangi kararla inşa ettiğimizi yazar. Nasıl çalıştığımız
 [`working-agreement.md`](working-agreement.md)'de.
 
-Kaynak: *MyMan.dev Final Tasarım ve Teknik Plan V1* (görsel yön ve kapsam) ve
-*Nasıl Çalıştık — Football Squad Optimizer* (mühendislik ilkeleri).
+Kaynak: _MyMan.dev Final Tasarım ve Teknik Plan V1_ (görsel yön ve kapsam) ve
+_Nasıl Çalıştık — Football Squad Optimizer_ (mühendislik ilkeleri).
 
 ---
 
@@ -32,12 +32,12 @@ kapılar geçiyor; `mymandev.com` yayında.
 
 Header linkleri yeni sayfa açmaz. Tek sayfa, dört bölüm, anchor + smooth scroll.
 
-| # | Bölüm | İş |
-|---|---|---|
-| 01 | Hero | Kim olduğumuzu tek cümlede anlat. Projects CTA + About CTA. |
-| 02 | Projects | Sitenin ana vitrini. |
-| 03 | Team | Ekip, farklı yetkinlikler, ortak üretim. |
-| 04 | About | Kısa manifesto, çalışma prensipleri, footer. |
+| #   | Bölüm    | İş                                                          |
+| --- | -------- | ----------------------------------------------------------- |
+| 01  | Hero     | Kim olduğumuzu tek cümlede anlat. Projects CTA + About CTA. |
+| 02  | Projects | Sitenin ana vitrini.                                        |
+| 03  | Team     | Ekip, farklı yetkinlikler, ortak üretim.                    |
+| 04  | About    | Kısa manifesto, çalışma prensipleri, footer.                |
 
 **Navigation:** sticky navbar; aktif bölüm linki yeşil; GitHub sağda sabit aksiyon; mobilde kompakt
 menü. Aktif link tespiti için tek bir `IntersectionObserver`, başka hiçbir yerde scroll listener yok.
@@ -75,8 +75,8 @@ sticky/z-index yığını devreye girer. Yani mimari bugünden çok-projeli, gö
 
 Bu kart **baştan gerçek veriyle** bağlanır. Optimizer'ın kendi dersi: ön yüz ile üretici
 birbirlerinin tarifine karşı geliştirildiği için ilk gerçek yayında üç uyuşmazlık birden çıkmıştı,
-ve asıl ders üç hata değil şuydu — *geliştiricinin baktığı yüzey kurgu gösteriyordu, o yüzden üçü de
-incelemeden sağ kaldı.* "Sonra doldururuz" aynı tuzağın adı.
+ve asıl ders üç hata değil şuydu — _geliştiricinin baktığı yüzey kurgu gösteriyordu, o yüzden üçü de
+incelemeden sağ kaldı._ "Sonra doldururuz" aynı tuzağın adı.
 
 **Yığın devreye girdiğinde çözülmüş olması gerekenler** (Draw.io'da planlanır): mobilde davranış
 (viewport yüksekliği kartı taşıyor mu, yoksa mobilde düz liste mi); `prefers-reduced-motion` açıkken
@@ -91,15 +91,15 @@ sayısıyla büyümesi.
 
 `app/tokens.css` tek kaynaktır. Component'lerde literal renk yok.
 
-| Rol | Hex | Kullanım |
-|---|---|---|
-| Page | `#203033` | sayfa zemini |
-| Surface | `#111B1D` | navbar, kartlar (zeminden koyu) |
-| Surface 2 | `#2A3A34` | ikincil yüzey, hover zemini |
-| Border | `#486354` | ince ayrım çizgileri |
-| Accent | `#78DF7B` | CTA, aktif nav, ikon, mikro highlight |
-| Text | `#F2F5F3` | birincil metin |
-| Text muted | `#A9B8B2` | ikincil metin (türetilmiş, §4.5) |
+| Rol        | Hex       | Kullanım                              |
+| ---------- | --------- | ------------------------------------- |
+| Page       | `#203033` | sayfa zemini                          |
+| Surface    | `#111B1D` | navbar, kartlar (zeminden koyu)       |
+| Surface 2  | `#2A3A34` | ikincil yüzey, hover zemini           |
+| Border     | `#486354` | ince ayrım çizgileri                  |
+| Accent     | `#78DF7B` | CTA, aktif nav, ikon, mikro highlight |
+| Text       | `#F2F5F3` | birincil metin                        |
+| Text muted | `#A9B8B2` | ikincil metin (türetilmiş, §4.5)      |
 
 **Yüzey mantığı:** sayfa zemini kartlardan daha açık. Katmanlar koyulaşarak öne gelir.
 
@@ -112,10 +112,10 @@ yeşilse eyebrow beyaz kalır.
 **Karar: IBM Plex Sans + IBM Plex Mono**, `next/font` ile self-host (Google Fonts kaynağından,
 build sırasında gömülür; runtime'da dış istek yok).
 
-| Rol | Yüz | Kullanım |
-|---|---|---|
-| Display | IBM Plex Sans 600/700, `letter-spacing: -0.02em` | Hero, bölüm başlıkları |
-| Body | IBM Plex Sans 400/500 | paragraf, kart açıklamaları |
+| Rol     | Yüz                                                      | Kullanım                                                  |
+| ------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| Display | IBM Plex Sans 600/700, `letter-spacing: -0.02em`         | Hero, bölüm başlıkları                                    |
+| Body    | IBM Plex Sans 400/500                                    | paragraf, kart açıklamaları                               |
 | Utility | IBM Plex Mono 500, `uppercase`, `letter-spacing: 0.08em` | bölüm etiketleri, tech tag'leri, proje numaraları, footer |
 
 Gerekçe: tek süper-aile olduğu için uyumsuzluk riski yok; mühendislik geçmişi olan bir yüz;
@@ -128,25 +128,25 @@ karar verilmezse **commit'li seçim Plex'tir**; belirsizlik kalmaz.
 
 **Tip ölçeği** (mobil / desktop):
 
-| Rol | Boyut | Satır yüksekliği |
-|---|---|---|
-| Display XL (hero) | 40px / 64px | 1.05 |
-| Display L (bölüm başlığı) | 28px / 40px | 1.15 |
-| Display M (kart başlığı) | 20px / 24px | 1.25 |
-| Body | 15px / 16px | 1.6 |
-| Body S | 14px | 1.55 |
-| Mono label | 12px | 1.4 |
+| Rol                       | Boyut       | Satır yüksekliği |
+| ------------------------- | ----------- | ---------------- |
+| Display XL (hero)         | 40px / 64px | 1.05             |
+| Display L (bölüm başlığı) | 28px / 40px | 1.15             |
+| Display M (kart başlığı)  | 20px / 24px | 1.25             |
+| Body                      | 15px / 16px | 1.6              |
+| Body S                    | 14px        | 1.55             |
+| Mono label                | 12px        | 1.4              |
 
 ### 4.3 Ölçü ve biçim
 
-| Token | Değer |
-|---|---|
-| İçerik genişliği | `max-width: 1180px`, yatay padding 20px / 32px |
-| Bölüm arası dikey boşluk | 80px / 128px |
-| Kart radius | 14px |
-| Küçük radius (tag, buton) | 8px |
-| Pill radius (nav) | 999px |
-| Border kalınlığı | 1px |
+| Token                     | Değer                                          |
+| ------------------------- | ---------------------------------------------- |
+| İçerik genişliği          | `max-width: 1180px`, yatay padding 20px / 32px |
+| Bölüm arası dikey boşluk  | 80px / 128px                                   |
+| Kart radius               | 14px                                           |
+| Küçük radius (tag, buton) | 8px                                            |
+| Pill radius (nav)         | 999px                                          |
+| Border kalınlığı          | 1px                                            |
 
 ### 4.4 Motion
 
@@ -203,7 +203,7 @@ content/
 
 **Şema serttir.** Alan eksik veya yanlışsa `pnpm build` patlar. Alan default'a düşmez, kart
 placeholder göstermez, `.optional()` eklenerek hata susturulmaz. Optimizer'ın kuralı birebir
-geçerli: *sessizce yanlış olmaktansa reddet.* Makul görünen bir placeholder, build hatasından
+geçerli: _sessizce yanlış olmaktansa reddet._ Makul görünen bir placeholder, build hatasından
 kötüdür.
 
 **Component'ler `content/` dosyalarını doğrudan okumaz**, yalnızca `content/index.ts` üzerinden
@@ -216,22 +216,22 @@ Proje kaydının zorunlu alanları: `slug`, `name`, `summary`, `tags[]`, `repoUr
 
 ## 6 · Stack
 
-| Karar | Seçim | Gerekçe |
-|---|---|---|
-| Framework | Next.js, App Router | Tasarım planında seçili; statik export ile host bağımsız |
-| Render | **`output: 'export'`** — tamamen statik | V1'de sunucu tarafı hiçbir şey yok. Statik kalmak host'u değiştirilebilir tutuyor; bu bir performans değil bağımsızlık kararı |
-| Dil | TypeScript, `strict: true` | — |
-| Paket yöneticisi | **pnpm** | Hızlı, lock dosyası net |
-| Node | Kurulu LTS; `.nvmrc` + `package.json > engines` ile **tam sürüm sabitlenir** | İki makinenin (iş/ev) aynı sürümde koşması bu projede özellikle önemli |
-| Styling | **Tailwind v4** | CSS-first `@theme`, tek-token-dosyası kuralına birebir oturuyor. v3'te token'lar JS config'inde yaşar ve CSS ile arasında köprü gerekir |
-| Lint | **ESLint** + `next/core-web-vitals` + **Prettier** | Buradaki asıl değer Next'in kendi kuralları (`next/image` kullanımı, hooks, link davranışı). Oxlint hızlı ama bu kapsamı henüz vermiyor; hız bu boyutta kazanç değil |
-| İçerik | TypeScript + Zod | §5 |
-| Görseller | `next/image` **`unoptimized`** + elle üretilmiş webp | Statik export runtime optimizasyonu desteklemiyor. Görseller `scripts/optimize-images.mjs` (sharp) ile iki genişlikte webp'e çevrilip commit'lenir. Az görsel var, bedeli düşük, karşılığı tam portabilite |
-| Statik sunucu (dev) | **`serve`** (devDependency) | `output: 'export'` ile `next start` çalışmıyor. `pnpm preview` ve Playwright, gerçek `404.html` döndüren bir statik sunucuya ihtiyaç duyuyor |
-| Test | Vitest + Playwright | §8 |
-| Motion kütüphanesi | yok | §4.4 |
-| Analytics | **yok** | Trafik hakkında cevaplamak istediğiniz bir soru henüz yok. Olmayan bir soruya araç kurmak kapsam ihlali. Ayrıca sıfır çerez = sıfır KVKK/GDPR yüzeyi, banner yok. Gerekirse sonra çerezsiz bir çözüm + gizlilik notu |
-| Lisans | Kod MIT; marka ve tasarım varlıkları hariç (`NOTICE`) | Kimse wordmark'ı ve logoyu yeniden kullanmasın |
+| Karar               | Seçim                                                                        | Gerekçe                                                                                                                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework           | Next.js, App Router                                                          | Tasarım planında seçili; statik export ile host bağımsız                                                                                                                                                             |
+| Render              | **`output: 'export'`** — tamamen statik                                      | V1'de sunucu tarafı hiçbir şey yok. Statik kalmak host'u değiştirilebilir tutuyor; bu bir performans değil bağımsızlık kararı                                                                                        |
+| Dil                 | TypeScript, `strict: true`                                                   | —                                                                                                                                                                                                                    |
+| Paket yöneticisi    | **pnpm**                                                                     | Hızlı, lock dosyası net                                                                                                                                                                                              |
+| Node                | Kurulu LTS; `.nvmrc` + `package.json > engines` ile **tam sürüm sabitlenir** | İki makinenin (iş/ev) aynı sürümde koşması bu projede özellikle önemli                                                                                                                                               |
+| Styling             | **Tailwind v4**                                                              | CSS-first `@theme`, tek-token-dosyası kuralına birebir oturuyor. v3'te token'lar JS config'inde yaşar ve CSS ile arasında köprü gerekir                                                                              |
+| Lint                | **ESLint** + `next/core-web-vitals` + **Prettier**                           | Buradaki asıl değer Next'in kendi kuralları (`next/image` kullanımı, hooks, link davranışı). Oxlint hızlı ama bu kapsamı henüz vermiyor; hız bu boyutta kazanç değil                                                 |
+| İçerik              | TypeScript + Zod                                                             | §5                                                                                                                                                                                                                   |
+| Görseller           | `next/image` **`unoptimized`** + elle üretilmiş webp                         | Statik export runtime optimizasyonu desteklemiyor. Görseller `scripts/optimize-images.mjs` (sharp) ile iki genişlikte webp'e çevrilip commit'lenir. Az görsel var, bedeli düşük, karşılığı tam portabilite           |
+| Statik sunucu (dev) | **`serve`** (devDependency)                                                  | `output: 'export'` ile `next start` çalışmıyor. `pnpm preview` ve Playwright, gerçek `404.html` döndüren bir statik sunucuya ihtiyaç duyuyor                                                                         |
+| Test                | Vitest + Playwright                                                          | §8                                                                                                                                                                                                                   |
+| Motion kütüphanesi  | yok                                                                          | §4.4                                                                                                                                                                                                                 |
+| Analytics           | **yok**                                                                      | Trafik hakkında cevaplamak istediğiniz bir soru henüz yok. Olmayan bir soruya araç kurmak kapsam ihlali. Ayrıca sıfır çerez = sıfır KVKK/GDPR yüzeyi, banner yok. Gerekirse sonra çerezsiz bir çözüm + gizlilik notu |
+| Lisans              | Kod MIT; marka ve tasarım varlıkları hariç (`NOTICE`)                        | Kimse wordmark'ı ve logoyu yeniden kullanmasın                                                                                                                                                                       |
 
 **Sürüm sabitleme:** `package.json`'da caret yok. `pnpm add next@latest` sonrası yüklenen tam sürüm
 yazılır. Güncelleme bilinçli bir `chore:` PR'ıdır, sessiz bir sürüklenme değil.
@@ -351,11 +351,11 @@ Lighthouse raporu. Repo public olduğu için dakikalar ücretsiz, bütçe kısı
 
 **İş adları sözleşmedir.** Workflow `.github/workflows/ci.yml`. İş adları tam olarak:
 
-| İş | İçerik | Zorunlu status check mi? |
-|---|---|---|
-| `gates` | lint, format, typecheck, test, build, size | **evet** |
-| `e2e` | Playwright + axe | **evet** |
-| `lighthouse` | Lighthouse raporu | hayır (bkz. §8) |
+| İş           | İçerik                                     | Zorunlu status check mi? |
+| ------------ | ------------------------------------------ | ------------------------ |
+| `gates`      | lint, format, typecheck, test, build, size | **evet**                 |
+| `e2e`        | Playwright + axe                           | **evet**                 |
+| `lighthouse` | Lighthouse raporu                          | hayır (bkz. §8)          |
 
 Branch protection bu iki adı isimle zorunlu kılıyor (`working-agreement.md` §3); ad değişirse koruma
 sessizce boşa düşer, çünkü GitHub var olmayan bir check'i beklemez.
@@ -366,17 +366,17 @@ sessizce boşa düşer, çünkü GitHub var olmayan bir check'i beklemez.
 
 Eşikler **implementasyondan önce** yazıldı. Sonradan seçilen eşik, eşiğe fit etmektir.
 
-| Nicelik | Eşik | Kapı mı? |
-|---|---|---|
-| axe erişilebilirlik ihlali | 0 | **Sert kapı** |
-| Sayfanın toplam JS'i (gzip) | < 150 KB | **Sert kapı** |
-| Klavye ile tüm bölüm ve aksiyonlar erişilebilir | evet | **Sert kapı** (E2E) |
-| Görünür focus göstergesi | evet | **Sert kapı** (E2E) |
-| `prefers-reduced-motion` desteği | evet | **Sert kapı** (E2E) |
-| Bilinmeyen yolda gerçek 404 | evet | **Sert kapı** (E2E) |
-| Lighthouse mobil Performance | ≥ 95 | Raporlanır |
-| LCP (mobil, kısıtlı bağlantı) | < 2.0 s | Raporlanır |
-| CLS | < 0.05 | Raporlanır |
+| Nicelik                                         | Eşik     | Kapı mı?            |
+| ----------------------------------------------- | -------- | ------------------- |
+| axe erişilebilirlik ihlali                      | 0        | **Sert kapı**       |
+| Sayfanın toplam JS'i (gzip)                     | < 150 KB | **Sert kapı**       |
+| Klavye ile tüm bölüm ve aksiyonlar erişilebilir | evet     | **Sert kapı** (E2E) |
+| Görünür focus göstergesi                        | evet     | **Sert kapı** (E2E) |
+| `prefers-reduced-motion` desteği                | evet     | **Sert kapı** (E2E) |
+| Bilinmeyen yolda gerçek 404                     | evet     | **Sert kapı** (E2E) |
+| Lighthouse mobil Performance                    | ≥ 95     | Raporlanır          |
+| LCP (mobil, kısıtlı bağlantı)                   | < 2.0 s  | Raporlanır          |
+| CLS                                             | < 0.05   | Raporlanır          |
 
 **Payload kapısının koşucusu:** `scripts/check-bundle-size.mjs`, script adı `size`. `build`'den
 sonra koşar, çünkü ölçtüğü şey build çıktısıdır. Faz 0'da yazılır.
@@ -386,8 +386,8 @@ JS dosyalarının gzip'lenmiş toplamı. Sayfaların en büyüğü **153.600 byt
 düşer. Ölçüm yalnızca `out/`'a bakar: her HTML'in `<script src>` ve JS `<link rel="preload">`
 referansları toplanır, build manifest'ine bağımlı değildir.
 
-Sayfa başına ölçülür çünkü eşiğin cevapladığı soru *"kullanıcı bu sayfayı açtığında ne kadar JS
-iniyor?"* — `out/` altındaki bütün dosyaların toplamı bu soruyu cevaplamaz ve route sayısıyla
+Sayfa başına ölçülür çünkü eşiğin cevapladığı soru _"kullanıcı bu sayfayı açtığında ne kadar JS
+iniyor?"_ — `out/` altındaki bütün dosyaların toplamı bu soruyu cevaplamaz ve route sayısıyla
 birlikte büyür, yani eşik zamanla anlamını yitirirdi. Paylaşılan chunk'lar onu yükleyen her sayfaya
 tam olarak sayılır; kullanıcı da öyle indiriyor.
 
@@ -413,18 +413,18 @@ o zaman eklenir.
 
 Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 
-| Konu | Karar | Nerede |
-|---|---|---|
-| Yığın vs tek proje | V1'de tek proje bloğu, mimari çok-projeli | §3 |
-| Placeholder proje | Yayınlanmaz | §3 |
-| Font | IBM Plex Sans + Mono | §4.2 |
-| İmza öğe | Dürüst sayı satırı, benimsendi | §4.6 |
-| İçerik formatı | TS + Zod, MDX yok | §5 |
-| Render | Tamamen statik export | §6 |
-| Styling | Tailwind v4 | §6 |
-| Lint | ESLint + Prettier | §6 |
-| Analytics | Yok | §6 |
-| Domain | `mymandev.com` kanonik, wordmark `MyManDev` | §7 |
-| Hosting | Cloudflare Pages | §7 |
-| Lighthouse | Raporlanır, kapı değil | §8 |
-| Component render testi | V1'de yok | §8 |
+| Konu                   | Karar                                       | Nerede |
+| ---------------------- | ------------------------------------------- | ------ |
+| Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli   | §3     |
+| Placeholder proje      | Yayınlanmaz                                 | §3     |
+| Font                   | IBM Plex Sans + Mono                        | §4.2   |
+| İmza öğe               | Dürüst sayı satırı, benimsendi              | §4.6   |
+| İçerik formatı         | TS + Zod, MDX yok                           | §5     |
+| Render                 | Tamamen statik export                       | §6     |
+| Styling                | Tailwind v4                                 | §6     |
+| Lint                   | ESLint + Prettier                           | §6     |
+| Analytics              | Yok                                         | §6     |
+| Domain                 | `mymandev.com` kanonik, wordmark `MyManDev` | §7     |
+| Hosting                | Cloudflare Pages                            | §7     |
+| Lighthouse             | Raporlanır, kapı değil                      | §8     |
+| Component render testi | V1'de yok                                   | §8     |
