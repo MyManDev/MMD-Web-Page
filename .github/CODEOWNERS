@@ -1,33 +1,33 @@
 # Paylasilan yuzeyler iki bolge sahibinin de onayini ister.
 # docs/working-agreement.md §1
 #
-# GitHub kullanici adlarini doldurun; placeholder halde birakilirsa CODEOWNERS calismaz.
+# Sahipler org uyesi ve repoya yazma yetkili olmali; degilse GitHub satiri sessizce yok sayar.
 
 # Varsayilan: degisiklik iki tarafa da bildirilir
-*                                @IBRAHIM_HANDLE @TUNAY_HANDLE
+*                                @SpeedyV5 @tunayaslan
 
 # Bolge A — vitrin ve icerik
-/components/sections/hero/       @IBRAHIM_HANDLE
-/components/sections/projects/   @IBRAHIM_HANDLE
-/content/projects.ts             @IBRAHIM_HANDLE
-/content/team.ts                 @IBRAHIM_HANDLE
+/components/sections/hero/       @SpeedyV5
+/components/sections/projects/   @SpeedyV5
+/content/projects.ts             @SpeedyV5
+/content/team.ts                 @SpeedyV5
 
 # Bolge B — kabuk ve teslim
-/components/sections/nav/        @TUNAY_HANDLE
-/components/sections/team/       @TUNAY_HANDLE
-/components/sections/about/      @TUNAY_HANDLE
-/components/sections/footer/     @TUNAY_HANDLE
-/app/not-found.tsx               @TUNAY_HANDLE
+/components/sections/nav/        @tunayaslan
+/components/sections/team/       @tunayaslan
+/components/sections/about/      @tunayaslan
+/components/sections/footer/     @tunayaslan
+/app/not-found.tsx               @tunayaslan
 
 # Paylasilan yuzeyler — her iki onay
-/app/tokens.css                  @IBRAHIM_HANDLE @TUNAY_HANDLE
-/app/globals.css                 @IBRAHIM_HANDLE @TUNAY_HANDLE
-/app/layout.tsx                  @IBRAHIM_HANDLE @TUNAY_HANDLE
-/app/page.tsx                    @IBRAHIM_HANDLE @TUNAY_HANDLE
-/components/ui/                  @IBRAHIM_HANDLE @TUNAY_HANDLE
-/content/schema.ts               @IBRAHIM_HANDLE @TUNAY_HANDLE
-/content/site.ts                 @IBRAHIM_HANDLE @TUNAY_HANDLE
-/content/index.ts                @IBRAHIM_HANDLE @TUNAY_HANDLE
-/.github/                        @IBRAHIM_HANDLE @TUNAY_HANDLE
-/docs/                           @IBRAHIM_HANDLE @TUNAY_HANDLE
-/CLAUDE.md                       @IBRAHIM_HANDLE @TUNAY_HANDLE
+/app/tokens.css                  @SpeedyV5 @tunayaslan
+/app/globals.css                 @SpeedyV5 @tunayaslan
+/app/layout.tsx                  @SpeedyV5 @tunayaslan
+/app/page.tsx                    @SpeedyV5 @tunayaslan
+/components/ui/                  @SpeedyV5 @tunayaslan
+/content/schema.ts               @SpeedyV5 @tunayaslan
+/content/site.ts                 @SpeedyV5 @tunayaslan
+/content/index.ts                @SpeedyV5 @tunayaslan
+/.github/                        @SpeedyV5 @tunayaslan
+/docs/                           @SpeedyV5 @tunayaslan
+/CLAUDE.md                       @SpeedyV5 @tunayaslan

@@ -4,7 +4,7 @@
 > Her devirde üzerine yazılır. Protokol: `docs/working-agreement.md` §7.
 
 **Tarih:** 2026-08-27
-**Yer:** —
+**Yer:** iş
 **Aşama:** 1 — Design lock (bkz. `docs/working-agreement.md` §6)
 
 ## Dal ve çalışma ağacı
@@ -29,3 +29,6 @@ Burada tekrar edilmiyor.
   Ondan önce `pnpm create next-app` çalıştırılmayacak.
 - Logo'nun kaliteli SVG'si henüz yok; favicon ve OG görselleri için gerekiyor.
 - Hero/About metinleri ve imza sayısının son hali henüz yazılmadı; placeholder konulmayacak.
+- Ev makinesinde ilk kurulum `gh auth login` + repo-yerel credential helper gerektiriyor
+  (`git config --local credential.https://github.com.helper` — **önce boş değer, sonra gh çağrısı**).
+  GCM'de `fatssy` hesabı önbellekte, silinmedi.
