@@ -419,18 +419,21 @@ o zaman eklenir.
 
 Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 
-| Konu                   | Karar                                       | Nerede |
-| ---------------------- | ------------------------------------------- | ------ |
-| Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli   | §3     |
-| Placeholder proje      | Yayınlanmaz                                 | §3     |
-| Font                   | IBM Plex Sans + Mono                        | §4.2   |
-| İmza öğe               | Dürüst sayı satırı, benimsendi              | §4.6   |
-| İçerik formatı         | TS + Zod, MDX yok                           | §5     |
-| Render                 | Tamamen statik export                       | §6     |
-| Styling                | Tailwind v4                                 | §6     |
-| Lint                   | ESLint + Prettier                           | §6     |
-| Analytics              | Yok                                         | §6     |
-| Domain                 | `mymandev.com` kanonik, wordmark `MyManDev` | §7     |
-| Hosting                | Cloudflare Pages                            | §7     |
-| Lighthouse             | Raporlanır, kapı değil                      | §8     |
-| Component render testi | V1'de yok                                   | §8     |
+| Konu                   | Karar                                                                 | Nerede |
+| ---------------------- | --------------------------------------------------------------------- | ------ |
+| Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                             | §3     |
+| Placeholder proje      | Yayınlanmaz                                                           | §3     |
+| Font                   | IBM Plex Sans + Mono                                                  | §4.2   |
+| İmza öğe               | Dürüst sayı satırı, benimsendi                                        | §4.6   |
+| İçerik formatı         | TS + Zod, MDX yok                                                     | §5     |
+| Render                 | Tamamen statik export                                                 | §6     |
+| Styling                | Tailwind v4                                                           | §6     |
+| Lint                   | ESLint + Prettier                                                     | §6     |
+| Analytics              | Yok                                                                   | §6     |
+| Domain                 | `mymandev.com` kanonik, wordmark `MyManDev`                           | §7     |
+| Hosting                | Cloudflare Pages                                                      | §7     |
+| Lighthouse             | Raporlanır, kapı değil                                                | §8     |
+| Component render testi | V1'de yok                                                             | §8     |
+| Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                 | §8     |
+| Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor | §6     |
+| İçerik dosyaları V1'de | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                   | §5     |
