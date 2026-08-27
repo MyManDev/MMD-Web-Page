@@ -9,6 +9,7 @@ labels: bug
 ## Ne olmalıydı
 
 ## Nerede
+
 - Sayfa/bölüm:
 - Viewport (px):
 - Tarayıcı ve sürüm:
