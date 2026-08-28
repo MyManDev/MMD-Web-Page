@@ -8,7 +8,15 @@
   --color-surface: #111b1d;
   --color-surface-2: #2a3a34;
   --color-border: #486354;
-  --color-accent: #78df7b;
+  /* Etkilesim rengi. Logonun kendi turkuazi DEGIL ve sebebi olculdu:
+     #0d9488 uzerinde page rengi metin 3.66:1 veriyor, WCAG AA 4.5 istiyor -
+     yani primary Button'in etiketi kapiyi dusururdu (axe sert kapi, §8).
+     Ayni ailenin bir tik acigi ucunu de gecir:
+       primary Button metni  5.51:1  (>= 4.5)
+       aktif nav linki       7.04:1  (>= 4.5)
+       focus halkasi         4.81:1  (>= 3, en kotu zemin surface-2)
+     Onceki deger #78DF7B idi; logo turkuaz oldugu icin degisti. §4.1, §9 */
+  --color-accent: #14b8a6;
   --color-text: #f2f5f3;
   --color-text-muted: #a9b8b2;
 
