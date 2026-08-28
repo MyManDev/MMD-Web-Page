@@ -135,8 +135,11 @@ işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Kl
 | Görsel      | metnin **altında** | altında | sağda, dikey ortalı           |
 | Hizalama    | sola               | sola    | sola                          |
 
-Sıra: `SectionLabel 01` → başlık (Display XL) → alt cümle (Body) → iki aksiyon
+Sıra: başlık (Display XL) → alt cümle (Body) → iki aksiyon
 (`primary` Projects CTA + `ghost` About CTA).
+
+**`SectionLabel` yok** — §3.5'teki gerekçeyle aynı: etiket burada başlığın söylemediği bir şey
+söylemiyor.
 
 - Başlık metni: **metin bekliyor**
 - Alt cümle: **metin bekliyor**
@@ -201,8 +204,10 @@ scroll listener yok.
 
 Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor. Genelden tekile.
 
-Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `SectionLabel 03` → başlık
-(Display L) → manifesto (Body) → çalışma prensipleri listesi (Body S).
+Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. Başlık (Display L) → manifesto
+(Body) → çalışma prensipleri listesi (Body S).
+
+**`SectionLabel` yok** — başlık zaten "Who we are", etiket onu tekrar ederdi (§3.5).
 
 - Manifesto ve prensipler: **metin bekliyor**
 
