@@ -36,7 +36,12 @@
   --height-tag: 24px;
 
   --radius-pill: 999px;
-  --width-prose: 65ch;
+  /* Tailwind v4'te max-w-* --max-width-* namespace'inden okur; --width-* diye
+     bir namespace yok. Ad --width-prose iken bu token cikti CSS'e hic girmiyor
+     ve max-w-prose Tailwind'in kendi varsayilanini kullaniyordu - yani 65ch iki
+     yerde yasiyordu. Ad dogru namespace'te oldugu icin token artik varsayilanin
+     ustune yaziyor ve kayit tek. Deger degismedi. */
+  --max-width-prose: 65ch;
   --aspect-screenshot: 16 / 10;
 }
 
