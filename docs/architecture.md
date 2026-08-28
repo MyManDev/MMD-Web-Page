@@ -91,19 +91,32 @@ sayısıyla büyümesi.
 
 `app/tokens.css` tek kaynaktır. Component'lerde literal renk yok.
 
-| Rol        | Hex       | Kullanım                              |
-| ---------- | --------- | ------------------------------------- |
-| Page       | `#203033` | sayfa zemini                          |
-| Surface    | `#111B1D` | navbar, kartlar (zeminden koyu)       |
-| Surface 2  | `#2A3A34` | ikincil yüzey, hover zemini           |
-| Border     | `#486354` | ince ayrım çizgileri                  |
-| Accent     | `#78DF7B` | CTA, aktif nav, ikon, mikro highlight |
-| Text       | `#F2F5F3` | birincil metin                        |
-| Text muted | `#A9B8B2` | ikincil metin (türetilmiş, §4.5)      |
+| Rol        | Hex       | Kullanım                                                 |
+| ---------- | --------- | -------------------------------------------------------- |
+| Page       | `#203033` | sayfa zemini                                             |
+| Surface    | `#111B1D` | navbar, kartlar (zeminden koyu)                          |
+| Surface 2  | `#2A3A34` | ikincil yüzey, hover zemini                              |
+| Border     | `#486354` | ince ayrım çizgileri                                     |
+| Brand      | `#0D9488` | logonun kendi rengi — **CSS token'ı yok**, aşağıya bakın |
+| Accent     | `#14B8A6` | CTA, aktif nav, ikon, mikro highlight                    |
+| Text       | `#F2F5F3` | birincil metin                                           |
+| Text muted | `#A9B8B2` | ikincil metin (türetilmiş, §4.5)                         |
 
 **Yüzey mantığı:** sayfa zemini kartlardan daha açık. Katmanlar koyulaşarak öne gelir.
 
-**Yeşil disiplini:** ekran başına **tek** yeşil odak. Referans mockup'ta yeşil aynı anda eyebrow'da,
+**Marka rengi ile accent neden ayrı.** Logo `#0D9488`; o renk üzerinde `page` renginde bir metin
+**3.66:1** veriyor ve WCAG AA 4.5 istiyor — yani `primary` Button'ın etiketi axe kapısını
+düşürürdü (§8). Accent, aynı ailenin bir tık açığı: buton etiketi 5.51:1, aktif nav linki 7.04:1,
+focus halkası en kötü zeminde 4.81:1. Logo kendi rengiyle çizilir; **etkileşim** accent'i kullanır.
+
+Ölçüm önce, renk sonra: bir marka rengini arayüze taşımak onu okunabilir yapmaz.
+
+**Brand'in `tokens.css`'te bir token'ı YOK ve bu bilinçli.** Bugün o renk yalnızca logo
+dosyasının içinde yaşıyor; hiçbir yüzey onu CSS'ten boyamıyor. Kullanılmayan bir token Tailwind
+tarafından çıktıya hiç yazılmıyor, yani dosyada duran ama hiçbir yere ulaşmayan ölü bir kayıt
+olurdu — `--width-prose` bu hatayı bir kez yaptı. Token, onu ilk kullanan yüzeyle birlikte gelir.
+
+**Yeşil disiplini:** ekran başına **tek** vurgu odağı. Referans mockup'ta yeşil aynı anda eyebrow'da,
 CTA'da, ikonlarda ve hover'da vardı; dördü birden olunca hiçbiri vurgu olmuyor. Bir bölümde CTA
 yeşilse eyebrow beyaz kalır.
 
@@ -439,26 +452,27 @@ o zaman eklenir.
 
 Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 
-| Konu                   | Karar                                                                 | Nerede |
-| ---------------------- | --------------------------------------------------------------------- | ------ |
-| Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                             | §3     |
-| Placeholder proje      | Yayınlanmaz                                                           | §3     |
-| Font                   | IBM Plex Sans + Mono                                                  | §4.2   |
-| İmza öğe               | Dürüst sayı satırı; sayı `0` — ML models promoted to production       | §4.6   |
-| İçerik formatı         | TS + Zod, MDX yok                                                     | §5     |
-| Render                 | Tamamen statik export                                                 | §6     |
-| Styling                | Tailwind v4                                                           | §6     |
-| Lint                   | ESLint + Prettier                                                     | §6     |
-| Analytics              | Yok                                                                   | §6     |
-| Domain                 | `mymandev.com` kanonik, wordmark `MyManDev`                           | §7     |
-| Hosting                | Cloudflare Pages                                                      | §7     |
-| Lighthouse             | Raporlanır, kapı değil                                                | §8     |
-| Component render testi | V1'de yok                                                             | §8     |
-| Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                 | §8     |
-| Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor | §6     |
-| İçerik dosyaları V1'de | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                   | §5     |
-| Bölüm sırası           | 03 Who we are (kolektif) → 04 Team (kişiler); genelden tekile         | §2     |
-| Görsel yüzeyi          | `next/image` değil düz `<img>` + elle `srcset`; ölçülmüş 5.5 KiB      | §6     |
-| Görsel pipeline        | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor   | §6     |
-| Etkileşim dili         | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor          | §4.4   |
-| Hareket sistemi        | Saf CSS `animation-timeline`; 0 KiB JS, motion kütüphanesi yok        | §4.4   |
+| Konu                   | Karar                                                                     | Nerede |
+| ---------------------- | ------------------------------------------------------------------------- | ------ |
+| Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                                 | §3     |
+| Placeholder proje      | Yayınlanmaz                                                               | §3     |
+| Font                   | IBM Plex Sans + Mono                                                      | §4.2   |
+| İmza öğe               | Dürüst sayı satırı; sayı `0` — ML models promoted to production           | §4.6   |
+| İçerik formatı         | TS + Zod, MDX yok                                                         | §5     |
+| Render                 | Tamamen statik export                                                     | §6     |
+| Styling                | Tailwind v4                                                               | §6     |
+| Lint                   | ESLint + Prettier                                                         | §6     |
+| Analytics              | Yok                                                                       | §6     |
+| Domain                 | `mymandev.com` kanonik, wordmark `MyManDev`                               | §7     |
+| Hosting                | Cloudflare Pages                                                          | §7     |
+| Lighthouse             | Raporlanır, kapı değil                                                    | §8     |
+| Component render testi | V1'de yok                                                                 | §8     |
+| Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                     | §8     |
+| Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor     | §6     |
+| İçerik dosyaları V1'de | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                       | §5     |
+| Bölüm sırası           | 03 Who we are (kolektif) → 04 Team (kişiler); genelden tekile             | §2     |
+| Marka rengi            | Logo `#0D9488`; accent `#14B8A6` — logo rengi kontrast kapısını düşürüyor | §4.1   |
+| Görsel yüzeyi          | `next/image` değil düz `<img>` + elle `srcset`; ölçülmüş 5.5 KiB          | §6     |
+| Görsel pipeline        | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor       | §6     |
+| Etkileşim dili         | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor              | §4.4   |
+| Hareket sistemi        | Saf CSS `animation-timeline`; 0 KiB JS, motion kütüphanesi yok            | §4.4   |
