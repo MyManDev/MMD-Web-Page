@@ -219,7 +219,18 @@ bırakıyor; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tabl
 uzun bir şerit üretirdi. Kolon sayısı **içerikten değil breakpoint'ten** gelir; kişi sayısı
 değişirse bu tablo yeniden düşünülür, `grid-cols` içeriğe göre hesaplanmaz.
 
-Kart içi: fotoğraf → ad (Display M) → rol (mono, `text-muted`) → biyografi (Body S) → link(ler).
+**Kart fotoğrafın kendisidir.** Kutu **2/3** oranında (token: `--aspect-portrait`) ve görüntü onu
+tamamen kaplar; ad, rol ve linkler görüntünün alt kenarında, üzerinde durur. Hover'da görüntü
+hayaletleşir ve biyografi üstünde belirir.
+
+Bu düzen bir estetik tercih değil, **kaymayı ortadan kaldıran şeyin kendisi**: açılan her şey
+mutlak konumlu, yani kartın yüksekliği hiç değişmiyor. Biyografi akışa eklendiğinde bölüm hover'da
+108px büyüyordu ve Team'in altındaki her şey — footer dahil — aşağı kayıyordu.
+
+Metin panelinin zemini **düz %92 opaklık**, gradyan değil. Gradyan denendi ve metnin durduğu yerde
+~%54'e düşüyordu; beyaz bir fotoğrafta rol satırı 1.84:1 veriyordu (gereken 4.5). %92'de en kötü
+durum ad için 12.83:1, rol ve biyografi için 6.83:1 — yani kontrast fotoğrafın içeriğine bağlı
+değil. Koyu fotoğraflarla sorun görünmüyordu; bu yüzden ölçülüyor, bakılmıyor.
 
 **Biyografi hover ile açılır** — ve hover **tek yol değildir.** Üç durum birden karşılanır:
 
