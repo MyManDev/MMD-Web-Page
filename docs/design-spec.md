@@ -277,6 +277,25 @@ yüzden nav ve footer linkleri de mono — jenerik sans nav, referans mockup'ın
 
 `letter-spacing` değerleri role bağlıdır ve §4.2'de yazılı; component'te ayrıca tanımlanmaz.
 
+**Roller token'dır, sayı değil.** Her rol `app/tokens.css`'te bir `--text-*` token'ı ve
+component'te bir utility olarak yaşar; boyut, satır yüksekliği ve `letter-spacing` üçü birden
+oradan gelir:
+
+| Rol        | Mobil             | `≥ lg`                  |
+| ---------- | ----------------- | ----------------------- |
+| Display XL | `text-display-xl` | `lg:text-display-xl-lg` |
+| Display L  | `text-display-l`  | `lg:text-display-l-lg`  |
+| Display M  | `text-display-m`  | `lg:text-display-m-lg`  |
+| Body       | `text-body`       | `lg:text-body-lg`       |
+| Body S     | `text-body-s`     | —                       |
+| Mono label | `text-mono`       | —                       |
+
+`text-[28px]` gibi gömülü bir değer artık yok. `clamp()` de **bilerek yok**: §1 ara
+breakpoint'lerde değer uydurulmayacağını söylüyor, `lg`'de sıçrıyor.
+
+**Tek istisna navbar wordmark'ı:** 14px mono, ve bu ölçü §4.2'nin ölçeğinde yok. Token'a
+bağlanmadı çünkü bağlamak için önce ölçeğe eklenmesi gerekir; o da bir karar.
+
 ---
 
 ## 5 · Renk uygulaması

@@ -60,7 +60,7 @@ export function Nav({ site }: { site: Site }) {
             aria-expanded={open}
             aria-controls={menuId}
             onClick={() => (open ? close() : setOpen(true))}
-            className="inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-xs tracking-[0.08em] text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
+            className="inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-mono text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
           >
             Menu
           </button>

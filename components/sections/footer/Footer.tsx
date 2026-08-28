@@ -18,7 +18,7 @@ export function Footer({ site }: { site: Site }) {
   return (
     <footer className="border-t border-border bg-surface">
       <Container>
-        <div className="flex flex-col gap-4 py-8 font-mono text-xs tracking-[0.08em] uppercase md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 py-8 font-mono text-mono uppercase md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-4">
             <span className="text-text">{site.wordmark}</span>
             <span className="text-text-muted">

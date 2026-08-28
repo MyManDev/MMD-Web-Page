@@ -20,7 +20,7 @@ export function NavLink({
       href={href}
       onClick={onNavigate}
       aria-current={active ? "true" : undefined}
-      className={`inline-flex h-[var(--height-nav-link)] items-center rounded-[var(--radius-pill)] px-4 font-mono text-xs tracking-[0.08em] uppercase transition-colors duration-150 ease-out ${
+      className={`inline-flex h-[var(--height-nav-link)] items-center rounded-[var(--radius-pill)] px-4 font-mono text-mono uppercase transition-colors duration-150 ease-out ${
         active ? "text-accent" : "text-text-muted hover:text-text"
       }`}
     >
