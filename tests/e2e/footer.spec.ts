@@ -33,6 +33,26 @@ test("GitHub linki yeni sekmede ve rel guvenli", async ({ page }) => {
   await expect(link).toHaveAttribute("rel", /noreferrer/);
 });
 
+/**
+ * §7.5: dis linkte gorunur ikon. Button'a #35'te eklenmisti; footer'in linki
+ * Button degil (§3.6) ve o yuzden atlanmisti.
+ */
+test("GitHub linki gorunur dis link ikonu tasiyor", async ({ page }) => {
+  const link = page.getByRole("contentinfo").getByRole("link", { name: "GitHub" });
+  const icon = link.locator('svg[aria-hidden="true"]');
+
+  await expect(icon).toHaveCount(1);
+  await expect(icon).toBeVisible();
+
+  // currentColor: ikonun kendi rengi yok. Footer'da yesil YASAK (§5.1) ve
+  // ikon metnin rengini aldigi icin o kotaya eleman sokmuyor.
+  const [iconColor, linkColor] = await link.evaluate((el) => [
+    getComputedStyle(el.querySelector("svg")!).color,
+    getComputedStyle(el).color,
+  ]);
+  expect(iconColor).toBe(linkColor);
+});
+
 test("sosyal ikon duvari yok - tek dis link", async ({ page }) => {
   // §3.6 bilincli bir daraltma: footer'da yalnizca GitHub var.
   const links = page.getByRole("contentinfo").getByRole("link");
