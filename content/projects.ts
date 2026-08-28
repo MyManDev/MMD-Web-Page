@@ -8,9 +8,11 @@ import type { Project } from "./schema";
  * `summary` uygulamanin kendi basligindaki cumle - vitrine ozel yeni bir metin
  * yazilmadi (CLAUDE.md kural 5).
  *
- * `metrics` BILEREK yok: imza sayisinin ifadesi paylasilan karar alani ve henuz
- * yazilmadi (#17). design-spec.md §3.3.1'e gore `metrics` bossa satir hic render
- * edilmez; bos cerceve veya "—" gosterilmez.
+ * `metrics` imza ogesi (architecture.md §4.6): olculmus, dogrulanabilir ve
+ * ovunme olmayan tek sayi. Deger uydurulmadi - §4.6'nin sayilan gercek
+ * malzemesinden secildi ve ifadesi paylasilan karar alaninda onaylandi (#17).
+ * Etiket dogal yazimda duruyor; buyuk harfe MetricRow'un CSS'i ceviriyor,
+ * metin iki farkli bicimde iki kez yazilmiyor.
  *
  * `screenshot` en buyuk uretilmis varyanti gosterir - srcset destegi olmayan
  * tarayicinin dusecegi yer burasi. Diger genislikler ayni tabandan turetiliyor
@@ -27,5 +29,6 @@ export const projects: Project[] = [
     liveUrl: "https://squadopt.mymandev.com/",
     screenshot: "/projects/football-squad-optimizer-1440.webp",
     order: 0,
+    metrics: [{ value: "0", label: "ML models promoted to production" }],
   },
 ];
