@@ -164,7 +164,7 @@ Blok içi sıra: `SectionLabel 02` → proje adı (Display M) → özet (Body) �
 listesi, mono) → `MetricRow` → aksiyonlar (GitHub `ghost`, Live Demo `primary`).
 
 `MetricRow` — imza öğesi (`architecture.md` §4.6). Sayı Display M, etiketi mono ve `text-muted`.
-Metin **paylaşılan karar alanı: metin bekliyor.** `metrics` boşsa satır **render edilmez**;
+İfade seçildi ve `architecture.md` §4.6'da kayıtlı. `metrics` boşsa satır **render edilmez**;
 boş çerçeve veya "—" gösterilmez.
 
 Ekran görüntüsü: gerçek uygulamadan. Yoksa blok yayınlanmaz — placeholder görsel konmaz

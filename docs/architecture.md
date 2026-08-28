@@ -190,8 +190,12 @@ Kullanılabilir gerçek malzeme: 15 günde 215 commit, ~2.600 test, 17 sprint, v
 sayısı sıfır** — sistem hâlâ deterministik temelle karar veriyor. İlk canlı hafta 56.08 projekte
 edildi, 26 gerçekleşti.
 
-Metnin son hali paylaşılan karar alanıdır (ikisinin onayı). Ama yer tasarımda ayrılır ve
-placeholder ile doldurulmaz: metin hazır olana kadar bölüm yayınlanmaz.
+**Seçilen sayı: `0` — "ML models promoted to production".** Yukarıdaki malzemenin en ayırt edici
+olanı bu: 215 commit ve 2.600 test çalışma hacmini gösterir, her vitrinde benzeri vardır. Terfi
+etmemiş model ise ölçülmüş bir başarısızlık ve §4.6'nın tarif ettiği şeyin ta kendisi.
+
+Etiket kısaltılmadı: `0` tek başına güçlü bir sayı değil, gücü **neyin** sayıldığından geliyor.
+"Models promoted" okuyucuya "neye terfi?" sorusunu bırakırdı.
 
 Gerekçe: sticky kart ödünç alınmış ve yaygın bir davranış, imza olamaz. Bir vitrinde ölçülmüş bir
 başarısızlık göstermek ise nadir ve tamamen size ait.

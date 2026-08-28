@@ -59,9 +59,45 @@ test("tech tag'leri liste olarak diziliyor", async ({ page }) => {
  * Imza sayisinin ifadesi yazilmadi (#17). design-spec.md §3.3.1: metrics bossa
  * satir HIC render edilmez - bos cerceve, tire veya placeholder yok.
  */
-test("metrics yazilmadigi icin MetricRow hic render edilmiyor", async ({ page }) => {
-  await expect(page.locator(`${SECTION} dl`)).toHaveCount(0);
+/**
+ * Imza ogesi. architecture.md §4.6, design-spec.md §3.3.1
+ *
+ * Metnin kendisi test edilmiyor - icerik dosyasi degistiginde test dusmemeli.
+ * Olculen sey isaretleme sozlesmesi: gecerli bir tanim listesi, sayi ve etiket
+ * eslesmis, ve placeholder yok.
+ */
+test("imza sayisi gecerli bir tanim listesi olarak render ediliyor", async ({ page }) => {
+  const list = page.locator(`${SECTION} dl`);
+  await expect(list).toHaveCount(1);
+
+  const terms = list.locator("dt");
+  const values = list.locator("dd");
+  await expect(terms).toHaveCount(await values.count());
+  await expect(values.first()).not.toBeEmpty();
+  await expect(terms.first()).not.toBeEmpty();
+
+  // Bos cerceve, tire veya "coming soon" yok (CLAUDE.md kural 6).
   await expect(page.locator(SECTION)).not.toContainText("—");
+});
+
+/**
+ * DOM sirasi dt -> dd (gecerli tanim listesi), gorsel sira sayi ustte.
+ * Siralamayi CSS cozuyor; isaretlemeyi bozarak degil.
+ */
+test("sayi etiketin USTUNDE gorunuyor ama DOM'da altinda", async ({ page }) => {
+  const pair = page.locator(`${SECTION} dl > div`).first();
+
+  const order = await pair.evaluate((el) => {
+    const term = el.querySelector("dt")!;
+    const value = el.querySelector("dd")!;
+    return {
+      domTermFirst: term.compareDocumentPosition(value) === Node.DOCUMENT_POSITION_FOLLOWING,
+      valueIsAbove: value.getBoundingClientRect().top < term.getBoundingClientRect().top,
+    };
+  });
+
+  expect(order.domTermFirst).toBe(true);
+  expect(order.valueIsAbove).toBe(true);
 });
 
 test("ekran goruntusu gercekten yukleniyor ve yerini onceden ayiriyor", async ({ page }) => {
