@@ -40,10 +40,10 @@ export function TeamCard({ member }: { member: TeamMember }) {
       <img
         src={member.photo}
         srcSet={portraitSrcSet(member.photo)}
-        sizes="(min-width: 1024px) 398px, (min-width: 640px) calc(50vw - 36px), calc(100vw - 40px)"
+        sizes="(min-width: 1600px) 491px, (min-width: 1024px) 34vw, (min-width: 640px) calc(50vw - 36px), calc(100vw - 40px)"
         alt={member.name}
-        width={800}
-        height={1280}
+        width={1000}
+        height={1600}
         loading="lazy"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"

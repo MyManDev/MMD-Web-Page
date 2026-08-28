@@ -50,8 +50,8 @@ test("her kartin fotografi gercekten yukleniyor ve yerini onceden ayiriyor", asy
     const image = images.nth(i);
     await expect(image).toHaveAttribute("width", /^\d+$/);
     await expect(image).toHaveAttribute("height", /^\d+$/);
-    await expect(image).toHaveAttribute("srcset", /-400\.webp 400w/);
-    await expect(image).toHaveAttribute("srcset", /-800\.webp 800w/);
+    await expect(image).toHaveAttribute("srcset", /-500\.webp 500w/);
+    await expect(image).toHaveAttribute("srcset", /-1000\.webp 1000w/);
 
     expect((await image.getAttribute("alt"))?.trim()).toBeTruthy();
 

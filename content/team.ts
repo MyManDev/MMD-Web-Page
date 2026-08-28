@@ -27,7 +27,7 @@ export const team: TeamMember[] = [
     bio: "Computer engineering graduate. React and React Native on the surface; ANNs, LLMs and retrieval pipelines underneath — RAG with local inference, computer vision, and machine learning on real datasets.",
     githubUrl: "https://github.com/SpeedyV5",
     linkedinUrl: "https://www.linkedin.com/in/ibrahim-ersan-ozdemir15",
-    photo: "/people/ibrahim-ersan-ozdemir-800.webp",
+    photo: "/people/ibrahim-ersan-ozdemir-1000.webp",
     order: 0,
   },
   {
@@ -37,7 +37,7 @@ export const team: TeamMember[] = [
     bio: "Computer engineering student at Boğaziçi. Builds systems that watch other systems: a secret-scanning pipeline across an organisation's repositories, and a routing engine over a hundred thousand hosts.",
     githubUrl: "https://github.com/tunayaslan",
     linkedinUrl: "https://www.linkedin.com/in/halis-tunay-aslan/",
-    photo: "/people/tunay-aslan-800.webp",
+    photo: "/people/tunay-aslan-1000.webp",
     order: 1,
   },
   {
@@ -47,7 +47,7 @@ export const team: TeamMember[] = [
     bio: "Computer science and industrial engineering, double major, mathematics minor at Sabancı. Optimisation and modelling: Gurobi, statistical analysis, and the maths under the models. Also taught calculus.",
     githubUrl: "https://github.com/ErtugrulS32175",
     linkedinUrl: "https://www.linkedin.com/in/ertuğrul-soydal-32b94a256/",
-    photo: "/people/ertugrul-soydal-800.webp",
+    photo: "/people/ertugrul-soydal-1000.webp",
     order: 2,
   },
 ];

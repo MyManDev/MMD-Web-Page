@@ -68,13 +68,18 @@
   --radius-card: 14px;
   --radius-sm: 8px;
 
-  --spacing-section: 80px;
-  --spacing-section-lg: 128px;
+  /* Bir bolumun DIKEY IC BOSLUGU. architecture.md §4.3 "bolum arasi dikey
+     bosluk 80/128" diyor ve aradaki bosluk iki bolumun padding'inin TOPLAMI:
+     her bolum bu degeri hem ustune hem altina uyguluyor. Deger 80/128 iken
+     araya 160/256 giriyordu - spec'in tam iki kati (olculdu). */
+  --spacing-section: 40px;
+  --spacing-section-lg: 64px;
   /* Icerik genisligi. 1180'den 1320'ye cikti: 1440'lik bir ekranda iki yanda
-     130'ar piksel bosluk kaliyordu ve sayfa dar duruyordu. 1320'de kenarlar
-     60'ar piksele iniyor, daha buyuk ekranlarda satir uzunlugu hala kontrollu.
+     bosluk kaliyordu ve sayfa dar duruyordu. 1600'de 1600px'e kadar olan her
+     ekran TAMAMEN akiskan - kenarda yalnizca padding kaliyor; ustunde kapak
+     devreye giriyor ki satir uzunlugu kontrolden cikmasin.
      architecture.md §4.3 ve §9 */
-  --container-content: 1320px;
+  --container-content: 1600px;
 
   /* docs/design-spec.md'de onaylanan olculer. Birden fazla yerde kullanilan
      veya breakpoint'e gore degisen her olcu burada yasar. */

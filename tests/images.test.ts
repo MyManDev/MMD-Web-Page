@@ -6,8 +6,8 @@ import { projects, team } from "@/content";
 
 describe("screenshotSrcSet", () => {
   it("her genislik icin bir aday uretir", () => {
-    const srcSet = screenshotSrcSet("/projects/ornek-1440.webp");
-    expect(srcSet).toBe("/projects/ornek-720.webp 720w, /projects/ornek-1440.webp 1440w");
+    const srcSet = screenshotSrcSet("/projects/ornek-1792.webp");
+    expect(srcSet).toBe("/projects/ornek-896.webp 896w, /projects/ornek-1792.webp 1792w");
   });
 
   /**
@@ -50,8 +50,8 @@ describe("uretilmis varyantlar", () => {
 
 describe("portraitSrcSet", () => {
   it("her genislik icin bir aday uretir", () => {
-    expect(portraitSrcSet("/people/ornek-800.webp")).toBe(
-      "/people/ornek-400.webp 400w, /people/ornek-800.webp 800w",
+    expect(portraitSrcSet("/people/ornek-1000.webp")).toBe(
+      "/people/ornek-500.webp 500w, /people/ornek-1000.webp 1000w",
     );
   });
 

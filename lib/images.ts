@@ -8,16 +8,16 @@ import kinds from "./image-widths.json";
  * yerine iki taraf da ayni dosyayi okuyor - dosyalar bir genislikte uretilip
  * srcset baska bir genislikten bahsedemez.
  *
- * Degerler olculdu, secilmedi. Kapsayici 1320px, yatay padding 32px:
+ * Degerler olculdu, secilmedi. Kapsayici 1600px, yatay padding 32px, yani
+ * ic genislik 1536px:
  *
- *   screenshot  12 kolonun 7'si = (1320-64-11*32)/12*7 + 6*32 = 717px
- *               -> 1x icin 720, 2x icin 1440 yetiyor. 390px'lik bir telefonda
- *                  3x bile 1050px istiyor ve 1440 onu da karsiliyor.
- *   portrait    3 kolonun 1'i   = (1320-64-2*32)/3        = 397px
- *               -> 1x icin 400, 2x icin 800.
+ *   screenshot  12 kolonun 7'si = (1536-11*32)/12*7 + 6*32 = 883px
+ *               -> 1x icin 896, 2x icin 1792
+ *   portrait    3 kolonun 1'i   = (1536-2*32)/3          = 491px
+ *               -> 1x icin 500, 2x icin 1000
  *
  * Her genislik kendi en-boy oranina tam bolunuyor; yarim piksel yok
- * (720x450, 1440x900, 400x640, 800x1280).
+ * (896x560, 1792x1120, 500x800, 1000x1600).
  *
  * Kaynaklar servis EDILMIYOR: assets/ altinda duruyorlar ve hicbir cihazin
  * ihtiyaci olmayan boyutlardalar.

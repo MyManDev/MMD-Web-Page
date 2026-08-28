@@ -12,7 +12,7 @@ export const validProject: Project = {
   tags: ["Python", "OR-Tools CP-SAT", "ML", "React"],
   repoUrl: "https://github.com/MyManDev/football-squad-optimizer",
   liveUrl: "https://squadopt.mymandev.com/",
-  screenshot: "/projects/football-squad-optimizer-1440.webp",
+  screenshot: "/projects/football-squad-optimizer-1792.webp",
   order: 0,
 };
 
@@ -23,6 +23,6 @@ export const validTeamMember: TeamMember = {
   bio: "Fixture only.",
   githubUrl: "https://github.com/MyManDev",
   linkedinUrl: "https://www.linkedin.com/in/fixture",
-  photo: "/people/test-member-800.webp",
+  photo: "/people/test-member-1000.webp",
   order: 0,
 };

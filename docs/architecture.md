@@ -154,8 +154,8 @@ karar verilmezse **commit'li seçim Plex'tir**; belirsizlik kalmaz.
 
 | Token                     | Değer                                          |
 | ------------------------- | ---------------------------------------------- |
-| İçerik genişliği          | `max-width: 1320px`, yatay padding 20px / 32px |
-| Bölüm arası dikey boşluk  | 80px / 128px                                   |
+| İçerik genişliği          | `max-width: 1600px`, yatay padding 20px / 32px |
+| Bölüm arası dikey boşluk  | 80px / 128px — bölüm başına 40/64, toplamı bu  |
 | Kart radius               | 14px                                           |
 | Küçük radius (tag, buton) | 8px                                            |
 | Pill radius (nav)         | 999px                                          |
@@ -313,9 +313,9 @@ değil, yapının kendisi sağlıyor.
   --radius-card: 14px;
   --radius-sm: 8px;
 
-  --spacing-section: 80px;
-  --spacing-section-lg: 128px;
-  --container-content: 1320px;
+  --spacing-section: 40px;
+  --spacing-section-lg: 64px;
+  --container-content: 1600px;
 }
 ```
 
