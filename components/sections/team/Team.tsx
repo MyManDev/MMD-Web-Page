@@ -40,7 +40,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
             (§3.5). Kolon sayisi icerikten degil breakpoint'ten geliyor;
             grid-cols dizinin uzunluguyla hesaplanmiyor.
           */}
-          <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <ul data-cards className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {members.map((member) => (
               <li key={member.slug} className="flex">
                 <TeamCard member={member} />

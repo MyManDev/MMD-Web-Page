@@ -82,16 +82,34 @@ export function TeamCard({ member }: { member: TeamMember }) {
         <BioTypewriter text={member.bio} className="overflow-hidden text-body-s text-text-muted" />
       </div>
 
-      <a
-        href={member.githubUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-describedby={`${member.slug}-name`}
-        className="mt-auto inline-flex items-center gap-2 self-start font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
-      >
-        GitHub
-        <ExternalIcon className="h-3 w-3" />
-      </a>
+      {/*
+        Iki link de ACILAN ALANIN DISINDA. Icinde olsalardi klavye onlara hic
+        ulasamazdi: focus'lanmak icin acilmasi, acilmak icin focus'lanmasi
+        gerekirdi.
+
+        Erisilebilir ad yalnizca "GitHub" olsaydi sayfada ayni adi tasiyan uc
+        link olurdu ve ekran okuyucu hangisinin kime ait oldugunu soyleyemezdi.
+        aria-describedby kartin adini baglayarak farki kuruyor.
+      */}
+      <ul className="mt-auto flex flex-wrap gap-x-5 gap-y-2">
+        {[
+          { label: "GitHub", href: member.githubUrl },
+          { label: "LinkedIn", href: member.linkedinUrl },
+        ].map((link) => (
+          <li key={link.label}>
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-describedby={`${member.slug}-name`}
+              className="inline-flex items-center gap-2 font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
+            >
+              {link.label}
+              <ExternalIcon className="h-3 w-3" />
+            </a>
+          </li>
+        ))}
+      </ul>
     </article>
   );
 }

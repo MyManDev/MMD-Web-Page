@@ -37,7 +37,7 @@ test("bolum main icinde, kendi basligina bagli, seviye atlanmiyor", async ({ pag
 });
 
 test("kartlar liste olarak diziliyor - ekran okuyucu sayiyi duyurur", async ({ page }) => {
-  const items = page.locator(`${SECTION} ul > li`);
+  const items = page.locator(`${SECTION} ul[data-cards] > li`);
   await expect(items).toHaveCount(await page.locator(CARD).count());
 });
 
@@ -189,14 +189,41 @@ test("klavye focus'u aciklamayi aciyor - hover tek yol degil", async ({ page }) 
  * ulasilamazdi - focus'lanmak icin acilmasi, acilmak icin focus'lanmasi
  * gerekirdi.
  */
-test("GitHub linki acilan alanin disinda ve her zaman odaklanabilir", async ({ page }) => {
-  const link = page.locator(CARD).first().getByRole("link").first();
+test("her kartta iki link var ve ikisi de acilan alanin disinda", async ({ page }) => {
+  const card = page.locator(CARD).first();
+  const links = card.getByRole("link");
+  await expect(links).toHaveCount(2);
 
-  const insideReveal = await link.evaluate((el) => el.closest("[data-bio]") !== null);
-  expect(insideReveal).toBe(false);
+  const count = await links.count();
+  for (let i = 0; i < count; i += 1) {
+    const link = links.nth(i);
+    // Icinde olsaydi klavye ulasamazdi: focus'lanmak icin acilmasi, acilmak
+    // icin focus'lanmasi gerekirdi.
+    expect(await link.evaluate((el) => el.closest("[data-bio]") !== null)).toBe(false);
+    await link.focus();
+    await expect(link).toBeFocused();
+  }
+});
 
-  await link.focus();
-  await expect(link).toBeFocused();
+/**
+ * Sayfada ayni adi tasiyan alti link var (uc kisi x iki ag). Erisilebilir ad
+ * tek basina hangisinin kime ait oldugunu soylemiyor; aria-describedby kartin
+ * adini bagliyor. Renk gibi, tek basina metin de bilgi tasimaz.
+ */
+test("linkler hangi kisiye ait oldugunu ekran okuyucuya soyluyor", async ({ page }) => {
+  const cards = page.locator(CARD);
+  const total = await cards.count();
+
+  for (let i = 0; i < total; i += 1) {
+    const card = cards.nth(i);
+    const nameId = await card.locator("h3").getAttribute("id");
+    expect(nameId).toBeTruthy();
+
+    const links = card.getByRole("link");
+    for (let j = 0; j < (await links.count()); j += 1) {
+      await expect(links.nth(j)).toHaveAttribute("aria-describedby", nameId!);
+    }
+  }
 });
 
 test("kart linkleri yeni sekmede ve rel guvenli", async ({ page }) => {
@@ -245,7 +272,7 @@ test("bolumde accent renk kullanilmiyor - hover'da bile", async ({ page }) => {
 test("mobilde tek kolon, sm'de iki, lg'de uc", async ({ page }, testInfo) => {
   const width = testInfo.project.use.viewport?.width ?? 0;
   const columns = await page
-    .locator(`${SECTION} ul`)
+    .locator(`${SECTION} ul[data-cards]`)
     .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
 
   expect(columns).toBe(width >= 1024 ? 3 : width >= 640 ? 2 : 1);
