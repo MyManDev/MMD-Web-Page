@@ -57,6 +57,11 @@ Değişiklikleri iki bölge sahibinin de onayını ister.
 `radius-sm`. `Tag`: yükseklik 24px, yatay padding 10px, `surface-2` zemin, `radius-sm`.
 `NavLink`: yükseklik 40px, yatay padding 16px, `radius-pill` — sayfadaki tek pill yüzeyi.
 
+**`Tag` pill yapılmadı** ve bu soru bir kez açıldı, kapandı. Zaffiro pivotu (§4.4) renk ve yazı
+ailesini değil ölçek, hareket ve mikro detayları değiştiriyor; `radius-pill`'i tag'lere yaymak ise
+yukarıdaki cümleyi geçersiz kılar ve nav'ın tek ayırt edici yüzeyini sıradanlaştırırdı. `Tag`
+`radius-sm` kalıyor.
+
 **`Button` durum matrisi**
 
 | Durum    | `primary`                                                                     | `ghost`                                        |
@@ -293,8 +298,15 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 
 ## 6 · Etkileşim ve motion
 
-§4.4 sınırları: CSS öncelikli, 150–250ms, `ease-out`, sayfa giriş animasyonu yok, motion
-kütüphanesi yok.
+§4.4 sınırları: CSS öncelikli, 150–250ms, `ease-out`, sayfa yüklenirken giriş animasyonu yok,
+motion kütüphanesi yok. Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
+değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
+
+Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
+`animation-timeline: view()` / `scroll()` ile yazılır ve sıfır JS'e mal olur (§4.4); hangi öğenin
+nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklenir. Önceden bir satır
+uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
+aynı sınıf hatadır.
 
 | Etkileşim                     | Süre  | Özellik                             |
 | ----------------------------- | ----- | ----------------------------------- |
@@ -316,6 +328,9 @@ birlikte katman sırasını okunmaz hale getiriyor.
   çünkü bazı tarayıcılar `transitionend` beklerken 0'da olayı hiç üretmiyor.)
 - Projects yığını `position: static` — düz liste.
 - Mobil menü anında açılır/kapanır; `opacity` ve `transform` geçişi uygulanmaz.
+- Scroll'a bağlı animasyonlar **hiç bağlanmaz**: `animation-timeline: none`. Süreyi kısaltmak
+  yetmez, çünkü zaman çizelgesi süreye değil scroll konumuna bağlı — öğe yine scroll'la birlikte
+  hareket ederdi. Öğe son halinde durur.
 
 Kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`), her component'te
 tekrar edilmez.
