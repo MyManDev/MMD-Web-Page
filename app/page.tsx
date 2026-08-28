@@ -26,7 +26,7 @@ export default function Home() {
       <Nav site={site} />
       <main id="main">
         <Container>
-          <h1 className="py-section font-sans text-display-xl font-semibold lg:text-display-xl-lg">
+          <h1 className="py-section font-mono text-display-xl font-medium lg:text-display-xl-lg">
             {site.wordmark}
           </h1>
         </Container>

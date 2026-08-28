@@ -30,10 +30,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
     <section id={section.id} aria-labelledby={headingId}>
       <Container>
         <div className="reveal-on-enter flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
-          <h2
-            id={headingId}
-            className="font-sans text-display-l font-semibold lg:text-display-l-lg"
-          >
+          <h2 id={headingId} className="font-mono text-display-l font-medium lg:text-display-l-lg">
             {section.label}
           </h2>
 

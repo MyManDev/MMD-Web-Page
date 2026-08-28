@@ -77,7 +77,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
         />
         <h3
           id={`${member.slug}-name`}
-          className="font-sans text-display-m font-semibold lg:text-display-m-lg"
+          className="font-mono text-display-m font-medium lg:text-display-m-lg"
         >
           {member.name}
         </h3>

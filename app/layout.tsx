@@ -10,7 +10,13 @@ import "./globals.css";
  */
 const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  /* 600 ve 700 dusuruldu: display rolu IBM Plex Mono'ya gecti (§4.2), yani
+     font-sans yalnizca govde metninde kaliyor ve orada 400/500 yetiyor.
+     BAYT KAZANDIRMIYOR - olculdu: next/font zaten yalnizca CSS'in gercekten
+     kullandigi agirliklari uretiyor, listede yazani degil. Liste yine de
+     kullanilana esitleniyor; kullanilmayan bir agirligi ilan etmek, ileride
+     birinin "zaten yukluymus" diye ona uzanmasini kolaylastirir. */
+  weight: ["400", "500"],
   variable: "--font-plex-sans",
   display: "swap",
 });
