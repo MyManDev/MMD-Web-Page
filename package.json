@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "size": "node scripts/check-bundle-size.mjs",
+    "images": "node scripts/optimize-images.mjs",
     "e2e": "playwright test",
     "gates": "pnpm lint && pnpm format && pnpm typecheck && pnpm test && pnpm build && pnpm size && pnpm e2e"
   },

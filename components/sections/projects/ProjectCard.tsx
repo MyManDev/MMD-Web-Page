@@ -1,5 +1,6 @@
 import type { Project } from "@/content";
 import { Button, Tag } from "@/components/ui";
+import { screenshotSrcSet } from "@/lib/images";
 import { MetricRow } from "./MetricRow";
 
 /**
@@ -89,19 +90,30 @@ export function ProjectCard({
         §8 "esik yukseltilmez, asarsa geri donup azaltilir" diyor; burada esige
         dayanmadan once azaltildi.
 
-        width/height DOSYANIN piksel olcusu degil, tasarimin 16/10 oranini
-        tasiyan iki sayi (§3.3.1 "En-boy 16/10", token: --aspect-screenshot).
-        Yeri fiilen ayiran sey CSS aspect kutusu; bu iki sayi orani tarayiciya
-        HTML'den de bildiriyor, boylece CLS esigi (< 0.05) goruntu inmeden once
-        de korunuyor. Semada boyut alani yok cunku oran her proje icin ayni.
+        srcset ELLE yaziliyor: next/image dusunce beraberinde srcset'i de
+        goturmustu ve o bosluk doldurulmadan kaldi (#33). Dosyalari
+        scripts/optimize-images.mjs uretiyor, genislikler lib/images.ts ile
+        ortak tek kayittan geliyor.
+
+        sizes olculdu: lg ustunde gorsel 12 kolonun 7'si, yani kapsayici tam
+        genisligindeyken 638px. 56vw bunu her zaman bir parca ASIYOR ve asmasi
+        kasitli - eksik tahmin bulanik goruntu demek, fazla tahmin birkac KB.
+
+        width/height artik en buyuk varyantin GERCEK olcusu (1440x900) ve ayni
+        zamanda tasarimin 16/10 orani. Yeri fiilen ayiran sey CSS aspect kutusu;
+        bu iki sayi orani tarayiciya HTML'den de bildiriyor, boylece CLS esigi
+        (< 0.05) goruntu inmeden once de korunuyor. Semada boyut alani yok cunku
+        oran her proje icin ayni.
       */}
       <div className="overflow-hidden rounded-card border border-border lg:col-span-7">
         {/* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */}
         <img
           src={project.screenshot}
+          srcSet={screenshotSrcSet(project.screenshot)}
+          sizes="(min-width: 1244px) 638px, (min-width: 1024px) 56vw, calc(100vw - 40px)"
           alt={`${project.name} screenshot`}
-          width={1600}
-          height={1000}
+          width={1440}
+          height={900}
           loading="lazy"
           decoding="async"
           className="aspect-screenshot h-full w-full object-cover"
