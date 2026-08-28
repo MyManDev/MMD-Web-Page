@@ -270,7 +270,7 @@ components/
     hero/  projects/  nav/  team/  about/  footer/
 content/              §5
 lib/                  yardımcılar
-assets/screenshots/   kaynak görüntüler — servis EDİLMEZ, pipeline'ın girdisi
+assets/               kaynak görüntüler (screenshots/, people/) — servis EDİLMEZ
 public/               logo, favicon, og, üretilmiş proje görselleri
 scripts/              optimize-images.mjs
 tests/e2e/            Playwright

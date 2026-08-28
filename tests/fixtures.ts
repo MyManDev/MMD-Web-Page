@@ -22,5 +22,6 @@ export const validTeamMember: TeamMember = {
   role: "Test Role",
   bio: "Fixture only.",
   githubUrl: "https://github.com/MyManDev",
+  photo: "/people/test-member-720.webp",
   order: 0,
 };

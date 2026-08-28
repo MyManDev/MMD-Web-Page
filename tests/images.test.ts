@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { SCREENSHOT_WIDTHS, screenshotSrcSet } from "@/lib/images";
-import { projects } from "@/content";
+import { PORTRAIT_WIDTHS, SCREENSHOT_WIDTHS, portraitSrcSet, screenshotSrcSet } from "@/lib/images";
+import { projects, team } from "@/content";
 
 describe("screenshotSrcSet", () => {
   it("her genislik icin bir aday uretir", () => {
@@ -45,5 +45,31 @@ describe("uretilmis varyantlar", () => {
     for (const project of projects) {
       expect(project.screenshot).toContain(`-${largest}.webp`);
     }
+  });
+});
+
+describe("portraitSrcSet", () => {
+  it("her genislik icin bir aday uretir", () => {
+    expect(portraitSrcSet("/people/ornek-720.webp")).toBe(
+      "/people/ornek-360.webp 360w, /people/ornek-720.webp 720w",
+    );
+  });
+
+  it("srcset'in gosterdigi her fotograf public/ altinda duruyor", () => {
+    for (const member of team) {
+      for (const width of PORTRAIT_WIDTHS) {
+        const path = member.photo.replace(/-\d+\.webp$/, "-" + width + ".webp");
+        expect(existsSync(join(process.cwd(), "public", path)), path).toBe(true);
+      }
+    }
+  });
+
+  /**
+   * Iki tur ayni listeyi PAYLASMAMALI: portre 350px'lik bir karta, ekran
+   * goruntusu 638px'lik bir kutuya giriyor. Ayni genislikleri kullanmak
+   * birinde gereksiz buyuk dosya indirtirdi.
+   */
+  it("portre ve ekran goruntusu genislikleri ayri", () => {
+    expect(PORTRAIT_WIDTHS).not.toEqual(SCREENSHOT_WIDTHS);
   });
 });

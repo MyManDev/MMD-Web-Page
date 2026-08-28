@@ -47,6 +47,15 @@ export const teamMemberSchema = z.object({
   role: z.string().min(1),
   bio: z.string().min(1),
   githubUrl: httpsUrl,
+  /**
+   * public/ altinda, scripts/optimize-images.mjs'ten gecmis webp. En buyuk
+   * varyanti gosterir; digerleri lib/images.ts'te ayni tabandan turetiliyor.
+   *
+   * ZORUNLU: fotografsiz bir kisi build'i dusurur. Avatar placeholder
+   * konulmaz (CLAUDE.md kural 6) - proje ekran goruntusunu yoneten kuralin
+   * aynisi.
+   */
+  photo: z.string().min(1).startsWith("/"),
   order: z.number().int().nonnegative(),
 });
 

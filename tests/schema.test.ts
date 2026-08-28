@@ -84,7 +84,20 @@ describe("content/index loader", () => {
     }
   });
 
-  it("team hala bos - biyografiler yazilmadi (#16)", () => {
-    expect(team).toEqual([]);
+  it("team uc kisiyi tasiyor", () => {
+    expect(team).toHaveLength(3);
+    expect(team.map((member) => member.order)).toEqual([0, 1, 2]);
+  });
+
+  /**
+   * Sema `photo`'nun "/" ile basladigini dogruluyor, dosyanin VAR OLDUGUNU
+   * degil. Ayni aralik proje ekran goruntusu icin tests/images.test.ts'te
+   * kapatilmisti; kisi fotografi onu yeniden aciyor.
+   */
+  it("her kisinin fotografi public/ altinda gercekten duruyor", () => {
+    for (const member of team) {
+      const file = join(process.cwd(), "public", member.photo);
+      expect(existsSync(file), member.slug + ": " + member.photo + " bulunamadi").toBe(true);
+    }
   });
 });

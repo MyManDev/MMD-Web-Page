@@ -1,0 +1,4 @@
+{
+  "screenshot": { "widths": [720, 1440], "aspect": [16, 10] },
+  "portrait": { "widths": [360, 720], "aspect": [4, 5] }
+}

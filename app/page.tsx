@@ -2,11 +2,12 @@ import { Container } from "@/components/ui";
 import { Footer } from "@/components/sections/footer";
 import { Nav } from "@/components/sections/nav";
 import { Projects } from "@/components/sections/projects";
-import { projects, site } from "@/content";
+import { Team } from "@/components/sections/team";
+import { projects, site, team } from "@/content";
 
 /**
  * Bolumler Faz 3'te tek tek geliyor. Su an Navigation, Projects ve Footer var;
- * Hero, Who we are ve Team kendi issue'larinda eklenecek.
+ * Hero ve Who we are kendi issue'larinda eklenecek.
  *
  * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
  * yalnizca tek sayfada anlamli, 404'te degil.
@@ -18,6 +19,7 @@ import { projects, site } from "@/content";
  */
 export default function Home() {
   const projectsSection = site.nav.find((item) => item.id === "projects");
+  const teamSection = site.nav.find((item) => item.id === "team");
 
   return (
     <>
@@ -32,6 +34,8 @@ export default function Home() {
         {projectsSection && projects.length > 0 ? (
           <Projects section={projectsSection} projects={projects} />
         ) : null}
+
+        {teamSection && team.length > 0 ? <Team section={teamSection} members={team} /> : null}
       </main>
       <Footer site={site} />
     </>
