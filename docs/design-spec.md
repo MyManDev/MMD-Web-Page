@@ -219,7 +219,12 @@ bırakıyor; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tabl
 uzun bir şerit üretirdi. Kolon sayısı **içerikten değil breakpoint'ten** gelir; kişi sayısı
 değişirse bu tablo yeniden düşünülür, `grid-cols` içeriğe göre hesaplanmaz.
 
-**Kart fotoğrafın kendisidir.** Kutu **2/3** oranında (token: `--aspect-portrait`) ve görüntü onu
+**`SectionLabel` yok.** "04 TEAM" etiketi ile "Team" başlığı aynı kelimeyi iki kez söylüyordu;
+numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket duruyor, çünkü orada
+başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerde değil **bilgi kattığı
+yerde** durur.
+
+**Kart fotoğrafın kendisidir.** Kutu **5/8** oranında (token: `--aspect-portrait`) ve görüntü onu
 tamamen kaplar; ad, rol ve linkler görüntünün alt kenarında, üzerinde durur. Hover'da görüntü
 hayaletleşir ve biyografi üstünde belirir.
 

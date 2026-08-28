@@ -17,7 +17,7 @@ import kinds from "./image-widths.json";
  *               -> 1x icin 400, 2x icin 800.
  *
  * Her genislik kendi en-boy oranina tam bolunuyor; yarim piksel yok
- * (720x450, 1440x900, 400x600, 800x1200).
+ * (720x450, 1440x900, 400x640, 800x1280).
  *
  * Kaynaklar servis EDILMIYOR: assets/ altinda duruyorlar ve hicbir cihazin
  * ihtiyaci olmayan boyutlardalar.

@@ -1,5 +1,5 @@
 import type { Site, TeamMember } from "@/content";
-import { Container, SectionLabel } from "@/components/ui";
+import { Container } from "@/components/ui";
 import { TeamCard } from "./TeamCard";
 
 type NavItem = Site["nav"][number];
@@ -12,6 +12,10 @@ type NavItem = Site["nav"][number];
  *
  * Baslik metni uydurulmuyor: nav etiketi content/site.ts'ten geliyor, ikinci
  * kez yazilmiyor. Bolum h2, kartlar h3 - seviye atlanmiyor (§7.1).
+ *
+ * SectionLabel YOK. "04 TEAM" etiketi ile "Team" basligi ayni kelimeyi iki kez
+ * soyluyordu; numara da tek basina kaldiginda bir sey anlatmiyordu. Projects'te
+ * etiket duruyor cunku orada baslik proje adi ve etiket bilgi katiyor.
  *
  * `members` bossa bolum HIC render edilmez - bos cerceve veya "coming soon"
  * yok (CLAUDE.md kural 6). Karar cagiran tarafta: app/page.tsx.
@@ -26,8 +30,6 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
     <section id={section.id} aria-labelledby={headingId}>
       <Container>
         <div className="reveal-on-enter flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
-          <SectionLabel number={section.number}>{section.label}</SectionLabel>
-
           <h2
             id={headingId}
             className="font-sans text-display-l font-semibold lg:text-display-l-lg"

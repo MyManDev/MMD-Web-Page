@@ -6,7 +6,7 @@ import { BioTypewriter } from "./BioTypewriter";
 /**
  * Tek kisi karti. docs/design-spec.md §3.5
  *
- * KART FOTOGRAFIN KENDISI. Kutu 4/5 oraninda ve goruntu onu tamamen kapliyor;
+ * KART FOTOGRAFIN KENDISI. Kutu 5/8 oraninda ve goruntu onu tamamen kapliyor;
  * ad ve rol altta, goruntunun uzerinde duruyor. Hover'da goruntu hayaletlesiyor
  * ve biyografi ustunde beliriyor.
  *
@@ -43,7 +43,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
         sizes="(min-width: 1024px) 398px, (min-width: 640px) calc(50vw - 36px), calc(100vw - 40px)"
         alt={member.name}
         width={800}
-        height={1200}
+        height={1280}
         loading="lazy"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
