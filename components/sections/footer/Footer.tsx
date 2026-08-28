@@ -1,5 +1,5 @@
 import type { Site } from "@/content";
-import { Container } from "@/components/ui";
+import { Container, ExternalIcon } from "@/components/ui";
 
 /**
  * Footer. docs/design-spec.md §3.6 — navbar'in aynasi: surface zemin, ustte
@@ -26,13 +26,20 @@ export function Footer({ site }: { site: Site }) {
             </span>
           </div>
 
+          {/*
+            Dis link gostergesi §7.5'in gerekliligi ve Button'a #35'te eklendi;
+            buradaki link Button DEGIL (duz mono <a>, §3.6 - footer'da 44px'lik
+            bir dokunma hedefi fazla agir durur), o yuzden ikonu atlamisti.
+            Ikon 12px: footer'in mono satiri Button'inkinden kucuk.
+          */}
           <a
             href={site.repoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-text-muted transition-colors duration-150 ease-out hover:text-text"
+            className="inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
           >
             GitHub
+            <ExternalIcon className="h-3 w-3" />
           </a>
         </div>
       </Container>

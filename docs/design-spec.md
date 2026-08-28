@@ -229,6 +229,10 @@ Navbar'ın aynası: `surface` zemin, üstte 1px `border`.
 
 İçerik: wordmark, telif satırı, GitHub linki. Tamamı mono rolü. Sosyal ikon duvarı yok.
 
+GitHub linki `Button` **değil**, düz mono `<a>` — footer'da 44px'lik bir dokunma hedefi fazla
+ağır durur. Ama dış link olduğu için §7.5'in görünür ikonunu taşır; ikon `ExternalIcon`
+primitive'inden gelir ve 12px'e küçültülür, çünkü footer'ın mono satırı `Button`'ınkinden küçük.
+
 ---
 
 ## 4 · Tipografi uygulaması
