@@ -6,7 +6,7 @@ import { projects, site } from "@/content";
 
 /**
  * Bolumler Faz 3'te tek tek geliyor. Su an Navigation, Projects ve Footer var;
- * Hero, Team ve About kendi issue'larinda eklenecek.
+ * Hero, Who we are ve Team kendi issue'larinda eklenecek.
  *
  * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
  * yalnizca tek sayfada anlamli, 404'te degil.

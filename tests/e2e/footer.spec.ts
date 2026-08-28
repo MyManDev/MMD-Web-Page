@@ -60,7 +60,7 @@ test("sosyal ikon duvari yok - tek dis link", async ({ page }) => {
 });
 
 /**
- * Yesil disiplini (§5.1): Team, About ve Footer'da accent KULLANILMAZ, cunku
+ * Yesil disiplini (§5.1): Who we are, Team ve Footer'da accent KULLANILMAZ, cunku
  * o bolumlerde birincil aksiyon yok. Yazili kural yerine olculen kural.
  */
 test("bolumde accent renk kullanilmiyor", async ({ page }) => {
