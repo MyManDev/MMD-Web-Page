@@ -335,14 +335,16 @@ nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklen
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
 aynı sınıf hatadır.
 
-| Etkileşim                     | Süre           | Özellik                                   |
-| ----------------------------- | -------------- | ----------------------------------------- |
-| Button hover / active         | 150ms          | `background-color`, `border-color`        |
-| NavLink hover ve aktif geçişi | 150ms          | `color`                                   |
-| Kart hover                    | 200ms          | `border-color`, `background-color`        |
-| Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`       |
-| Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)           |
-| Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)` |
+| Etkileşim                     | Süre           | Özellik                                    |
+| ----------------------------- | -------------- | ------------------------------------------ |
+| Button hover / active         | 150ms          | `background-color`, `border-color`         |
+| NavLink hover ve aktif geçişi | 150ms          | `color`                                    |
+| Kart hover                    | 200ms          | `background-color`                         |
+| `TeamCard` hover / focus      | 200ms          | `translate: 0 -10px`                       |
+| `TeamCard` biyografisi        | ~12ms/harf     | daktilo — **DENEME**, aşağıdaki nota bakın |
+| Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`        |
+| Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)            |
+| Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
 
 **Bölüm girişi** `animation-timeline: view()`, `animation-range: entry 0% cover 20%`. Süre yok:
 ilerlemeyi scroll konumu belirliyor. Erken bitmesi kasıtlı — okumaya başlanan bir metin hâlâ
@@ -352,8 +354,28 @@ tarayıcıda hiç uygulanmıyor ve öğe son halinde duruyor.
 Hareket **bölümün zeminine değil içeriğine** uygulanır. Zemin viewport genişliğinde (§1) ve onu
 soldurmak bölümün kendisini yanıp sönüyormuş gibi gösterir.
 
-`transform` mobil menüde ve bölüm girişinde. Kartlarda hover'da büyüme/kalkma **yok** — sticky
-yığınla birlikte katman sırasını okunmaz hale getiriyor.
+`transform` mobil menüde ve bölüm girişinde; `TeamCard` `translate` kullanır.
+
+**Kalkma kuralı bölüm bazına ayrıldı.** `ProjectCard`'da hover'da büyüme/kalkma **yok** — sticky
+yığınla birlikte katman sırasını okunmaz hale getiriyor (§3.3.2). `TeamCard` yığında değil, yani o
+gerekçe orada geçerli değil: kart hover ve focus'ta **10px kalkıyor**. Kalkma layout'a dokunmuyor,
+komşu kartlar kaymıyor.
+
+> Tailwind v4 `translate-y-*` için `transform` değil **`translate`** özelliğini üretir. Geçiş
+> listesi ve testi de onu okur; `transform` bu kartta `none` kalır.
+
+**Daktilo efekti şu an bir DENEME** ve tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`).
+Beğenilmezse o dosya silinir, `TeamCard` sunucu component'i olarak kalır. Koşulları:
+
+- Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel
+  **+0.3 KiB** (132.3 → 132.6 KiB).
+- Metin DOM'da **her zaman tam** durur; yazılmamış harfler `opacity: 0` ile gizlenir, `display`
+  veya `visibility` ile değil. Ekran okuyucu ilk andan itibaren cümlenin tamamını okur, yarım
+  yazılmış bir metin duymaz.
+- Harfler yerlerini baştan işgal ettiği için metin yazılırken **büyümez**; satır sonları baştan
+  hesaplanır ve kart zıplamaz.
+- `prefers-reduced-motion`, `(hover: none)` ve **JavaScript hiç çalışmazsa** efekt devreye girmez;
+  metin anında tam görünür.
 
 ### 6.1 `prefers-reduced-motion: reduce`
 

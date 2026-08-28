@@ -94,10 +94,14 @@ test("hoversiz cihazda aciklama HER ZAMAN acik, hoverli cihazda kapali baslar", 
     // Dokunmatikte :hover ya hic tetiklenmiyor ya ilk dokunusta takili
     // kaliyor; aciklama yalnizca hover'a baglanirsa ERISILEMEZ icerik olurdu.
     expect(parseFloat(rows)).toBeGreaterThan(0);
+
+    // Dokunmatikte daktilo HIC calismaz: metin bastan tam gorunur olmali.
+    const lastCharacter = page.locator(`${CARD} [data-bio] p span`).last();
+    expect(await lastCharacter.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
   }
 });
 
-test("fare hover'i aciklamayi aciyor", async ({ page }) => {
+test("fare hover'i aciklamayi aciyor ve metni gorunur kiliyor", async ({ page }) => {
   test.skip(!(await hoverCapable(page)), "hoversiz cihazda aciklama zaten acik");
 
   const card = page.locator(CARD).first();
@@ -107,6 +111,59 @@ test("fare hover'i aciklamayi aciyor", async ({ page }) => {
   await expect
     .poll(() => row.evaluate((el) => parseFloat(getComputedStyle(el).gridTemplateRows)))
     .toBeGreaterThan(0);
+
+  // Satirin acilmasi yetmez: metin ayrica DAKTILO ile yaziliyor. Yazilan harf
+  // sayisi metnin tamamina ulasmali - yarim kalan bir animasyon da gecerdi.
+  // Olculen sey son harfin GORUNUR olmasi - yarim kalan bir animasyon da
+  // "acildi" sayilirdi.
+  const lastCharacter = row.locator("p span").last();
+  await expect
+    .poll(() => lastCharacter.evaluate((el) => Number(getComputedStyle(el).opacity)), {
+      timeout: 15_000,
+    })
+    .toBe(1);
+});
+
+/**
+ * Kart hover'da kalkiyor. design-spec.md §6: kalkma yasagi ProjectCard'a ait
+ * ve gerekcesi sticky yigin; TeamCard yiginda degil.
+ *
+ * `transform` ile: layout'a dokunmadigi icin komsu kartlar kaymiyor. Olculen
+ * sey de bu - yalnizca kalkmis olmasi degil, komsunun YERINDE kalmasi.
+ */
+test("kart hover'da kalkiyor, komsusu yerinde kaliyor", async ({ page }) => {
+  test.skip(!(await hoverCapable(page)), "hoversiz cihazda hover yok");
+
+  const cards = page.locator(CARD);
+  if ((await cards.count()) < 2) test.skip(true, "komsu kart yok");
+
+  const first = cards.first();
+  const second = cards.nth(1);
+
+  // Tailwind v4 `translate` ozelligini kullaniyor, `transform` degil.
+  const resting = await first.evaluate((el) => getComputedStyle(el).translate);
+  /**
+   * Komsunun yeri BOLUME GORE olculuyor. Mutlak koordinat iki sebeple oynuyor:
+   * hover() karti gorunur kilmak icin sayfayi kaydiriyor, ve bolum girisi
+   * animasyonu (reveal-on-enter) scroll'a bagli olarak icerigi 16px'e kadar
+   * tasiyor. Ikisi de bu testin sordugu sey degil.
+   *
+   * Referans BOLUM DEGIL IZGARA: reveal sarmalayicisi bolumun icinde, yani
+   * bolume gore olcum de o 16px'i tasiyordu (olculdu). Izgara ile komsu ayni
+   * sarmalayicinin icinde ve birlikte hareket ediyor, dolayisiyla aradaki
+   * fark yalnizca kartin kalkmasina duyarli kaliyor.
+   */
+  const offsetInGrid = () =>
+    second.evaluate((el) =>
+      Math.round(el.getBoundingClientRect().top - el.closest("ul")!.getBoundingClientRect().top),
+    );
+  const neighbourBefore = await offsetInGrid();
+
+  await first.hover();
+
+  await expect.poll(() => first.evaluate((el) => getComputedStyle(el).translate)).not.toBe(resting);
+
+  expect(await offsetInGrid()).toBe(neighbourBefore);
 });
 
 /**

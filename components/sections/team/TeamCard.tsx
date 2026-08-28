@@ -1,6 +1,7 @@
 import type { TeamMember } from "@/content";
 import { ExternalIcon } from "@/components/ui";
 import { portraitSrcSet } from "@/lib/images";
+import { BioTypewriter } from "./BioTypewriter";
 
 /**
  * Tek kisi karti. docs/design-spec.md §3.5
@@ -25,12 +26,26 @@ import { portraitSrcSet } from "@/lib/images";
  * ulasilamazdi: focus'lanabilmesi icin once acilmasi, acilmasi icin de
  * focus'lanmasi gerekirdi.
  *
- * BOLUMDE YESIL YOK (§5.1): hover yalnizca zemini degistiriyor, accent
+ * KART HOVER'DA KALKIYOR (-10px). design-spec.md §6 bunu Projects icin
+ * yasakliyor ve gerekcesi orada yazili: sticky yigin ile birlikte katman
+ * sirasini okunmaz hale getiriyor. Team kartlari yiginda DEGIL, o yuzden
+ * gerekce burada gecerli degil. Kural §6'da bolum bazina ayrildi.
+ *
+ * Kalkma layout'a dokunmuyor, yani komsu kartlar kaymiyor. Tailwind v4
+ * `translate-y-*` icin `transform` DEGIL `translate` ozelligini kullaniyor;
+ * gecis listesi ve testi de onu okuyor (olculdu: `transform` "none" kaliyor).
+ *
+ * `focus-within:` grubun KENDISINE uygulaniyor, `group-focus-within:` degil -
+ * ikincisi yalnizca .group'un ALT ogelerine iner ve kartin kendisi kalkmazdi.
+ * Metin kalkmadan 100ms SONRA beliriyor (delay-100) - once kart hareket
+ * ediyor, sonra yazi geliyor.
+ *
+ * BOLUMDE YESIL YOK (§5.1): hover zemini ve konumu degistiriyor, accent
  * getirmiyor. Team'de birincil aksiyon yok, dolayisiyla accent kotasi sifir.
  */
 export function TeamCard({ member }: { member: TeamMember }) {
   return (
-    <article className="group flex h-full flex-col gap-4 rounded-card border border-border bg-surface p-[var(--spacing-card)] transition-colors duration-200 ease-out hover:bg-surface-2 lg:p-[var(--spacing-card-lg)]">
+    <article className="group flex h-full -translate-y-0 flex-col gap-4 rounded-card border border-border bg-surface p-[var(--spacing-card)] transition-[translate,background-color] duration-200 ease-out hover:-translate-y-2.5 hover:bg-surface-2 focus-within:-translate-y-2.5 focus-within:bg-surface-2 lg:p-[var(--spacing-card-lg)]">
       <div className="overflow-hidden rounded-sm border border-border">
         {/* eslint-disable-next-line @next/next/no-img-element -- olculdu, #34: next/image 5.5 KiB client JS ekliyor, statik export'ta karsiligi sifir */}
         <img
@@ -64,7 +79,10 @@ export function TeamCard({ member }: { member: TeamMember }) {
         data-bio
         className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out group-focus-within:grid-rows-[1fr] group-hover:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]"
       >
-        <p className="overflow-hidden text-[14px] leading-[1.55] text-text-muted">{member.bio}</p>
+        <BioTypewriter
+          text={member.bio}
+          className="overflow-hidden text-[14px] leading-[1.55] text-text-muted"
+        />
       </div>
 
       <a
