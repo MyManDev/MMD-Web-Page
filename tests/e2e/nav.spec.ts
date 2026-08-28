@@ -53,7 +53,8 @@ test.describe("navbar", () => {
   test("dort bolum linki dogru anchor'a isaret ediyor", async ({ page }, testInfo) => {
     const width = testInfo.project.use.viewport?.width ?? 0;
     const scope = isDesktop(width) ? page.getByLabel("Sections") : (await openMenu(page)).panel;
-    for (const id of ["hero", "projects", "team", "about"]) {
+    // Bolum sirasi: architecture.md §2. 03 kolektifi, 04 kisileri anlatir.
+    for (const id of ["hero", "projects", "who-we-are", "team"]) {
       await expect(scope.locator(`a[href="#${id}"]`)).toBeVisible();
     }
   });

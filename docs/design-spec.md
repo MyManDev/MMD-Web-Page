@@ -85,9 +85,9 @@ V1'de `disabled` kullanan bir yüzey **yok**; durum tanımlı ki sonradan uyduru
 | `Projects`    | Projects   | **A** | `projects: Project[]`           | —                                    |
 | `ProjectCard` | Projects   | **A** | `project`, `index`, `total`     | default · hover · focus-within       |
 | `MetricRow`   | Projects   | **A** | `metrics: Metric[]`             | —                                    |
+| `WhoWeAre`    | Who we are | **B** | `site.whoWeAre`                 | —                                    |
 | `Team`        | Team       | **B** | `members: TeamMember[]`         | —                                    |
 | `TeamCard`    | Team       | **B** | `member`                        | default · hover · focus-within       |
-| `About`       | About      | **B** | `site.about`                    | —                                    |
 | `Footer`      | Footer     | **B** | `site.footer`                   | —                                    |
 
 `ProjectCard` `index` ve `total` alır çünkü yığın davranışı (§4.2) kartın kaçıncı olduğunu bilmek
@@ -197,27 +197,50 @@ scroll listener yok.
 | Alttaki kartın focus'u   | Kart içeriği `inert` **değildir**; sticky yalnızca konumu değiştirir, kartlar DOM'da normal sırada ve klavyeyle erişilebilir. Üste binen kart alttakinin focus'unu görsel olarak kapatırsa, focus'lanan kart `z-index` sırasını geçici olarak kazanır (`:focus-within`). |
 | Yığın yüksekliği         | Kap yüksekliği = kart sayısı × viewport yüksekliği. Tek kartta kap normal akışa döner ve sticky hiç uygulanmaz.                                                                                                                                                          |
 
-### 3.4 Team — Bölge B
+### 3.4 Who we are — Bölge B
 
-|       | Mobil | `sm` | `≥ lg` |
-| ----- | ----- | ---- | ------ |
-| Kolon | 1     | 2    | 2      |
+Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor. Genelden tekile.
 
-İki kişi var; üç kolonluk bir ızgara boş hücre üretirdi. `TeamMember` sayısı arttığında kolon
-sayısı **içerikten** değil breakpoint'ten gelir; boş hücre oluşmaması için `sm`'de 2 kolon
-yeterli.
-
-Kart içi: ad (Display M) → rol (mono, `text-muted`) → kısa biyografi (Body S) → link(ler).
-
-- Rol ve biyografi: **metin bekliyor**
-- Profil görseli: V1'de **yok**. Gerçek fotoğraf gelene kadar avatar placeholder konmaz.
-
-### 3.5 About — Bölge B
-
-Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `SectionLabel 04` → başlık
+Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `SectionLabel 03` → başlık
 (Display L) → manifesto (Body) → çalışma prensipleri listesi (Body S).
 
 - Manifesto ve prensipler: **metin bekliyor**
+
+### 3.5 Team — Bölge B
+
+Üç kişiyi tek tek tanıtan kartlar.
+
+|       | Mobil | `sm` | `≥ lg` |
+| ----- | ----- | ---- | ------ |
+| Kolon | 1     | 2    | 3      |
+
+`lg`'de üç kolon çünkü üç kişi var ve üçü tek satıra oturuyor. `sm`'de iki kolon bir hücreyi boş
+bırakıyor; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tablette bir sütunluk
+uzun bir şerit üretirdi. Kolon sayısı **içerikten değil breakpoint'ten** gelir; kişi sayısı
+değişirse bu tablo yeniden düşünülür, `grid-cols` içeriğe göre hesaplanmaz.
+
+Kart içi: fotoğraf → ad (Display M) → rol (mono, `text-muted`) → biyografi (Body S) → link(ler).
+
+**Biyografi hover ile açılır** — ve hover **tek yol değildir.** Üç durum birden karşılanır:
+
+| Giriş yolu                   | Davranış                                                   |
+| ---------------------------- | ---------------------------------------------------------- |
+| Fare                         | `:hover` — açıklama açılır                                 |
+| Klavye                       | `:focus-within` — karttaki bir linke tab'landığında açılır |
+| Dokunmatik / hover'sız cihaz | `@media (hover: none)` — açıklama **her zaman açık**       |
+
+Gerekçe: klavye erişimi ve görünür focus **sert kapı** (`architecture.md` §8), ve dokunmatik
+cihazda `:hover` ya hiç tetiklenmez ya da ilk dokunuşta takılı kalır. Yalnızca hover'a bağlanan
+bir açıklama, o cihazlarda **erişilemez içerik** olur. Bu, sonradan eklenecek bir yama değil,
+bölümün tanımının parçası (`CLAUDE.md` kural 10 ile aynı mantık).
+
+Açıklama **DOM'da her zaman vardır**; açılıp kapanan şey görünürlüğü. `display: none` ile
+saklanmaz, çünkü ekran okuyucu onu okuyabilmeli.
+
+- Rol ve biyografi: **metin bekliyor** (#16)
+- Fotoğraflar: **gerçek fotoğraf bekliyor.** Avatar placeholder konmaz (`CLAUDE.md` kural 6);
+  şemaya `photo` alanı **zorunlu** olarak eklenir, yani fotoğrafsız bir kişi build'i düşürür.
+  Görseller `scripts/optimize-images.mjs` hattından geçer (`architecture.md` §6).
 
 ### 3.6 Footer — Bölge B
 
@@ -243,7 +266,7 @@ elemanın hangi rolü aldığı.
 | Rol        | Nerede                                                                                           |
 | ---------- | ------------------------------------------------------------------------------------------------ |
 | Display XL | Yalnızca Hero başlığı. Sayfada **bir kez**.                                                      |
-| Display L  | Bölüm başlıkları: Projects, Team, About.                                                         |
+| Display L  | Bölüm başlıkları: Projects, Who we are, Team.                                                    |
 | Display M  | Proje adı, `TeamCard` adı, `MetricRow` sayısı.                                                   |
 | Body       | Hero alt cümlesi, proje özeti, About manifestosu.                                                |
 | Body S     | `TeamCard` biyografisi, About prensip listesi, footer telif.                                     |
@@ -282,11 +305,11 @@ Component'te literal renk yok (`CLAUDE.md` kural 1).
 | Navigation | aktif nav linki                 | wordmark, diğer linkler, GitHub aksiyonu                                  |
 | Hero       | `primary` CTA zemini            | `SectionLabel`, başlık, alt cümle, `ghost` CTA                            |
 | Projects   | Live Demo `primary` zemini      | `SectionLabel`, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu |
-| Team       | yok — bölümde yeşil kullanılmaz | ad, rol, biyografi, linkler                                               |
-| About      | yok                             | başlık, manifesto, liste madde işaretleri                                 |
+| Who we are | yok                             | başlık, manifesto, liste madde işaretleri                                 |
+| Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                                     |
 | Footer     | yok                             | wordmark, linkler, telif                                                  |
 
-Team, About ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve o üç bölümde
+Who we are, Team ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve o üç bölümde
 birincil aksiyon yok. Her bölüme bir yeşil serpmek §4.1'in tarif ettiği hatanın kendisi.
 
 **Tek istisna — focus halkası** (§7.2). Halka accent renklidir ve bölüm kotasına sayılmaz; bir
@@ -362,11 +385,11 @@ tekrar edilmez.
 
 ### 7.1 Landmark'lar ve belge yapısı
 
-| Landmark      | Eleman                                    |
-| ------------- | ----------------------------------------- |
-| `banner`      | `<header>` — navbar                       |
-| `main`        | `<main>` — Hero + Projects + Team + About |
-| `contentinfo` | `<footer>`                                |
+| Landmark      | Eleman                                         |
+| ------------- | ---------------------------------------------- |
+| `banner`      | `<header>` — navbar                            |
+| `main`        | `<main>` — Hero + Projects + Who we are + Team |
+| `contentinfo` | `<footer>`                                     |
 
 Her bölüm `<section>` ve `aria-labelledby` ile kendi başlığına bağlanır. Başlık hiyerarşisi:
 sayfada tek `h1` (Hero başlığı), bölüm başlıkları `h2`, kart başlıkları `h3`. Seviye atlanmaz.
@@ -392,8 +415,8 @@ DOM sırası = görsel sıra. Hiçbir yerde pozitif `tabindex` yok.
 2. Wordmark → nav linkleri (`01`–`04` sırasıyla) → GitHub aksiyonu
 3. Hero: Projects CTA → About CTA
 4. Projects: her kart için GitHub → Live Demo
-5. Team: kart sırasıyla linkler
-6. About: gövde içi linkler
+5. Who we are: gövde içi linkler
+6. Team: kart sırasıyla linkler
 7. Footer: linkler
 
 **Sticky navbar focus'u kapatmamalı.** Anchor hedefine atlandığında hedef başlık sabit bar'ın

@@ -32,12 +32,12 @@ kapılar geçiyor; `mymandev.com` yayında.
 
 Header linkleri yeni sayfa açmaz. Tek sayfa, dört bölüm, anchor + smooth scroll.
 
-| #   | Bölüm    | İş                                                          |
-| --- | -------- | ----------------------------------------------------------- |
-| 01  | Hero     | Kim olduğumuzu tek cümlede anlat. Projects CTA + About CTA. |
-| 02  | Projects | Sitenin ana vitrini.                                        |
-| 03  | Team     | Ekip, farklı yetkinlikler, ortak üretim.                    |
-| 04  | About    | Kısa manifesto, çalışma prensipleri, footer.                |
+| #   | Bölüm      | İş                                                                |
+| --- | ---------- | ----------------------------------------------------------------- |
+| 01  | Hero       | Kim olduğumuzu tek cümlede anlat. Projects CTA + About CTA.       |
+| 02  | Projects   | Sitenin ana vitrini.                                              |
+| 03  | Who we are | Kolektifi birlikte anlatan kısa manifesto ve çalışma prensipleri. |
+| 04  | Team       | Kişileri tek tek tanıtan kartlar.                                 |
 
 **Navigation:** sticky navbar; aktif bölüm linki yeşil; GitHub sağda sabit aksiyon; mobilde kompakt
 menü. Aktif link tespiti için tek bir `IntersectionObserver`, başka hiçbir yerde scroll listener yok.
@@ -457,6 +457,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                 | §8     |
 | Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor | §6     |
 | İçerik dosyaları V1'de | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                   | §5     |
+| Bölüm sırası           | 03 Who we are (kolektif) → 04 Team (kişiler); genelden tekile         | §2     |
 | Görsel yüzeyi          | `next/image` değil düz `<img>` + elle `srcset`; ölçülmüş 5.5 KiB      | §6     |
 | Görsel pipeline        | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor   | §6     |
 | Etkileşim dili         | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor          | §4.4   |
