@@ -123,6 +123,31 @@ test("16/10 oraninda ve tasmiyor", async ({ page }) => {
   expect(box!.width / box!.height).toBeCloseTo(1.6, 1);
 });
 
+/**
+ * design-spec.md §2.1 ve §7.5: dis linkte gorunur ikon, ama ikon bilgi
+ * TASIMAZ - tekrarlar. Bu yuzden iki sey birden olculuyor: ikon var, ve
+ * erisilebilir ad hala yalnizca metinden geliyor.
+ */
+test("dis link aksiyonlari gorunur ikon tasiyor, erisilebilir ad degismiyor", async ({ page }) => {
+  const section = page.locator(SECTION);
+
+  for (const name of ["GitHub", "Live Demo"]) {
+    const link = section.getByRole("link", { name });
+    await expect(link).toHaveCount(1);
+
+    const icon = link.locator('svg[aria-hidden="true"]');
+    await expect(icon).toHaveCount(1);
+    await expect(icon).toBeVisible();
+
+    // currentColor: ikonun kendi rengi yok, zeminin metin rengini aliyor.
+    const [iconColor, linkColor] = await link.evaluate((el) => [
+      getComputedStyle(el.querySelector("svg")!).color,
+      getComputedStyle(el).color,
+    ]);
+    expect(iconColor).toBe(linkColor);
+  }
+});
+
 test("iki aksiyon da yeni sekmede ve rel guvenli", async ({ page }) => {
   const section = page.locator(SECTION);
 
