@@ -93,7 +93,7 @@
      ustune yaziyor ve kayit tek. Deger degismedi. */
   --max-width-prose: 65ch;
   --aspect-screenshot: 16 / 10;
-  --aspect-portrait: 4 / 5;
+  --aspect-portrait: 2 / 3;
 }
 
 /* Navbar yuksekligi breakpoint'e gore degistigi icin @theme disinda,

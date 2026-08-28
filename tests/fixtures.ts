@@ -23,6 +23,6 @@ export const validTeamMember: TeamMember = {
   bio: "Fixture only.",
   githubUrl: "https://github.com/MyManDev",
   linkedinUrl: "https://www.linkedin.com/in/fixture",
-  photo: "/people/test-member-720.webp",
+  photo: "/people/test-member-800.webp",
   order: 0,
 };

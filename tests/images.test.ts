@@ -50,8 +50,8 @@ describe("uretilmis varyantlar", () => {
 
 describe("portraitSrcSet", () => {
   it("her genislik icin bir aday uretir", () => {
-    expect(portraitSrcSet("/people/ornek-720.webp")).toBe(
-      "/people/ornek-360.webp 360w, /people/ornek-720.webp 720w",
+    expect(portraitSrcSet("/people/ornek-800.webp")).toBe(
+      "/people/ornek-400.webp 400w, /people/ornek-800.webp 800w",
     );
   });
 

@@ -54,7 +54,30 @@ async function encode({ dataUrl, width, height, quality }) {
   // Kucultmede varsayilan filtre metni ve yuz detayini bozuyor.
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = "high";
-  context.drawImage(image, 0, 0, width, height);
+
+  /*
+   * KIRP, ESNETME. Onceki hali kaynagi hedef kutuya dogrudan ciziyordu; kaynak
+   * ile hedef ayni orandayken fark etmiyordu, ama oran degistigi anda goruntu
+   * EZILIYORDU - bir portrede bu, yuzun bozulmasi demek.
+   *
+   * CSS tarafi zaten object-cover kullaniyor; dosyayi da ayni sekilde uretmek
+   * ikisinin ayni kadraji gormesini sagliyor. Kirpma ORTADAN: bir yani secmek
+   * icin gorseli tanimak gerekir, ve script gorseli tanimiyor.
+   */
+  const sourceRatio = image.naturalWidth / image.naturalHeight;
+  const targetRatio = width / height;
+  let sx = 0;
+  let sy = 0;
+  let sWidth = image.naturalWidth;
+  let sHeight = image.naturalHeight;
+  if (sourceRatio > targetRatio) {
+    sWidth = Math.round(image.naturalHeight * targetRatio);
+    sx = Math.round((image.naturalWidth - sWidth) / 2);
+  } else if (sourceRatio < targetRatio) {
+    sHeight = Math.round(image.naturalWidth / targetRatio);
+    sy = Math.round((image.naturalHeight - sHeight) / 2);
+  }
+  context.drawImage(image, sx, sy, sWidth, sHeight, 0, 0, width, height);
 
   const encoded = canvas.toDataURL("image/webp", quality);
   if (!encoded.startsWith("data:image/webp")) {
