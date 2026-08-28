@@ -83,6 +83,40 @@ test("ekran goruntusu gercekten yukleniyor ve yerini onceden ayiriyor", async ({
     .toBe(true);
 });
 
+test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
+  const image = page.locator(`${SECTION} img`);
+  await expect(image).toHaveAttribute("srcset", /-720\.webp 720w/);
+  await expect(image).toHaveAttribute("srcset", /-1440\.webp 1440w/);
+  await expect(image).toHaveAttribute("sizes", /.+/);
+});
+
+/**
+ * Asil olcum: tarayici HANGI dosyayi indirdi. srcset'in yazili olmasi onu
+ * kullanildigi anlamina gelmiyor - yanlis bir `sizes` ile her cihaz en buyugu
+ * indirir ve hicbir sey hata vermez.
+ *
+ * Beklenen secim cihazin piksel yogunlugundan cikiyor, viewport genisliginden
+ * degil - ve ikisi burada ters yonde calisiyor:
+ *   desktop  1280px, DPR 1     -> gorsel kutusu 638px  -> 720 yetiyor
+ *   mobil     412px, DPR 2.625 -> 372 * 2.625 = 977px  -> 1440 gerekiyor
+ * Yani dar viewport DAHA BUYUK dosyayi aliyor, ve dogrusu bu.
+ */
+test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
+  const image = page.locator(`${SECTION} img`);
+  await image.scrollIntoViewIfNeeded();
+
+  const dpr = await page.evaluate(() => window.devicePixelRatio);
+  const expected = dpr > 1.5 ? "-1440.webp" : "-720.webp";
+
+  await expect
+    .poll(() => image.evaluate((el: HTMLImageElement) => el.currentSrc))
+    .toContain(expected);
+
+  // Kaynak goruntu (2360px) servis edilmiyor - assets/ altinda, public/ degil.
+  const response = await page.request.get("/projects/football-squad-optimizer.webp");
+  expect(response.status(), `${testInfo.project.name}: kaynak gorsel yayinlanmis`).toBe(404);
+});
+
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {
   const box = await page.locator(`${SECTION} img`).boundingBox();
   expect(box).not.toBeNull();

@@ -266,7 +266,8 @@ components/
     hero/  projects/  nav/  team/  about/  footer/
 content/              §5
 lib/                  yardımcılar
-public/               logo, favicon, og, proje görselleri
+assets/screenshots/   kaynak görüntüler — servis EDİLMEZ, pipeline'ın girdisi
+public/               logo, favicon, og, üretilmiş proje görselleri
 scripts/              optimize-images.mjs
 tests/e2e/            Playwright
 docs/                 bu belge ve kardeşleri
