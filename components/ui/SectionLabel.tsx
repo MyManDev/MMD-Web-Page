@@ -5,7 +5,7 @@
  */
 export function SectionLabel({ number, children }: { number: string; children: string }) {
   return (
-    <p className="font-mono text-xs tracking-[0.08em] text-text-muted uppercase">
+    <p className="font-mono text-mono text-text-muted uppercase">
       <span aria-hidden="true">{number}</span> <span>{children}</span>
     </p>
   );

@@ -14,7 +14,7 @@ export default function NotFound() {
       <Container>
         <div className="py-section-lg">
           <SectionLabel number="404">Not found</SectionLabel>
-          <p className="mt-4 mb-8 text-[15px] leading-[1.6] text-text-muted lg:text-base">
+          <p className="mt-4 mb-8 text-body text-text-muted lg:text-body-lg">
             This page does not exist.
           </p>
           <Button href="/" variant="ghost">
