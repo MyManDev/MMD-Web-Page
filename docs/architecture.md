@@ -444,7 +444,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                             | §3     |
 | Placeholder proje      | Yayınlanmaz                                                           | §3     |
 | Font                   | IBM Plex Sans + Mono                                                  | §4.2   |
-| İmza öğe               | Dürüst sayı satırı, benimsendi                                        | §4.6   |
+| İmza öğe               | Dürüst sayı satırı; sayı `0` — ML models promoted to production       | §4.6   |
 | İçerik formatı         | TS + Zod, MDX yok                                                     | §5     |
 | Render                 | Tamamen statik export                                                 | §6     |
 | Styling                | Tailwind v4                                                           | §6     |

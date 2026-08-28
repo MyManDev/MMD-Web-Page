@@ -3,15 +3,17 @@
 > Bu dosya **şu anki durumu** tutar, geçmişi tutmaz — geçmiş git log'unda yaşar.
 > Her devirde üzerine yazılır. Protokol: `docs/working-agreement.md` §7.
 
-**Tarih:** 2026-08-27
+**Tarih:** 2026-08-28
 **Yer:** iş
-**Aşama:** 3 — Bölge işi (bkz. `docs/working-agreement.md` §6). Aşama 1 ve Faz 0 kapandı.
+**Aşama:** 3 — Bölge işi (bkz. `docs/working-agreement.md` §6).
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`b2d6617`)
+- Dal: `main` (`a01c084`)
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` uçtan uca geçiyor; CI'da da yeşil (`gates` · `e2e` · `lighthouse`).
+- Payload: **132.3 KiB / 150.0 KiB**, kalan pay 17.7 KiB.
+- Test: 25 birim, 79 E2E (7'si viewport'a göre atlanıyor).
 
 ## Açık PR'lar
 
@@ -19,51 +21,76 @@
 
 ## Sıradaki tek iş
 
-**#15 — Hero cümlesi ve About manifestosunu yaz.** Bölge A'nın tek işi olan #12 Hero buna
-bağlı, ve #9 About ile #11 SEO da aynı metni bekliyor. Paylaşılan karar alanı: iki tarafın
-onayı gerekiyor, placeholder konulmayacak.
+**#15 — Hero cümlesi ve About manifestosunu yaz.**
+
+Bu iş bu sabah da sıradaki tek işti ve bugün ona dokunulmadı; bugün yapılan sekiz PR, **metin
+gerektirmeyen ne kaldıysa** oydu. Artık o kaynak tükendi: #12 Hero, #9 About ve #11 SEO'nun
+üçü de aynı metni bekliyor, yani Faz 3'ün kalanı tek bir yazma işinin arkasında duruyor.
+
+Paylaşılan karar alanı: iki tarafın onayı gerekiyor, placeholder konulmayacak.
+
+> Ekip biyografileri (#16) de yazılmamış durumda ve #8 Team'i bloke ediyor. İkisinden birini
+> seçmek gerekirse #15 önce gelir, çünkü üç issue'yu birden açıyor.
 
 ## Bitmemiş iş
 
-- **#7 Navigation açık kaldı.** Component tamam ve merge edildi, ama **anchor scroll ve aktif
-  link E2E'si yazılamadı** — gözlenecek bölüm yok. `useActiveSection` boş durumu karşılıyor
-  (bölüm yoksa hiçbir link aktif olmuyor). O iki test ilk bölümle birlikte yazılacak.
-- **#14 gerçek ekran görüntüsü bekliyor.** `scripts/optimize-images.mjs` de yazılmadı ve `sharp`
-  henüz bağımlılık değil — eklenmesi ayrı onay ister.
-- **Branch protection'a status check eklenmedi.** `gates` ve `e2e` artık gerçekten var.
-- **`@tunayaslan`'ın yazma yetkisi yok.** Yetkisiz CODEOWNERS sahibi sessizce yok sayılır.
-- **Katkıcı listesi kenar çubuğunda hâlâ üç isim.** `main`, API ve Insights temiz; kalıntı
-  `refs/pull/*` ref'lerinde. GitHub Support'a talep açıldı, yanıt bekleniyor.
+- **#7 Navigation açık.** Anchor scroll ve aktif link E2E'si hâlâ yazılmadı — ama **artık
+  yazılabilir**: gözlenecek bir bölüm var ve `useActiveSection` fiilen çalışıyor. Dosya
+  `tests/e2e/nav.spec.ts`, **Bölge B**.
+- **`ProjectCard` hover/focus-within bilerek yazılmadı** (`design-spec.md` §2.2). V1'de blok tam
+  genişlikte, kendi border'ı ve zemini yok (§3.3.1) — oraya hover koymak hiçbir şeyi vurgulamayan
+  bir vurgu olurdu. O satır §3.3.2'nin yığılmış kartlarına ait; yığın uykuda ve test edilemez.
+- **Yığın uyandığında doğrulanacak yeni bir nokta var:** bölüm girişi animasyonu süresince
+  `transform` bir kapsayıcı blok yaratıyor ve sticky kartların ona göre konumlanması kontrol
+  edilmeli. Yorum `components/sections/projects/Projects.tsx`'te duruyor.
+- **Footer'ın GitHub linki dış link ikonu almadı.** `Button` değil, düz mono `<a>`.
+  `design-spec.md` §7.5 açısından tutarsızlık — **Bölge B**'nin dosyası.
+- **Tip ölçeği component'lerde gömülü** (`text-[40px]` gibi), `tokens.css`'te değil. Kendi
+  `refactor:` PR'ını ve öncesi/sonrası görsel kontrolünü hak ediyor (§3.4).
+- **Lighthouse için issue açılmadı.** Dün ev makinesinde Perf 82 / LCP 2.7s ölçüldü ama aynı sayfa
+  üç koşuda 74↔92 salındı. §8 zaten "raporlanır, kapı değil" diyor; açılacak issue sayıyı değil
+  **ölçümün güvenilirliğini** konu almalı (üç koşunun medyanı) ve "unused JavaScript 53 KiB"in
+  kaynağını (Next'in kendi JS'i).
+- **Branch protection'a status check eklenmedi.** `gates` ve `e2e` gerçekten var.
+- **`@tunayaslan`'ın yazma yetkisi yok.** CODEOWNERS satırları sessizce yok sayılıyor, yani
+  paylaşılan yüzey koruması fiilen yok ve zorunlu review 0.
+- **Katkıcı listesi kenar çubuğunda hâlâ üç isim.** GitHub Support'tan yanıt bekleniyor.
+- **#18 logo SVG bekliyor**; favicon ve OG görselleri buna bağlı.
 
 ## Alınan kararlar
 
-Bu devirde alınan kalıcı kararların hepsi `docs/architecture.md` §9'daki karar kaydında.
-Burada tekrar edilmiyor.
+Bugün alınan kalıcı kararların hepsi `docs/architecture.md` §9'daki karar kaydında — beş satır
+eklendi veya güncellendi: görsel yüzeyi, görsel pipeline, etkileşim dili, hareket sistemi, ve
+imza sayısının değeri. Burada tekrar edilmiyor.
+
+`Tag`'in pill yapılmaması bir **değişiklik değil**, sorulup reddedilen bir öneri; gerekçesi
+`design-spec.md` §2.1'de duruyor ki soru bir daha açılmasın.
 
 ## Tuzaklar ve notlar
 
-- **Payload kapısında kalan pay 19.7 KiB.** Boş sayfa 130.3 KiB / 150 KiB. Faz 3'ün tamamı bu
-  paya sığmak zorunda. İlk bölüm component'lerinden sonra tekrar ölçün; eşiği yükseltmek çözüm
-  değil.
-- **TypeScript 7 ve ESLint 10 kullanılamıyor.** `typescript-eslint` TS 7'yi desteklemiyor,
-  `eslint-plugin-react` ESLint 10 altında çöküyor. TS `6.0.3` ve ESLint `9.39.5`'e sabitli.
-  Yukarı çıkış ayrı bir `chore:` PR'ı olmalı ve upstream düzelmeden denenmemeli.
-- **`corepack enable pnpm` yönetici izni istiyor** (`C:\Program Files\nodejs`). Bu makinede
-  `npm install -g pnpm` ile kuruldu; PATH'e `%APPDATA%\npm` eklemek gerekebiliyor.
-- **`gh` token'ında `workflow` scope'u olmalı**, yoksa `.github/workflows/` içeren dal push
-  edilemiyor (`gh auth refresh -h github.com -s workflow`).
-- **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2). Bu kural bir kez ihlal
-  edildi ve geçmişi yeniden yazmak gerekti; `refs/pull/*` kalıntısı geri alınamadı.
-- **Payload payı 17.9 KiB.** Boş sayfa 132.1 / 150 KiB. Navigation client component'i 1.8 KiB'a
-  mal oldu; Footer sunucu component'i olduğu için 0. Kalan dört bölüm bu paya sığmak zorunda —
-  hangi bölümün `"use client"` gerektirdiğini önceden düşünün.
-- **Yeşil disiplini artık ölçülüyor.** `tests/e2e/footer.spec.ts` bölümdeki her elemanın
-  hesaplanmış rengini okuyup accent'e çözülürse düşüyor. Team ve About bölümlerine de aynı test
-  eklenmeli.
-- Ev makinesinde ilk kurulum `gh auth login` + repo-yerel credential helper gerektiriyor
-  (`git config --local credential.https://github.com.helper` — **önce boş değer, sonra gh çağrısı**).
+- **`animation-timeline: none` reduced-motion'da YANLIŞ.** Zaman çizelgesi olmayan bir animasyonun
+  geçerli zamanı çözümlenemiyor ve `fill-mode: both` o durumda `from` karesini uyguluyor — öğe
+  `opacity: 0`'da donuyor. Doğrusu `animation-name: none`. Bu kural sabah belgeye **yanlış**
+  yazıldı ve akşam E2E yakaladı; yazılmasaydı reduced-motion açık bir kullanıcı Projects bölümünü
+  hiç görmeyecekti ve hiçbir kapı bunu söylemeyecekti. Gerekçe `app/globals.css` ve
+  `design-spec.md` §6.1'de.
+- **Tailwind v4'te `--width-*` diye bir namespace yok.** `max-w-*` `--max-width-*` okur. Token adı
+  yanlış namespace'teyse **çıktı CSS'e hiç girmez** ve hiçbir şey hata vermez; utility sessizce
+  Tailwind'in varsayılanını kullanır. Yeni token eklerken üretilen CSS'te değişkenin gerçekten
+  yayınlandığını kontrol edin.
+- **Payload payı 17.7 KiB.** Boş sayfa değil, bugünkü sayfa 132.3 / 150 KiB. Hero, Team ve About
+  bu paya sığmak zorunda. `Button`'a eklenen ikon 0.2 KiB'a mal oldu ve sebebi öğretici:
+  `Button` sunucu component'i **ama** `Nav` ve `MobileMenu` client component ve onu kullanıyor,
+  yani `components/ui/` içindeki her şey client bundle'a girebiliyor.
+- **Playwright Chromium webp kodlayabiliyor.** `scripts/optimize-images.mjs` bunu kullanıyor;
+  `sharp` gerekmedi ve eklenmedi. Kaynak görüntüler `assets/screenshots/` altında ve **servis
+  edilmiyor**; `public/projects/` altındakiler üretilmiş varyantlar.
+- **`next-env.d.ts` bu makinede build/lint/typecheck/test ile değişmiyor** — tek tek ölçüldü.
+  Değişim yalnızca `.next/dev/` kalıntısı dururken yapılan ilk gates koşusunda görüldü. Commit'li
+  hali build varyantı (`./.next/types/...`); dev varyantı (`./.next/dev/types/...`) commit'lenmez.
+  `.gitignore` kararı verilmedi.
+- **`gh` CLI PR gövdesine görsel yükleyemiyor.** Görselli PR'larda dosyaları elle sürüklemek
+  gerekiyor; şablonun görsel alanına "var ama henüz yüklenmedi" yazmak boş bırakmaktan iyi.
+- **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).
+- Ev makinesinde ilk kurulum `gh auth login` + repo-yerel credential helper gerektiriyor.
   GCM'de `fatssy` hesabı önbellekte, silinmedi.
-- **Logo'nun kaliteli SVG'si hâlâ yok**; favicon ve OG görselleri buna bağlı (#18).
-- **Hero/About metinleri, ekip biyografileri ve imza sayısının metni yazılmadı** (#15, #16, #17).
-  Placeholder konulmayacak; metin gelene kadar ilgili bölüm yayınlanmaz.
-- `pnpm create next-app` **kullanılmadı**; iskelet elle kuruldu, sürümler tam sabitli.
