@@ -52,12 +52,12 @@ export function ProjectCard({
       <div className="flex flex-col gap-6 lg:col-span-5">
         <Heading
           id={`${project.slug}-title`}
-          className="font-sans text-[20px] leading-[1.25] font-semibold tracking-[-0.02em] lg:text-[24px]"
+          className="font-sans text-display-m font-semibold lg:text-display-m-lg"
         >
           {project.name}
         </Heading>
 
-        <p className="max-w-prose font-sans text-[15px] leading-[1.6] text-text-muted lg:text-[16px]">
+        <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
           {project.summary}
         </p>
 
