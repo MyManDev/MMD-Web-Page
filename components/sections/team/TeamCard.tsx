@@ -6,110 +6,130 @@ import { BioTypewriter } from "./BioTypewriter";
 /**
  * Tek kisi karti. docs/design-spec.md §3.5
  *
- * BIYOGRAFI HOVER ILE ACILIR - ve hover TEK YOL DEGIL. Uc giris yolu birden
- * karsilaniyor:
- *   fare      group-hover
- *   klavye    group-focus-within  (karttaki GitHub linkine tab'lanınca)
- *   dokunmatik  @media (hover: none) - aciklama HER ZAMAN acik
+ * KART FOTOGRAFIN KENDISI. Kutu 4/5 oraninda ve goruntu onu tamamen kapliyor;
+ * ad ve rol altta, goruntunun uzerinde duruyor. Hover'da goruntu hayaletlesiyor
+ * ve biyografi ustunde beliriyor.
+ *
+ * KAYMA YOK, ve sebebi bu duzenin kendisi: acilan her sey MUTLAK konumlu, yani
+ * kartin yuksekligi hicbir zaman degismiyor. Onceki duzen biyografiyi akisa
+ * ekliyordu ve hover'da bolum 108px buyuyordu - Team'in altindaki her sey,
+ * footer dahil, asagi kayiyordu (uc breakpoint'te de olculdu).
+ *
+ * HOVER TEK YOL DEGIL. Uc giris yolu birden karsilaniyor:
+ *   fare        group-hover
+ *   klavye      group-focus-within - linkler durgun halde de gorunur; birine
+ *               tab'lanmak perdeyi aciyor
+ *   dokunmatik  @media (hover: none) - perde HER ZAMAN acik
  *
  * Ucuncusu sart: Tailwind v4'te `hover:` zaten `@media (hover: hover)` icinde,
- * yani dokunmatik cihazda hic tetiklenmiyor. Yalnizca hover'a baglanan bir
- * aciklama o cihazlarda ERISILEMEZ ICERIK olurdu; klavye erisimi de sert kapi
- * (architecture.md §8).
+ * yani dokunmatikte `group-hover` hic tetiklenmiyor. Yalnizca hover'a baglanan
+ * bir aciklama o cihazlarda ERISILEMEZ ICERIK olurdu (architecture.md §8).
  *
- * Aciklama DOM'DAN HIC CIKMIYOR: grid satiri 0fr'den 1fr'ye aciliyor,
- * `display: none` veya `visibility: hidden` kullanilmiyor - ekran okuyucu onu
- * her durumda okuyabilmeli. Kapali haldeyken de metin oradadir, yalnizca
- * yuksekligi sifirdir.
+ * PERDE OKUNABILIRLIK ICIN, dekorasyon icin degil. Metin bir fotografin
+ * uzerinde duruyor; perdesiz birakmak kontrasti goruntunun icerigine
+ * birakirdi - acik bir fotografta metin kaybolurdu. Perde `surface` zemini
+ * %92 opaklikla getiriyor, yani kontrast fiilen "surface uzerinde metin".
  *
- * GitHub linki ACILAN ALANIN DISINDA duruyor. Icinde olsaydi klavye ile
- * ulasilamazdi: focus'lanabilmesi icin once acilmasi, acilmasi icin de
- * focus'lanmasi gerekirdi.
- *
- * KART HOVER'DA KALKIYOR (-10px). design-spec.md §6 bunu Projects icin
- * yasakliyor ve gerekcesi orada yazili: sticky yigin ile birlikte katman
- * sirasini okunmaz hale getiriyor. Team kartlari yiginda DEGIL, o yuzden
- * gerekce burada gecerli degil. Kural §6'da bolum bazina ayrildi.
- *
- * Kalkma layout'a dokunmuyor, yani komsu kartlar kaymiyor. Tailwind v4
- * `translate-y-*` icin `transform` DEGIL `translate` ozelligini kullaniyor;
- * gecis listesi ve testi de onu okuyor (olculdu: `transform` "none" kaliyor).
- *
- * `focus-within:` grubun KENDISINE uygulaniyor, `group-focus-within:` degil -
- * ikincisi yalnizca .group'un ALT ogelerine iner ve kartin kendisi kalkmazdi.
- * Metin kalkmadan 100ms SONRA beliriyor (delay-100) - once kart hareket
- * ediyor, sonra yazi geliyor.
- *
- * BOLUMDE YESIL YOK (§5.1): hover zemini ve konumu degistiriyor, accent
+ * BOLUMDE YESIL YOK (§5.1): hover perdeyi ve konumu degistiriyor, accent
  * getirmiyor. Team'de birincil aksiyon yok, dolayisiyla accent kotasi sifir.
  */
 export function TeamCard({ member }: { member: TeamMember }) {
   return (
-    <article className="group flex h-full -translate-y-0 flex-col gap-4 rounded-card border border-border bg-surface p-[var(--spacing-card)] transition-[translate,background-color] duration-200 ease-out hover:-translate-y-2.5 hover:bg-surface-2 focus-within:-translate-y-2.5 focus-within:bg-surface-2 lg:p-[var(--spacing-card-lg)]">
-      <div className="overflow-hidden rounded-sm border border-border">
-        {/* eslint-disable-next-line @next/next/no-img-element -- olculdu, #34: next/image 5.5 KiB client JS ekliyor, statik export'ta karsiligi sifir */}
-        <img
-          src={member.photo}
-          srcSet={portraitSrcSet(member.photo)}
-          sizes="(min-width: 1024px) 351px, (min-width: 640px) calc(50vw - 36px), calc(100vw - 40px)"
-          alt={member.name}
-          width={720}
-          height={900}
-          loading="lazy"
-          decoding="async"
-          className="aspect-portrait h-full w-full object-cover"
-        />
-      </div>
-
-      <h3
-        id={`${member.slug}-name`}
-        className="font-sans text-display-m font-semibold lg:text-display-m-lg"
-      >
-        {member.name}
-      </h3>
-
-      <p className="font-mono text-mono text-text-muted uppercase">{member.role}</p>
+    <article className="group relative aspect-portrait w-full overflow-hidden rounded-card border border-border bg-surface transition-[translate] duration-200 ease-out hover:-translate-y-2.5 focus-within:-translate-y-2.5">
+      {/* eslint-disable-next-line @next/next/no-img-element -- olculdu, #34: next/image 5.5 KiB client JS ekliyor, statik export'ta karsiligi sifir */}
+      <img
+        src={member.photo}
+        srcSet={portraitSrcSet(member.photo)}
+        sizes="(min-width: 1024px) 351px, (min-width: 640px) calc(50vw - 36px), calc(100vw - 40px)"
+        alt={member.name}
+        width={720}
+        height={900}
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
 
       {/*
-        0fr -> 1fr: yuksekligi CSS'in kendisi hesapliyor, sabit bir max-height
-        tahmin edilmiyor. Tahmin edilen bir yukseklik uzun bir biyografiyi
-        keserdi ve kesildigi hicbir kapida gorunmezdi.
+        Hover perdesi: kartin tamami. Goruntu ardinda hayalet gibi kaliyor.
+        `(hover: none)` altinda bastan acik, cunku orada hover hic gelmiyor.
       */}
       <div
-        data-bio
-        className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out group-focus-within:grid-rows-[1fr] group-hover:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]"
-      >
-        <BioTypewriter text={member.bio} className="overflow-hidden text-body-s text-text-muted" />
-      </div>
+        aria-hidden="true"
+        className="absolute inset-0 bg-surface/92 opacity-0 transition-opacity duration-200 ease-out group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+      />
 
       {/*
-        Iki link de ACILAN ALANIN DISINDA. Icinde olsalardi klavye onlara hic
-        ulasamazdi: focus'lanmak icin acilmasi, acilmak icin focus'lanmasi
-        gerekirdi.
+        Metin panelinin zemini GRADYAN DEGIL, olculebilir bir opaklik - ve bu
+        olculerek secildi. Once altta yariya kadar bir gradyan vardi; metnin
+        durdugu yerde perde ~%54'e dusuyordu ve BEMBEYAZ bir fotografta rol
+        yazisi 1.84:1 veriyordu (gereken 4.5). Mock fotograflar koyu oldugu icin
+        sorun GORUNMUYORDU - sahte veriyle iyi gorunen bir hata.
 
-        Erisilebilir ad yalnizca "GitHub" olsaydi sayfada ayni adi tasiyan uc
-        link olurdu ve ekran okuyucu hangisinin kime ait oldugunu soyleyemezdi.
-        aria-describedby kartin adini baglayarak farki kuruyor.
+        %92'de en kotu durum (beyaz fotograf) olculdu: ad 12.83:1, rol ve
+        biyografi 6.83:1. Yani kontrast artik fotografin icerigine bagli degil.
+
+        Gecis yumusakligi panelin USTUNDEKI seride birakildi (bottom-full).
       */}
-      <ul className="mt-auto flex flex-wrap gap-x-5 gap-y-2">
-        {[
-          { label: "GitHub", href: member.githubUrl },
-          { label: "LinkedIn", href: member.linkedinUrl },
-        ].map((link) => (
-          <li key={link.label}>
-            <a
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-describedby={`${member.slug}-name`}
-              className="inline-flex items-center gap-2 font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
-            >
-              {link.label}
-              <ExternalIcon className="h-3 w-3" />
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-surface/92 p-[var(--spacing-card)]">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-full h-20 bg-gradient-to-t from-surface/92 to-transparent"
+        />
+        <h3
+          id={`${member.slug}-name`}
+          className="font-sans text-display-m font-semibold lg:text-display-m-lg"
+        >
+          {member.name}
+        </h3>
+
+        <p className="font-mono text-mono text-text-muted uppercase">{member.role}</p>
+
+        {/*
+          Biyografi DARALIYOR (0fr -> 1fr), yalnizca solmakla kalmiyor: gizliyken
+          yer isgal etseydi ad kartin ortasinda asili kalirdi ve altinda bos bir
+          alan olurdu (olculdu ve gorunuyordu). Kart yuksekligi yine sabit - blok
+          mutlak konumlu ve alta cakili, yani buyume disari tasmiyor.
+        */}
+        <div
+          data-bio
+          className="grid grid-rows-[0fr] transition-[grid-template-rows,opacity] delay-100 duration-200 ease-out group-focus-within:grid-rows-[1fr] group-hover:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]"
+        >
+          <BioTypewriter
+            text={member.bio}
+            className="overflow-hidden text-body-s text-text-muted"
+          />
+        </div>
+
+        {/*
+          Linkler DARALAN ALANIN DISINDA ve durgun halde de gorunur. Icinde
+          olsalardi sifir yukseklikli bir kutunun icinde kalirlardi; odaklanmak
+          teknik olarak mumkun ama kullanici odaklandigi seyin nerede oldugunu
+          goremezdi.
+
+          Erisilebilir adlari tek basina "GitHub" olsaydi sayfada ayni adi
+          tasiyan alti link olurdu; aria-describedby her birini kartin adina
+          bagliyor.
+        */}
+        <ul className="flex flex-wrap gap-x-5 gap-y-2">
+          {[
+            { label: "GitHub", href: member.githubUrl },
+            { label: "LinkedIn", href: member.linkedinUrl },
+          ].map((link) => (
+            <li key={link.label}>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-describedby={`${member.slug}-name`}
+                className="inline-flex items-center gap-2 font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
+              >
+                {link.label}
+                <ExternalIcon className="h-3 w-3" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </article>
   );
 }

@@ -2,38 +2,39 @@ import type { TeamMember } from "./schema";
 
 /**
  * ================================================================
- *  MOCK VERI - BU DOSYA `main`'E MERGE EDILMEZ.
+ *  BU DOSYA `main`'E MERGE EDILMEZ - HENUZ.
  * ================================================================
  *
- * Bolumun tasarimi, hover davranisi ve testleri gorulebilsin diye gecici
- * veriyle dolduruldu. Gercek biyografiler (#16) ve gercek fotograflar gelene
- * kadar bu dal acik kalir.
+ * Adlar, roller, biyografiler ve linkler GERCEK. Biyografiler uc CV'den
+ * cikarildi, ovgu sifati eklenmedi ve dogrulanamayan hicbir sey yazilmadi.
+ * Yine de ONAY BEKLIYORLAR (#16): kisinin kendi metnini gormeden yayina
+ * girmez.
  *
- * Sahte olan her metin "MOCK" diye BAGIRIYOR ve fotograflarin uzerinde de
- * "MOCK" yazili. Bu kasitli: makul gorunen bir sahte metin, hatadan kotudur
- * cunku incelemeden sagi kalir (architecture.md §3). Gozden kacip yayina
- * giderse rezil olsun, inandirici olmasin.
+ * MOCK OLAN TEK SEY FOTOGRAFLAR. assets/people/ altindaki uc dosya uzerinde
+ * "MOCK" yazili; gercek fotograflar gelince degistirilecek. Sahtenin bagirmasi
+ * kasitli - makul gorunen bir sahte, hatadan kotudur cunku incelemeden sag
+ * kalir (architecture.md §3).
  *
- * Gercek olan tek sey isimler ve bilinen GitHub adresleri - onlar repoda
- * zaten kayitli (CODEOWNERS, working-agreement.md §1). Ertugrul'un soyadi ve
- * GitHub adresi BILINMIYOR, o yuzden uydurulmadi.
+ * Uzunluklar olculdu, secilmedi: 26-28 kelime, her kartta 5 satir. 30'u gecen
+ * bir biyografi kartlari birbirinden farkli yukseklige goturuyor
+ * (design-spec.md §3.5).
  */
 export const team: TeamMember[] = [
   {
     slug: "ibrahim-ersan-ozdemir",
     name: "İbrahim Ersan Özdemir",
-    role: "MOCK — rol yazilmadi (#16)",
-    bio: "MOCK — biyografi yazilmadi (#16). Bu metin yayina girmez; kart duzeni ve hover davranisi gorulebilsin diye duruyor.",
+    role: "Full-stack & applied AI",
+    bio: "Computer engineering graduate. React and React Native on the surface; ANNs, LLMs and retrieval pipelines underneath — RAG with local inference, computer vision, and machine learning on real datasets.",
     githubUrl: "https://github.com/SpeedyV5",
-    linkedinUrl: "https://www.linkedin.com/in/ibrahim-ersan-özdemir15",
+    linkedinUrl: "https://www.linkedin.com/in/ibrahim-ersan-ozdemir15",
     photo: "/people/ibrahim-ersan-ozdemir-720.webp",
     order: 0,
   },
   {
     slug: "tunay-aslan",
     name: "Tunay Aslan",
-    role: "MOCK — rol yazilmadi (#16)",
-    bio: "MOCK — biyografi yazilmadi (#16). Bu metin yayina girmez; kart duzeni ve hover davranisi gorulebilsin diye duruyor.",
+    role: "Backend & security engineering",
+    bio: "Computer engineering student at Boğaziçi. Builds systems that watch other systems: a secret-scanning pipeline across an organisation's repositories, and a routing engine over a hundred thousand hosts.",
     githubUrl: "https://github.com/tunayaslan",
     linkedinUrl: "https://www.linkedin.com/in/halis-tunay-aslan/",
     photo: "/people/tunay-aslan-720.webp",
@@ -42,10 +43,9 @@ export const team: TeamMember[] = [
   {
     slug: "ertugrul-soydal",
     name: "Ertuğrul Soydal",
-    role: "MOCK — rol yazilmadi (#16)",
-    bio: "MOCK — biyografi yazilmadi (#16). Bu metin yayina girmez; kart duzeni ve hover davranisi gorulebilsin diye duruyor.",
+    role: "Optimisation & modelling",
+    bio: "Computer science and industrial engineering, double major, mathematics minor at Sabancı. Optimisation and modelling: Gurobi, statistical analysis, and the maths under the models. Also taught calculus.",
     githubUrl: "https://github.com/ErtugrulS32175",
-    // MOCK - LinkedIn adresi CV'de yok ve uydurulmadi; gercegi beklenıyor.
     linkedinUrl: "https://www.linkedin.com/in/ertuğrul-soydal-32b94a256/",
     photo: "/people/ertugrul-soydal-720.webp",
     order: 2,

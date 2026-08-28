@@ -83,6 +83,8 @@ test("aciklama kapaliyken bile DOM'da ve okunabilir durumda", async ({ page }) =
 test("hoversiz cihazda aciklama HER ZAMAN acik, hoverli cihazda kapali baslar", async ({
   page,
 }) => {
+  // Daralan sey yukseklik: gizliyken yer isgal etseydi ad kartin ortasinda
+  // asili kalirdi. Perde ayri bir katman ve o opacity ile calisiyor.
   const rows = await page
     .locator(`${CARD} [data-bio]`)
     .first()
@@ -112,10 +114,8 @@ test("fare hover'i aciklamayi aciyor ve metni gorunur kiliyor", async ({ page })
     .poll(() => row.evaluate((el) => parseFloat(getComputedStyle(el).gridTemplateRows)))
     .toBeGreaterThan(0);
 
-  // Satirin acilmasi yetmez: metin ayrica DAKTILO ile yaziliyor. Yazilan harf
-  // sayisi metnin tamamina ulasmali - yarim kalan bir animasyon da gecerdi.
-  // Olculen sey son harfin GORUNUR olmasi - yarim kalan bir animasyon da
-  // "acildi" sayilirdi.
+  // Perdenin acilmasi yetmez: metin ayrica DAKTILO ile yaziliyor. Olculen sey
+  // son harfin GORUNUR olmasi - yarim kalan bir animasyon da "acildi" sayilirdi.
   const lastCharacter = row.locator("p span").last();
   await expect
     .poll(() => lastCharacter.evaluate((el) => Number(getComputedStyle(el).opacity)), {
@@ -185,23 +185,30 @@ test("klavye focus'u aciklamayi aciyor - hover tek yol degil", async ({ page }) 
 });
 
 /**
- * Linkin acilan alanin DISINDA durmasi sart: icinde olsaydi klavyeyle
- * ulasilamazdi - focus'lanmak icin acilmasi, acilmak icin focus'lanmasi
- * gerekirdi.
+ * Linkler perdenin ICINDE, ve bunun calismasi `opacity: 0`'in odaklanmayi
+ * engellememesine bagli. `display: none` olsaydi linkler tab sirasindan
+ * duserdi ve klavye onlara HIC ulasamazdi - focus'lanmak icin perdenin
+ * acilmasi, acilmasi icin focus'lanmasi gerekirdi.
+ *
+ * Olculen sey tam olarak bu: link odaklanabiliyor mu, ve odaklaninca gorunur
+ * hale geliyor mu.
  */
-test("her kartta iki link var ve ikisi de acilan alanin disinda", async ({ page }) => {
+test("her kartta iki link var, ikisi de odaklanabilir ve odaklaninca gorunuyor", async ({
+  page,
+}) => {
   const card = page.locator(CARD).first();
   const links = card.getByRole("link");
   await expect(links).toHaveCount(2);
 
+  const reveal = card.locator("[data-bio]");
   const count = await links.count();
   for (let i = 0; i < count; i += 1) {
     const link = links.nth(i);
-    // Icinde olsaydi klavye ulasamazdi: focus'lanmak icin acilmasi, acilmak
-    // icin focus'lanmasi gerekirdi.
-    expect(await link.evaluate((el) => el.closest("[data-bio]") !== null)).toBe(false);
     await link.focus();
     await expect(link).toBeFocused();
+    await expect
+      .poll(() => reveal.evaluate((el) => parseFloat(getComputedStyle(el).gridTemplateRows)))
+      .toBeGreaterThan(0);
   }
 });
 
@@ -267,6 +274,35 @@ test("bolumde accent renk kullanilmiyor - hover'da bile", async ({ page }) => {
 
   await page.locator(CARD).first().hover();
   expect(await usesAccent()).toBe(false);
+});
+
+/**
+ * Metin bir FOTOGRAFIN uzerinde duruyor, yani kontrast fotografin icerigine
+ * baglanamaz: acik bir fotografta ad ve rol okunmaz olurdu. Panelin zemini
+ * yeterince opak oldugu surece kontrast fotograftan BAGIMSIZ kaliyor.
+ *
+ * Olculen sey opakligin kendisi. Gercek fotograflar geldiginde bu test,
+ * birinin acik cikmasi durumunda da gecerli kalir - ki mock fotograflar koyu
+ * oldugu icin goz bunu yakalamiyordu.
+ */
+test("ad ve rolun zemini fotograftan bagimsiz okunabilir", async ({ page }) => {
+  const panel = page.locator(`${CARD} h3`).first();
+
+  const alpha = await panel.evaluate((el) => {
+    const box = el.closest("div")!;
+    const value = getComputedStyle(box).backgroundColor;
+    // Tailwind v4 opakligi color-mix ile uretiyor ve tarayici bunu
+    // `oklab(... / 0.92)` diye geri veriyor - `rgba(...)` degil (olculdu).
+    // Alfa hangi renk uzayinda olursa olsun egik cizgiden sonra geliyor;
+    // eski rgba() bicimi icin de dorduncu bilesene dusuyoruz.
+    const slash = value.split("/")[1];
+    if (slash) return Number.parseFloat(slash);
+    const parts = value.replace(/[^0-9.,]/g, "").split(",");
+    return parts.length === 4 ? Number(parts[3]) : 1;
+  });
+
+  // %90 altinda bembeyaz bir fotograf uzerinde rol yazisi 4.5:1'i gecemiyor.
+  expect(alpha).toBeGreaterThanOrEqual(0.9);
 });
 
 test("mobilde tek kolon, sm'de iki, lg'de uc", async ({ page }, testInfo) => {

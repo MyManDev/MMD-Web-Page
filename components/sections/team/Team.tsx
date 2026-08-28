@@ -42,7 +42,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
           */}
           <ul data-cards className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {members.map((member) => (
-              <li key={member.slug} className="flex">
+              <li key={member.slug}>
                 <TeamCard member={member} />
               </li>
             ))}
