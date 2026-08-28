@@ -38,12 +38,12 @@ export const team: TeamMember[] = [
     order: 1,
   },
   {
-    slug: "ertugrul",
-    name: "Ertuğrul",
+    slug: "ertugrul-soydal",
+    name: "Ertuğrul Soydal",
     role: "MOCK — rol yazilmadi (#16)",
-    bio: "MOCK — biyografi yazilmadi (#16). Soyadi ve GitHub adresi de bilinmiyor; uydurulmadi.",
+    bio: "MOCK — biyografi yazilmadi (#16). GitHub adresi bilinmiyor; uydurulmadi.",
     githubUrl: "https://github.com/MyManDev",
-    photo: "/people/ertugrul-720.webp",
+    photo: "/people/ertugrul-soydal-720.webp",
     order: 2,
   },
 ];
