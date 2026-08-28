@@ -29,6 +29,12 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(site.canonicalUrl),
   title: site.wordmark,
+  /**
+   * Kanonik adres marka metni DEGIL, bir adres - architecture.md §7'de
+   * karara baglandi ve content/site.ts'te duruyor. "/" veriliyor cunku
+   * metadataBase onu mutlak adrese cevirir; adres burada ikinci kez yazilmaz.
+   */
+  alternates: { canonical: "/" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
