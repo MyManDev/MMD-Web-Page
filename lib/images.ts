@@ -9,7 +9,7 @@ import widthsFile from "./screenshot-widths.json";
  * srcset baska bir genislikten bahsedemez.
  *
  * Degerler olculdu, secilmedi. lg ustunde gorsel kutusu 12 kolonluk izgaranin
- * 7 kolonu: (1180 - 64 - 11*32) / 12 * 7 + 6*32 = 638px. Yani 1x icin 720,
+ * 7 kolonu: (1320 - 64 - 11*32) / 12 * 7 + 6*32 = 717px. Yani 1x icin 720,
  * 2x icin 1440 yetiyor; 390px'lik bir telefonda 3x bile 1050px istiyor ve
  * 1440 onu da karsiliyor. Kaynak 2360 piksel genisliginde ve hicbir cihazin
  * ihtiyaci degil - servis edilmiyor, assets/screenshots/ altinda kaynak olarak
