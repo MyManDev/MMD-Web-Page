@@ -63,12 +63,12 @@ export function TeamCard({ member }: { member: TeamMember }) {
 
       <h3
         id={`${member.slug}-name`}
-        className="font-sans text-[20px] leading-[1.25] font-semibold tracking-[-0.02em] lg:text-[24px]"
+        className="font-sans text-display-m font-semibold lg:text-display-m-lg"
       >
         {member.name}
       </h3>
 
-      <p className="font-mono text-xs tracking-[0.08em] text-text-muted uppercase">{member.role}</p>
+      <p className="font-mono text-mono text-text-muted uppercase">{member.role}</p>
 
       {/*
         0fr -> 1fr: yuksekligi CSS'in kendisi hesapliyor, sabit bir max-height
@@ -79,10 +79,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
         data-bio
         className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out group-focus-within:grid-rows-[1fr] group-hover:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]"
       >
-        <BioTypewriter
-          text={member.bio}
-          className="overflow-hidden text-[14px] leading-[1.55] text-text-muted"
-        />
+        <BioTypewriter text={member.bio} className="overflow-hidden text-body-s text-text-muted" />
       </div>
 
       <a
@@ -90,7 +87,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-describedby={`${member.slug}-name`}
-        className="mt-auto inline-flex items-center gap-2 self-start font-mono text-xs tracking-[0.08em] text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
+        className="mt-auto inline-flex items-center gap-2 self-start font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
       >
         GitHub
         <ExternalIcon className="h-3 w-3" />
