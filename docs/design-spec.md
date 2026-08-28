@@ -308,16 +308,25 @@ nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklen
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
 aynı sınıf hatadır.
 
-| Etkileşim                     | Süre  | Özellik                             |
-| ----------------------------- | ----- | ----------------------------------- |
-| Button hover / active         | 150ms | `background-color`, `border-color`  |
-| NavLink hover ve aktif geçişi | 150ms | `color`                             |
-| Kart hover                    | 200ms | `border-color`, `background-color`  |
-| Mobil menü açılış/kapanış     | 200ms | `opacity` + `transform: translateY` |
-| Anchor scroll                 | —     | `scroll-behavior: smooth` (CSS)     |
+| Etkileşim                     | Süre           | Özellik                                   |
+| ----------------------------- | -------------- | ----------------------------------------- |
+| Button hover / active         | 150ms          | `background-color`, `border-color`        |
+| NavLink hover ve aktif geçişi | 150ms          | `color`                                   |
+| Kart hover                    | 200ms          | `border-color`, `background-color`        |
+| Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`       |
+| Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)           |
+| Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)` |
 
-`transform` yalnızca mobil menüde. Kartlarda hover'da büyüme/kalkma **yok** — sticky yığınla
-birlikte katman sırasını okunmaz hale getiriyor.
+**Bölüm girişi** `animation-timeline: view()`, `animation-range: entry 0% cover 20%`. Süre yok:
+ilerlemeyi scroll konumu belirliyor. Erken bitmesi kasıtlı — okumaya başlanan bir metin hâlâ
+hareket ediyorsa hareket okunurluğun önüne geçiyor. Kural `@supports` içinde: desteği olmayan
+tarayıcıda hiç uygulanmıyor ve öğe son halinde duruyor.
+
+Hareket **bölümün zeminine değil içeriğine** uygulanır. Zemin viewport genişliğinde (§1) ve onu
+soldurmak bölümün kendisini yanıp sönüyormuş gibi gösterir.
+
+`transform` mobil menüde ve bölüm girişinde. Kartlarda hover'da büyüme/kalkma **yok** — sticky
+yığınla birlikte katman sırasını okunmaz hale getiriyor.
 
 ### 6.1 `prefers-reduced-motion: reduce`
 
@@ -328,9 +337,14 @@ birlikte katman sırasını okunmaz hale getiriyor.
   çünkü bazı tarayıcılar `transitionend` beklerken 0'da olayı hiç üretmiyor.)
 - Projects yığını `position: static` — düz liste.
 - Mobil menü anında açılır/kapanır; `opacity` ve `transform` geçişi uygulanmaz.
-- Scroll'a bağlı animasyonlar **hiç bağlanmaz**: `animation-timeline: none`. Süreyi kısaltmak
+- Scroll'a bağlı animasyonlar **tamamen kaldırılır**: `animation-name: none`. Süreyi kısaltmak
   yetmez, çünkü zaman çizelgesi süreye değil scroll konumuna bağlı — öğe yine scroll'la birlikte
-  hareket ederdi. Öğe son halinde durur.
+  hareket ederdi. Öğe animasyonsuz doğal haliyle, yani hareketin bittiği halde render edilir.
+
+  **`animation-timeline: none` değil**, ve bu ölçüldü: zaman çizelgesi olmayan bir animasyonun
+  geçerli zamanı çözümlenemiyor ve `fill-mode: both` o durumda `from` karesini uyguluyor. Öğe
+  `opacity: 0`'da donar — yani reduced-motion açık bir kullanıcı bölümü hiç görmez. Sessizce.
+  E2E bu hatayı bir kez yakaladı ve o yüzden duruyor.
 
 Kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`), her component'te
 tekrar edilmez.

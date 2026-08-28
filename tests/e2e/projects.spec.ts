@@ -117,6 +117,72 @@ test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
   expect(response.status(), `${testInfo.project.name}: kaynak gorsel yayinlanmis`).toBe(404);
 });
 
+/**
+ * Bolum girisi. design-spec.md §6 ve §6.1
+ *
+ * Hareketin kendisi olculmuyor - hangi karede oldugu scroll'a bagli ve testte
+ * kirilgan olurdu. Olculen sey SOZLESME: zaman cizelgesi scroll'a bagli mi, ve
+ * hareket calismadigi her durumda icerik GORUNUR mu.
+ */
+test.describe("bolum girisi", () => {
+  const REVEAL = `${SECTION} .reveal-on-enter`;
+
+  test("icerige bagli, zeminin kendisine degil", async ({ page }) => {
+    await expect(page.locator(REVEAL)).toHaveCount(1);
+
+    // Zemin animasyonun disinda kalmali: soldurulan sey bolumun kendisi degil.
+    const sectionIsTarget = await page
+      .locator(SECTION)
+      .evaluate((el) => el.classList.contains("reveal-on-enter"));
+    expect(sectionIsTarget).toBe(false);
+  });
+
+  test("zaman cizelgesi scroll'a bagli - sure degil", async ({ page }) => {
+    const timeline = await page
+      .locator(REVEAL)
+      .evaluate((el) => getComputedStyle(el).animationTimeline);
+    expect(timeline).toContain("view");
+  });
+
+  /**
+   * En onemli test: hareket calismadiginda icerik GORUNMEZ kalmamali.
+   * opacity: 0 ile baslayan bir animasyon, calismadigi her yerde bolumu
+   * silmis olur - ve bu sessizce olur.
+   */
+  test("reduced-motion altinda icerik tam gorunur", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const reveal = page.locator(REVEAL);
+    await reveal.scrollIntoViewIfNeeded();
+
+    const style = await reveal.evaluate((el) => {
+      const computed = getComputedStyle(el);
+      return {
+        name: computed.animationName,
+        opacity: computed.opacity,
+        transform: computed.transform,
+      };
+    });
+
+    // Animasyon tamamen kaldirildi. `animation-timeline: none` ise oge'yi
+    // opacity: 0'da dondururdu - zaman cizelgesi yoksa `both` fill `from`
+    // karesini uyguluyor. Bu test o hatayi bir kez yakaladi; ondan duruyor.
+    expect(style.name).toBe("none");
+    expect(Number(style.opacity)).toBe(1);
+    expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(style.transform);
+  });
+
+  test("scroll edildiginde icerik tam gorunur hale geliyor", async ({ page }) => {
+    const reveal = page.locator(REVEAL);
+    await reveal.scrollIntoViewIfNeeded();
+    // Bolum tamamen gecilene kadar scroll: animasyon araligi bitmis olmali.
+    await page.mouse.wheel(0, 1200);
+
+    await expect.poll(() => reveal.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+  });
+});
+
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {
   const box = await page.locator(`${SECTION} img`).boundingBox();
   expect(box).not.toBeNull();

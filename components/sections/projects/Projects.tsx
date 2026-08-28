@@ -32,7 +32,16 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
   return (
     <section id={section.id} aria-labelledby={headingId} className="bg-surface">
       <Container>
-        <div className="flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
+        {/*
+          Bolum girisi ICERIGE bagli, section'a degil: zemin viewport genisliginde
+          ve onu soldurmak bolumun kendisini yanip sonuyormus gibi gosterirdi.
+          Kural app/globals.css'te tek yerde; burada yalnizca uygulaniyor.
+
+          Yigin uyandiginda (§3.3.2) dogrulanacak: animasyon suresince buradaki
+          transform bir kapsayici blok yaratiyor ve sticky kartlarin ona gore
+          konumlanmasi kontrol edilmeli. Bugun total === 1, sticky hic uygulanmiyor.
+        */}
+        <div className="reveal-on-enter flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
           <SectionLabel number={section.number}>{section.label}</SectionLabel>
 
           {stacked ? (

@@ -38,6 +38,42 @@ section[id] {
   outline-offset: 2px;
 }
 
+/* Zaffiro hareket katmani - bolum girisi. architecture.md §4.4, design-spec.md §6
+
+   Scroll'a bagli, saf CSS: zaman cizelgesini tarayici yurutuyor, sayfaya 0 KiB
+   JS ekleniyor ve CLAUDE.md kural 3 ("scroll listener yazma") degismeden duruyor.
+
+   @supports SART: destegi olmayan tarayicida kural HIC uygulanmiyor ve oge dogal
+   halinde - yani son halinde - duruyor. Animasyonu kosulsuz yazip opacity: 0 ile
+   baslamak, destegin olmadigi yerde icerigi gorunmez birakirdi. Hareket ustune
+   binen bir katman, tasiyici degil.
+
+   Sayfa yuklenirken giris animasyonu yasagiyla (§4.4) celismiyor: bu hareket
+   yukleme anina degil kullanicinin scroll'una bagli. Ilk ekranda duran bir bolum
+   zaten "entry" araligini gecmis sayilir ve son halinde acilir. */
+@keyframes reveal-on-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .reveal-on-enter {
+    animation: reveal-on-enter linear both;
+    animation-timeline: view();
+    /* Bolum viewport'a girmeye basladiginda basliyor, %20 kaplamisken bitiyor.
+       Erken bitmesi kasitli: okumaya baslanan bir metin hala hareket ediyorsa
+       hareket okunurlugun onune geciyor. */
+    animation-range: entry 0% cover 20%;
+  }
+}
+
 /* prefers-reduced-motion tek yerde ele alinir, her component'te tekrar edilmez.
    architecture.md §4.4 / design-spec.md §6.1 */
 @media (prefers-reduced-motion: reduce) {
@@ -54,5 +90,20 @@ section[id] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+
+    /* Scroll'a bagli animasyon SUREYE degil scroll konumuna bagli; yukaridaki
+       0.01ms onu durdurmuyor, oge yine scroll'la birlikte hareket ederdi.
+       Bu yuzden animasyon tamamen kaldiriliyor ve oge dogal haliyle - yani
+       hareketin bittigi halle - render ediliyor.
+
+       `animation-timeline: none` DEGIL, ve bu olculdu: zaman cizelgesi olmayan
+       bir animasyonun gecerli zamani cozumlenemiyor, `fill-mode: both` de o
+       durumda `from` karesini uyguluyor. Oge opacity: 0'da doniyor - yani
+       reduced-motion acik bir kullanici bolumu HIC gormuyor. Testi
+       tests/e2e/projects.spec.ts'te.
+
+       !important sart: .reveal-on-enter (0,1,0) bu evrensel seciciden (0,0,0)
+       daha guclu, yani sira degil oncelik belirliyor. design-spec.md §6.1 */
+    animation-name: none !important;
   }
 }
