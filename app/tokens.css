@@ -70,7 +70,11 @@
 
   --spacing-section: 80px;
   --spacing-section-lg: 128px;
-  --container-content: 1180px;
+  /* Icerik genisligi. 1180'den 1320'ye cikti: 1440'lik bir ekranda iki yanda
+     130'ar piksel bosluk kaliyordu ve sayfa dar duruyordu. 1320'de kenarlar
+     60'ar piksele iniyor, daha buyuk ekranlarda satir uzunlugu hala kontrollu.
+     architecture.md §4.3 ve §9 */
+  --container-content: 1320px;
 
   /* docs/design-spec.md'de onaylanan olculer. Birden fazla yerde kullanilan
      veya breakpoint'e gore degisen her olcu burada yasar. */

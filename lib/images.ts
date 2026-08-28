@@ -8,10 +8,19 @@ import kinds from "./image-widths.json";
  * yerine iki taraf da ayni dosyayi okuyor - dosyalar bir genislikte uretilip
  * srcset baska bir genislikten bahsedemez.
  *
- * Degerler olculdu, secilmedi:
- *   screenshot  lg ustunde 12 kolonun 7'si = 638px -> 1x icin 720, 2x icin 1440
- *   portrait    lg ustunde 3 kolonun 1'i  = 350px -> 1x icin 360, 2x icin 720
- * Her genislik kendi en-boy oranina tam bolunuyor; yarim piksel yok.
+ * Degerler olculdu, secilmedi. Kapsayici 1320px, yatay padding 32px:
+ *
+ *   screenshot  12 kolonun 7'si = (1320-64-11*32)/12*7 + 6*32 = 717px
+ *               -> 1x icin 720, 2x icin 1440 yetiyor. 390px'lik bir telefonda
+ *                  3x bile 1050px istiyor ve 1440 onu da karsiliyor.
+ *   portrait    3 kolonun 1'i   = (1320-64-2*32)/3        = 397px
+ *               -> 1x icin 400, 2x icin 800.
+ *
+ * Her genislik kendi en-boy oranina tam bolunuyor; yarim piksel yok
+ * (720x450, 1440x900, 400x600, 800x1200).
+ *
+ * Kaynaklar servis EDILMIYOR: assets/ altinda duruyorlar ve hicbir cihazin
+ * ihtiyaci olmayan boyutlardalar.
  */
 export const SCREENSHOT_WIDTHS: readonly number[] = kinds.screenshot.widths;
 export const PORTRAIT_WIDTHS: readonly number[] = kinds.portrait.widths;

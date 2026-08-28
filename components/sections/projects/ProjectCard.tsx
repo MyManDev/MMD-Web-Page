@@ -96,8 +96,9 @@ export function ProjectCard({
         ortak tek kayittan geliyor.
 
         sizes olculdu: lg ustunde gorsel 12 kolonun 7'si, yani kapsayici tam
-        genisligindeyken 638px. 56vw bunu her zaman bir parca ASIYOR ve asmasi
-        kasitli - eksik tahmin bulanik goruntu demek, fazla tahmin birkac KB.
+        genisligindeyken 717px (kapsayici 1320'ye cikinca 638'den yukseldi).
+        56vw bunu her zaman bir parca ASIYOR ve asmasi kasitli - eksik tahmin
+        bulanik goruntu demek, fazla tahmin birkac KB.
 
         width/height artik en buyuk varyantin GERCEK olcusu (1440x900) ve ayni
         zamanda tasarimin 16/10 orani. Yeri fiilen ayiran sey CSS aspect kutusu;
@@ -110,7 +111,7 @@ export function ProjectCard({
         <img
           src={project.screenshot}
           srcSet={screenshotSrcSet(project.screenshot)}
-          sizes="(min-width: 1244px) 638px, (min-width: 1024px) 56vw, calc(100vw - 40px)"
+          sizes="(min-width: 1384px) 720px, (min-width: 1024px) 56vw, calc(100vw - 40px)"
           alt={`${project.name} screenshot`}
           width={1440}
           height={900}

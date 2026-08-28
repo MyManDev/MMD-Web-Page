@@ -154,7 +154,7 @@ karar verilmezse **commit'li seçim Plex'tir**; belirsizlik kalmaz.
 
 | Token                     | Değer                                          |
 | ------------------------- | ---------------------------------------------- |
-| İçerik genişliği          | `max-width: 1180px`, yatay padding 20px / 32px |
+| İçerik genişliği          | `max-width: 1320px`, yatay padding 20px / 32px |
 | Bölüm arası dikey boşluk  | 80px / 128px                                   |
 | Kart radius               | 14px                                           |
 | Küçük radius (tag, buton) | 8px                                            |
@@ -315,7 +315,7 @@ değil, yapının kendisi sağlıyor.
 
   --spacing-section: 80px;
   --spacing-section-lg: 128px;
-  --container-content: 1180px;
+  --container-content: 1320px;
 }
 ```
 
@@ -472,6 +472,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | İçerik dosyaları V1'de | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                       | §5     |
 | Bölüm sırası           | 03 Who we are (kolektif) → 04 Team (kişiler); genelden tekile             | §2     |
 | Marka rengi            | Logo `#0D9488`; accent `#14B8A6` — logo rengi kontrast kapısını düşürüyor | §4.1   |
+| İçerik genişliği       | 1180px → 1320px; 1440'lık ekranda kenarlar 130'ar pikselden 60'a iniyor   | §4.3   |
 | Görsel yüzeyi          | `next/image` değil düz `<img>` + elle `srcset`; ölçülmüş 5.5 KiB          | §6     |
 | Görsel pipeline        | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor       | §6     |
 | Etkileşim dili         | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor              | §4.4   |
