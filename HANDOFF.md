@@ -49,10 +49,6 @@ da kalmadı — amblem o yeri dolduruyor.
 - **#19 Cloudflare depodan yapılamaz** — hesap ve DNS erişimi gerekiyor. **API token'ı gerekmiyor:**
   dashboard'dan "Connect to Git" GitHub App yetkisi kullanılıyor. Token yalnızca CI'dan deploy
   edilirse gerekir. Token sohbete yapıştırılmaz; gerekirse arayüzden uygulanır.
-- **Proje açıklamasının bir yeri doğrulanmayı bekliyor.** `content/projects.ts`'teki metin
-  uydurulmadı; her cümlesi uygulamanın kendi ekranındaki bir olguya dayanıyor ve dayanaklar dosyada
-  tek tek yazılı. Tek **çıkarım** "Fantasy Premier League" ibaresi: ekrandaki `Gameweek`,
-  `Transfer hit points` ve £100.0m bütçeden türetildi, doğrudan doğrulanmadı.
 
 ## Alınan kararlar
 
