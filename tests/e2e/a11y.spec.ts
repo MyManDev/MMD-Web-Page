@@ -72,6 +72,17 @@ test("bolumlerde 01-04 numarasi kalmadi", async ({ page }) => {
     [...document.querySelectorAll("main section")].flatMap((section) =>
       [...section.querySelectorAll("*")]
         .filter((el) => el.children.length === 0 && /^0[1-4]$/.test((el.textContent ?? "").trim()))
+        /*
+          Karusel icindeki sayac BOLUM NUMARASI DEGIL, konum gostergesi -
+          "kacinci prensipteyim" sorusunu cevapliyor ve kaldirilan sey o degildi.
+          #58'in gerekcesi "etiket bilgi katmadigi yerde durmaz"; burada bilgi
+          katiyor, cunku gezinen kullanici konumu baska turlu bilemez.
+
+          Dislama SECICIYE degil ROLE bagli: `aria-roledescription="carousel"`
+          kalkarsa sayac yeniden kapsama giriyor. Sinif adiyla dislasaydim
+          yeniden adlandirma testi sessizce kor birakirdi.
+        */
+        .filter((el) => el.closest('[aria-roledescription="carousel"]') === null)
         .map((el) => `${section.id}: ${el.textContent?.trim()}`),
     ),
   );
