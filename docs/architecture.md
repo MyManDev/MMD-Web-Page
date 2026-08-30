@@ -512,3 +512,5 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Navbar zemini          | Ayrı bar rengi yok — blur + tint; desteklenmiyorsa **dolu** zemine düşer  | §4.1   |
 | Hero sağ kolonu        | Wordmark değil **marka amblemi**; zemini ayrılmış PNG, rengi token'dan    | §4.1   |
 | Proje açıklaması       | Şemada **zorunlu** alan; tek satırla proje yayınlanmaz                    | §5     |
+| Logo SVG               | Vektör kaynağı yok; PNG'den türetildi, sapması ölçülü (0.098px)           | §6     |
+| OG kartı               | Siteden üretiliyor — renk ve font ikinci kez yazılmıyor                   | §6     |
