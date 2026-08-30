@@ -136,7 +136,7 @@ işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Kl
 | Görsel      | metnin **altında** | altında | sağda, dikey ortalı           |
 | Hizalama    | sola               | sola    | sola                          |
 
-Sıra: `SectionLabel 01` → başlık (Display XL) → alt cümle (Body) → iki aksiyon
+Sıra: başlık (Display XL) → alt cümle (Body) → iki aksiyon
 (`primary` Projects CTA + `ghost` About CTA).
 
 - Başlık metni: `site.hero.title` — #15'te yazıldı
@@ -214,8 +214,10 @@ scroll listener yok.
 
 Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor. Genelden tekile.
 
-Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `SectionLabel 03` → başlık
-(Display L) → manifesto (Body) → çalışma prensipleri listesi (Body S).
+Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. Başlık (Display L) → manifesto
+(Body) → çalışma prensipleri listesi (Body S).
+
+**`SectionLabel` yok** — başlık zaten "Who we are", etiket onu tekrar ederdi (§3.5).
 
 - Manifesto ve prensipler: `site.whoWeAre` — #15'te yazıldı
 
@@ -263,7 +265,23 @@ bırakıyor; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tabl
 uzun bir şerit üretirdi. Kolon sayısı **içerikten değil breakpoint'ten** gelir; kişi sayısı
 değişirse bu tablo yeniden düşünülür, `grid-cols` içeriğe göre hesaplanmaz.
 
-Kart içi: fotoğraf → ad (Display M) → rol (mono, `text-muted`) → biyografi (Body S) → link(ler).
+**`SectionLabel` yok.** "04 TEAM" etiketi ile "Team" başlığı aynı kelimeyi iki kez söylüyordu;
+numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket duruyor, çünkü orada
+başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerde değil **bilgi kattığı
+yerde** durur.
+
+**Kart fotoğrafın kendisidir.** Kutu **5/8** oranında (token: `--aspect-portrait`) ve görüntü onu
+tamamen kaplar; ad, rol ve linkler görüntünün alt kenarında, üzerinde durur. Hover'da görüntü
+hayaletleşir ve biyografi üstünde belirir.
+
+Bu düzen bir estetik tercih değil, **kaymayı ortadan kaldıran şeyin kendisi**: açılan her şey
+mutlak konumlu, yani kartın yüksekliği hiç değişmiyor. Biyografi akışa eklendiğinde bölüm hover'da
+108px büyüyordu ve Team'in altındaki her şey — footer dahil — aşağı kayıyordu.
+
+Metin panelinin zemini **düz %92 opaklık**, gradyan değil. Gradyan denendi ve metnin durduğu yerde
+~%54'e düşüyordu; beyaz bir fotoğrafta rol satırı 1.84:1 veriyordu (gereken 4.5). %92'de en kötü
+durum ad için 12.83:1, rol ve biyografi için 6.83:1 — yani kontrast fotoğrafın içeriğine bağlı
+değil. Koyu fotoğraflarla sorun görünmüyordu; bu yüzden ölçülüyor, bakılmıyor.
 
 **Biyografi hover ile açılır** — ve hover **tek yol değildir.** Üç durum birden karşılanır:
 
@@ -401,15 +419,17 @@ nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklen
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
 aynı sınıf hatadır.
 
-| Etkileşim                     | Süre           | Özellik                                   |
-| ----------------------------- | -------------- | ----------------------------------------- |
-| Button hover / active         | 150ms          | `background-color`, `border-color`        |
-| NavLink hover ve aktif geçişi | 150ms          | `color`                                   |
-| Kart hover                    | 200ms          | `border-color`, `background-color`        |
-| Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`       |
-| Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)           |
-| Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)` |
-| Prensip dizisi (`lg`)         | scroll'a bağlı | `opacity` + `transform: translateY(12px)` |
+| Etkileşim                     | Süre           | Özellik                                    |
+| ----------------------------- | -------------- | ------------------------------------------ |
+| Button hover / active         | 150ms          | `background-color`, `border-color`         |
+| NavLink hover ve aktif geçişi | 150ms          | `color`                                    |
+| Kart hover                    | 200ms          | `background-color`                         |
+| `TeamCard` hover / focus      | 200ms          | `translate: 0 -10px`                       |
+| `TeamCard` biyografisi        | ~12ms/harf     | daktilo — **DENEME**, aşağıdaki nota bakın |
+| Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`        |
+| Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)            |
+| Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
+| Prensip dizisi (`lg`)         | scroll'a bağlı | `opacity` + `transform: translateY(12px)`  |
 
 **Bölüm girişi** `animation-timeline: view()`, `animation-range: entry 0% cover 20%`. Süre yok:
 ilerlemeyi scroll konumu belirliyor. Erken bitmesi kasıtlı — okumaya başlanan bir metin hâlâ
@@ -419,8 +439,28 @@ tarayıcıda hiç uygulanmıyor ve öğe son halinde duruyor.
 Hareket **bölümün zeminine değil içeriğine** uygulanır. Zemin viewport genişliğinde (§1) ve onu
 soldurmak bölümün kendisini yanıp sönüyormuş gibi gösterir.
 
-`transform` mobil menüde ve bölüm girişinde. Kartlarda hover'da büyüme/kalkma **yok** — sticky
-yığınla birlikte katman sırasını okunmaz hale getiriyor.
+`transform` mobil menüde ve bölüm girişinde; `TeamCard` `translate` kullanır.
+
+**Kalkma kuralı bölüm bazına ayrıldı.** `ProjectCard`'da hover'da büyüme/kalkma **yok** — sticky
+yığınla birlikte katman sırasını okunmaz hale getiriyor (§3.3.2). `TeamCard` yığında değil, yani o
+gerekçe orada geçerli değil: kart hover ve focus'ta **10px kalkıyor**. Kalkma layout'a dokunmuyor,
+komşu kartlar kaymıyor.
+
+> Tailwind v4 `translate-y-*` için `transform` değil **`translate`** özelliğini üretir. Geçiş
+> listesi ve testi de onu okur; `transform` bu kartta `none` kalır.
+
+**Daktilo efekti şu an bir DENEME** ve tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`).
+Beğenilmezse o dosya silinir, `TeamCard` sunucu component'i olarak kalır. Koşulları:
+
+- Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel
+  **+0.3 KiB** (132.3 → 132.6 KiB).
+- Metin DOM'da **her zaman tam** durur; yazılmamış harfler `opacity: 0` ile gizlenir, `display`
+  veya `visibility` ile değil. Ekran okuyucu ilk andan itibaren cümlenin tamamını okur, yarım
+  yazılmış bir metin duymaz.
+- Harfler yerlerini baştan işgal ettiği için metin yazılırken **büyümez**; satır sonları baştan
+  hesaplanır ve kart zıplamaz.
+- `prefers-reduced-motion`, `(hover: none)` ve **JavaScript hiç çalışmazsa** efekt devreye girmez;
+  metin anında tam görünür.
 
 ### 6.1 `prefers-reduced-motion: reduce`
 
