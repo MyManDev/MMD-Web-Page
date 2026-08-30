@@ -96,11 +96,11 @@ export function ProjectCard({
         ortak tek kayittan geliyor.
 
         sizes olculdu: lg ustunde gorsel 12 kolonun 7'si, yani kapsayici tam
-        genisligindeyken 717px (kapsayici 1320'ye cikinca 638'den yukseldi).
+        genisligindeyken 883px (kapsayici 1600'e cikinca 717'den yukseldi).
         56vw bunu her zaman bir parca ASIYOR ve asmasi kasitli - eksik tahmin
         bulanik goruntu demek, fazla tahmin birkac KB.
 
-        width/height artik en buyuk varyantin GERCEK olcusu (1440x900) ve ayni
+        width/height artik en buyuk varyantin GERCEK olcusu (1792x1120) ve ayni
         zamanda tasarimin 16/10 orani. Yeri fiilen ayiran sey CSS aspect kutusu;
         bu iki sayi orani tarayiciya HTML'den de bildiriyor, boylece CLS esigi
         (< 0.05) goruntu inmeden once de korunuyor. Semada boyut alani yok cunku
@@ -111,10 +111,10 @@ export function ProjectCard({
         <img
           src={project.screenshot}
           srcSet={screenshotSrcSet(project.screenshot)}
-          sizes="(min-width: 1384px) 720px, (min-width: 1024px) 56vw, calc(100vw - 40px)"
+          sizes="(min-width: 1600px) 883px, (min-width: 1024px) 58vw, calc(100vw - 40px)"
           alt={`${project.name} screenshot`}
-          width={1440}
-          height={900}
+          width={1792}
+          height={1120}
           loading="lazy"
           decoding="async"
           className="aspect-screenshot h-full w-full object-cover"

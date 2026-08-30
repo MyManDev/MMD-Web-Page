@@ -6,8 +6,8 @@ import { projects } from "@/content";
 
 describe("screenshotSrcSet", () => {
   it("her genislik icin bir aday uretir", () => {
-    const srcSet = screenshotSrcSet("/projects/ornek-1440.webp");
-    expect(srcSet).toBe("/projects/ornek-720.webp 720w, /projects/ornek-1440.webp 1440w");
+    const srcSet = screenshotSrcSet("/projects/ornek-1792.webp");
+    expect(srcSet).toBe("/projects/ornek-896.webp 896w, /projects/ornek-1792.webp 1792w");
   });
 
   /**

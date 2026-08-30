@@ -27,7 +27,7 @@ export const projects: Project[] = [
     tags: ["Python", "OR-Tools CP-SAT", "ML", "React"],
     repoUrl: "https://github.com/MyManDev/football-squad-optimizer",
     liveUrl: "https://squadopt.mymandev.com/",
-    screenshot: "/projects/football-squad-optimizer-1440.webp",
+    screenshot: "/projects/football-squad-optimizer-1792.webp",
     order: 0,
     metrics: [{ value: "0", label: "ML models promoted to production" }],
   },

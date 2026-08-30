@@ -154,8 +154,8 @@ karar verilmezse **commit'li seçim Plex'tir**; belirsizlik kalmaz.
 
 | Token                     | Değer                                          |
 | ------------------------- | ---------------------------------------------- |
-| İçerik genişliği          | `max-width: 1320px`, yatay padding 20px / 32px |
-| Bölüm arası dikey boşluk  | 80px / 128px                                   |
+| İçerik genişliği          | `max-width: 1600px`, yatay padding 20px / 32px |
+| Bölüm arası dikey boşluk  | 80px / 128px — bölüm başına 40/64, toplamı bu  |
 | Kart radius               | 14px                                           |
 | Küçük radius (tag, buton) | 8px                                            |
 | Pill radius (nav)         | 999px                                          |
@@ -313,9 +313,9 @@ değil, yapının kendisi sağlıyor.
   --radius-card: 14px;
   --radius-sm: 8px;
 
-  --spacing-section: 80px;
-  --spacing-section-lg: 128px;
-  --container-content: 1320px;
+  --spacing-section: 40px;
+  --spacing-section-lg: 64px;
+  --container-content: 1600px;
 }
 ```
 
@@ -457,6 +457,8 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                                 | §3     |
 | Placeholder proje      | Yayınlanmaz                                                               | §3     |
 | Font                   | IBM Plex Sans + Mono                                                      | §4.2   |
+| Sayfa genişliği        | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                    | §4.3   |
+| Bölüm dikey boşluğu    | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı   | §4.3   |
 | İmza öğe               | Dürüst sayı satırı; sayı `0` — ML models promoted to production           | §4.6   |
 | İçerik formatı         | TS + Zod, MDX yok                                                         | §5     |
 | Render                 | Tamamen statik export                                                     | §6     |
