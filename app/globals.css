@@ -74,6 +74,34 @@ section[id] {
   }
 }
 
+/* Navbar zemini. design-spec.md §3.1
+
+   AYRI BIR RENK YOK. Onceden bar `surface` (#111b1d) idi ve sayfa zemininden
+   (#203033) belirgin sekilde koyuydu: ustte duran ayri bir serit gibi
+   okunuyordu. Istek o farkin kalkmasi.
+
+   Yerine `backdrop-filter`: bar arkasindaki neyse onu aliyor, bulaniklastirip
+   biraz koyultuyor. Yani duz bir bant degil, ama uzerinden gecen her seyde
+   yazi okunur kaliyor - Team'in acik gokyuzlu fotograflari dahil. Duz saydam
+   birakmak orada beyaz mono yaziyi okunmaz yapardi.
+
+   `background-color` token'in kendisinden turetiliyor (`color-mix`), sabit bir
+   rgba() yazilmiyor (CLAUDE.md kural 1).
+
+   `@supports` kapisi: backdrop-filter'i olmayan tarayicida bar SAYDAM DEGIL
+   dolu zemine dusuyor. Okunurluk bir tercih degil; destegin yoklugunda
+   gerileme yonu her zaman okunur olan taraf olmali. */
+.nav-bar {
+  background-color: color-mix(in srgb, var(--color-page) 72%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .nav-bar {
+    background-color: var(--color-page);
+  }
+}
+
 /* Hero amblemi. design-spec.md §3.2
 
    Marka isareti - uc kafa ve bir "m". Kaynak dolu turkuaz bir kare; zemin
@@ -145,7 +173,14 @@ a:focus-visible .rule::after {
    iki etiket birden gorunur - yani kusur sessiz degil, cirkin olurdu. */
 .roll {
   display: inline-block;
-  height: calc(var(--text-mono) * var(--text-mono--line-height));
+  /* `1lh` = ogenin KENDI satir yuksekligi. Once bu deger `--text-mono`dan
+     hesaplaniyordu ve nav yazisi `--text-nav`e gecince kutu satirla uyumsuz
+     kaldi: 18.19px'lik bir kutu 18px'lik satiri kirpiyordu, yani hover'da
+     ikinci kopyadan ince bir serit gorunuyordu. Olculdu, gozle degil.
+
+     Token'a baglamak yerine satira baglamak bu sinif hatayi tumden kapatiyor:
+     `roll` hangi olcuyle kullanilirsa kullanilsin kutu ona uyuyor. */
+  height: 1lh;
   overflow: hidden;
 }
 
