@@ -146,26 +146,30 @@ Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
 Sayfa yüklenirken **giriş animasyonu yok** (§4.4). Hero açılışta zaten ekranda; `reveal-on-enter`
 burada bilerek uygulanmıyor.
 
-**Sağ kolonda görsel değil işaret var.**
+**Sağ kolonda amblem var.** Markanın kendi işareti — üç kafa ve bir "m", yani üç kişi.
 
-Tablo `lg`'de sağda bir görsel istiyor ve **öyle bir varlık hâlâ yok.** Depodaki tek marka görseli
-`assets/brand/logo.png` ve o 9 KB'lik favicon'un kendisi; hero ölçeğinde göstermek placeholder
-görsel koymak olurdu (`CLAUDE.md` kural 6). Yerini **wordmark'ın kendisi** dolduruyor — yeni bir
-varlık değil, zaten sahip olduğumuz tipografinin büyütülmüş hâli. **Hiçbir issue hero görselini
-takip etmiyor**; #18 logo SVG ve OG görselini kapsıyor, hero görselini değil.
+Orada bir zamanlar **büyütülmüş wordmark** duruyordu ve kaldırıldı. Bir kelime ancak kenardan
+taşarsa grafik gibi okunuyor (çerçeveye sığan bir metin ikinci bir başlıktır), taşınca da **yarım
+bir kelime** olarak görünüyordu — "MyManD". Amblem o ikilemi taşımıyor.
 
 Kuralları:
 
-- **`aria-hidden`.** Wordmark sayfada zaten iki kez okunuyor (navbar ve footer). Üçüncüsü bilgi
-  değil ağırlık taşıyor; ekran okuyucuya üçüncü kez "MyManDev" duyurmak gürültüdür.
-- **Kenardan taşar ve taşması şart.** Çerçeveye sığan bir metin grafik değil, ikinci bir başlıktır.
-  Sabit `px` bunu vermiyor: 168px'te işaret 1024'te 339px taşıyor ama 1920'de 61px **içeride**
-  kalıyordu. Ölçü bu yüzden viewport'a bağlı — `--text-mark: max(168px, 13vw)`, türetmesi
-  `app/tokens.css`'te. Ölçüldü: 1024–2560 arası beş genişlikte taşma 233–358px.
-- **Yatay kaydırma üretmez.** Taşan kısmı bölümdeki `overflow-hidden` kırpıyor; beş genişlikte de
-  `scrollWidth == innerWidth`.
-- **Accent değil.** Rengi `surface-2`; Hero'nun tek yeşili primary CTA (§5.1).
-- **Yalnızca `lg` üstünde.** Dar ekranda taşan bir wordmark metnin yerini alır, yanına gelmez.
+- **Zemin ayrıldı.** Kaynak `assets/brand/logo.png` dolu turkuaz bir **kare**. Kareyi olduğu gibi
+  koymak ekran boyunda ikinci bir yeşil odak eklerdi (§5.1). `scripts/extract-mark.mjs` zemini
+  saydama çeviriyor ve geriye yalnızca şekil kalıyor. Kesme sert eşikle değil **renk mesafesiyle**
+  yapılıyor; aradaki dar bant kenar yumuşatmasını koruyor, yoksa kenarlar merdiven olurdu.
+- **`mask-image` + `background-color`, `<img>` değil.** Renk token'dan (`--color-mark`) geliyor ve
+  bir dosyanın içine gömülü kalmıyor (`CLAUDE.md` kural 1).
+- **Accent değil.** Hero'nun tek yeşili primary CTA (§5.1). Amblemi de yeşil yapmak ekranda ikinci
+  bir odak açardı; ton zeminden ayrılıyor ama okumaya davet etmiyor.
+- **Bütün durur, taşmaz.** Yerini aldığı wordmark'ın tam tersi sözleşme: yarısı kırpılmış bir logo
+  bozuk görünür.
+- **Ölçü 380px'te kapanıyor** ve sebebi kaynak: elimizdeki varlık **400×400**. Üstüne çıkmak
+  bulanıklık olurdu. **#18** gerçek logo SVG'sini getirdiğinde bu tavan kalkar ve
+  `scripts/extract-mark.mjs` de silinir.
+- **`aria-hidden`.** Marka adı sayfada zaten navbar ve footer'da okunuyor; amblem bilgi değil
+  ağırlık taşıyor.
+- **Yalnızca `lg` üstünde.** Dar ekranda metnin yanına değil, yerine geçerdi.
 
 **Başlık `text-wrap: balance` kullanır.** Süsleme değil: başlığın anlamı iki cümlenin
 karşıtlığında ve tarayıcı onu ortasından bölüyordu — 390, 1024, 1920 ve 2560'ta satır

@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { Site } from "@/content";
 import { Button, Container } from "@/components/ui";
 
@@ -15,55 +14,47 @@ type NavItem = Site["nav"][number];
  * ekranda, yani scroll'a bagli bir reveal burada ya hic gorunmez ya da
  * sayfayi yanip sonuyormus gibi gosterir.
  *
- * SAG KOLONDA GORSEL DEGIL ISARET var. §3.2 lg'de sagda bir gorsel istiyor ve
- * oyle bir varlik hala YOK - depodaki tek marka gorseli 9 KB'lik favicon ve onu
- * hero olceginde gostermek placeholder koymak olurdu (CLAUDE.md kural 6).
- * Yerini wordmark'in kendisi dolduruyor: yeni bir varlik degil, zaten sahip
- * oldugumuz tipografinin buyutulmus hali.
+ * SAG KOLONDA AMBLEM var. §3.2 orada bir gorsel istiyor ve artik bir tane var:
+ * markanin kendi isareti - uc kafa ve bir "m", yani uc kisi.
  *
- * Isaret bir METIN DUGUMU DEGIL, CSS uretilen icerik - ve bu bir kacamak degil,
- * dogru model. Wordmark sayfada zaten iki kez okunuyor (navbar ve footer);
- * ucuncusu bilgi tasimiyor, agirlik tasiyor. Bir metin dugumu olarak yazmak
- * "bu icerik" demek olurdu ve degil.
+ * Once orada buyutulmus WORDMARK duruyordu ve kaldirildi: bir kelime ancak
+ * kenardan tasarsa grafik gibi okunuyor, tasinca da yarim bir kelime olarak
+ * gorunuyordu ("MyManD"). Amblem o ikilemi tasimiyor.
  *
- * Olculen sonuc: metin dugumuyken axe onu 1.14:1 kontrastla ihlal saydi.
- * Kural susturulmadi ve renk parlatilmadi - ikisi de yanlis cevap olurdu.
- * WCAG 1.4.3 saf dekorasyonu acikca muaf tutuyor; makineye "bu dekorasyon"
- * demenin yolu, icerik gibi davranmayan bir kaynak kullanmak. Yan fayda:
- * metin secilirken ve okuyucu modunda araya "MyManDev" karismiyor.
+ * Kaynak `assets/brand/logo.png` dolu turkuaz bir KARE. Kareyi oldugu gibi
+ * koymak ekran boyunda ikinci bir yesil odak eklerdi (§5.1), o yuzden zemin
+ * ayrildi ve geriye yalnizca sekil kaldi - `scripts/extract-mark.mjs`.
  *
- * Metin yine `content/site.ts`'ten geliyor - CSS'e sabitlenmedi, ozel ozellik
- * olarak gecirildi. Tek kayit kurali bozulmuyor.
+ * Sekil `mask-image` ile boyaniyor, `<img>` olarak degil: rengi token'dan
+ * geliyor, bir dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).
  *
- * Kenardan tasiyor ve tasmasi kasitli: cerceveye sigan bir metin grafik degil,
- * ikinci bir basliktir. Tasan kismi bolum kirpiyor.
+ * TASMIYOR - ve bu, yerini aldigi wordmark'tan farki. Bir amblem BUTUN olmak
+ * zorunda; yarisi kirpilmis bir logo bozuk gorunur.
+ *
+ * `aria-hidden`: amblem bilgi tasimiyor, agirlik tasiyor. Marka adi sayfada
+ * zaten navbar ve footer'da okunuyor.
  *
  * Aksiyon etiketleri UYDURULMUYOR: ikisi de content/site.ts'teki nav
  * kayitlarindan geliyor.
  *
- * `secondary` OPSIYONEL ve bu kasitli. §3.2 iki aksiyon istiyor, ama ikincisi
- * Who we are'a gidiyor ve o bolum henuz yok (#9) - cizilseydi hicbir yere
- * goturmeyen bir dugme olurdu. Deponun kendi kalibi bu: "projects bossa bolum
- * hic render edilmez". Arkasinda bir sey olmayan aksiyon da cizilmez.
- * Karar cagiran tarafta: app/page.tsx.
+ * `secondary` OPSIYONEL ve bu kasitli: arkasinda bir sey olmayan aksiyon
+ * cizilmez. Karar cagiran tarafta: app/page.tsx.
  */
 export function Hero({
   section,
   hero,
-  wordmark,
   primary,
   secondary,
 }: {
   section: NavItem;
   hero: Site["hero"];
-  wordmark: Site["wordmark"];
   primary: NavItem;
   secondary?: NavItem;
 }) {
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId} className="overflow-hidden">
+    <section id={section.id} aria-labelledby={headingId}>
       <Container>
         <div className="grid grid-cols-1 items-center lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)]">
           <div className="flex flex-col gap-8 py-section lg:col-span-7 lg:gap-10 lg:py-section-lg">
@@ -71,13 +62,10 @@ export function Hero({
               `text-wrap: balance` burada susleme degil. Basligin tum anlami iki
               cumlenin karsitliginda ve tarayici onu ortasindan boluyordu:
               390, 1024, 1920 ve 2560'ta satir "changed. We" / "didn't." diye
-              kiriliyor, "We" onceki cumlenin kuyruguna takiliyordu. (Sag kolon
-              acilmadan once de boyleydi - bu sapma yeni degil, yalnizca
-              olculdugunde gorundu.)
+              kiriliyordu. Balance ile alti genislikte de cift bozulmuyor.
 
-              Olculen sonuc, balance ile alti genislikte de cift bozulmuyor.
               Genislik siniri EKLENMEDI: denendi ve 768'i bozuyor - orada
-              baslik tek satira sigiyor, 22ch capi onu gereksiz yere ikiye
+              baslik tek satira sigiyor, bir cap onu gereksiz yere ikiye
               boluyordu.
             */}
             <h1
@@ -105,14 +93,10 @@ export function Hero({
           </div>
 
           {/*
-            Isaret yalnizca lg ustunde: dar ekranda tasan bir wordmark metnin
-            yerini alir, yanina gelmez.
+            Amblem yalnizca lg ustunde: dar ekranda metnin yanina degil, yerine
+            gecerdi.
           */}
-          <div
-            aria-hidden="true"
-            className="hero-mark hidden lg:col-span-5 lg:block"
-            style={{ "--mark": `"${wordmark}"` } as CSSProperties}
-          />
+          <div aria-hidden="true" className="hero-mark hidden lg:col-span-5 lg:block" />
         </div>
       </Container>
     </section>
