@@ -1,23 +1,17 @@
 import type { TeamMember } from "./schema";
 
 /**
- * ================================================================
- *  BU DOSYA `main`'E MERGE EDILMEZ - HENUZ.
- * ================================================================
+ * Yayinlanan ekip kayitlari. Uc kisi de GERCEK ve hepsi onaylandi (#16).
  *
- * Adlar, roller, biyografiler ve linkler GERCEK. Biyografiler uc CV'den
- * cikarildi, ovgu sifati eklenmedi ve dogrulanamayan hicbir sey yazilmadi.
- * Yine de ONAY BEKLIYORLAR (#16): kisinin kendi metnini gormeden yayina
- * girmez.
+ * Biyografiler uc CV'den cikarildi: ovgu sifati eklenmedi ve dogrulanamayan
+ * hicbir sey yazilmadi. Uzunluklar olculdu, secilmedi - 26-28 kelime, her
+ * kartta 5 satir. 30'u gecen bir biyografi kartlari birbirinden farkli
+ * yukseklige goturuyor (design-spec.md §3.5).
  *
- * MOCK OLAN TEK SEY FOTOGRAFLAR. assets/people/ altindaki uc dosya uzerinde
- * "MOCK" yazili; gercek fotograflar gelince degistirilecek. Sahtenin bagirmasi
- * kasitli - makul gorunen bir sahte, hatadan kotudur cunku incelemeden sag
- * kalir (architecture.md §3).
- *
- * Uzunluklar olculdu, secilmedi: 26-28 kelime, her kartta 5 satir. 30'u gecen
- * bir biyografi kartlari birbirinden farkli yukseklige goturuyor
- * (design-spec.md §3.5).
+ * Fotograflar gercek ve sahiplerinden geldi; mock donem kapandi. Kaynaklar
+ * assets/people/ altinda, servis edilen varyantlari scripts/optimize-images.mjs
+ * uretiyor. Kadraj kart icin secildi: kartin alt ucte biri metin paneli, yani
+ * yuz ust yarida durmali (§3.5).
  */
 export const team: TeamMember[] = [
   {
