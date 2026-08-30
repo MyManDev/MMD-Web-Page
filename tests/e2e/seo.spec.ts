@@ -88,3 +88,83 @@ test("aciklama meta etiketi gercekten uretiliyor", async ({ page }) => {
   // hata degil ama sessiz bir kayip, o yuzden burada tutuluyor.
   expect(content.trim().length).toBeLessThanOrEqual(160);
 });
+
+/**
+ * Open Graph ve Twitter card. #11 / #18
+ *
+ * Bu etiketler sayfada GORUNMUYOR, yani bozulduklarinda kimse fark etmez -
+ * bir link paylasilana kadar. O yuzden olculuyorlar.
+ */
+test.describe("paylasim karti", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
+  });
+
+  const content = (page: import("@playwright/test").Page, selector: string) =>
+    page.locator(selector).getAttribute("content");
+
+  test("og:url canonical ile ayni adresi gosteriyor", async ({ page }) => {
+    // `href`, `content` DEGIL: canonical bir <link>, adresi href'te durur.
+    // Yardimci her zaman `content` okuyordu ve bu test kendi hatasiyla dustu.
+    const canonical = await page.locator('head link[rel="canonical"]').getAttribute("href");
+    const ogUrl = await content(page, 'head meta[property="og:url"]');
+
+    // Ikisi de mutlak olmali: goreli bir OG adresi paylasimda cozulmez.
+    expect(ogUrl).toMatch(/^https:\/\//);
+    expect(ogUrl?.replace(/\/$/, "")).toBe(canonical?.replace(/\/$/, ""));
+  });
+
+  test("og:image mutlak, ulasilabilir ve gercekten bir gorsel", async ({ page }) => {
+    const url = await content(page, 'head meta[property="og:image"]');
+    expect(url).toMatch(/^https:\/\//);
+
+    // Mutlak adres gercek alan adini gosteriyor; testte yerel kopyayi cekiyoruz.
+    const path = new URL(url as string).pathname;
+    const response = await page.request.get(path);
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("image");
+  });
+
+  /**
+   * ILAN EDILEN olcu ile GERCEK olcu ayni olmali.
+   *
+   * Ayrildiklarinda hicbir sey patlamaz: bazi paylasim onizlemeleri bu iki
+   * sayiya bakip yer ayiriyor ve kart kayiyor. Gorseli degistirip sayilari
+   * guncellemeyi unutmak tam olarak boyle bir hata.
+   */
+  test("ilan edilen olcu gorselin gercek olcusu", async ({ page }) => {
+    const url = await content(page, 'head meta[property="og:image"]');
+    const declared = {
+      width: Number(await content(page, 'head meta[property="og:image:width"]')),
+      height: Number(await content(page, 'head meta[property="og:image:height"]')),
+    };
+
+    const actual = await page.evaluate(
+      (src) =>
+        new Promise<{ width: number; height: number }>((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+          image.onerror = () => reject(new Error("gorsel yuklenemedi"));
+          image.src = src;
+        }),
+      new URL(url as string).pathname,
+    );
+
+    expect(actual).toEqual(declared);
+  });
+
+  test("twitter karti buyuk bicimde gosteriliyor", async ({ page }) => {
+    // Varsayilan `summary` 1200x630'luk karti kucuk bir kareye kirpar.
+    expect(await content(page, 'head meta[name="twitter:card"]')).toBe("summary_large_image");
+  });
+
+  test("baslik ve aciklama iki kanalda da ayni", async ({ page }) => {
+    // Metin iki yerde yaziliysa bir gun ayrilir; ayni kaynaktan geldiginin kaniti.
+    expect(await content(page, 'head meta[name="twitter:title"]')).toBe(
+      await content(page, 'head meta[property="og:title"]'),
+    );
+    expect(await content(page, 'head meta[name="twitter:description"]')).toBe(
+      await content(page, 'head meta[property="og:description"]'),
+    );
+  });
+});

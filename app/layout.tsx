@@ -43,9 +43,9 @@ export const metadata: Metadata = {
    * buraya baglanmamisti: depoda duruyor, HTML'e girmiyordu. #11'in artik
    * engellenmemis yarisi bu.
    *
-   * Open Graph ve Twitter card HALA #18'i (OG gorseli) bekliyor. Goruntusuz
-   * bir OG etiketi yazmak, olmayan bir varliga isaret eden bir vaat olurdu -
-   * ayni gerekce Hero gorselinde de yazili (§3.2).
+   * Open Graph ve Twitter card bir zamanlar #18'i bekliyordu; goruntusuz bir OG
+   * etiketi yazmak olmayan bir varliga isaret eden bir vaat olurdu. #18 kapandi,
+   * gorsel `public/og.png` olarak var, etiketler asagida.
    */
   description: site.description,
   /**
@@ -54,6 +54,39 @@ export const metadata: Metadata = {
    * metadataBase onu mutlak adrese cevirir; adres burada ikinci kez yazilmaz.
    */
   alternates: { canonical: "/" },
+
+  /*
+    Adres ve metin IKINCI KEZ YAZILMIYOR: `url` ve `images` goreli veriliyor,
+    `metadataBase` onlari mutlak adrese ceviriyor; baslik ve aciklama zaten
+    yukarida tanimli degerlerin ta kendisi. Bir gun alan adi degistiginde
+    degisecek tek yer `content/site.ts`.
+
+    `width`/`height` gorselin GERCEK olcusu ve `scripts/build-og.mjs` uretirken
+    o olcuyu dogruluyor - eslesmedigi anda atiyor. Bazi paylasim onizlemeleri
+    bu iki sayiya bakip yer ayiriyor; yanlis olduklarinda kart kayiyor.
+
+    `alt` marka adinin kendisi: gorselde zaten amblem ve wordmark var, yani
+    baska bir cumle yazmak yeni bir marka metni yazmak olurdu (kural 5).
+  */
+  openGraph: {
+    type: "website",
+    siteName: site.wordmark,
+    title: site.wordmark,
+    description: site.description,
+    url: "/",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: site.wordmark }],
+  },
+
+  /*
+    `summary_large_image`: kart 1200x630 ve buyuk bicimde gosterilmek uzere
+    tasarlandi. Varsayilan `summary` onu kucuk bir kareye kirpardi.
+  */
+  twitter: {
+    card: "summary_large_image",
+    title: site.wordmark,
+    description: site.description,
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
