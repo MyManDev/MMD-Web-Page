@@ -448,6 +448,18 @@ tam olarak sayılır; kullanıcı da öyle indiriyor.
 koşucudan koşucuya oynar; kapı yapılırsa flaky olur, insanlar zorla geçer, kapı ölür. Bu yüzden
 Lighthouse her PR'da **raporlanır, engellemez.** Bir eşik iki kez üst üste düşerse issue açılır.
 
+**Üç koşunun medyanı, aralığıyla birlikte** (#39). Tek koşu bir olgu değil bir örneklemdi: aynı
+sayfa 74, 92 ve 82 verdi. Medyanı tek başına yazmak da yanıltıcı olurdu — okuyan kişi stabil bir 82
+ile 18 puan sallanarak gelen bir 82'yi ayırt edemez. Skorlar artifact'in içinde değil iş özetinde.
+
+**Lighthouse'un Accessibility skoru bizim axe kapımızdan düşük çıkabilir ve bu bir çelişki
+değil.** İkisi sayfayı farklı anda tarıyor: bizim kapımız `prefers-reduced-motion` altında, yani
+sayfa **duragan** haldeyken (`tests/e2e/a11y.spec.ts`); Lighthouse hareket açıkken tarıyor ve bölüm
+girişi fade'inin ortasına denk gelebiliyor. O anda üst öğe opaklığı renklere karışıyor ve
+`color-contrast` düşüyor — ölçülen örnek: Live Demo butonu, dinlenme halinde **5.51:1**. WCAG
+kontrastı duragan durumun özelliğidir, geçici bir animasyon karesinin değil. Yani o satır bir
+kusuru değil, **ölçüm anını** gösteriyor.
+
 **Playwright kapsamı:** navigation + anchor scroll + aktif link; Projects bölümü davranışı; mobil
 menü; dış linkler (Live Demo ve GitHub gerçekten açılıyor mu); 404; ve desktop + mobil viewport'ta
 axe taraması.
