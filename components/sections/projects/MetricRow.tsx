@@ -19,7 +19,7 @@ export function MetricRow({ metrics }: { metrics: Project["metrics"] }) {
       {metrics.map((metric) => (
         <div key={metric.label} className="flex flex-col-reverse gap-1">
           <dt className="font-mono text-mono text-text-muted uppercase">{metric.label}</dt>
-          <dd className="m-0 font-sans text-display-m font-semibold lg:text-display-m-lg">
+          <dd className="m-0 font-mono text-display-m font-medium lg:text-display-m-lg">
             {metric.value}
           </dd>
         </div>

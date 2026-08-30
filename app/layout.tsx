@@ -10,7 +10,16 @@ import "./globals.css";
  */
 const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  /* 600 ve 700 dusuruldu: display rolu IBM Plex Mono'ya gecti (§4.2), yani
+     font-sans yalnizca govde metninde kaliyor ve orada 400/500 yetiyor.
+
+     BAYT KAZANDIRMIYOR - olculdu, 169.888 byte iki durumda da ayni. Sebebi
+     next/font'un kullanilmayan agirligi elemesi DEGIL: ilan edilen her agirlik
+     icin bir @font-face kurali uretiyor, kullanilmayan 700 icin bile. Bayt
+     degismiyor cunku Plex Sans degisken font olarak geliyor ve dort agirlik da
+     ayni .woff2 dosyalarini isaret ediyor. Liste yine de kullanilana
+     esitleniyor: burada yazan sey, hangi agirligin beklendigidir. */
+  weight: ["400", "500"],
   variable: "--font-plex-sans",
   display: "swap",
 });
