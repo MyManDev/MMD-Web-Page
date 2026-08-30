@@ -31,10 +31,10 @@ export function Nav({ site }: { site: Site }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface">
+    <header className="nav-bar sticky top-0 z-40">
       <Container>
         <div className="flex h-[var(--nav-height)] items-center justify-between gap-4">
-          <a href="#main" className="rule font-mono text-sm tracking-[0.08em] text-text uppercase">
+          <a href="#main" className="rule font-mono text-nav font-medium text-text uppercase">
             {site.wordmark}
           </a>
 
@@ -60,7 +60,7 @@ export function Nav({ site }: { site: Site }) {
             aria-expanded={open}
             aria-controls={menuId}
             onClick={() => (open ? close() : setOpen(true))}
-            className="inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-mono text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
+            className="inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-nav text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
           >
             Menu
           </button>

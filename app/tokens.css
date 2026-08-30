@@ -75,6 +75,17 @@
   --text-body-s: 15px;
   --text-body-s--line-height: 1.55;
 
+  /* Nav yazisi. Onceden `Nav.tsx` icinde `text-sm tracking-[0.08em]` diye SATIR
+     ICI duruyordu ve #46 diger her seyi token'a tasirken bu satir atlanmisti;
+     bar buyurken token'a alindi.
+
+     Mono kaliyor ve bu bir secim: sitenin butun basliklari mono, nav'i baska
+     bir aileye gecirmek kimligi bolerdi. Yeni bir font da eklenmedi - ihtiyac
+     olan sey aile degil OLCU idi. */
+  --text-nav: 15px;
+  --text-nav--line-height: 1.2;
+  --text-nav--letter-spacing: 0.08em;
+
   --text-mono: 13px;
   --text-mono--line-height: 1.4;
   --text-mono--letter-spacing: 0.08em;
@@ -105,10 +116,11 @@
   --spacing-card: 24px;
   --spacing-card-lg: 32px;
 
-  --height-nav: 56px;
-  --height-nav-lg: 64px;
+  /* Nav bir basamak buyudu (istek: "yukaridaki bar cok kucuk"). 56/64 idi. */
+  --height-nav: 72px;
+  --height-nav-lg: 88px;
   --height-button: 44px;
-  --height-nav-link: 40px;
+  --height-nav-link: 44px;
   --height-tag: 24px;
 
   --radius-pill: 999px;

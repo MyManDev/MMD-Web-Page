@@ -107,15 +107,36 @@ Sticky, sayfanın en üstünde, `position: sticky; top: 0`. **Scroll listener yo
 
 |           | Mobil               | `≥ lg`                                         |
 | --------- | ------------------- | ---------------------------------------------- |
-| Yükseklik | 56px                | 64px                                           |
+| Yükseklik | 72px                | 88px                                           |
 | Sol       | wordmark `MyManDev` | wordmark                                       |
 | Orta      | —                   | dört nav linki, pill radius                    |
 | Sağ       | menü düğmesi        | GitHub aksiyonu (`ghost` Button, ikon + metin) |
-| Zemin     | `surface`           | `surface`                                      |
-| Alt kenar | 1px `border`        | 1px `border`                                   |
+| Zemin     | blur + hafif tint   | blur + hafif tint                              |
+| Alt kenar | **yok**             | **yok**                                        |
 
-Zemin **saydam değil**. Referans mockup'ta blur'lu saydam bar vardı; altından geçen metin
-okunurluğu bozuyor ve `backdrop-filter` mobilde bedava değil. Düz `surface` zemin seçildi.
+**Ayrı bir bar rengi yok** ve bu bir karar değişikliği. Burada bir zamanlar şu yazıyordu: "Zemin
+saydam değil… `backdrop-filter` mobilde bedava değil, düz `surface` zemin seçildi." Sonuç, sayfa
+zemininden (`#203033`) belirgin şekilde koyu (`#111b1d`) bir şerit oldu — üstte duran, sayfaya ait
+olmayan ayrı bir bant. Kaldırıldı.
+
+Yerine `backdrop-filter`: bar arkasındaki neyse onu alıp bulanıklaştırıyor ve hafifçe koyultuyor.
+Düz bir bant değil, ama üzerinden geçen her şeyde yazı okunur kalıyor.
+
+**Okunurluk ölçüldü, göz kararı değil.** Sayfa baştan sona kaydırılıp nav yazısının arkasındaki
+zemin her 100px'te örneklendi; en kötü durum **5.49:1** — AA eşiği 4.5. Team'in açık gökyüzlü
+fotoğrafları dahil. Düz saydam bırakmak orada beyaz mono yazıyı okunmaz yapardı; tint'in görevi
+estetik değil, o tabanı garanti etmek.
+
+Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 72%, transparent)`), sabit
+bir `rgba()` yazılmıyor (`CLAUDE.md` kural 1).
+
+**`@supports` kapısı:** `backdrop-filter` desteklenmiyorsa bar **saydam değil dolu zemine** düşer.
+Okunurluk bir tercih değil; desteğin yokluğunda gerileme yönü her zaman okunur olan taraf olmalı.
+
+**Yazı ölçüsü token'da.** Nav yazısı 15px (`--text-nav`) ve mono kalıyor: sitenin bütün başlıkları
+mono, nav'ı başka bir aileye geçirmek kimliği bölerdi — ihtiyaç olan şey aile değil **ölçü** idi,
+yeni font eklenmedi. Daha önce `Nav.tsx` içinde `text-sm tracking-[0.08em]` diye **satır içi**
+duruyordu; #46 diğer her şeyi token'a taşırken bu satır atlanmıştı.
 
 **Aktif link tespiti:** tek bir `IntersectionObserver`, yalnızca `Nav` içinde. Başka hiçbir yerde
 scroll dinlenmez. Gözlem ayarı: `rootMargin: '-<navbar>px 0px -55% 0px'`, `threshold: 0`.

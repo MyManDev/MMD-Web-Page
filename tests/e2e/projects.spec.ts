@@ -300,11 +300,24 @@ test("tek projede yigin devreye girmiyor", async ({ page }) => {
   expect(position).toBe("static");
 });
 
-test("sticky navbar bolum basligini kapatmiyor", async ({ page }, testInfo) => {
-  const width = testInfo.project.use.viewport?.width ?? 0;
-  const margin = await page.locator(SECTION).evaluate((el) => getComputedStyle(el).scrollMarginTop);
-  // --nav-height 56px mobil / 64px lg ustunde, ustune 24px. design-spec.md §7.3
-  expect(margin).toBe(width >= 1024 ? "88px" : "80px");
+/**
+ * Cip ile gelen gezinmede bolum basligi sticky navbar'in ALTINDA kalmamali.
+ *
+ * Beklenen deger SABIT YAZILMIYOR, token'dan turetiliyor. Onceden "88px" /
+ * "80px" diye elle yazilmisti ve nav yuksekligi degisince test, davranis
+ * bozulmadigi halde dustu - yani gercek sozlesmeyi degil o gunku sayiyi
+ * tutuyordu. Olculen sey artik su: pay, nav yuksekligi + 24px.
+ */
+test("sticky navbar bolum basligini kapatmiyor", async ({ page }) => {
+  const { margin, navHeight } = await page.locator(SECTION).evaluate((el) => ({
+    margin: parseFloat(getComputedStyle(el).scrollMarginTop),
+    navHeight: parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--nav-height"),
+    ),
+  }));
+
+  expect(navHeight).toBeGreaterThan(0);
+  expect(margin).toBe(navHeight + 24);
 });
 
 test("mobilde tek kolon, lg ustunde 12 kolonluk izgara", async ({ page }, testInfo) => {
