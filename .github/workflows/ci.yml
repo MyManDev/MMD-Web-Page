@@ -94,21 +94,33 @@ jobs:
 
       - run: pnpm build
 
-      - name: Serve out/ and run Lighthouse
+      - name: Serve out/ and run Lighthouse three times
         run: |
           pnpm exec serve out -l 4173 --no-clipboard &
           npx --yes wait-on http://127.0.0.1:4173 --timeout 60000
           # Varsayilan mobil emulasyon - architecture.md §8 mobil Performance ve
           # mobil LCP raporluyor, o yuzden desktop preset'i verilmiyor.
-          npx --yes lighthouse http://127.0.0.1:4173 \
-            --only-categories=performance,accessibility,best-practices,seo \
-            --output=json --output=html \
-            --output-path=./lighthouse-report \
-            --chrome-flags="--headless=new --no-sandbox"
+          #
+          # UC KOSU (#39): tek kosu bir olgu degil bir orneklem. Ayni sayfa uc
+          # olcumde 74 ile 92 arasinda salindi, TBT 330 ile 1370ms arasinda.
+          # Lighthouse CLI --runs desteklemiyor; dongu yeni bir bagimlilik
+          # eklemiyor (CLAUDE.md kural 4).
+          for i in 1 2 3; do
+            npx --yes lighthouse http://127.0.0.1:4173 \
+              --only-categories=performance,accessibility,best-practices,seo \
+              --output=json --output=html \
+              --output-path=./lighthouse-run-$i \
+              --chrome-flags="--headless=new --no-sandbox"
+          done
+
+      # Skorlar artifact'in ICINDE kalmasin: PR'a bakan kisi indirmeden gormeli.
+      - name: Summarise the three runs
+        if: ${{ !cancelled() }}
+        run: node scripts/lighthouse-summary.mjs .
 
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
-          path: lighthouse-report.*
+          path: lighthouse-run-*.*
           retention-days: 7

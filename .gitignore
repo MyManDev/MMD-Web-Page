@@ -15,3 +15,6 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 Thumbs.db
+
+# lighthouse yerel kosu ciktilari
+lighthouse-run-*
