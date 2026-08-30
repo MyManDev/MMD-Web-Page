@@ -17,6 +17,11 @@ import type { Project } from "./schema";
  *   - projeksiyon vs sonuc -> "Projection Versus Outcome" ve sezon satirindaki
  *                             "Versus Projection -30.1"
  *
+ * "Fantasy Premier League" ibaresi bu listeden TURETILMISTI, dogrudan
+ * gorulmemisti - ekrandaki `Gameweek`, `Transfer hit points` ve butce ifadesi
+ * oraya isaret ediyordu. Cikarim olarak kaldigi surece kayda gecirildi ve
+ * 2026-08-30'da sahibi tarafindan ONAYLANDI. Artik cikarim degil.
+ *
  * Son cumle ovunme degil: uygulama kendi tahmininin KAYBETTIGI haftalari da
  * yayinliyor. Ayni durustluk bu deponun kendi sayisinda da var - "0 ML models
  * promoted to production".
