@@ -126,3 +126,67 @@ test("bolumdeki tek accent kullanimi birincil aksiyonun zemini", async ({ page }
 
   expect(users).toEqual(["Projects"]);
 });
+
+/**
+ * Hero isareti. design-spec.md §3.2
+ *
+ * Sag kolon bir GORSEL degil, buyutulmus wordmark. Uc sozlesmesi var ve ucu de
+ * gozle bakinca dogru gorunup sessizce bozulabilecek turden.
+ */
+test.describe("hero isareti", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
+  });
+
+  /**
+   * Isaret erisilebilir ada KARISMAMALI. Wordmark sayfada zaten navbar ve
+   * footer'da okunuyor; ucuncu kez duyurmak gurultu.
+   *
+   * Test `aria-hidden` niteligini degil, bolumun metin icerigini olcuyor:
+   * nitelik silinirse degil, isaret duyulur hale gelirse dusmeli.
+   */
+  test("ekran okuyucuya ucuncu bir wordmark duyurmuyor", async ({ page }) => {
+    // Burada viewport kapisi YOK: isaret gorunsun gorunmesin, wordmark bolumun
+    // metninde hic olmamali. Kapi koymak testi lg'de zayiflatirdi.
+    const spoken = await page.locator(SECTION).evaluate((section) => {
+      const clone = section.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove());
+      return (clone.textContent ?? "").toLowerCase();
+    });
+
+    expect(spoken).not.toContain("mymandev");
+  });
+
+  /**
+   * Isaret kenardan TASMALI - cerceveye sigan bir metin grafik degil, ikinci
+   * bir basliktir. 168px sabitken 1920'de tam iceri sigiyordu; olcu o yuzden
+   * viewport'a bagli. Bu test o gerilemeyi yakalar.
+   */
+  test("isaret gorunur alanin disina tasiyor", async ({ page }) => {
+    const mark = page.locator(".hero-mark");
+    // `count()` DEGIL `isVisible()`: isaret mobilde de DOM'da duruyor, yalnizca
+    // `display: none`. Sayiya bakan bir kapi mobilde aciliyor ve olcum 0 donuyor.
+    test.skip(!(await mark.isVisible()), "isaret yalnizca lg ustunde");
+
+    // Isaret bir metin dugumu degil, `::after` uretiyor - Range ile olculemez.
+    // `scrollWidth` tasan satir ici icerigi kapsiyor, o yuzden sag kenar
+    // "kutunun solu + kaydirma genisligi".
+    const overflow = await mark.evaluate(
+      (el) => el.getBoundingClientRect().left + el.scrollWidth - window.innerWidth,
+    );
+
+    expect(overflow).toBeGreaterThan(0);
+  });
+
+  /**
+   * ...ama tasma sayfayi yatay kaydirilir hale GETIRMEMELI. Bolumdeki
+   * `overflow-hidden` kalkarsa bu test duser, gorsel fark ise fark edilmez.
+   */
+  test("tasma yatay kaydirma uretmiyor", async ({ page }) => {
+    const overflows = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth,
+    );
+
+    expect(overflows).toBe(false);
+  });
+});
