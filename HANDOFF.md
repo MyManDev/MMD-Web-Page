@@ -10,38 +10,41 @@
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`932bdf8`)
+- Dal: `main` (`b8234b0`)
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` uçtan uca geçiyor; CI'da da yeşil (`gates` · `e2e` · `lighthouse`)
 - Payload: **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB
-- Test: **42 birim, 181 E2E** (23'ü viewport'a göre atlanıyor)
+- Test: **47 birim, 191 E2E** (23'ü viewport'a göre atlanıyor)
 
 ## Açık PR'lar
 
-**Yok.** Bugün on PR merge edildi: #67–#76.
+**Yok.** #67–#80 merge edildi.
 
-Sayfanın görünen yüzü bu turda ölçek olarak bir basamak büyüdü ve Hero'nun sağına marka amblemi
-geldi. Ayrıntı `docs/design-spec.md`'de; burada tekrar edilmiyor.
+#18 ve #11 kapandı: logo SVG, OG görseli ve paylaşım etiketleri yayında. Ayrıntı
+`docs/design-spec.md` ve `docs/architecture.md` §9'da; burada tekrar edilmiyor.
 
 ## Sıradaki tek iş
 
-**#18 — logo SVG ve OG görseli.**
+**#19 — Cloudflare Pages bağlantısı ve alan adı.**
 
-Kalan beş issue'nun dördü depo dışında bir erişim bekliyor: #54 (ayar/izin), #19 (Cloudflare
-hesabı), #20 (en sona kalması gereken kontrol listesi), #11'in kalanı (#18'e bağlı). Depoda
-yapılabilecek tek iş #18 ve **üç şeyi birden açıyor:**
+**Depoda yapılabilecek iş kalmadı.** Açık üç issue'nun üçü de depo dışında bir erişim bekliyor:
 
-1. #11'in kalan yarısı (Open Graph + Twitter card) yazılabilir hâle geliyor.
-2. Hero amblemindeki **380px tavan** kalkıyor — bugünkü sınır kaynağın 400×400 olması.
-3. `scripts/extract-mark.mjs` silinebiliyor; o script yalnızca gerçek SVG gelene kadar var.
+| Issue | Neden burada yapılamaz                                         |
+| ----- | -------------------------------------------------------------- |
+| #19   | Cloudflare hesabı ve DNS erişimi gerekiyor                     |
+| #54   | Depo ayarı; `gh api --method PUT` izin katmanınca reddediliyor |
+| #20   | Yayın sonrası ölçüm — #19'a bağlı, en sona kalmalı             |
 
-Not: **hero görselini hiçbir issue takip etmiyor** ve #73'ten sonra hero'nun bir görsele ihtiyacı
-da kalmadı — amblem o yeri dolduruyor.
+#19 sırada çünkü diğer ikisini de o açıyor: #20 yayın olmadan koşamaz, ve yayın sonrası
+doğrulama listesine #18'den taşınan **"OG görseli gerçek URL'de doğru görünüyor"** maddesi de
+eklendi.
+
+**API token'ı gerekmiyor:** dashboard'dan "Connect to Git" GitHub App yetkisi kullanılıyor. Token
+yalnızca CI'dan deploy edilirse gerekir, ve o token sohbete yapıştırılmaz — gerekirse arayüzden
+uygulanır.
 
 ## Bitmemiş iş
 
-- **#11 yarım.** `robots.txt`, `sitemap.xml`, canonical (#42) ve `description` (#71) yayında.
-  Kalan yalnızca OG ve Twitter card, ikisi de #18'e bağlı.
 - **#54 — branch protection hâlâ uygulanmadı.** Ruleset `main protect` yalnızca `deletion` ve
   `non_fast_forward` içeriyor; §3'ün istediği beş maddenin hiçbiri yok. Hazırlanan payload
   uygulanamadı: `gh api --method PUT` çağrısı izin katmanı tarafından reddedildi. Uygulamak için
@@ -106,5 +109,21 @@ zemini, Hero sağ kolonu, proje açıklamasının zorunluluğu. Burada tekrar ed
   süreç `node.exe` olarak görünüyor.
 - **Katkıcı listesi sorunu bu depoda YOK.** Ölçüldü: `main`'de gerçek trailer 0. Kalıntı yalnızca
   `refs/pull/*`'ta ve listeyi etkilemiyor.
+- **Duyarsız bir metrikle eşik seçilmez.** Logo SVG'sinin sadeleştirme eşiğini seçerken önce
+  çıktıyı render edip kaynakla piksel karşılaştırması yapıyordum; sonuç eşik 0.05'ten 0.8'e
+  çıkarken **değişmiyordu**, çünkü o fark sadeleştirmeden değil kenar yumuşatmasından geliyordu.
+  Bir sayıya bakıp karar vermeden önce o sayının **değişmesi gerektiğinde değiştiğini** görmek
+  lazım.
+- **`mask-image` bulunamayan bir dosyada sessizdir.** Tarayıcı hata vermez, öğe sadece hiç
+  görünmez: kutu yerinde, ölçüler doğru, ekranda hiçbir şey yok. `tests/e2e/hero.spec.ts` maskenin
+  gerçekten yüklendiğini ayrıca ölçüyor.
+- **`page.goto` bağlantı reddedildiğinde anında atıyor**, zaman aşımını beklemeden. Beklemesiz bir
+  yeniden deneme döngüsü 80 denemeyi bir saniyede tüketip sunucu ayağa kalkmadan pes eder.
+  Denemeler arasına bekleme koy.
+- **canonical `href` taşır, `content` değil.** `<link>` ile `<meta>` karıştırıldığında test kendi
+  hatasıyla düşer.
+- **`NOTICE`'in saydığı yollar ile gerçek dosya yolları ayrılabiliyor.** `public/brand/mark.png` o
+  listenin dışında kalıyordu — yani amblem, onu kapsaması gereken bildirimin kapsamı dışındaydı.
+  Yeni marka varlıkları `public/logo*` altında ve kalıp tutuyor.
 - **Bu depoda `git add -A` kullanma**, dosyaları tek tek ekle.
 - **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).
