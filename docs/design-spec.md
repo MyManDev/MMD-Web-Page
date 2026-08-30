@@ -427,7 +427,7 @@ aynı sınıf hatadır.
 | Metin linki hover / focus | 150ms          | `scale` — alt çizgi soldan açılır (`rule`) |
 | Kart hover                | 200ms          | `background-color`                         |
 | `TeamCard` hover / focus  | 200ms          | `translate: 0 -10px`                       |
-| `TeamCard` biyografisi    | ~12ms/harf     | daktilo — **DENEME**, aşağıdaki nota bakın |
+| `TeamCard` biyografisi    | ~12ms/harf     | daktilo — aşağıdaki nota bakın             |
 | Mobil menü açılış/kapanış | 200ms          | `opacity` + `transform: translateY`        |
 | Anchor scroll             | —              | `scroll-behavior: smooth` (CSS)            |
 | Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
@@ -467,8 +467,9 @@ komşu kartlar kaymıyor.
 > Tailwind v4 `translate-y-*` için `transform` değil **`translate`** özelliğini üretir. Geçiş
 > listesi ve testi de onu okur; `transform` bu kartta `none` kalır.
 
-**Daktilo efekti şu an bir DENEME** ve tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`).
-Beğenilmezse o dosya silinir, `TeamCard` sunucu component'i olarak kalır. Koşulları:
+**Daktilo efekti kalıcı** (#57). Gerçek portrelerle bakıldı ve benimsendi; deneme dönemi kapandı.
+Tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`) ve şu koşulları karşıladığı için
+kalıyor:
 
 - Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel
   **+0.3 KiB** (132.3 → 132.6 KiB).
