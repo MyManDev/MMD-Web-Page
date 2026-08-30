@@ -39,6 +39,16 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.canonicalUrl),
   title: site.wordmark,
   /**
+   * Metin #15'te yazildi ve `content/schema.ts` onu ZORUNLU tutuyor, ama
+   * buraya baglanmamisti: depoda duruyor, HTML'e girmiyordu. #11'in artik
+   * engellenmemis yarisi bu.
+   *
+   * Open Graph ve Twitter card HALA #18'i (OG gorseli) bekliyor. Goruntusuz
+   * bir OG etiketi yazmak, olmayan bir varliga isaret eden bir vaat olurdu -
+   * ayni gerekce Hero gorselinde de yazili (§3.2).
+   */
+  description: site.description,
+  /**
    * Kanonik adres marka metni DEGIL, bir adres - architecture.md §7'de
    * karara baglandi ve content/site.ts'te duruyor. "/" veriliyor cunku
    * metadataBase onu mutlak adrese cevirir; adres burada ikinci kez yazilmaz.
