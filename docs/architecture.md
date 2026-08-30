@@ -495,6 +495,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Lighthouse             | Raporlanır, kapı değil                                                    | §8     |
 | axe taraması           | `prefers-reduced-motion` altında, sayfa duragan halde                     | §8     |
 | Lighthouse ölçümü      | Üç koşunun medyanı, aralığıyla birlikte                                   | §8     |
+| Daktilo efekti         | Kalıcı; `TeamCard` biyografisi harf harf yazılıyor                        | §6     |
 | Component render testi | V1'de yok                                                                 | §8     |
 | Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                     | §8     |
 | Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor     | §6     |
