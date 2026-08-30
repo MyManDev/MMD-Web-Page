@@ -74,6 +74,32 @@ section[id] {
   }
 }
 
+/* Hero isareti (#59'da acik birakilan sag bosluk). design-spec.md §3.2
+
+   §3.2 lg'de sagda bir gorsel istiyor ve oyle bir varlik yok. Yerini wordmark
+   dolduruyor - yeni varlik degil, sahip oldugumuz tipografinin buyutulmus hali.
+
+   Renk `surface-2`: zeminden bir tik ayrilan bir DUZLEM, okunacak bir metin
+   degil. Accent kullanilmiyor - Hero'nun tek yesili primary CTA (§5.1).
+
+   `nowrap` + bolumdeki `overflow-hidden`: isaret kenardan tasiyor ve tasmasi
+   kasitli. Cerceveye sigan bir metin grafik degil, ikinci bir basliktir.
+
+   `::after` + `content`: isaret bir metin dugumu DEGIL. Metin dugumuyken axe
+   onu 1.14:1 kontrastla ihlal saydi; kural susturulmadi, renk de parlatilmadi.
+   WCAG 1.4.3 saf dekorasyonu muaf tutuyor ve makineye "bu dekorasyon" demenin
+   yolu icerik gibi davranmayan bir kaynak kullanmak. `--mark` degeri
+   `content/site.ts`'ten geliyor, CSS'e sabitlenmiyor. */
+.hero-mark::after {
+  content: var(--mark);
+  color: var(--color-surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-mark);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
 /* Zaffiro mikro etkilesimleri - `rule` ve `roll`. design-spec.md §6 (#55)
 
    Ikisi de saf CSS ve 0 KiB. Ikisi de :hover VE :focus-visible altinda

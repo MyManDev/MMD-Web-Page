@@ -128,12 +128,12 @@ işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Kl
 
 ### 3.2 Hero — Bölge A
 
-|             | Mobil              | `md`    | `≥ lg`                        |
-| ----------- | ------------------ | ------- | ----------------------------- |
-| Kolon       | 1                  | 1       | 2 — metin solda, görsel sağda |
-| Kolon oranı | —                  | —       | 7 / 5, arada 1 kolon boşluk   |
-| Görsel      | metnin **altında** | altında | sağda, dikey ortalı           |
-| Hizalama    | sola               | sola    | sola                          |
+|             | Mobil   | `md` | `≥ lg`                         |
+| ----------- | ------- | ---- | ------------------------------ |
+| Kolon       | 1       | 1    | 2 — metin solda, işaret sağda  |
+| Kolon oranı | —       | —    | 7 / 5, arada 1 kolon boşluk    |
+| Sağ kolon   | **yok** | yok  | wordmark işareti, dikey ortalı |
+| Hizalama    | sola    | sola | sola                           |
 
 Sıra: başlık (Display XL) → alt cümle (Body) → iki aksiyon
 (`primary` Projects CTA + `ghost` About CTA).
@@ -146,16 +146,37 @@ Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
 Sayfa yüklenirken **giriş animasyonu yok** (§4.4). Hero açılışta zaten ekranda; `reveal-on-enter`
 burada bilerek uygulanmıyor.
 
-**Bugün iki sapma var ve ikisi de eksik bir şeyi işaret ediyor, tercih değil:**
+**Sağ kolonda görsel değil işaret var.**
 
-1. **Tek kolon.** Yukarıdaki tablo `lg`'de sağda görsel istiyor; **öyle bir varlık yok.** Elimizdeki
-   tek marka görseli `assets/brand/logo.png` ve o 9 KB'lik favicon'un kendisi — hero ölçeğinde
-   göstermek placeholder görsel koymak olurdu (`CLAUDE.md` kural 6). Boş bir sağ kolon da açılmıyor.
-   Dikkat: **hiçbir issue hero görselini takip etmiyor**; #18 logo SVG ve OG görselini kapsıyor,
-   hero görselini değil.
-2. **Tek aksiyon.** İkinci aksiyon Who we are'a gidiyor ve o bölüm henüz yok (#9). Hiçbir yere
-   götürmeyen bir düğme çizilmiyor — bu, "`projects` boşsa bölüm render edilmez" kuralının aynısı.
-   `Hero`'nun `secondary` prop'u opsiyonel; bölüm eklendiğinde düğme kendiliğinden geliyor.
+Tablo `lg`'de sağda bir görsel istiyor ve **öyle bir varlık hâlâ yok.** Depodaki tek marka görseli
+`assets/brand/logo.png` ve o 9 KB'lik favicon'un kendisi; hero ölçeğinde göstermek placeholder
+görsel koymak olurdu (`CLAUDE.md` kural 6). Yerini **wordmark'ın kendisi** dolduruyor — yeni bir
+varlık değil, zaten sahip olduğumuz tipografinin büyütülmüş hâli. **Hiçbir issue hero görselini
+takip etmiyor**; #18 logo SVG ve OG görselini kapsıyor, hero görselini değil.
+
+Kuralları:
+
+- **`aria-hidden`.** Wordmark sayfada zaten iki kez okunuyor (navbar ve footer). Üçüncüsü bilgi
+  değil ağırlık taşıyor; ekran okuyucuya üçüncü kez "MyManDev" duyurmak gürültüdür.
+- **Kenardan taşar ve taşması şart.** Çerçeveye sığan bir metin grafik değil, ikinci bir başlıktır.
+  Sabit `px` bunu vermiyor: 168px'te işaret 1024'te 339px taşıyor ama 1920'de 61px **içeride**
+  kalıyordu. Ölçü bu yüzden viewport'a bağlı — `--text-mark: max(168px, 13vw)`, türetmesi
+  `app/tokens.css`'te. Ölçüldü: 1024–2560 arası beş genişlikte taşma 233–358px.
+- **Yatay kaydırma üretmez.** Taşan kısmı bölümdeki `overflow-hidden` kırpıyor; beş genişlikte de
+  `scrollWidth == innerWidth`.
+- **Accent değil.** Rengi `surface-2`; Hero'nun tek yeşili primary CTA (§5.1).
+- **Yalnızca `lg` üstünde.** Dar ekranda taşan bir wordmark metnin yerini alır, yanına gelmez.
+
+**Başlık `text-wrap: balance` kullanır.** Süsleme değil: başlığın anlamı iki cümlenin
+karşıtlığında ve tarayıcı onu ortasından bölüyordu — 390, 1024, 1920 ve 2560'ta satır
+`changed. We / didn't.` diye kırılıyor, "We" önceki cümlenin kuyruğuna takılıyordu. Balance ile
+altı genişlikte de çift bozulmuyor. **Genişlik sınırı eklenmedi:** denendi, 768'i bozuyor — orada
+başlık tek satıra sığıyor ve bir `22ch` capı onu gereksiz yere ikiye bölüyordu.
+
+**İki aksiyon da çiziliyor.** Burada bir zamanlar "tek aksiyon" sapması yazılıydı: ikinci düğme
+Who we are'a gidiyordu ve o bölüm henüz yoktu (#9). #9 kapandı, bölüm sayfada, düğme çiziliyor —
+sapma bitti. `Hero`'nun `secondary` prop'u yine de opsiyonel kalıyor; hiçbir yere götürmeyen bir
+düğme çizilmemesi kuralı ("`projects` boşsa bölüm render edilmez"in aynısı) hâlâ geçerli.
 
 ### 3.3 Projects — Bölge A
 

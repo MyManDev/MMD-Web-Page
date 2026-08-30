@@ -32,6 +32,7 @@ export default function Home() {
           <Hero
             section={heroSection}
             hero={site.hero}
+            wordmark={site.wordmark}
             primary={projectsSection}
             secondary={whoWeAreSection}
           />
