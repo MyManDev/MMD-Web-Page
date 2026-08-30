@@ -35,7 +35,10 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
             yukari"). Bolumun dis ritmi (py-section) DEGISMEDI - o paylasilan bir
             olcu ve tek bir bolum icin oynatilmaz (§4.2).
           */}
-          <h2 id={headingId} className="font-mono text-display-l font-medium lg:text-display-l-lg">
+          <h2
+            id={headingId}
+            className="font-mono text-display-xl font-medium lg:text-display-xl-lg"
+          >
             {section.label}
           </h2>
 

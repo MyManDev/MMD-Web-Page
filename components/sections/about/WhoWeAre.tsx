@@ -36,7 +36,7 @@ export function WhoWeAre({ section, whoWeAre }: { section: NavItem; whoWeAre: Si
           <div className="flex flex-col gap-8 lg:col-span-6 lg:gap-10">
             <h2
               id={headingId}
-              className="font-mono text-display-l font-medium lg:text-display-l-lg"
+              className="font-mono text-display-xl font-medium lg:text-display-xl-lg"
             >
               {section.label}
             </h2>

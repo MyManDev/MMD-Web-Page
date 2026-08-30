@@ -34,36 +34,48 @@
 
      Font agirligi token'a girmiyor: `font-semibold` zaten adiyla anlasilan bir
      utility, `text-[40px]` gibi bir sihirli sayi degil. */
-  --text-display-xl: 40px;
+  /* OLCEK BIR BASAMAK BUYUDU (istek: "yazilar cok kucuk", "bu sayfa cok kucuk").
+     Tek tek component'lere dokunulmadi - hepsi zaten bu token'lari okuyor, yani
+     buyume tek yerden geliyor. Onceki degerler: 40/64, 28/40, 20/24, 15/16, 14,
+     12.
+
+     Bolum basligi 40'tan 56'ya cikarken Hero da 64'ten 80'e cikti; ikisi
+     birlikte hareket etmeseydi baslik hiyerarsisi duzlesirdi. Prensip destesi
+     Display L kullaniyor, yani o da 56'ya cikiyor ve bolum basligiyla ayni
+     olcude kaliyor - aralarindaki ayrimi §3.4'teki cizgi yapiyor, olcu degil.
+
+     `ch` ile tanimli olcu sinirlari (--max-width-prose, --max-width-statement)
+     yazi boyutuyla birlikte buyuyor; ayrica ayarlanmalari gerekmiyor. */
+  --text-display-xl: 48px;
   --text-display-xl--line-height: 1.05;
   --text-display-xl--letter-spacing: -0.02em;
-  --text-display-xl-lg: 64px;
+  --text-display-xl-lg: 80px;
   --text-display-xl-lg--line-height: 1.05;
   --text-display-xl-lg--letter-spacing: -0.02em;
 
-  --text-display-l: 28px;
+  --text-display-l: 32px;
   --text-display-l--line-height: 1.15;
   --text-display-l--letter-spacing: -0.02em;
-  --text-display-l-lg: 40px;
+  --text-display-l-lg: 56px;
   --text-display-l-lg--line-height: 1.15;
   --text-display-l-lg--letter-spacing: -0.02em;
 
-  --text-display-m: 20px;
+  --text-display-m: 22px;
   --text-display-m--line-height: 1.25;
   --text-display-m--letter-spacing: -0.02em;
-  --text-display-m-lg: 24px;
+  --text-display-m-lg: 28px;
   --text-display-m-lg--line-height: 1.25;
   --text-display-m-lg--letter-spacing: -0.02em;
 
-  --text-body: 15px;
+  --text-body: 16px;
   --text-body--line-height: 1.6;
-  --text-body-lg: 16px;
+  --text-body-lg: 18px;
   --text-body-lg--line-height: 1.6;
 
-  --text-body-s: 14px;
+  --text-body-s: 15px;
   --text-body-s--line-height: 1.55;
 
-  --text-mono: 12px;
+  --text-mono: 13px;
   --text-mono--line-height: 1.4;
   --text-mono--letter-spacing: 0.08em;
 
