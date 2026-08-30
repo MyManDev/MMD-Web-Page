@@ -8,14 +8,14 @@ import widthsFile from "./screenshot-widths.json";
  * yerine iki taraf da ayni JSON'u okuyor - dosyalar bir genislikte uretilip
  * srcset baska bir genislikten bahsedemez.
  *
- * Degerler olculdu, secilmedi. lg ustunde gorsel kutusu 12 kolonluk izgaranin
- * 7 kolonu: (1320 - 64 - 11*32) / 12 * 7 + 6*32 = 717px. Yani 1x icin 720,
- * 2x icin 1440 yetiyor; 390px'lik bir telefonda 3x bile 1050px istiyor ve
- * 1440 onu da karsiliyor. Kaynak 2360 piksel genisliginde ve hicbir cihazin
- * ihtiyaci degil - servis edilmiyor, assets/screenshots/ altinda kaynak olarak
- * duruyor.
+ * Degerler olculdu, secilmedi. Kapsayici 1600px, yatay padding 32px, yani ic
+ * genislik 1536px. Gorsel kutusu 12 kolonluk izgaranin 7 kolonu:
+ * (1536 - 11*32) / 12 * 7 + 6*32 = 883px. Yani 1x icin 896, 2x icin 1792.
  *
- * Ikisi de 16/10'a tam bolunuyor (720x450, 1440x900); yarim piksel yok.
+ * Ikisi de 16/10'a tam bolunuyor (896x560, 1792x1120); yarim piksel yok.
+ *
+ * Kaynak servis EDILMIYOR: assets/screenshots/ altinda duruyor ve hicbir
+ * cihazin ihtiyaci olmayan bir boyutta.
  */
 export const SCREENSHOT_WIDTHS: readonly number[] = widthsFile.widths;
 
