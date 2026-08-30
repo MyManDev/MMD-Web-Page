@@ -43,7 +43,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
         sizes="(min-width: 1600px) 491px, (min-width: 1024px) 34vw, (min-width: 640px) calc(50vw - 36px), calc(100vw - 40px)"
         alt={member.name}
         width={1000}
-        height={1600}
+        height={1800}
         loading="lazy"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"

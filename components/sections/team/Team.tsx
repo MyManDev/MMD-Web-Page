@@ -29,7 +29,12 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
   return (
     <section id={section.id} aria-labelledby={headingId}>
       <Container>
-        <div className="reveal-on-enter flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
+        <div className="reveal-on-enter flex flex-col gap-6 py-section lg:gap-8 lg:py-section-lg">
+          {/*
+            Basliktan karta mesafe 40/56'dan 24/32'ye indi (istek: "baslik biraz
+            yukari"). Bolumun dis ritmi (py-section) DEGISMEDI - o paylasilan bir
+            olcu ve tek bir bolum icin oynatilmaz (§4.2).
+          */}
           <h2 id={headingId} className="font-mono text-display-l font-medium lg:text-display-l-lg">
             {section.label}
           </h2>
