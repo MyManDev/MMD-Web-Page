@@ -103,10 +103,20 @@ Bugün ölçümle bulunan, gözle bulunamayacak olanlar:
 - **`pnpm preview` bir sunucudur, biten bir iş değil.** Arka planda başlatılıp durdurulmazsa
   birikiyor; bugün sekiz tane bulundu, en eskisi üç saatlik. Ölçüm scriptleri kendi sunucusunu
   açıp kapatmalı. `pkill -f "serve out"` eşleşmiyor — süreç `node.exe` olarak görünüyor.
-- **Katkıcı listesi sorunu bu depoda YOK.** Ölçüldü: `main`'de gerçek trailer 0, contributors API
-  iki gerçek kişi. Kalıntı yalnızca `refs/pull/*`'ta ve listeyi etkilemiyor. Sorun
-  `football-squad-optimizer` deposundaydı; orada da API (`anon=1` dahil) üç gerçek kişi
-  döndürüyor, yani kenar çubuğundaki dördüncü isim **bayat önbellek**. GitHub Support talebi
-  kapatıldı — düzeltilecek kayıt olmadığı için yapabilecekleri bir şey yoktu.
+- **Katkıcı listesindeki `claude` duruyor ve kaldırılamıyor.** Ölçüldü, üç ayrı yoldan:
+  `main`'de trailer taşıyan commit **0**; contributors API (`anon=1` dahil) **iki gerçek kişi**;
+  ama kenar çubuğu **üç** gösteriyor. Aradaki farkı `refs/pull/*` üretiyor — trailer taşıyan
+  **sekiz commit** orada duruyor ve hiçbiri `main`'den veya herhangi bir daldan erişilemiyor
+  (`git merge-base --is-ancestor` ile doğrulandı).
+
+  **Contributors API sidebar'ı beslemiyor.** Bir önceki devir kaydı bunu doğru yazmıştı
+  ("kalıntı `refs/pull/*`'ta ve silinemiyor"); 30 Ağustos'ta API'ye bakılıp "sorun çözülmüş"
+  diye düzeltildi ve **o düzeltme yanlıştı**.
+
+  `refs/pull/*` kullanıcı tarafından silinemez, yeniden yazılamaz. GitHub Support talebi
+  self-service'e yönlendirilerek kapatıldı. Geriye iki yol kalıyor: depoyu silip temiz geçmişle
+  yeniden kurmak — 66 PR ve bütün issue kaydı gider — ya da kabul etmek. O commit'ler gerçek
+  geçmiş: o PR'lar incelendiği anda gerçekten o trailer'ı taşıyordu.
+
 - **Bu depoda `git add -A` kullanma**, dosyaları tek tek ekle.
 - **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).
