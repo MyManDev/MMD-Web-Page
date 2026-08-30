@@ -50,13 +50,22 @@ export function ProjectCard({
       <div className="flex flex-col gap-6 lg:col-span-5">
         <h3
           id={`${project.slug}-title`}
-          className="font-mono text-display-m font-medium lg:text-display-m-lg"
+          className="font-mono text-display-l font-medium lg:text-display-l-lg"
         >
           {project.name}
         </h3>
 
-        <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
+        {/*
+          Ozet CENGEL, aciklama GOVDE. Ikisi ayri tipografik rolde: ozet
+          uygulamanin kendi basligi ve tek satir, aciklama projenin ne yaptigini
+          anlatiyor. Ayni boyutta bassaydik iki paragraf birbirine karisirdi.
+        */}
+        <p className="max-w-prose font-mono text-display-m text-text-muted lg:text-display-m-lg">
           {project.summary}
+        </p>
+
+        <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
+          {project.description}
         </p>
 
         <ul className="flex flex-wrap gap-2">

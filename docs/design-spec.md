@@ -218,8 +218,27 @@ Kart değil, kendi başına bir bölüm gibi duran tam genişlikte blok.
 | Ekran görüntüsü | metnin altında, tam genişlik | sağ kolon                                    |
 | En-boy          | 16 / 10                      | 16 / 10                                      |
 
-Blok içi sıra: proje adı (Display M) → özet (Body) → tech tag'leri (`Tag`
-listesi, mono) → `MetricRow` → aksiyonlar (GitHub `ghost`, Live Demo `primary`).
+Blok içi sıra: proje adı (Display L) → özet (Display M, `text-muted`) → **açıklama (Body)** →
+tech tag'leri (`Tag` listesi, mono) → `MetricRow` → aksiyonlar (GitHub `ghost`, Live Demo
+`primary`).
+
+**Açıklama alanı sonradan eklendi ve şemada `zorunlu`.** Blok bir zamanlar yalnızca tek satırlık
+özetle yayına çıkıyordu; sol kolon dolmuyor, proje de anlatılmıyordu — "projemizi çok az
+açıklıyoruz". `.optional()` yazmak o kusuru sessizce geri getirirdi (`CLAUDE.md` kural 7), bu
+yüzden açıklaması olmayan bir proje **build'i düşürür.**
+
+Özet ile açıklama **ayrı tipografik roldedir** ve bu ayrım kasıtlı: özet uygulamanın kendi
+başlığındaki cümle — bir çengel, tek satır; açıklama projenin ne yaptığını anlatan gövde. İkisi
+aynı ölçüde basıldığında yan yana iki paragraf gibi okunuyordu, o yüzden özet Display M'e çıktı ve
+`text-muted` oldu.
+
+Proje adı da Display M'den **Display L**'e çıktı: özetle aynı ölçüdeyken hangisinin ad olduğu
+okunmuyordu. Bölüm içi ölçü sırası artık 80 → 56 → 28 → 18.
+
+**Açıklama metni doğrulanabilir olgulara dayanır, uydurulmaz** (`CLAUDE.md` kural 5). Football
+Squad Optimizer'ınki için dayanaklar `content/projects.ts`'te tek tek yazılı: bütçe rakamı, çözücü
+çıktısı (`OPTIMAL — Proved Optimal`), oyuncu başına projeksiyon ve "Projection Versus Outcome"
+satırı — hepsi uygulamanın kendi ekranında görünüyor.
 
 `MetricRow` — imza öğesi (`architecture.md` §4.6). Sayı Display M, etiketi mono ve `text-muted`.
 İfade seçildi ve `architecture.md` §4.6'da kayıtlı. `metrics` boşsa satır **render edilmez**;

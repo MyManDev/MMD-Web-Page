@@ -19,7 +19,14 @@ export const projectSchema = z.object({
     .min(1)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug kebab-case olmali"),
   name: z.string().min(1),
+  /** Uygulamanin kendi basligindaki cumle - tek satirlik cengel. */
   summary: z.string().min(1),
+  /**
+   * Projenin ne yaptigini anlatan paragraf. ZORUNLU: bir proje kartinin tek
+   * satirla yayina cikmasi "cok az anlatiyoruz" durumunun ta kendisiydi.
+   * `.optional()` yazmak o kusuru sessizce geri getirirdi (CLAUDE.md kural 7).
+   */
+  description: z.string().min(1),
   tags: z.array(z.string().min(1)).min(1),
   repoUrl: httpsUrl,
   /** public/ altinda, elle uretilmis webp. Yoksa kart yayinlanmaz. */

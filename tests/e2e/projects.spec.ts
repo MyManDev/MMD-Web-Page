@@ -71,8 +71,16 @@ test("imza sayisi gecerli bir tanim listesi olarak render ediliyor", async ({ pa
   await expect(values.first()).not.toBeEmpty();
   await expect(terms.first()).not.toBeEmpty();
 
-  // Bos cerceve, tire veya "coming soon" yok (CLAUDE.md kural 6).
-  await expect(page.locator(SECTION)).not.toContainText("—");
+  /*
+    Placeholder tire yok (CLAUDE.md kural 6): eksik bir sayinin yerine "—"
+    konmaz, satir hic render edilmez.
+
+    Kontrol BOLUMUN TAMAMINDA degil, tanim listesinde. Once bolum geneline
+    bakiyordu ve proje aciklamasi eklenince dustu - cumlenin icindeki uzun
+    tire, noktalama isareti olarak. Test yanlis yeri olcuyordu: yasak olan sey
+    metinde tire GECMESI degil, bir DEGERIN yerine tire konmasi.
+  */
+  await expect(list).not.toContainText("—");
 });
 
 /**
