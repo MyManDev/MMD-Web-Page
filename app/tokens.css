@@ -7,6 +7,11 @@
   --color-page: #203033;
   --color-surface: #111b1d;
   --color-surface-2: #2a3a34;
+
+  /* Hero amblemi. Accent DEGIL: Hero'nun tek yesili primary CTA (§5.1) ve
+     amblemi de yesil yapmak ekranda ikinci bir odak acardi. Zeminden ayrilan
+     ama okumaya davet etmeyen bir ton - amblem bir DUZLEM, bir baslik degil. */
+  --color-mark: #3d5a53;
   --color-border: #486354;
   /* Etkilesim rengi. Logonun kendi turkuazi DEGIL ve sebebi olculdu:
      #0d9488 uzerinde page rengi metin 3.66:1 veriyor, WCAG AA 4.5 istiyor -
@@ -107,24 +112,6 @@
      cumleyi display olceginde gosteriyor ve kendi olcusune ihtiyaci var.
      Breakpoint'e bagli oldugu icin burada yasiyor (§4.3). */
   --max-width-statement: 22ch;
-
-  /* Hero isareti. §3.2 lg'de sagda bir gorsel istiyor ve oyle bir varlik yok;
-     yerini wordmark'in kendisi bir GRAFIK olarak dolduruyor (#59'da acik
-     birakilan bosluk). Isaret kenardan TASMAK ZORUNDA - cerceveye sigan bir
-     metin grafik degil, ikinci bir basliktir.
-
-     Sabit bir px bunu garanti etmiyor, olculdu: 168px'te isaret 1024'te
-     339px tasiyor ama 1920'de 61px ICERIDE kaliyor, yani genis ekranda tam
-     okunur bir "MyManDev"e donusuyordu. Tasmayi viewport'a bagliyoruz.
-
-     13vw nereden: sag kolon viewport'un %57.7'sinde basliyor ve mono
-     wordmark 4.48em genisliginde (9 karakter, letter-spacing dahil - olculdu,
-     0.6em'lik nominal advance degil). Tasma sarti 0.577vw + 4.48s > vw, yani
-     s > 9.45vw. 13vw bunun ~1.4 kati; pay bilerek birakildi.
-
-     168px taban: 13vw ancak 1292px'ten sonra bunu geciyor, altinda isaret
-     kucultmeye baslardi. lg (1024) ile 1292 arasinda taban devrede. */
-  --text-mark: max(168px, 13vw);
   --aspect-screenshot: 16 / 10;
   /* 5/8 idi, 5/9 oldu: kartlar buyusun diye (istek). Kart zaten kapsayicinin
      tam genisligini kaplıyor, yani buyume ancak YUKSEKLIKTEN gelebiliyordu -

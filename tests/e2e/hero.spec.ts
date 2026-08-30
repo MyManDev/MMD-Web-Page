@@ -128,26 +128,22 @@ test("bolumdeki tek accent kullanimi birincil aksiyonun zemini", async ({ page }
 });
 
 /**
- * Hero isareti. design-spec.md §3.2
+ * Hero amblemi. design-spec.md §3.2
  *
- * Sag kolon bir GORSEL degil, buyutulmus wordmark. Uc sozlesmesi var ve ucu de
- * gozle bakinca dogru gorunup sessizce bozulabilecek turden.
+ * Sag kolonda markanin kendi isareti duruyor - uc kafa ve bir "m". Once orada
+ * buyutulmus wordmark vardi; bir kelime ancak kenardan tasarsa grafik gibi
+ * okunuyor, tasinca da yarim kelime olarak gorunuyordu. Amblem butun duruyor.
  */
-test.describe("hero isareti", () => {
+test.describe("hero amblemi", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
   });
 
   /**
-   * Isaret erisilebilir ada KARISMAMALI. Wordmark sayfada zaten navbar ve
-   * footer'da okunuyor; ucuncu kez duyurmak gurultu.
-   *
-   * Test `aria-hidden` niteligini degil, bolumun metin icerigini olcuyor:
-   * nitelik silinirse degil, isaret duyulur hale gelirse dusmeli.
+   * Amblem erisilebilir ada KARISMAMALI. Marka adi sayfada zaten navbar ve
+   * footer'da okunuyor; ucuncusu bilgi degil agirlik tasiyor.
    */
-  test("ekran okuyucuya ucuncu bir wordmark duyurmuyor", async ({ page }) => {
-    // Burada viewport kapisi YOK: isaret gorunsun gorunmesin, wordmark bolumun
-    // metninde hic olmamali. Kapi koymak testi lg'de zayiflatirdi.
+  test("ekran okuyucuya ucuncu bir marka adi duyurmuyor", async ({ page }) => {
     const spoken = await page.locator(SECTION).evaluate((section) => {
       const clone = section.cloneNode(true) as HTMLElement;
       clone.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove());
@@ -158,35 +154,71 @@ test.describe("hero isareti", () => {
   });
 
   /**
-   * Isaret kenardan TASMALI - cerceveye sigan bir metin grafik degil, ikinci
-   * bir basliktir. 168px sabitken 1920'de tam iceri sigiyordu; olcu o yuzden
-   * viewport'a bagli. Bu test o gerilemeyi yakalar.
+   * BUTUN duruyor - tasmiyor. Yerini aldigi wordmark'in tam tersi sozlesme:
+   * yarisi kirpilmis bir logo bozuk gorunur, o yuzden kutusu gorunur alanin
+   * icinde kalmali.
    */
-  test("isaret gorunur alanin disina tasiyor", async ({ page }) => {
+  test("amblem gorunur alanin icinde, kirpilmadan duruyor", async ({ page }) => {
     const mark = page.locator(".hero-mark");
-    // `count()` DEGIL `isVisible()`: isaret mobilde de DOM'da duruyor, yalnizca
-    // `display: none`. Sayiya bakan bir kapi mobilde aciliyor ve olcum 0 donuyor.
-    test.skip(!(await mark.isVisible()), "isaret yalnizca lg ustunde");
+    test.skip(!(await mark.isVisible()), "amblem yalnizca lg ustunde");
 
-    // Isaret bir metin dugumu degil, `::after` uretiyor - Range ile olculemez.
-    // `scrollWidth` tasan satir ici icerigi kapsiyor, o yuzden sag kenar
-    // "kutunun solu + kaydirma genisligi".
-    const overflow = await mark.evaluate(
-      (el) => el.getBoundingClientRect().left + el.scrollWidth - window.innerWidth,
-    );
+    const box = await mark.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return {
+        left: r.left,
+        right: r.right,
+        width: r.width,
+        height: r.height,
+        vw: window.innerWidth,
+      };
+    });
 
-    expect(overflow).toBeGreaterThan(0);
+    expect(box.left).toBeGreaterThanOrEqual(0);
+    expect(box.right).toBeLessThanOrEqual(box.vw);
+    // Kare: maske `contain` ve kutu 1/1, yani bozulma olmamali.
+    expect(Math.round(box.width)).toBe(Math.round(box.height));
   });
 
   /**
-   * ...ama tasma sayfayi yatay kaydirilir hale GETIRMEMELI. Bolumdeki
-   * `overflow-hidden` kalkarsa bu test duser, gorsel fark ise fark edilmez.
+   * Kaynak varlik 400x400 ve bunun uzerine cikmak bulaniklik demek. Tavan
+   * kaldirilirsa bu test duser - #18 gercek SVG'yi getirene kadar gecerli.
    */
-  test("tasma yatay kaydirma uretmiyor", async ({ page }) => {
+  test("amblem kaynak cozunurlugunun uzerine cikmiyor", async ({ page }) => {
+    const mark = page.locator(".hero-mark");
+    test.skip(!(await mark.isVisible()), "amblem yalnizca lg ustunde");
+
+    const width = await mark.evaluate((el) => el.getBoundingClientRect().width);
+    expect(width).toBeLessThanOrEqual(400);
+  });
+
+  /** Amblem sayfayi yatay kaydirilir hale getirmiyor. */
+  test("yatay kaydirma uretmiyor", async ({ page }) => {
     const overflows = await page.evaluate(
       () => document.documentElement.scrollWidth > window.innerWidth,
     );
 
     expect(overflows).toBe(false);
+  });
+
+  /**
+   * §5.1: Hero'nun tek yesili primary CTA. Amblemi de accent yapmak ekranda
+   * ikinci bir odak acardi - bu test o gerilemeyi tutar.
+   */
+  test("amblem accent renk kullanmiyor", async ({ page }) => {
+    const mark = page.locator(".hero-mark");
+    test.skip(!(await mark.isVisible()), "amblem yalnizca lg ustunde");
+
+    const { markColor, accent } = await mark.evaluate((el) => {
+      const probe = document.createElement("span");
+      probe.style.color = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-accent")
+        .trim();
+      document.body.appendChild(probe);
+      const accent = getComputedStyle(probe).color;
+      probe.remove();
+      return { markColor: getComputedStyle(el).backgroundColor, accent };
+    });
+
+    expect(markColor).not.toBe(accent);
   });
 });

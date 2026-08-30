@@ -74,30 +74,27 @@ section[id] {
   }
 }
 
-/* Hero isareti (#59'da acik birakilan sag bosluk). design-spec.md §3.2
+/* Hero amblemi. design-spec.md §3.2
 
-   §3.2 lg'de sagda bir gorsel istiyor ve oyle bir varlik yok. Yerini wordmark
-   dolduruyor - yeni varlik degil, sahip oldugumuz tipografinin buyutulmus hali.
+   Marka isareti - uc kafa ve bir "m". Kaynak dolu turkuaz bir kare; zemin
+   `scripts/extract-mark.mjs` ile ayrildi, cunku kareyi oldugu gibi koymak
+   ekran boyunda ikinci bir yesil odak eklerdi (§5.1).
 
-   Renk `surface-2`: zeminden bir tik ayrilan bir DUZLEM, okunacak bir metin
-   degil. Accent kullanilmiyor - Hero'nun tek yesili primary CTA (§5.1).
+   `mask-image` + `background-color`, `<img>` DEGIL: renk token'dan geliyor ve
+   dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).
 
-   `nowrap` + bolumdeki `overflow-hidden`: isaret kenardan tasiyor ve tasmasi
-   kasitli. Cerceveye sigan bir metin grafik degil, ikinci bir basliktir.
-
-   `::after` + `content`: isaret bir metin dugumu DEGIL. Metin dugumuyken axe
-   onu 1.14:1 kontrastla ihlal saydi; kural susturulmadi, renk de parlatilmadi.
-   WCAG 1.4.3 saf dekorasyonu muaf tutuyor ve makineye "bu dekorasyon" demenin
-   yolu icerik gibi davranmayan bir kaynak kullanmak. `--mark` degeri
-   `content/site.ts`'ten geliyor, CSS'e sabitlenmiyor. */
-.hero-mark::after {
-  content: var(--mark);
-  color: var(--color-surface-2);
-  font-family: var(--font-mono);
-  font-size: var(--text-mark);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
+   Olcu 380px'te KAPANIYOR ve sebebi kaynak: elimizdeki varlik 400x400, daha
+   buyugu bulaniklik olurdu. #18 gercek logo SVG'sini getirdiginde bu tavan
+   kalkar ve script de silinir. */
+.hero-mark {
+  aspect-ratio: 1;
+  width: clamp(220px, 26vw, 380px);
+  margin-inline: auto;
+  background-color: var(--color-mark);
+  mask-image: url("/brand/mark.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
 }
 
 /* Zaffiro mikro etkilesimleri - `rule` ve `roll`. design-spec.md §6 (#55)
