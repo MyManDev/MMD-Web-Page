@@ -175,19 +175,19 @@ bir kelime** olarak görünüyordu — "MyManD". Amblem o ikilemi taşımıyor.
 
 Kuralları:
 
-- **Zemin ayrıldı.** Kaynak `assets/brand/logo.png` dolu turkuaz bir **kare**. Kareyi olduğu gibi
-  koymak ekran boyunda ikinci bir yeşil odak eklerdi (§5.1). `scripts/extract-mark.mjs` zemini
-  saydama çeviriyor ve geriye yalnızca şekil kalıyor. Kesme sert eşikle değil **renk mesafesiyle**
-  yapılıyor; aradaki dar bant kenar yumuşatmasını koruyor, yoksa kenarlar merdiven olurdu.
+- **Kaynak vektör** (#18): `public/logo-mark.svg`. Orijinal 400×400 PNG'den
+  `scripts/trace-mark.mjs` ile türetildi — başka bir vektör kaynağı yok, PNG'nin kendisi orijinal.
+  Zemini **saydam**: markanın dolu turkuaz karesini olduğu gibi koymak ekran boyunda ikinci bir
+  yeşil odak eklerdi (§5.1). Tam logo ayrı dosyada: `public/logo.svg`.
 - **`mask-image` + `background-color`, `<img>` değil.** Renk token'dan (`--color-mark`) geliyor ve
   bir dosyanın içine gömülü kalmıyor (`CLAUDE.md` kural 1).
 - **Accent değil.** Hero'nun tek yeşili primary CTA (§5.1). Amblemi de yeşil yapmak ekranda ikinci
   bir odak açardı; ton zeminden ayrılıyor ama okumaya davet etmiyor.
 - **Bütün durur, taşmaz.** Yerini aldığı wordmark'ın tam tersi sözleşme: yarısı kırpılmış bir logo
   bozuk görünür.
-- **Ölçü 380px'te kapanıyor** ve sebebi kaynak: elimizdeki varlık **400×400**. Üstüne çıkmak
-  bulanıklık olurdu. **#18** gerçek logo SVG'sini getirdiğinde bu tavan kalkar ve
-  `scripts/extract-mark.mjs` de silinir.
+- **Ölçü 460px'te kapanıyor** ve bu artık bir **tasarım** sınırı, çözünürlük sınırı değil. Vektöre
+  geçmeden önce tavan 380px'ti ve sebebi kaynağın 400×400 olmasıydı; vektörde öyle bir tavan yok.
+  Bugünkü sınırın gerekçesi: amblem başlığın ağırlığını geçmemeli.
 - **`aria-hidden`.** Marka adı sayfada zaten navbar ve footer'da okunuyor; amblem bilgi değil
   ağırlık taşıyor.
 - **Yalnızca `lg` üstünde.** Dar ekranda metnin yanına değil, yerine geçerdi.

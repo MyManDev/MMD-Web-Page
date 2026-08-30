@@ -21,9 +21,10 @@ type NavItem = Site["nav"][number];
  * kenardan tasarsa grafik gibi okunuyor, tasinca da yarim bir kelime olarak
  * gorunuyordu ("MyManD"). Amblem o ikilemi tasimiyor.
  *
- * Kaynak `assets/brand/logo.png` dolu turkuaz bir KARE. Kareyi oldugu gibi
- * koymak ekran boyunda ikinci bir yesil odak eklerdi (§5.1), o yuzden zemin
- * ayrildi ve geriye yalnizca sekil kaldi - `scripts/extract-mark.mjs`.
+ * Kaynak `public/logo-mark.svg` - orijinal PNG'den `scripts/trace-mark.mjs`
+ * ile turetilmis vektor, sapmasi olculdu (en kotu 0.098px). Zemini saydam:
+ * markanin dolu turkuaz karesini oldugu gibi koymak ekran boyunda ikinci bir
+ * yesil odak eklerdi (§5.1).
  *
  * Sekil `mask-image` ile boyaniyor, `<img>` olarak degil: rengi token'dan
  * geliyor, bir dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).

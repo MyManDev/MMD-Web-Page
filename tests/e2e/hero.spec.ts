@@ -180,15 +180,26 @@ test.describe("hero amblemi", () => {
   });
 
   /**
-   * Kaynak varlik 400x400 ve bunun uzerine cikmak bulaniklik demek. Tavan
-   * kaldirilirsa bu test duser - #18 gercek SVG'yi getirene kadar gecerli.
+   * Maske dosyasi GERCEKTEN yukleniyor.
+   *
+   * Bu testin varlik sebebi sessizlik: `mask-image` bulunamayan bir dosyaya
+   * isaret ederse tarayici hata vermez, oge sadece hic gorunmez. Kutu yerinde
+   * durur, olculeri dogrudur, ekranda hicbir sey yoktur - yukaridaki
+   * testlerin hicbiri bunu yakalamaz.
    */
-  test("amblem kaynak cozunurlugunun uzerine cikmiyor", async ({ page }) => {
+  test("maske dosyasi yukleniyor", async ({ page }) => {
     const mark = page.locator(".hero-mark");
     test.skip(!(await mark.isVisible()), "amblem yalnizca lg ustunde");
 
-    const width = await mark.evaluate((el) => el.getBoundingClientRect().width);
-    expect(width).toBeLessThanOrEqual(400);
+    const url = await mark.evaluate((el) => {
+      const match = /url\("?([^")]+)"?\)/.exec(getComputedStyle(el).maskImage);
+      return match?.[1] ?? null;
+    });
+    expect(url, "maske bir dosyaya isaret etmeli").not.toBeNull();
+
+    const response = await page.request.get(url as string);
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("svg");
   });
 
   /** Amblem sayfayi yatay kaydirilir hale getirmiyor. */
