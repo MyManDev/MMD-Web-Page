@@ -5,31 +5,23 @@
 
 **Tarih:** 2026-08-30
 **Yer:** ev
-**Aşama:** 3 bitti ve tasarım geri bildirimleri kapandı. Kalan her şey Faz 4 — ve **hepsi depo
-dışında bir erişim bekliyor.**
+**Aşama:** Faz 3 bitti; iki tur tasarım geri bildirimi de kapandı. Kalan her şey Faz 4 — ve
+**hepsi depo dışında bir erişim bekliyor.**
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`f4ba250`)
+- Dal: `main` (`932bdf8`)
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` uçtan uca geçiyor; CI'da da yeşil (`gates` · `e2e` · `lighthouse`).
-- Payload: **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB.
-- Test: **40 birim, 179 E2E** (21'i viewport'a göre atlanıyor).
+- `pnpm gates` uçtan uca geçiyor; CI'da da yeşil (`gates` · `e2e` · `lighthouse`)
+- Payload: **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB
+- Test: **42 birim, 181 E2E** (23'ü viewport'a göre atlanıyor)
 
 ## Açık PR'lar
 
-**Yok.** Bu turda beş PR merge edildi: #67 #68 #69 #70 #71.
+**Yok.** Bugün on PR merge edildi: #67–#76.
 
-Dört tasarım geri bildirimi de bitti:
-
-| İstek                              | Nasıl çözüldü                                                                 |
-| ---------------------------------- | ----------------------------------------------------------------------------- |
-| Hero'nun sağındaki boşluk          | Wordmark grafik öğe olarak; ölçü viewport'a bağlı, kenardan taşıyor (#68)     |
-| Who we are çok boş                 | İki kolon; prensipler tuşlarla gezilen deste — pinlenen dizi **kalktı** (#69) |
-| Team başlığı yukarı, kartlar büyük | Oran 5/8 → 5/9, kart 708 → 787px; başlık mesafesi 56 → 32px (#70)             |
-| (planlanan)                        | `description` meta etiketi yayına girdi (#71)                                 |
-
-#56 kapalı ama **ürettiği biçim kaldırıldı**; gerekçe issue'ya yorum olarak yazıldı.
+Sayfanın görünen yüzü bu turda ölçek olarak bir basamak büyüdü ve Hero'nun sağına marka amblemi
+geldi. Ayrıntı `docs/design-spec.md`'de; burada tekrar edilmiyor.
 
 ## Sıradaki tek iş
 
@@ -37,12 +29,14 @@ Dört tasarım geri bildirimi de bitti:
 
 Kalan beş issue'nun dördü depo dışında bir erişim bekliyor: #54 (ayar/izin), #19 (Cloudflare
 hesabı), #20 (en sona kalması gereken kontrol listesi), #11'in kalanı (#18'e bağlı). Depoda
-yapılabilecek tek iş #18 ve **iki şeyi birden açıyor:** OG görseli gelince #11'in kalan yarısı
-(Open Graph + Twitter card) da yazılabilir hâle geliyor. Şu an görüntüsü olmayan bir OG etiketi
-yazmak, var olmayan bir varlığa işaret eden bir vaat olurdu.
+yapılabilecek tek iş #18 ve **üç şeyi birden açıyor:**
 
-Not: **hero görselini hiçbir issue takip etmiyor** — ve #68'den sonra hero'nun bir görsele
-ihtiyacı da kalmadı.
+1. #11'in kalan yarısı (Open Graph + Twitter card) yazılabilir hâle geliyor.
+2. Hero amblemindeki **380px tavan** kalkıyor — bugünkü sınır kaynağın 400×400 olması.
+3. `scripts/extract-mark.mjs` silinebiliyor; o script yalnızca gerçek SVG gelene kadar var.
+
+Not: **hero görselini hiçbir issue takip etmiyor** ve #73'ten sonra hero'nun bir görsele ihtiyacı
+da kalmadı — amblem o yeri dolduruyor.
 
 ## Bitmemiş iş
 
@@ -53,95 +47,68 @@ ihtiyacı da kalmadı.
   uygulanamadı: `gh api --method PUT` çağrısı izin katmanı tarafından reddedildi. Uygulamak için
   ya depo ayarlarından elle, ya da `gh api` için Bash izni gerekiyor.
 - **#19 Cloudflare depodan yapılamaz** — hesap ve DNS erişimi gerekiyor. **API token'ı gerekmiyor:**
-  dashboard'dan "Connect to Git" GitHub App yetkisi kullanıyor. Token yalnızca CI'dan deploy
-  edilirse gerekir.
-- ~~Who we are'ın sağ yarısı geniş ekranda boş.~~ **#69'da çözüldü** — sağ yarı artık prensip
-  destesini taşıyor.
-- **Nav wordmark'ı tip ölçeği token'larında değil.** `components/sections/nav/Nav.tsx` içinde hâlâ
-  `text-sm tracking-[0.08em]` satır içi duruyor; #46 diğer her şeyi token'lara taşırken bu satır
-  atlanmış. Issue açılmadı.
+  dashboard'dan "Connect to Git" GitHub App yetkisi kullanılıyor. Token yalnızca CI'dan deploy
+  edilirse gerekir. Token sohbete yapıştırılmaz; gerekirse arayüzden uygulanır.
+- **Proje açıklamasının bir yeri doğrulanmayı bekliyor.** `content/projects.ts`'teki metin
+  uydurulmadı; her cümlesi uygulamanın kendi ekranındaki bir olguya dayanıyor ve dayanaklar dosyada
+  tek tek yazılı. Tek **çıkarım** "Fantasy Premier League" ibaresi: ekrandaki `Gameweek`,
+  `Transfer hit points` ve £100.0m bütçeden türetildi, doğrudan doğrulanmadı.
 
 ## Alınan kararlar
 
-Bugün alınan kalıcı kararlar `docs/architecture.md` §9'da: axe taramasının duragan halde koşması ve
-Lighthouse'un üç koşunun medyanıyla raporlanması. Burada tekrar edilmiyor.
+Kalıcı kararlar `docs/architecture.md` §9'da. Bu turda dört satır eklendi: tip ölçeği, navbar
+zemini, Hero sağ kolonu, proje açıklamasının zorunluluğu. Burada tekrar edilmiyor.
 
 ## Tuzaklar ve notlar
 
-Bugün ölçümle bulunan, gözle bulunamayacak olanlar:
+Ölçümle bulunan, gözle bulunamayacak olanlar:
 
-- **`animation-name: none` reduced-motion'da YETMİYOR.** Hareketi durduruyor ama **düzeni**
-  bırakıyor: pinlenen prensipler mutlak konumda üst üste binip okunmaz oluyordu. Gelişmiş düzenin
-  tamamı `prefers-reduced-motion: no-preference` kapısının **içinde** olmalı. Bu, deponun
-  `animation-timeline: none` ile yaşadığı hatanın ikinci sürümü.
-- **axe, scroll'a bağlı fade'in ortasına denk gelebiliyor.** Üst öğe opaklığını kontrast hesabına
-  kattığı için Live Demo butonu 4.34 verdi; renkler `#149f90 / #1e2d2f` diye raporlandı ve ikisi de
-  token değil — token'ların zemine karışmış hali. Dinlenme halinde aynı çift **5.51:1**. Tarama
-  artık reduced-motion altında koşuyor ve taramadan önce hiçbir şeyin animasyon yapmadığını
-  doğruluyor.
-- **Lighthouse'un Accessibility skoru bu yüzden bizim kapımızdan düşük çıkabilir** (ölçüldü: 96).
-  Kusur değil, ölçüm anı. `architecture.md` §8'de yazılı.
-- **LCP'nin genliği eşiğin kendisinden büyük.** Gerçek CI verisi: medyan 2438ms, aralık
-  1761–3253ms, genlik **1491ms**; eşik 2000ms. Bu sayıyı tek koşuya bakarak kovalamak ölçmeden
-  düzeltmek olur.
-- **`next/font` ilan edilen ağırlığı üretir, kullanılanı değil.** Devir kaydında tersi yazıyordu.
-  Bayt değişmemesinin sebebi eleme değil, **Plex Sans'ın değişken font olması**: dört ağırlık da
-  aynı altı `.woff2` dosyasını işaret ediyor. Ölçüm: her kuruluşta 169.888 byte.
-- **`.next` önbelleği font ölçümünü yalanlıyor.** İki dal aynı sayıyı verdi; doğru sayılar ancak
-  `rm -rf .next` sonrası çıktı.
-- **Görsel hattı kırpmıyordu, esnetiyordu.** Kaynak ve hedef aynı orandayken görünmüyordu. Artık
-  ortadan cover-crop yapıyor; düzeltme çıktıyı bayt bayt değiştirmedi (#50).
-- **Hat genişliği kırpar, yüksekliği değil** (3/4 kaynak, 5/8 hedeften geniş). Yani portrenin dikey
-  çerçevelemesi **kaynaktan gelir ve aşağıda düzeltilemez**. İbrahim'in fotoğrafı bu yüzden hatta
-  girmeden önce 5/8'lik bir pencereye kırpıldı.
-- **`scale` tekdüzeyken tarayıcı tek sayıya kısaltıyor:** açık halde `"1 1"` değil `"1"`. Dize
-  karşılaştıran test düşer; yatay bileşen okunmalı.
-- **`nav.spec.ts`'te `beforeEach` her `describe`'ın içinde**, dosya seviyesinde değil. Yeni bir
-  describe eklerken unutulursa testler sayfaya hiç gitmez ve "eleman yok" diye düşer.
-- **`pnpm preview` bir sunucudur, biten bir iş değil.** Arka planda başlatılıp durdurulmazsa
-  birikiyor; bugün sekiz tane bulundu, en eskisi üç saatlik. Ölçüm scriptleri kendi sunucusunu
-  açıp kapatmalı. `pkill -f "serve out"` eşleşmiyor — süreç `node.exe` olarak görünüyor.
-- **Katkıcı listesindeki `claude` duruyor ve kaldırılamıyor.** Ölçüldü, üç ayrı yoldan:
-  `main`'de trailer taşıyan commit **0**; contributors API (`anon=1` dahil) **iki gerçek kişi**;
-  ama kenar çubuğu **üç** gösteriyor. Aradaki farkı `refs/pull/*` üretiyor — trailer taşıyan
-  **sekiz commit** orada duruyor ve hiçbiri `main`'den veya herhangi bir daldan erişilemiyor
-  (`git merge-base --is-ancestor` ile doğrulandı).
-
-  **Contributors API sidebar'ı beslemiyor.** Bir önceki devir kaydı bunu doğru yazmıştı
-  ("kalıntı `refs/pull/*`'ta ve silinemiyor"); 30 Ağustos'ta API'ye bakılıp "sorun çözülmüş"
-  diye düzeltildi ve **o düzeltme yanlıştı**.
-
-  `refs/pull/*` kullanıcı tarafından silinemez, yeniden yazılamaz. GitHub Support talebi
-  self-service'e yönlendirilerek kapatıldı. Geriye iki yol kalıyor: depoyu silip temiz geçmişle
-  yeniden kurmak — 66 PR ve bütün issue kaydı gider — ya da kabul etmek. O commit'ler gerçek
-  geçmiş: o PR'lar incelendiği anda gerçekten o trailer'ı taşıyordu.
-
+- **Testin "o günkü sayıyı" tutması bir kusurdur.** Bu turda iki test **davranış bozulmadığı hâlde**
+  düştü: biri `scroll-margin`'i `"88px"` diye sabit yazmıştı, diğeri bölümün **tamamında** uzun
+  tire arıyordu ve bir cümlenin noktalamasını yakaladı. İkisi de gerçek sözleşmeyi ölçmüyordu.
+  Beklenen değer türetilebiliyorsa **türet** (token'dan), ve yasağı doğru kapsama uygula.
+- **Bir ölçüyü token'a bağlamak yetmez, DOĞRU token'a bağlamak gerekir.** `roll` kutusunun
+  yüksekliği `--text-mono`dan hesaplanıyordu; nav `--text-nav`e geçince 18.19px'lik kutu 18px'lik
+  satırı kırptı ve hover'da ikinci kopyadan ince bir şerit göründü. `1lh` bu sınıfı tümden
+  kapatıyor — kutu öğenin **kendi** satırına bağlı.
+- **Koyu bir barda "en açık piksel" zemin değil, YAZIDIR.** Navbar kontrastını ölçerken ilk sonucum
+  1.00 çıktı çünkü yazının kendi pikselini örnekliyordum. Doğrusu: yazıyı `visibility: hidden` ile
+  gizleyip aynı koordinatı örneklemek. Gerçek sayı 5.49:1.
 - **`fullPage: true` ekran görüntüsü scroll'a bağlı reveal'ı YALANLIYOR.** Chromium viewport'u
-  büyütmeden kaydırıyor, yani ekran altındaki bölümler `opacity: 0`'da yakalanıyor: tam sayfa
-  görüntüsünde Who we are ve Team **hiç yokmuş gibi** göründü. Ölçüldü — 900px viewport'ta ikisi
-  de 0.00, 2649px'te 1.00. Kusur değil, yakalama yöntemi. Bölümlere tek tek bakmak lazım.
+  büyütmeden kaydırıyor, ekran altındaki bölümler `opacity: 0`'da yakalanıyor. Bölümlere tek tek
+  bakmak lazım.
 - **Playwright'ın ilk tıklaması hareketli sayfada boşa düşüyor.** Ölçüldü: normal yolda 24 koşunun
   7'sinde, reduced-motion altında 0'ında. Sebep uygulama **değil** — tuşun DOM'a girdiği anda
-  çalıştığı ayrıca ölçüldü (12/12, ölü pencere 0 ms). `scroll-behavior: smooth` ve scroll'a bağlı
-  reveal, tuşu ölçümle gönderim arasında oynatıyor. Tıklayan testler reduced-motion altında
-  koşmalı — axe'in aynı sebeple koşması gibi.
-- **Bir taşıyıcının yüksekliği içerikle değişiyorsa üstündeki tuşlar kayar.** Prensip destesinde
-  tam bu oldu; art arda tıklamaların biri boşa düştü. Çözüm: bütün durumları aynı ızgara hücresinde
-  üst üste yığıp yüksekliği en uzununa sabitlemek. Görünmeyenler `visibility: hidden` —
-  `display: none` yüksekliği götürür, `opacity: 0` öğeyi odak sırasında bırakır.
-- **axe, `aria-hidden` bir metni kontrast için yine de tartıyor.** Hero işareti metin düğümüyken
-  1.14:1 verip kapıyı düşürdü. Doğru cevap kuralı susturmak veya rengi parlatmak değil: WCAG 1.4.3
-  saf dekorasyonu muaf tutuyor ve makineye bunu söylemenin yolu **metin düğümü kullanmamak** —
-  `content` ile CSS'ten üretmek.
-- **Sabit `px` bir "taşma" garantisi değildir.** Hero işareti 168px'te 1024'te 339px taşıyordu ama
-  1920'de 61px **içeride** kalıyordu. Taşması gereken şeyin ölçüsü viewport'a bağlanmalı.
-- **`test.use({ reducedMotion })` bu Playwright sürümünde `tsc`'den geçmiyor**; deponun kendi
-  örneği `page.emulateMedia({ reducedMotion: "reduce" })`.
-- **`useEffect` içinde `setState` lint'ten geçmiyor** (`react-hooks/set-state-in-effect`).
-  Hidrasyon tespiti için doğru araç `useSyncExternalStore`: sunucu anlık görüntüsü `false`,
-  istemcininki `true`, tek render.
+  çalıştığı ayrıca ölçüldü (12/12, ölü pencere 0 ms). Tıklayan testler reduced-motion altında
+  koşmalı, axe'in aynı sebeple koşması gibi.
+- **Bir taşıyıcının yüksekliği içerikle değişiyorsa üstündeki tuşlar kayar** ve tıklama kaybolur.
+  Çözüm: bütün durumları aynı ızgara hücresinde üst üste yığıp yüksekliği en uzununa sabitlemek.
+  Görünmeyenler `visibility: hidden` — `display: none` yüksekliği götürür, `opacity: 0` öğeyi odak
+  sırasında bırakır.
+- **axe, `aria-hidden` bir metni kontrast için yine de tartıyor.** Doğru cevap kuralı susturmak veya
+  rengi parlatmak değil: WCAG 1.4.3 saf dekorasyonu muaf tutuyor ve makineye bunu söylemenin yolu
+  **metin düğümü kullanmamak**.
+- **Sabit `px` bir "taşma" garantisi değildir.** 1024'te 339px taşan bir işaret 1920'de 61px
+  **içeride** kalıyordu. Taşması gereken şeyin ölçüsü viewport'a bağlanmalı.
+- **Şemayı sıkılaştırmak fixture'ları düşürür ve bu doğru davranıştır.** `description` zorunlu
+  olunca `tests/fixtures.ts` ve iki şema testi düştü; kapının çalıştığının kanıtı bu.
+- **`test.use({ reducedMotion })` bu Playwright sürümünde `tsc`'den geçmiyor**; deponun kendi örneği
+  `page.emulateMedia({ reducedMotion: "reduce" })`.
+- **`useEffect` içinde `setState` lint'ten geçmiyor** (`react-hooks/set-state-in-effect`). Hidrasyon
+  tespiti için doğru araç `useSyncExternalStore`: sunucu anlık görüntüsü `false`, istemcininki
+  `true`, tek render.
 - **Aynı olgu iki yerde yaşıyorsa test yaz.** Portre oranı hem `app/tokens.css`'te hem
   `lib/image-widths.json`'da yazılı; ayrıldıklarında hiçbir şey patlamıyor, `object-fit: cover`
   farkı sessizce kırpıyor. `tests/portrait-aspect.test.ts` o aralığı tutuyor.
+- **Lighthouse'un Accessibility skoru bizim kapımızdan düşük çıkabilir** (ölçüldü: 96). Kusur değil,
+  ölçüm anı. `architecture.md` §8'de yazılı.
+- **LCP'nin genliği eşiğin kendisinden büyük.** Gerçek CI verisi: medyan 2438ms, aralık 1761–3253ms,
+  genlik **1491ms**; eşik 2000ms. Tek koşuya bakarak kovalamak ölçmeden düzeltmek olur.
+- **`.next` önbelleği font ölçümünü yalanlıyor.** Doğru sayılar ancak `rm -rf .next` sonrası çıktı.
+- **`pnpm preview` bir sunucudur, biten bir iş değil.** Arka planda başlatılıp durdurulmazsa
+  birikiyor. Ölçüm scriptleri kendi sunucusunu açıp kapatmalı. `pkill -f "serve out"` eşleşmiyor —
+  süreç `node.exe` olarak görünüyor.
+- **Katkıcı listesi sorunu bu depoda YOK.** Ölçüldü: `main`'de gerçek trailer 0. Kalıntı yalnızca
+  `refs/pull/*`'ta ve listeyi etkilemiyor.
 - **Bu depoda `git add -A` kullanma**, dosyaları tek tek ekle.
 - **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).
