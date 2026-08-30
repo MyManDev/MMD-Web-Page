@@ -34,7 +34,7 @@ export function Nav({ site }: { site: Site }) {
     <header className="sticky top-0 z-40 border-b border-border bg-surface">
       <Container>
         <div className="flex h-[var(--nav-height)] items-center justify-between gap-4">
-          <a href="#main" className="font-mono text-sm tracking-[0.08em] text-text uppercase">
+          <a href="#main" className="rule font-mono text-sm tracking-[0.08em] text-text uppercase">
             {site.wordmark}
           </a>
 

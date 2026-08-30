@@ -267,3 +267,112 @@ test.describe("anchor scroll ve aktif link", () => {
     // uydurmuyoruz; davranis once yazilmali, sonra test edilmeli. Bolge B.
   });
 });
+
+/**
+ * Mikro etkilesimler (#55). docs/design-spec.md §6
+ *
+ * `roll`: nav etiketi iki kez yaziliyor ve hover/focus'ta dikey kayiyor.
+ * Kural app/globals.css'te; burada davranisi olculuyor.
+ */
+test.describe("nav mikro etkilesimleri", () => {
+  const NAV = 'nav[aria-label="Sections"]';
+
+  test.beforeEach(async ({ page }, testInfo) => {
+    const width = testInfo.project.use.viewport?.width ?? 0;
+    // Masaustu nav'i lg altinda gizli; roll ve wordmark oradaki yuzeyler.
+    test.skip(width < 1024, "masaustu nav yalnizca lg ustunde gorunur");
+    await page.goto("/");
+  });
+
+  /**
+   * EN KRITIK DEGISMEZ: etiket iki kez YAZILIYOR ama bir kez OKUNUYOR.
+   * Ikinci kopya aria-hidden degilse ekran okuyucu her linki iki kez okur ve
+   * gorsel bir detay gezinmeyi bozar.
+   */
+  test("etiket iki kez yaziliyor ama erisilebilir ad tek", async ({ page }) => {
+    const names = await page.evaluate((nav) => {
+      return [...document.querySelectorAll(`${nav} a`)].map((a) => {
+        const clone = a.cloneNode(true) as HTMLElement;
+        clone.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove());
+        return clone.textContent?.trim() ?? "";
+      });
+    }, NAV);
+
+    expect(names).toEqual(["Hero", "Projects", "Who we are", "Team"]);
+
+    // Gorsel kopya gercekten VAR - yoksa test bir sey kanitlamiyor olurdu.
+    const rendered = await page.locator(`${NAV} a`).first().innerText();
+    expect(rendered.split("\n").filter(Boolean)).toHaveLength(2);
+  });
+
+  test("roll kutusu tam bir satir ve tasan kismi gizli", async ({ page }) => {
+    const geometry = await page.evaluate((nav) => {
+      const roll = document.querySelector(`${nav} .roll`) as HTMLElement;
+      const track = roll.querySelector(".roll-track") as HTMLElement;
+      const first = track.firstElementChild as HTMLElement;
+      return {
+        roll: roll.getBoundingClientRect().height,
+        track: track.getBoundingClientRect().height,
+        line: first.getBoundingClientRect().height,
+        overflow: getComputedStyle(roll).overflow,
+      };
+    }, NAV);
+
+    expect(geometry.overflow).toBe("hidden");
+    expect(geometry.roll).toBeCloseTo(geometry.line, 1);
+    expect(geometry.track).toBeCloseTo(geometry.line * 2, 1);
+  });
+
+  test("hover'da kayiyor", async ({ page }) => {
+    const track = page.locator(`${NAV} .roll-track`).first();
+    expect(await track.evaluate((el) => getComputedStyle(el).translate)).toBe("none");
+
+    await page.locator(`${NAV} a`).first().hover();
+    await expect
+      .poll(() => track.evaluate((el) => getComputedStyle(el).translate))
+      .not.toBe("none");
+  });
+
+  /**
+   * KLAVYE PARITESI. Yalnizca hover'a baglanan bir detayi klavye kullanicisi
+   * HIC gormez; detay olmaktan cikip fare sahiplerine ozel bir sey olur.
+   * `link.focus()` yerine gercek Tab kullaniliyor cunku :focus-visible
+   * programatik focus'ta tetiklenmeyebiliyor.
+   */
+  test("focus-visible'da da kayiyor", async ({ page }) => {
+    const first = page.locator(`${NAV} a`).first();
+
+    for (let i = 0; i < 12; i++) {
+      await page.keyboard.press("Tab");
+      if (await first.evaluate((el) => el === document.activeElement)) break;
+    }
+    await expect(first).toBeFocused();
+
+    const translate = await page
+      .locator(`${NAV} .roll-track`)
+      .first()
+      .evaluate((el) => getComputedStyle(el).translate);
+    expect(translate).not.toBe("none");
+  });
+
+  test("wordmark alt cizgi aliyor ve cizgi accent degil", async ({ page }) => {
+    const rule = page.locator("header .rule").first();
+    await expect(rule).toHaveCount(1);
+
+    const line = await rule.evaluate((el) => {
+      const probe = document.createElement("span");
+      probe.style.color = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-accent")
+        .trim();
+      document.body.appendChild(probe);
+      const accent = getComputedStyle(probe).color;
+      probe.remove();
+      const after = getComputedStyle(el, "::after");
+      return { scale: after.scale, background: after.backgroundColor, accent };
+    });
+
+    // Dinlenme halinde cizgi kapali.
+    expect(line.scale).toBe("0 1");
+    expect(line.background).not.toBe(line.accent);
+  });
+});

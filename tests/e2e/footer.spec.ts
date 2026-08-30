@@ -107,3 +107,33 @@ test("mobilde dikey, md ustunde yatay", async ({ page }, testInfo) => {
   });
   expect(direction).toBe(width >= 768 ? "row" : "column");
 });
+
+/**
+ * `rule` alt cizgisi (#55). docs/design-spec.md §6
+ *
+ * Cizgi `currentColor` kullaniyor, yani §5.1'in "Footer'da yesil yok" kurali
+ * sonradan hatirlanmasi gereken bir sey degil - renk kendiliginden dogru.
+ * Yukaridaki "bolumde accent renk kullanilmiyor" testi zaten bunu kapsiyor;
+ * burada cizginin DAVRANISI olculuyor.
+ */
+test("GitHub linki hover'da alt cizgi aliyor", async ({ page }) => {
+  const rule = page.locator("footer .rule");
+  await expect(rule).toHaveCount(1);
+
+  // Cizgi yalnizca METNI kapsiyor, dis link ikonunu degil.
+  await expect(rule).toHaveText("GitHub");
+  expect(await rule.locator("svg").count()).toBe(0);
+
+  /*
+    `scale` tekduze oldugunda tarayici tek sayiya kisaltiyor: kapali halde
+    "0 1", acik halde "1 1" DEGIL "1". Bu yuzden dize karsilastirmak yerine
+    yatay bilesen okunuyor.
+  */
+  const xScale = (value: string) => (value === "none" ? 1 : Number(value.split(" ")[0]));
+  const read = () => rule.evaluate((el) => getComputedStyle(el, "::after").scale).then(xScale);
+
+  expect(await read()).toBe(0);
+
+  await page.getByRole("contentinfo").getByRole("link", { name: "GitHub" }).hover();
+  await expect.poll(read).toBe(1);
+});
