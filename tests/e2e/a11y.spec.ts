@@ -56,3 +56,25 @@ test("skip link klavyeyle erisilebilir ve gorunur oluyor", async ({ page }) => {
   await expect(skip).toBeFocused();
   await expect(skip).toBeVisible();
 });
+
+/**
+ * §58: bolum numaralari (`01`-`04`) kalkti ve `SectionLabel` primitive'i silindi.
+ *
+ * Testi tek tek bolumlere degil SAYFAYA yaziyorum: kaldirma isi dort bolumu
+ * birden ilgilendiriyor ve geri gelmesi de oyle olur. Numaranin bir bolume
+ * sessizce geri donmesi, kaldirma gerekcesini (etiket bilgi katmadigi yerde
+ * durmaz, §3.5) ihlal eder.
+ */
+test("bolumlerde 01-04 numarasi kalmadi", async ({ page }) => {
+  await page.goto("/");
+
+  const markers = await page.evaluate(() =>
+    [...document.querySelectorAll("main section")].flatMap((section) =>
+      [...section.querySelectorAll("*")]
+        .filter((el) => el.children.length === 0 && /^0[1-4]$/.test((el.textContent ?? "").trim()))
+        .map((el) => `${section.id}: ${el.textContent?.trim()}`),
+    ),
+  );
+
+  expect(markers).toEqual([]);
+});

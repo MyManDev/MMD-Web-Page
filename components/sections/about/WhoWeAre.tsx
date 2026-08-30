@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Site } from "@/content";
-import { Container, SectionLabel } from "@/components/ui";
+import { Container } from "@/components/ui";
 
 type NavItem = Site["nav"][number];
 
@@ -36,8 +36,6 @@ export function WhoWeAre({ section, whoWeAre }: { section: NavItem; whoWeAre: Si
           Bolum girisi ICERIGE bagli, section'a degil - kural globals.css'te (§6).
         */}
         <div className="reveal-on-enter flex flex-col gap-8 py-section lg:gap-10 lg:pt-section-lg">
-          <SectionLabel number={section.number}>{section.label}</SectionLabel>
-
           <h2 id={headingId} className="font-mono text-display-l font-medium lg:text-display-l-lg">
             {section.label}
           </h2>

@@ -1,5 +1,5 @@
 import type { Project, Site } from "@/content";
-import { Container, SectionLabel } from "@/components/ui";
+import { Container } from "@/components/ui";
 import { ProjectCard } from "./ProjectCard";
 
 type NavItem = Site["nav"][number];
@@ -10,14 +10,10 @@ type NavItem = Site["nav"][number];
  * Zemin viewport genisliginde (§1'deki tam genislik istisnasi), icerik yine
  * Container icinde.
  *
- * Bolum basligi TOTAL'E BAGLI ve bu bilincli:
- *   - V1 tek proje: §3.3.1 ve Design/design.drawio blok ici sirayi
- *     "SectionLabel 02 -> proje adi" diye veriyor, ayri bir Projects basligi
- *     YOK. Blok bolumun kendisi oldugu icin proje adi h2 ve bolum ona
- *     aria-labelledby ile bagli.
- *   - Cok proje: §4'teki "Display L = bolum basligi" satiri devreye girer,
- *     Projects basligi h2 olur ve kartlar h3'e iner.
- * Iki durumda da tek h1 Hero'da kaliyor ve seviye atlanmiyor (§7.1).
+ * Bolum basligi HER ZAMAN var (#58). Onceden tek projede baslik proje adiydi
+ * ve bolum kimligini "02 PROJECTS" etiketi tasiyordu; etiketler kalkinca o
+ * kimlik bosta kaldi. Artik bolum kendi basligini tasiyor (Display L) ve proje
+ * adi h3 - seviye atlanmiyor, tek h1 Hero'da kaliyor (§7.1).
  *
  * Baslik metni uydurulmuyor: nav etiketi content/site.ts'ten geliyor, ikinci
  * kez yazilmiyor.
@@ -27,7 +23,7 @@ type NavItem = Site["nav"][number];
  */
 export function Projects({ section, projects }: { section: NavItem; projects: Project[] }) {
   const stacked = projects.length > 1;
-  const headingId = stacked ? `${section.id}-title` : `${projects[0]?.slug ?? section.id}-title`;
+  const headingId = `${section.id}-title`;
 
   return (
     <section id={section.id} aria-labelledby={headingId} className="bg-surface">
@@ -42,16 +38,9 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
           konumlanmasi kontrol edilmeli. Bugun total === 1, sticky hic uygulanmiyor.
         */}
         <div className="reveal-on-enter flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
-          <SectionLabel number={section.number}>{section.label}</SectionLabel>
-
-          {stacked ? (
-            <h2
-              id={headingId}
-              className="font-mono text-display-l font-medium lg:text-display-l-lg"
-            >
-              {section.label}
-            </h2>
-          ) : null}
+          <h2 id={headingId} className="font-mono text-display-l font-medium lg:text-display-l-lg">
+            {section.label}
+          </h2>
 
           {/*
             Yigin kabi: kart basina bir viewport yuksekligi (§3.3.2). Tek

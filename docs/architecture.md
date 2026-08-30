@@ -291,7 +291,7 @@ app/
   globals.css         reset ve taban stiller
   not-found.tsx       404
 components/
-  ui/                 Button, Tag, SectionLabel, Container ...
+  ui/                 Button, Tag, ExternalIcon, Container ...
   sections/
     hero/  projects/  nav/  team/  about/  footer/
 content/              §5
@@ -496,6 +496,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | axe taraması           | `prefers-reduced-motion` altında, sayfa duragan halde                     | §8     |
 | Lighthouse ölçümü      | Üç koşunun medyanı, aralığıyla birlikte                                   | §8     |
 | Daktilo efekti         | Kalıcı; `TeamCard` biyografisi harf harf yazılıyor                        | §6     |
+| Bölüm numaraları       | Kaldırıldı; her bölüm kendi başlığını taşır                               | §3     |
 | Component render testi | V1'de yok                                                                 | §8     |
 | Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                     | §8     |
 | Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor     | §6     |

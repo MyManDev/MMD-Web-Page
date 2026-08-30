@@ -31,10 +31,6 @@ test("bolum main icinde ve kendi basligina bagli", async ({ page }) => {
   await expect(section.locator("h1")).toHaveCount(0);
 });
 
-test("bolum numarasi dekoratif - ekran okuyucuya okunmuyor", async ({ page }) => {
-  await expect(page.locator(`${SECTION} [aria-hidden="true"]`).first()).toHaveText("03");
-});
-
 test("manifesto ve prensipler dolu", async ({ page }) => {
   await expect(page.locator(`${SECTION} p`).first()).not.toBeEmpty();
 

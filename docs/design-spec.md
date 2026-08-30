@@ -47,12 +47,11 @@ demektir — fare tıklamasında halka çıkmaz, klavyede çıkar.
 
 Değişiklikleri iki bölge sahibinin de onayını ister.
 
-| Component      | Props                                                                          | Durumlar                                    | Not                                                                                                                                                                                              |
-| -------------- | ------------------------------------------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Container`    | `as?`, `children`                                                              | —                                           | Genişlik ve yatay padding'in tek kaynağı. `as` ile `section`/`div`/`nav` olabilir.                                                                                                               |
-| `SectionLabel` | `number`, `children`                                                           | —                                           | `01`–`04` bölüm numarası + etiket. Mono rolü. Bölüm başlıklarının üstünde.                                                                                                                       |
-| `Button`       | `variant: 'primary' \| 'ghost'`, `href?`, `external?`, `disabled?`, `children` | default · hover · focus · active · disabled | `href` varsa `<a>`, yoksa `<button>`. `external` ise `target="_blank"` + `rel="noopener noreferrer"` + görünür dış link ikonu — ikon `external`'ın kendisinden gelir, ayrı bir prop'la geçilmez. |
-| `Tag`          | `children`                                                                     | —                                           | Statik. Tech tag'leri. Tıklanabilir değil, `<li>` olarak dizilir.                                                                                                                                |
+| Component   | Props                                                                          | Durumlar                                    | Not                                                                                                                                                                                              |
+| ----------- | ------------------------------------------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Container` | `as?`, `children`                                                              | —                                           | Genişlik ve yatay padding'in tek kaynağı. `as` ile `section`/`div`/`nav` olabilir.                                                                                                               |
+| `Button`    | `variant: 'primary' \| 'ghost'`, `href?`, `external?`, `disabled?`, `children` | default · hover · focus · active · disabled | `href` varsa `<a>`, yoksa `<button>`. `external` ise `target="_blank"` + `rel="noopener noreferrer"` + görünür dış link ikonu — ikon `external`'ın kendisinden gelir, ayrı bir prop'la geçilmez. |
+| `Tag`       | `children`                                                                     | —                                           | Statik. Tech tag'leri. Tıklanabilir değil, `<li>` olarak dizilir.                                                                                                                                |
 
 `Button` ölçüsü: yükseklik 44px (mobil dokunma hedefi eşiği), yatay padding 20px,
 `radius-sm`. `Tag`: yükseklik 24px, yatay padding 10px, `surface-2` zemin, `radius-sm`.
@@ -173,7 +172,7 @@ Kart değil, kendi başına bir bölüm gibi duran tam genişlikte blok.
 | Ekran görüntüsü | metnin altında, tam genişlik | sağ kolon                                    |
 | En-boy          | 16 / 10                      | 16 / 10                                      |
 
-Blok içi sıra: `SectionLabel 02` → proje adı (Display M) → özet (Body) → tech tag'leri (`Tag`
+Blok içi sıra: proje adı (Display M) → özet (Body) → tech tag'leri (`Tag`
 listesi, mono) → `MetricRow` → aksiyonlar (GitHub `ghost`, Live Demo `primary`).
 
 `MetricRow` — imza öğesi (`architecture.md` §4.6). Sayı Display M, etiketi mono ve `text-muted`.
@@ -217,7 +216,7 @@ Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor.
 Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. Başlık (Display L) → manifesto
 (Body) → çalışma prensipleri listesi (Body S).
 
-**`SectionLabel` yok** — başlık zaten "Who we are", etiket onu tekrar ederdi (§3.5).
+Bölüm başlığı (Display L) doğrudan manifestonun üstünde; ayrı bir etiket yok (§9, #58).
 
 - Manifesto ve prensipler: `site.whoWeAre` — #15'te yazıldı
 
@@ -265,7 +264,7 @@ bırakıyor; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tabl
 uzun bir şerit üretirdi. Kolon sayısı **içerikten değil breakpoint'ten** gelir; kişi sayısı
 değişirse bu tablo yeniden düşünülür, `grid-cols` içeriğe göre hesaplanmaz.
 
-**`SectionLabel` yok.** "04 TEAM" etiketi ile "Team" başlığı aynı kelimeyi iki kez söylüyordu;
+**Etiket yok.** "04 TEAM" ile "Team" aynı kelimeyi iki kez söylüyordu;
 numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket duruyor, çünkü orada
 başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerde değil **bilgi kattığı
 yerde** durur.
@@ -325,14 +324,14 @@ primitive'inden gelir ve 12px'e küçültülür, çünkü footer'ın mono satır
 Rollerin boyut ve satır yüksekliği değerleri `architecture.md` §4.2'de. Buradaki iş, hangi
 elemanın hangi rolü aldığı.
 
-| Rol        | Nerede                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------ |
-| Display XL | Yalnızca Hero başlığı. Sayfada **bir kez**.                                                      |
-| Display L  | Bölüm başlıkları: Projects, Who we are, Team.                                                    |
-| Display M  | Proje adı, `TeamCard` adı, `MetricRow` sayısı.                                                   |
-| Body       | Hero alt cümlesi, proje özeti, About manifestosu.                                                |
-| Body S     | `TeamCard` biyografisi, About prensip listesi, footer telif.                                     |
-| Mono label | `SectionLabel`, `Tag`, `MetricRow` etiketi, nav linkleri, footer linkleri, `01`–`04` numaraları. |
+| Rol        | Nerede                                                       |
+| ---------- | ------------------------------------------------------------ |
+| Display XL | Yalnızca Hero başlığı. Sayfada **bir kez**.                  |
+| Display L  | Bölüm başlıkları: Projects, Who we are, Team.                |
+| Display M  | Proje adı, `TeamCard` adı, `MetricRow` sayısı.               |
+| Body       | Hero alt cümlesi, proje özeti, About manifestosu.            |
+| Body S     | `TeamCard` biyografisi, About prensip listesi, footer telif. |
+| Mono label | `Tag`, `MetricRow` etiketi, nav linkleri, footer linkleri.   |
 
 Mono katmanı `architecture.md` §4.2'ye göre "şablon hissi"ne karşı en büyük tekil kazanç. Bu
 yüzden nav ve footer linkleri de mono — jenerik sans nav, referans mockup'ın en jenerik yeriydi.
@@ -384,14 +383,14 @@ Component'te literal renk yok (`CLAUDE.md` kural 1).
 
 §4.1 kuralı: ekran başına tek yeşil odak. Bölüm bölüm bağlandı:
 
-| Bölüm      | **Tek** yeşil odak              | Yeşil **olmayan**                                                         |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| Navigation | aktif nav linki                 | wordmark, diğer linkler, GitHub aksiyonu                                  |
-| Hero       | `primary` CTA zemini            | `SectionLabel`, başlık, alt cümle, `ghost` CTA                            |
-| Projects   | Live Demo `primary` zemini      | `SectionLabel`, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu |
-| Who we are | yok                             | başlık, manifesto, liste madde işaretleri                                 |
-| Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                                     |
-| Footer     | yok                             | wordmark, linkler, telif                                                  |
+| Bölüm      | **Tek** yeşil odak              | Yeşil **olmayan**                                                 |
+| ---------- | ------------------------------- | ----------------------------------------------------------------- |
+| Navigation | aktif nav linki                 | wordmark, diğer linkler, GitHub aksiyonu                          |
+| Hero       | `primary` CTA zemini            | başlık, alt cümle, `ghost` CTA                                    |
+| Projects   | Live Demo `primary` zemini      | başlık, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu |
+| Who we are | yok                             | başlık, manifesto, liste madde işaretleri                         |
+| Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                             |
+| Footer     | yok                             | wordmark, linkler, telif                                          |
 
 Who we are, Team ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve o üç bölümde
 birincil aksiyon yok. Her bölüme bir yeşil serpmek §4.1'in tarif ettiği hatanın kendisi.
@@ -520,8 +519,10 @@ tekrar edilmez.
 Her bölüm `<section>` ve `aria-labelledby` ile kendi başlığına bağlanır. Başlık hiyerarşisi:
 sayfada tek `h1` (Hero başlığı), bölüm başlıkları `h2`, kart başlıkları `h3`. Seviye atlanmaz.
 
-`SectionLabel`'daki `01`–`04` numaraları **dekoratiftir** ve `aria-hidden`; ekran okuyucu
-"sıfır bir Projects" diye okumaz.
+Bölüm numaraları (`01`–`04`) **kaldırıldı** (#58). Etiket, tekrar ettiği yerde değil bilgi kattığı
+yerde durur (§3.5); Hero, Who we are ve Team'de kalktıktan sonra Projects'teki tek başına kaldı ve
+dizi olmaktan çıktı. Projects artık kendi bölüm başlığını taşıyor ve proje adı bir alt seviyede.
+404 sayfasındaki `404 / Not found` işareti bir bölüm etiketi değil, orada kendi işaretiyle duruyor.
 
 ### 7.2 Focus göstergesi
 

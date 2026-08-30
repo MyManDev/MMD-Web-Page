@@ -40,9 +40,9 @@ export const site: Site = {
   },
   copyrightYear: 2026,
   nav: [
-    { id: "hero", number: "01", label: "Hero" },
-    { id: "projects", number: "02", label: "Projects" },
-    { id: "who-we-are", number: "03", label: "Who we are" },
-    { id: "team", number: "04", label: "Team" },
+    { id: "hero", label: "Hero" },
+    { id: "projects", label: "Projects" },
+    { id: "who-we-are", label: "Who we are" },
+    { id: "team", label: "Team" },
   ],
 };
