@@ -111,15 +111,17 @@ section[id] {
    `mask-image` + `background-color`, `<img>` DEGIL: renk token'dan geliyor ve
    dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).
 
-   Olcu 380px'te KAPANIYOR ve sebebi kaynak: elimizdeki varlik 400x400, daha
-   buyugu bulaniklik olurdu. #18 gercek logo SVG'sini getirdiginde bu tavan
-   kalkar ve script de silinir. */
+   Kaynak artik VEKTOR (#18): `public/logo-mark.svg`, `scripts/trace-mark.mjs`
+   ile orijinal PNG'den turetildi ve sapmasi olculdu - en kotu 0.098px.
+   Onceki 380px tavani kaynagin 400x400 olmasindan geliyordu; vektorde
+   cozunurluk tavani yok. Ust sinir hala var ama artik TASARIM sinirisi:
+   amblem basligin agirligini gecmemeli. */
 .hero-mark {
   aspect-ratio: 1;
-  width: clamp(220px, 26vw, 380px);
+  width: clamp(220px, 26vw, 460px);
   margin-inline: auto;
   background-color: var(--color-mark);
-  mask-image: url("/brand/mark.png");
+  mask-image: url("/logo-mark.svg");
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
