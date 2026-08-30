@@ -5,50 +5,49 @@
 
 **Tarih:** 2026-08-30
 **Yer:** ev
-**Aşama:** 3 bitti — dört bölüm de `main`'de. Kalan her şey Faz 4: varlık, yayın ve iki karar.
+**Aşama:** 3 bitti ve tasarım geri bildirimleri kapandı. Kalan her şey Faz 4 — ve **hepsi depo
+dışında bir erişim bekliyor.**
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`7eabcf8`)
+- Dal: `main` (`f4ba250`)
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` uçtan uca geçiyor; CI'da da yeşil (`gates` · `e2e` · `lighthouse`).
-- Payload: **132.7 KiB / 150.0 KiB**, kalan pay 17.3 KiB.
-- Test: **37 birim, 166 E2E** (22'si viewport'a göre atlanıyor).
+- Payload: **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB.
+- Test: **40 birim, 179 E2E** (21'i viewport'a göre atlanıyor).
 
 ## Açık PR'lar
 
-**Yok.** Bugün on PR merge edildi (#50–#63) ve hiçbiri açık kalmadı.
+**Yok.** Bu turda beş PR merge edildi: #67 #68 #69 #70 #71.
 
-Kapanan issue'lar: #8 #9 #12 #13 #14 #15 #16 #39 #55 #56.
+Dört tasarım geri bildirimi de bitti:
 
-Sayfada artık `01 Hero` · `02 Projects` · `03 Who we are` · `04 Team` ve footer var.
+| İstek                              | Nasıl çözüldü                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| Hero'nun sağındaki boşluk          | Wordmark grafik öğe olarak; ölçü viewport'a bağlı, kenardan taşıyor (#68)     |
+| Who we are çok boş                 | İki kolon; prensipler tuşlarla gezilen deste — pinlenen dizi **kalktı** (#69) |
+| Team başlığı yukarı, kartlar büyük | Oran 5/8 → 5/9, kart 708 → 787px; başlık mesafesi 56 → 32px (#70)             |
+| (planlanan)                        | `description` meta etiketi yayına girdi (#71)                                 |
+
+#56 kapalı ama **ürettiği biçim kaldırıldı**; gerekçe issue'ya yorum olarak yazıldı.
 
 ## Sıradaki tek iş
 
-**`site.description` yazıldı ama yayınlanmıyor.**
+**#18 — logo SVG ve OG görseli.**
 
-`content/site.ts` bir SEO açıklaması taşıyor ve `content/schema.ts` onu **zorunlu** alan olarak
-tutuyor (#15'te yazıldı). Ama `app/layout.tsx`'teki `metadata` nesnesi onu **hiç kullanmıyor** —
-içinde `metadataBase`, `title` ve `alternates.canonical` var, `description` yok. Yani metin
-depoda duruyor, HTML'e girmiyor.
+Kalan beş issue'nun dördü depo dışında bir erişim bekliyor: #54 (ayar/izin), #19 (Cloudflare
+hesabı), #20 (en sona kalması gereken kontrol listesi), #11'in kalanı (#18'e bağlı). Depoda
+yapılabilecek tek iş #18 ve **iki şeyi birden açıyor:** OG görseli gelince #11'in kalan yarısı
+(Open Graph + Twitter card) da yazılabilir hâle geliyor. Şu an görüntüsü olmayan bir OG etiketi
+yazmak, var olmayan bir varlığa işaret eden bir vaat olurdu.
 
-Bu **#11'in artık engellenmemiş yarısı**: `description` için gereken tek şey #15'ti ve o kapandı.
-Open Graph ve Twitter card hâlâ #18'i (OG görseli) bekliyor, ama `description` beklemiyor.
-
-Yapılacak: `app/layout.tsx`'e `description: site.description` eklemek ve `tests/e2e/seo.spec.ts`'e
-meta etiketin gerçekten üretildiğini doğrulayan bir test yazmak.
+Not: **hero görselini hiçbir issue takip etmiyor** — ve #68'den sonra hero'nun bir görsele
+ihtiyacı da kalmadı.
 
 ## Bitmemiş iş
 
-- **#11 yarım.** `robots.txt`, `sitemap.xml`, canonical yayında (#42) ve `description` metni hazır
-  ama bağlanmadı (yukarıda). OG ve Twitter card #18'e bağlı.
-- **#57 — daktilo kararı verilmedi.** `components/sections/team/BioTypewriter.tsx` `design-spec.md`
-  §6'da hâlâ **DENEME** işaretli. Karar gerçek fotoğraflarla verilecekti; fotoğraflar bugün geldi,
-  yani engel kalktı. Kalırsa ibare kalkar, kalkarsa dosya silinir (−0.3 KiB).
-- **#58 — `02 PROJECTS` etiketine karar verilmedi.** Hero, Who we are ve Projects etiket taşıyor,
-  Team taşımıyor. Görsel kanıt issue'ya yorum olarak eklendi: "03 WHO WE ARE" ile "Who we are"
-  aynı kelimeyi iki kez söylüyor. Kalkarsa `components/ui/SectionLabel.tsx` ve şemadaki zorunlu
-  `nav[].number` alanı da düşer.
+- **#11 yarım.** `robots.txt`, `sitemap.xml`, canonical (#42) ve `description` (#71) yayında.
+  Kalan yalnızca OG ve Twitter card, ikisi de #18'e bağlı.
 - **#54 — branch protection hâlâ uygulanmadı.** Ruleset `main protect` yalnızca `deletion` ve
   `non_fast_forward` içeriyor; §3'ün istediği beş maddenin hiçbiri yok. Hazırlanan payload
   uygulanamadı: `gh api --method PUT` çağrısı izin katmanı tarafından reddedildi. Uygulamak için
@@ -56,9 +55,8 @@ meta etiketin gerçekten üretildiğini doğrulayan bir test yazmak.
 - **#19 Cloudflare depodan yapılamaz** — hesap ve DNS erişimi gerekiyor. **API token'ı gerekmiyor:**
   dashboard'dan "Connect to Git" GitHub App yetkisi kullanıyor. Token yalnızca CI'dan deploy
   edilirse gerekir.
-- **Who we are'ın sağ yarısı geniş ekranda boş.** §3.4 tek kolon ve `65ch` istiyor ve uygulandı;
-  ama o spec kapsayıcı 1180px iken yazılmıştı, `#51` ile 1600'e çıktı. Bir tercih değil,
-  genişletmenin yan etkisi. Issue açılmadı.
+- ~~Who we are'ın sağ yarısı geniş ekranda boş.~~ **#69'da çözüldü** — sağ yarı artık prensip
+  destesini taşıyor.
 - **Nav wordmark'ı tip ölçeği token'larında değil.** `components/sections/nav/Nav.tsx` içinde hâlâ
   `text-sm tracking-[0.08em]` satır içi duruyor; #46 diğer her şeyi token'lara taşırken bu satır
   atlanmış. Issue açılmadı.
@@ -118,5 +116,32 @@ Bugün ölçümle bulunan, gözle bulunamayacak olanlar:
   yeniden kurmak — 66 PR ve bütün issue kaydı gider — ya da kabul etmek. O commit'ler gerçek
   geçmiş: o PR'lar incelendiği anda gerçekten o trailer'ı taşıyordu.
 
+- **`fullPage: true` ekran görüntüsü scroll'a bağlı reveal'ı YALANLIYOR.** Chromium viewport'u
+  büyütmeden kaydırıyor, yani ekran altındaki bölümler `opacity: 0`'da yakalanıyor: tam sayfa
+  görüntüsünde Who we are ve Team **hiç yokmuş gibi** göründü. Ölçüldü — 900px viewport'ta ikisi
+  de 0.00, 2649px'te 1.00. Kusur değil, yakalama yöntemi. Bölümlere tek tek bakmak lazım.
+- **Playwright'ın ilk tıklaması hareketli sayfada boşa düşüyor.** Ölçüldü: normal yolda 24 koşunun
+  7'sinde, reduced-motion altında 0'ında. Sebep uygulama **değil** — tuşun DOM'a girdiği anda
+  çalıştığı ayrıca ölçüldü (12/12, ölü pencere 0 ms). `scroll-behavior: smooth` ve scroll'a bağlı
+  reveal, tuşu ölçümle gönderim arasında oynatıyor. Tıklayan testler reduced-motion altında
+  koşmalı — axe'in aynı sebeple koşması gibi.
+- **Bir taşıyıcının yüksekliği içerikle değişiyorsa üstündeki tuşlar kayar.** Prensip destesinde
+  tam bu oldu; art arda tıklamaların biri boşa düştü. Çözüm: bütün durumları aynı ızgara hücresinde
+  üst üste yığıp yüksekliği en uzununa sabitlemek. Görünmeyenler `visibility: hidden` —
+  `display: none` yüksekliği götürür, `opacity: 0` öğeyi odak sırasında bırakır.
+- **axe, `aria-hidden` bir metni kontrast için yine de tartıyor.** Hero işareti metin düğümüyken
+  1.14:1 verip kapıyı düşürdü. Doğru cevap kuralı susturmak veya rengi parlatmak değil: WCAG 1.4.3
+  saf dekorasyonu muaf tutuyor ve makineye bunu söylemenin yolu **metin düğümü kullanmamak** —
+  `content` ile CSS'ten üretmek.
+- **Sabit `px` bir "taşma" garantisi değildir.** Hero işareti 168px'te 1024'te 339px taşıyordu ama
+  1920'de 61px **içeride** kalıyordu. Taşması gereken şeyin ölçüsü viewport'a bağlanmalı.
+- **`test.use({ reducedMotion })` bu Playwright sürümünde `tsc`'den geçmiyor**; deponun kendi
+  örneği `page.emulateMedia({ reducedMotion: "reduce" })`.
+- **`useEffect` içinde `setState` lint'ten geçmiyor** (`react-hooks/set-state-in-effect`).
+  Hidrasyon tespiti için doğru araç `useSyncExternalStore`: sunucu anlık görüntüsü `false`,
+  istemcininki `true`, tek render.
+- **Aynı olgu iki yerde yaşıyorsa test yaz.** Portre oranı hem `app/tokens.css`'te hem
+  `lib/image-widths.json`'da yazılı; ayrıldıklarında hiçbir şey patlamıyor, `object-fit: cover`
+  farkı sessizce kırpıyor. `tests/portrait-aspect.test.ts` o aralığı tutuyor.
 - **Bu depoda `git add -A` kullanma**, dosyaları tek tek ekle.
 - **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).
