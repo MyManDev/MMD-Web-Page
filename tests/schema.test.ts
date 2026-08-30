@@ -23,6 +23,10 @@ describe("projectSchema", () => {
     ["slug kebab-case degil", { slug: "Football Squad" }],
     ["order negatif", { order: -1 }],
     ["summary bos", { summary: "" }],
+    // Bir proje karti tek satirla yayina cikamaz - "cok az anlatiyoruz"
+    // durumunun ta kendisi buydu. Alan ZORUNLU, opsiyonel degil.
+    ["description eksik", { description: undefined }],
+    ["description bos", { description: "" }],
   ])("%s ise reddeder", (_label, patch) => {
     expect(() => projectSchema.parse({ ...validProject, ...patch })).toThrow();
   });

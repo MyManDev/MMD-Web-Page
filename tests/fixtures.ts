@@ -9,6 +9,7 @@ export const validProject: Project = {
   slug: "football-squad-optimizer",
   name: "Football Squad Optimizer",
   summary: "Squad selection under real constraints.",
+  description: "A fixture paragraph, long enough to stand in for a real description.",
   tags: ["Python", "OR-Tools CP-SAT", "ML", "React"],
   repoUrl: "https://github.com/MyManDev/football-squad-optimizer",
   liveUrl: "https://squadopt.mymandev.com/",
