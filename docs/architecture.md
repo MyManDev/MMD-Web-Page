@@ -508,3 +508,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Görsel pipeline        | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor       | §6     |
 | Etkileşim dili         | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor              | §4.4   |
 | Hareket sistemi        | Saf CSS `animation-timeline`; 0 KiB JS, motion kütüphanesi yok            | §4.4   |
+| Tip ölçeği             | Bir basamak büyütüldü; bölüm başlıkları da **Display XL**                 | §4.2   |
+| Navbar zemini          | Ayrı bar rengi yok — blur + tint; desteklenmiyorsa **dolu** zemine düşer  | §4.1   |
+| Hero sağ kolonu        | Wordmark değil **marka amblemi**; zemini ayrılmış PNG, rengi token'dan    | §4.1   |
+| Proje açıklaması       | Şemada **zorunlu** alan; tek satırla proje yayınlanmaz                    | §5     |
