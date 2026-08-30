@@ -47,7 +47,7 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
           {stacked ? (
             <h2
               id={headingId}
-              className="font-sans text-display-l font-semibold lg:text-display-l-lg"
+              className="font-mono text-display-l font-medium lg:text-display-l-lg"
             >
               {section.label}
             </h2>

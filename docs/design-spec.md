@@ -275,6 +275,9 @@ elemanın hangi rolü aldığı.
 Mono katmanı `architecture.md` §4.2'ye göre "şablon hissi"ne karşı en büyük tekil kazanç. Bu
 yüzden nav ve footer linkleri de mono — jenerik sans nav, referans mockup'ın en jenerik yeriydi.
 
+**Display rolü de mono** (§4.2). Başlıklarda büyük harf ve geniş `letter-spacing` **yok**; ortak
+olan yalnızca yüz. Ölçek ve `letter-spacing` display'in kendi değerleri (`-0.02em`).
+
 `letter-spacing` değerleri role bağlıdır ve §4.2'de yazılı; component'te ayrıca tanımlanmaz.
 
 **Roller token'dır, sayı değil.** Her rol `app/tokens.css`'te bir `--text-*` token'ı ve

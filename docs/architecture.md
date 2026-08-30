@@ -127,7 +127,7 @@ build sırasında gömülür; runtime'da dış istek yok).
 
 | Rol     | Yüz                                                      | Kullanım                                                  |
 | ------- | -------------------------------------------------------- | --------------------------------------------------------- |
-| Display | IBM Plex Sans 600/700, `letter-spacing: -0.02em`         | Hero, bölüm başlıkları                                    |
+| Display | IBM Plex Mono 500, `letter-spacing: -0.02em`             | Hero, bölüm başlıkları                                    |
 | Body    | IBM Plex Sans 400/500                                    | paragraf, kart açıklamaları                               |
 | Utility | IBM Plex Mono 500, `uppercase`, `letter-spacing: 0.08em` | bölüm etiketleri, tech tag'leri, proje numaraları, footer |
 
@@ -136,8 +136,21 @@ Gerekçe: tek süper-aile olduğu için uyumsuzluk riski yok; mühendislik geçm
 jenerik geometric sans, "şablon" hissinin renkten çok daha büyük kaynağıydı. Yeşil uppercase sans
 etiketler yerine mono etiketler tek başına en büyük farkı yaratıyor.
 
-Draw.io aşamasında display için alternatif denenebilir (ör. Bricolage Grotesque). Denenmezse veya
-karar verilmezse **commit'li seçim Plex'tir**; belirsizlik kalmaz.
+**Display rolü mono'ya geçti.** Başlıklar da IBM Plex Mono 500 kullanıyor — büyük harf ve geniş
+`letter-spacing` olmadan, display ölçeğinde ve `-0.02em` ile. Yukarıdaki gerekçenin devamı: mono
+katmanı "şablon" hissine karşı en büyük tekil kazançsa, başlığı da ona vermek o kazancı sayfanın
+en görünür yerine taşıyor.
+
+Bricolage Grotesque denendi ve seçilmedi. **Bayt farkı yok, ölçüldü:** her iki durumda da indirilen
+font 169.888 byte. Yani seçim tamamen görünüş; maliyet argümanı yok.
+
+**Sebebi neden önemli:** `next/font` ilan edilen her ağırlık için bir `@font-face` kuralı üretir —
+kullanılanı değil, **ilan edileni**. Ölçüldü: `weight: ["400","500","600","700"]` ile hiç
+kullanılmayan 700 için de kural çıkıyor. Bayt değişmemesinin sebebi ağırlıkların elenmesi değil,
+**IBM Plex Sans'ın değişken font olarak gelmesi**: dört ağırlık da unicode altkümesi başına aynı
+altı `.woff2` dosyasını işaret ediyor. Yani ağırlık listesini uzatmak da kısaltmak da bedava.
+Listeyi kısaltmak bayt kazandırmaz; yalnızca hangi ağırlıkların kullanılmasının beklendiğini
+söyler.
 
 **Tip ölçeği** (mobil / desktop):
 
@@ -456,7 +469,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | ---------------------- | ------------------------------------------------------------------------- | ------ |
 | Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                                 | §3     |
 | Placeholder proje      | Yayınlanmaz                                                               | §3     |
-| Font                   | IBM Plex Sans + Mono                                                      | §4.2   |
+| Font                   | IBM Plex Sans + Mono; **display rolü de mono** (bayt farkı yok)           | §4.2   |
 | Sayfa genişliği        | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                    | §4.3   |
 | Bölüm dikey boşluğu    | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı   | §4.3   |
 | İmza öğe               | Dürüst sayı satırı; sayı `0` — ML models promoted to production           | §4.6   |
