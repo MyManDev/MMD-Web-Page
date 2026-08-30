@@ -166,134 +166,79 @@ a:focus-visible .roll-track {
   translate: 0 -50%;
 }
 
-/* Zaffiro hareket katmani - pinlenen prensip dizisi. design-spec.md §3.4 ve §6
+/* Prensip destesi - components/sections/about/PrincipleDeck.tsx
+   design-spec.md §3.4
 
-   Bolum bir viewport'a pinlenir ve scroll ilerledikce prensipler tek tek
-   degisir. Referansin (Zaffiro) ayni hareketi JS ile yapiyor; burada zaman
-   cizelgesini tarayici yurutuyor, sayfaya 0 KiB JS ekleniyor ve CLAUDE.md
-   kural 3 degismeden duruyor.
+   Burada pinlenen bir dizi VARDI (#56) ve kaldirildi. Sebebi olculdu degil
+   gorulduydu: dizi manifestoyu ekrandan atiyor, geriye bir viewport'ta tek bir
+   satir kaliyordu - bolumun bos gorunmesinin sebebi oydu. Yerine gecen bicimde
+   manifesto ve prensipler ayni ekranda duruyor ve prensipler arasinda scroll
+   degil tuslarla geziliyor.
 
-   UC KAPI birden var ve ucu de ayni yere dusuyor - duz liste:
-     1. @supports yoksa       -> hicbir kural uygulanmaz
-     2. lg altinda            -> mobilde viewport yuksekligi pini tasimiyor;
-                                 ayni gerekce design-spec.md §3.3.2'de Projects
-                                 yigini icin de verilmisti
-     3. prefers-reduced-motion -> asagidaki blok animation-name'i kaldiriyor
-   Yani gelismis bicim bir KATMAN; icerigin tasiyicisi degil. Liste her uc
-   durumda da tam ve okunur kaliyor.
+   Silinenler: .principle-track, .principle-pin, .principle-list, .principle,
+   .principle-index ve principle-step / principle-step-last keyframe'leri.
 
-   Prensip basina yarim ekranlik scroll: bes kisa cumle icin bes ekran istemek
-   hareketi okunurlugun onune gecirirdi. */
-/* Sayac VARSAYILAN OLARAK KAPALI ve yalnizca pinlenen bicimde aciliyor.
-   Duz listede madde isaretleri sirayi zaten soyluyor; "01 / 05" orada
-   tekrar olurdu. Iki kural da bu dosyada, yani hangisinin kazandigi
-   yukleme sirasina degil bu siraya bagli. */
-.principle-index {
-  display: none;
+   Sabit yukseklik YOK ve bu bilerek: prensipler farkli uzunlukta, sabit bir
+   kap ya en uzununa gore fazladan bosluk birakir ya da kisasini kirpar. Kap
+   icerikle birlikte buyuyor. */
+/* Bes prensip de ayni izgara hucresinde ust uste. Kap yuksekligi boylece EN
+   UZUN prensibe sabitleniyor ve gezinirken tuslar yerinden oynamiyor.
+
+   Onceki bicim tek prensip basip `min-height` veriyordu ve yetmedi: iki
+   satirdan uc satira gecerken kap yine buyuyor, tuslar asagi kayiyor ve ard
+   arda tiklamalarin biri bosa dusuyordu. Olculdu - bes tiklamada sayac 01
+   yerine 05'te kaldi. */
+.principle-stage {
+  display: grid;
 }
 
-@keyframes principle-step {
-  0% {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  12% {
-    opacity: 1;
-    transform: none;
-  }
-
-  88% {
-    opacity: 1;
-    transform: none;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
+.principle-slot {
+  grid-area: 1 / 1;
+  /* `display: none` DEGIL - yuksekligi de goturur ve sabitleme bozulur.
+     `opacity: 0` DA DEGIL - oge erisilebilirlik agacinda ve odak sirasinda
+     kalirdi. `visibility` ikisini birden cozuyor. */
+  visibility: hidden;
 }
 
-/* Sonuncusu SOLMAZ: dizi bittiginde pin hala ekranda olabiliyor ve son
-   prensip kaybolursa panel bos kalirdi. */
-@keyframes principle-step-last {
-  0% {
+.principle-slot[data-active] {
+  visibility: visible;
+}
+
+/* Yalnizca `from` tanimli ve bu onemli: reduced-motion evrensel blogu
+   `animation-name: none` uyguladiginda oge dinlenme haline - yani tam gorunur
+   haline - donuyor. `to` yazilsaydi ayni blok ogeyi `from` karesinde
+   dondururdu; deponun daha once yasadigi hatanin aynisi. */
+@keyframes principle-enter {
+  from {
     opacity: 0;
-    transform: translateY(12px);
-  }
-
-  12% {
-    opacity: 1;
-    transform: none;
-  }
-
-  100% {
-    opacity: 1;
-    transform: none;
+    translate: 0 8px;
   }
 }
 
-/* prefers-reduced-motion KAPININ ICINDE, disinda degil - ve bu olculerek
-   bulundu. Asagidaki genel blok yalnizca `animation-name`i kaldiriyor; duzen
-   kalsaydi bes prensip mutlak konumda UST USTE binip okunmaz olurdu. Yani
-   hareketi kaldirmak yetmiyor, gelismis DUZENI de geri almak gerekiyor.
-   Ayni sinif hata daha once `animation-timeline: none` ile yasanmisti. */
-@supports (animation-timeline: view()) {
-  @media (width >= 1024px) and (prefers-reduced-motion: no-preference) {
-    .principle-track {
-      /* `contain` evresinin uzunlugu = kap yuksekligi - viewport. Yani
-         prensip basina dusen scroll tam olarak 50dvh. */
-      height: calc(var(--n) * 50dvh + 100dvh);
-      view-timeline-name: --principles;
-      view-timeline-axis: block;
-    }
+.principle-slot[data-active] {
+  animation: principle-enter 240ms ease-out both;
+}
 
-    .principle-pin {
-      position: sticky;
-      /* Sticky navbar panelin ustunu kapatmasin - §7.3'teki ayni hesap. */
-      top: calc(var(--nav-height) + 24px);
-      display: flex;
-      height: calc(100dvh - var(--nav-height) - 48px);
-      align-items: center;
-    }
+/* Deste tuslari. Yesil YOK - §5.1 bu bolume accent kotasi vermiyor; tuslar
+   ince border ve renk degisimiyle calisiyor. */
+.deck-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition:
+    color 150ms ease-out,
+    border-color 150ms ease-out;
+}
 
-    .principle-list {
-      position: relative;
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .principle {
-      position: absolute;
-      inset-inline: 0;
-      /* TIP ROLU YUKSELIYOR ve bu bilincli bir sapma (§3.4'te yazili).
-         Duz listede prensip Body S; pinlenen bicimde tek cumleye butun ekran
-         veriliyor ve Body S orada bos bir ekranda kaybolan bir satir olurdu.
-         Ekrani hak eden cumle display olceginde durur. Olculer token'dan
-         geliyor, buraya sayi yazilmiyor. */
-      max-width: var(--max-width-statement);
-      color: var(--color-text);
-      font-size: var(--text-display-l-lg);
-      line-height: var(--text-display-l-lg--line-height);
-      letter-spacing: var(--text-display-l-lg--letter-spacing);
-      animation: principle-step linear both;
-      animation-timeline: --principles;
-      /* Her prensip `contain` evresinin kendi diliminde gorunur. */
-      animation-range: contain calc((var(--i) / var(--n)) * 100%) contain
-        calc(((var(--i) + 1) / var(--n)) * 100%);
-    }
-
-    .principle:last-child {
-      animation-name: principle-step-last;
-    }
-
-    /* Sayac yalnizca gelismis bicimde: duz listede madde isaretleri zaten
-       sirayi soyluyor. Dekoratif degil - kullanici dizinin neresinde oldugunu
-       baska turlu bilemez, o yuzden aria-hidden DEGIL. */
-    .principle-index {
-      display: block;
-    }
-  }
+.deck-button:hover,
+.deck-button:focus-visible {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
 }
 
 /* Daktilo efekti - components/sections/team/BioTypewriter.tsx (DENEME)

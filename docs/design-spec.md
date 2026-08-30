@@ -234,8 +234,9 @@ scroll listener yok.
 
 Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor. Genelden tekile.
 
-Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. Başlık (Display L) → manifesto
-(Body) → çalışma prensipleri listesi (Body S).
+**İki kolon (`lg` üstünde).** Solda başlık (Display L) → manifesto (Body), sağda prensip destesi.
+Mobilde alt alta. Metin genişliği okunabilirlik için `65ch` ile sınırlı — sınır kapsayıcıdan değil
+okunabilirlikten geliyor, kapsayıcı 1600px.
 
 Bölüm başlığı (Display L) doğrudan manifestonun üstünde; ayrı bir etiket yok (§9, #58).
 
@@ -244,33 +245,58 @@ Bölüm başlığı (Display L) doğrudan manifestonun üstünde; ayrı bir etik
 Prensip sayısı **3–5** ve bu sınır belgede değil şemada zorlanıyor
 (`content/schema.ts`, `.min(3).max(5)`): altıncı bir madde eklenirse `pnpm build` patlar.
 
-**Prensipler `lg` üstünde pinlenen bir dizi** (#56). Bölüm bir viewport'a sabitlenir ve scroll
-ilerledikçe prensipler tek tek değişir; her birinin üstünde `01 / 05` sayacı durur. Prensip başına
-yarım ekranlık scroll — beş kısa cümle için beş ekran istemek hareketi okunurluğun önüne geçirirdi.
+#### Prensip destesi
 
-**Üç kapı da aynı yere düşer: düz liste.**
+Prensipler **tek tek** gösterilir; kullanıcı ileri/geri tuşlarıyla gezer ve `01 / 05` sayacı
+konumu söyler. Prensip Display L'de durur — ekranı hak eden cümle Body S'te kaybolur. Ölçü
+genişliği `--max-width-statement` (22ch): `65ch` gövde metni için doğru ama `ch` yazı boyutuyla
+büyüdüğü için 40px'te sınır işlevini yitirir (§4.3).
 
-| Kapı                                         | Sonuç                                                                                                        |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `@supports (animation-timeline: view())` yok | Hiçbir kural uygulanmaz                                                                                      |
-| `lg` altında                                 | Pin yok — mobilde viewport yüksekliği pini taşımıyor; aynı gerekçe §3.3.2'de Projects yığını için de verildi |
-| `prefers-reduced-motion: reduce`             | Pin ve mutlak konum **birlikte** kalkar                                                                      |
+**Burada pinlenen bir dizi vardı (#56) ve kaldırıldı.** O biçim bölümü bir viewport'a sabitleyip
+prensipleri scroll'la değiştiriyordu. Kusuru yapısaldı, ayarla düzelmiyordu: **manifestoyu ekrandan
+atıyordu.** Geriye bir viewport dolusu boşlukta tek bir cümle kalıyordu — bölümün boş görünmesinin
+sebebi buydu. Manifesto ve prensipler artık aynı ekranda: biri kolektifin ne olduğunu, diğeri nasıl
+çalıştığını söylüyor ve ikisi birlikte okunuyor.
 
-Son satır ölçülerek bulundu ve önemli: hareketi kaldırmak **yetmiyor.** `animation-name: none`
-animasyonu durduruyor ama düzeni bırakıyordu; beş prensip mutlak konumda üst üste binip okunmaz
-oluyordu. Bu yüzden gelişmiş düzenin tamamı `prefers-reduced-motion: no-preference` kapısının
-**içinde**. Aynı sınıf hata daha önce `animation-timeline: none` ile yaşanmıştı (§6.1).
+**İlerleme bir katman, taşıyıcı değil.** Sunucu çıktısı **beş prensibi de** düz liste olarak
+basar; tuşlar yoktur. Deste ancak hidrasyondan sonra devreye girer.
 
-**Tip rolü pinlenen biçimde yükseliyor** ve bu bilinçli bir sapma. Düz listede prensip Body S;
-pinlenen biçimde tek cümleye bütün ekran veriliyor ve Body S orada boş bir ekranda kaybolan bir
-satır olur. Ekranı hak eden cümle Display L'de durur. Ölçü genişliği de değişiyor: `65ch` gövde
-metni için doğru ama `ch` yazı boyutuyla büyüdüğü için 40px'te kapsayıcıyı aşar ve sınır işlevini
-yitirir — bu yüzden `--max-width-statement` (22ch) token'ı eklendi (§4.3).
+| JS durumu           | Sonuç                                                      |
+| ------------------- | ---------------------------------------------------------- |
+| Hiç gelmedi / düştü | Beş prensip de okunur düz liste, gezinme tuşu **çizilmez** |
+| Geldi               | Tek prensip + ileri/geri tuşları + sayaç                   |
 
-Liste her durumda gerçek bir `<ul>` ve prensiplerin hepsi DOM'da: değişen şey görünürlük, içerik
-değil. Sayaç **dekoratif değildir** — pinlenen biçimde kullanıcı dizinin neresinde olduğunu başka
-türlü bilemez, o yüzden `aria-hidden` taşımaz; düz listede madde işaretleri sırayı zaten söylediği
-için CSS ile gizlenir.
+Tersini yazmak (sunucuda tek prensip, gerisini JS açar) beş cümlenin dördünü JS'e rehin verirdi.
+Aynı gerekçe daktilo efektinde de yazılı (§6): gizleyen taraf, gelmeyebilecek olan taraf olmalı.
+Çalışmayan bir tuş da çizilmez — hiçbir yere gitmeyen düğme çizmemekle aynı kural (§3.2).
+
+**Beş prensip de aynı ızgara hücresinde üst üste durur**, yalnızca aktif olan görünür. Sebep
+ölçüldü: tek prensip basıldığında kap yüksekliği prensibin uzunluğuyla değişiyor, iki satırdan üç
+satıra geçerken **tuşlar aşağı kayıyordu**. Art arda tıklamaların biri boşa düştü — beş tıklamada
+sayaç 01 yerine 05'te kaldı. Gerçek kullanıcıda bu "tuşa bastım, bir şey olmadı" olur. Üst üste
+yığmak kap yüksekliğini en uzun prensibe sabitliyor; ölçüldü, tuş konumu beş adımda da aynı.
+
+Görünmeyenler `visibility: hidden`. `display: none` yüksekliği de götürür ve sabitleme bozulur;
+`opacity: 0` ise öğeyi erişilebilirlik ağacında ve odak sırasında bırakırdı.
+
+**Erişilebilirlik.** Sahne `aria-live="polite"`: odak tuşta kaldığı için değişen metin
+kendiliğinden duyulmaz ve canlı bölge olmadan ekran okuyucu kullanıcısı tuşun bir şey yaptığını
+anlamaz. Deste `role="group"` + `aria-roledescription="carousel"`; erişilebilir adı `Principles` ve
+bu **uydurulmuş marka metni değil** — alanın `content/site.ts`'teki adı zaten o. Görünür bir başlık
+yazmak yeni bir marka cümlesi yazmak olurdu (`CLAUDE.md` kural 5).
+
+Gezinme **başa sarar**. Sonu olan bir gezinmede son tuş devre dışı kalır ve odak boşa düşer; beş
+öğede sarma yönü kaybettirmiyor, sayaç konumu zaten söylüyor.
+
+**Destenin üstünde ince bir çizgi var ve bu süsleme değil, hiyerarşi düzeltmesi.** Prensip de
+bölüm başlığı da aynı ölçüde mono (40px); çizgisiz hâlde ikisi yan yana iki **başlık** gibi
+okunuyordu. Alternatifi denendi — prensibi 24px'e düşürmek — ve sağ kolonu yeniden boşaltıyordu,
+yani bu bölümün ilk şikâyetini geri getiriyordu. Çizgi desteyi ayrı bir modül olarak işaretliyor,
+ölçüyü düşürmeden. Mobilde de durur; orada işi daha açık, kolonlar yığıldığında manifestoyla
+prensipleri ayıran tek şey odur.
+
+**Bölümde yeşil yok** (§5.1). Birincil aksiyon olmadığı için accent kotası sıfır; tuşlar ince
+border ve renk değişimiyle çalışır. Tek istisna focus halkası ve o kotaya sayılmıyor (§7.2).
 
 ### 3.5 Team — Bölge B
 
