@@ -74,6 +74,72 @@ section[id] {
   }
 }
 
+/* Zaffiro mikro etkilesimleri - `rule` ve `roll`. design-spec.md §6 (#55)
+
+   Ikisi de saf CSS ve 0 KiB. Ikisi de :hover VE :focus-visible altinda
+   calisiyor: yalnizca hover'a baglanan bir detayi klavye kullanicisi HIC
+   gormez, yani detay olmaktan cikip fare sahiplerine ozel bir sey olur.
+
+   prefers-reduced-motion asagidaki blokta gecis surelerini 0.01ms'e indiriyor;
+   ikisi de o zaman aninda gerceklesiyor. Bu kasitli: `roll`da degisen sey ayni
+   metnin kopyasi, `rule` ise bir hover gostergesi - ikisi de anlik hallerinde
+   dogru, yalnizca hareketsiz. */
+
+/* rule: alt cizgi soldan acilir.
+
+   Renk `currentColor` - yani hicbir zaman accent olamaz. §5.1 Footer'da yesil
+   yasakliyor ve `footer.spec.ts` bunu olcuyor; currentColor o kurali
+   kendiliginden koruyor, sonradan hatirlanmasi gereken bir sey birakmiyor. */
+.rule {
+  position: relative;
+}
+
+.rule::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.25em;
+  height: 1px;
+  background-color: currentColor;
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale 150ms ease-out;
+}
+
+/* Iki kullanim da destekleniyor: sinif linkin kendisinde olabilir, ya da
+   linkin icindeki bir parcada (footer'da ikonun alti cizilmesin diye). */
+.rule:hover::after,
+.rule:focus-visible::after,
+a:hover .rule::after,
+a:focus-visible .rule::after {
+  scale: 1 1;
+}
+
+/* roll: etiket iki kez yazilir, hover/focus'ta dikey kayar.
+
+   Kutu tam BIR satir yuksekliginde ve deger token'dan hesaplaniyor. `1lh`
+   birimi kullanilmadi: destegi bu projenin gerisinden yeni ve destek yoksa
+   iki etiket birden gorunur - yani kusur sessiz degil, cirkin olurdu. */
+.roll {
+  display: inline-block;
+  height: calc(var(--text-mono) * var(--text-mono--line-height));
+  overflow: hidden;
+}
+
+.roll-track {
+  display: block;
+  transition: translate 150ms ease-out;
+}
+
+.roll-track > span {
+  display: block;
+}
+
+a:hover .roll-track,
+a:focus-visible .roll-track {
+  translate: 0 -50%;
+}
+
 /* Zaffiro hareket katmani - pinlenen prensip dizisi. design-spec.md §3.4 ve §6
 
    Bolum bir viewport'a pinlenir ve scroll ilerledikce prensipler tek tek

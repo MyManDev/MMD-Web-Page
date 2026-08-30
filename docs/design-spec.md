@@ -419,17 +419,35 @@ nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklen
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
 aynı sınıf hatadır.
 
-| Etkileşim                     | Süre           | Özellik                                    |
-| ----------------------------- | -------------- | ------------------------------------------ |
-| Button hover / active         | 150ms          | `background-color`, `border-color`         |
-| NavLink hover ve aktif geçişi | 150ms          | `color`                                    |
-| Kart hover                    | 200ms          | `background-color`                         |
-| `TeamCard` hover / focus      | 200ms          | `translate: 0 -10px`                       |
-| `TeamCard` biyografisi        | ~12ms/harf     | daktilo — **DENEME**, aşağıdaki nota bakın |
-| Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`        |
-| Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)            |
-| Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
-| Prensip dizisi (`lg`)         | scroll'a bağlı | `opacity` + `transform: translateY(12px)`  |
+| Etkileşim                 | Süre           | Özellik                                    |
+| ------------------------- | -------------- | ------------------------------------------ |
+| Button hover / active     | 150ms          | `background-color`, `border-color`         |
+| NavLink hover / focus     | 150ms          | `translate` — etiket rulosu (`roll`)       |
+| NavLink aktif geçişi      | 150ms          | `color`                                    |
+| Metin linki hover / focus | 150ms          | `scale` — alt çizgi soldan açılır (`rule`) |
+| Kart hover                | 200ms          | `background-color`                         |
+| `TeamCard` hover / focus  | 200ms          | `translate: 0 -10px`                       |
+| `TeamCard` biyografisi    | ~12ms/harf     | daktilo — **DENEME**, aşağıdaki nota bakın |
+| Mobil menü açılış/kapanış | 200ms          | `opacity` + `transform: translateY`        |
+| Anchor scroll             | —              | `scroll-behavior: smooth` (CSS)            |
+| Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
+| Prensip dizisi (`lg`)     | scroll'a bağlı | `opacity` + `transform: translateY(12px)`  |
+
+**`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
+hover'a bağlanan bir detayı klavye kullanıcısı hiç görmez, yani detay olmaktan çıkıp fare
+sahiplerine özel bir şey olur.
+
+`rule` çizgisi `currentColor` kullanır, yani **hiçbir zaman accent olamaz**: §5.1'in "Footer'da
+yeşil yok" kuralı sonradan hatırlanması gereken bir şey değil, renk kendiliğinden doğru. Çizgi
+metni kapsar, dış link ikonunu değil.
+
+`roll` etiketi iki kez yazar ve kutuyu tam bir satır yüksekliğinde tutar. **İkinci kopya
+`aria-hidden`**: erişilebilir ad tek kalmalı, aksi halde ekran okuyucu her nav linkini iki kez
+okur.
+
+**Ölçülen bedel +0.1 KiB** (132.6 → 132.7). Sıfır değil ve sebebi kayda değer: CSS bedava ama
+`NavLink`'in markup'ı client component olan `Nav`'ın içinde yaşıyor, yani ikinci etiket birkaç bayt
+JavaScript'e mal oluyor. Aynı `rule` Footer'da — sunucu component'i — hiçbir şeye mal olmuyor.
 
 **Bölüm girişi** `animation-timeline: view()`, `animation-range: entry 0% cover 20%`. Süre yok:
 ilerlemeyi scroll konumu belirliyor. Erken bitmesi kasıtlı — okumaya başlanan bir metin hâlâ

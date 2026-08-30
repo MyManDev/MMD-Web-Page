@@ -38,7 +38,13 @@ export function Footer({ site }: { site: Site }) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
           >
-            GitHub
+            {/*
+              `rule` ikonu DEGIL yalnizca metni kapsiyor: alt cizgi dis link
+              ikonunun da altindan gecerse cizgi bir alti cizili metin gibi
+              degil, kutuyu bolen bir sinir gibi okunuyor. Tetikleyen sey yine
+              linkin kendisi (globals.css'te `a:hover .rule`).
+            */}
+            <span className="rule">GitHub</span>
             <ExternalIcon className="h-3 w-3" />
           </a>
         </div>
