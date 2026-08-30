@@ -144,7 +144,19 @@ Sıra: `SectionLabel 01` → başlık (Display XL) → alt cümle (Body) → iki
 
 Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
 
-Sayfa yüklenirken **giriş animasyonu yok** (§4.4).
+Sayfa yüklenirken **giriş animasyonu yok** (§4.4). Hero açılışta zaten ekranda; `reveal-on-enter`
+burada bilerek uygulanmıyor.
+
+**Bugün iki sapma var ve ikisi de eksik bir şeyi işaret ediyor, tercih değil:**
+
+1. **Tek kolon.** Yukarıdaki tablo `lg`'de sağda görsel istiyor; **öyle bir varlık yok.** Elimizdeki
+   tek marka görseli `assets/brand/logo.png` ve o 9 KB'lik favicon'un kendisi — hero ölçeğinde
+   göstermek placeholder görsel koymak olurdu (`CLAUDE.md` kural 6). Boş bir sağ kolon da açılmıyor.
+   Dikkat: **hiçbir issue hero görselini takip etmiyor**; #18 logo SVG ve OG görselini kapsıyor,
+   hero görselini değil.
+2. **Tek aksiyon.** İkinci aksiyon Who we are'a gidiyor ve o bölüm henüz yok (#9). Hiçbir yere
+   götürmeyen bir düğme çizilmiyor — bu, "`projects` boşsa bölüm render edilmez" kuralının aynısı.
+   `Hero`'nun `secondary` prop'u opsiyonel; bölüm eklendiğinde düğme kendiliğinden geliyor.
 
 ### 3.3 Projects — Bölge A
 
