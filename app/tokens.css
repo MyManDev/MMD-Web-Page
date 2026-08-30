@@ -108,6 +108,7 @@
      Breakpoint'e bagli oldugu icin burada yasiyor (§4.3). */
   --max-width-statement: 22ch;
   --aspect-screenshot: 16 / 10;
+  --aspect-portrait: 5 / 8;
 }
 
 /* Navbar yuksekligi breakpoint'e gore degistigi icin @theme disinda,

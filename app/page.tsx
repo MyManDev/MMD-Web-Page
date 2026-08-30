@@ -3,11 +3,12 @@ import { Hero } from "@/components/sections/hero";
 import { Nav } from "@/components/sections/nav";
 import { WhoWeAre } from "@/components/sections/about";
 import { Projects } from "@/components/sections/projects";
-import { projects, site } from "@/content";
+import { Team } from "@/components/sections/team";
+import { projects, site, team } from "@/content";
 
 /**
- * Bolumler Faz 3'te tek tek geliyor. Su an Navigation, Hero, Projects,
- * Who we are ve Footer var; Team #8'de eklenecek.
+ * Bolumler Faz 3'te tek tek geliyor. Faz 3 bu bolumle kapaniyor: Navigation,
+ * Hero, Projects, Who we are, Team ve Footer.
  *
  * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
  * yalnizca tek sayfada anlamli, 404'te degil.
@@ -20,8 +21,8 @@ import { projects, site } from "@/content";
 export default function Home() {
   const heroSection = site.nav.find((item) => item.id === "hero");
   const projectsSection = site.nav.find((item) => item.id === "projects");
-
   const whoWeAreSection = site.nav.find((item) => item.id === "who-we-are");
+  const teamSection = site.nav.find((item) => item.id === "team");
 
   return (
     <>
@@ -41,6 +42,8 @@ export default function Home() {
         ) : null}
 
         {whoWeAreSection ? <WhoWeAre section={whoWeAreSection} whoWeAre={site.whoWeAre} /> : null}
+
+        {teamSection && team.length > 0 ? <Team section={teamSection} members={team} /> : null}
       </main>
       <Footer site={site} />
     </>

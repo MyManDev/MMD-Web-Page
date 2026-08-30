@@ -202,6 +202,15 @@ section[id] {
       display: block;
     }
   }
+/* Daktilo efekti - components/sections/team/BioTypewriter.tsx (DENEME)
+   design-spec.md §6
+
+   Gizleme burada, JS'te DEGIL. `data-typing` isaretini JS koyuyor; yani JS hic
+   calismazsa bu kural hic uygulanmaz ve butun harfler gorunur kalir. Tersi
+   yazilsaydi (JS gosterir, CSS gizler) JS'in gelmedigi bir sayfada biyografi
+   gorunmez olurdu. */
+[data-typing] > span[data-pending] {
+  opacity: 0;
 }
 
 /* prefers-reduced-motion tek yerde ele alinir, her component'te tekrar edilmez.

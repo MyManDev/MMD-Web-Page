@@ -46,7 +46,22 @@ export const teamMemberSchema = z.object({
   name: z.string().min(1),
   role: z.string().min(1),
   bio: z.string().min(1),
+  /**
+   * IKISI DE ZORUNLU. Bir kisinin karti iki linkle yayinlanir; biri eksikse
+   * build patlar ve kart yarim yayinlanmaz. Opsiyonel yapmak, eksik olani
+   * sessizce gizlemek olurdu - ve eksik oldugu hicbir yerde gorunmezdi.
+   */
   githubUrl: httpsUrl,
+  linkedinUrl: httpsUrl,
+  /**
+   * public/ altinda, scripts/optimize-images.mjs'ten gecmis webp. En buyuk
+   * varyanti gosterir; digerleri lib/images.ts'te ayni tabandan turetiliyor.
+   *
+   * ZORUNLU: fotografsiz bir kisi build'i dusurur. Avatar placeholder
+   * konulmaz (CLAUDE.md kural 6) - proje ekran goruntusunu yoneten kuralin
+   * aynisi.
+   */
+  photo: z.string().min(1).startsWith("/"),
   order: z.number().int().nonnegative(),
 });
 
