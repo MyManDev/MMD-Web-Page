@@ -238,11 +238,11 @@ scroll listener yok.
 
 Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor. Genelden tekile.
 
-**İki kolon (`lg` üstünde).** Solda başlık (Display L) → manifesto (Body), sağda prensip destesi.
+**İki kolon (`lg` üstünde).** Solda başlık (Display XL) → manifesto (Body), sağda prensip destesi.
 Mobilde alt alta. Metin genişliği okunabilirlik için `65ch` ile sınırlı — sınır kapsayıcıdan değil
 okunabilirlikten geliyor, kapsayıcı 1600px.
 
-Bölüm başlığı (Display L) doğrudan manifestonun üstünde; ayrı bir etiket yok (§9, #58).
+Bölüm başlığı (Display XL) doğrudan manifestonun üstünde; ayrı bir etiket yok (§9, #58).
 
 - Manifesto ve prensipler: `site.whoWeAre` — #15'te yazıldı
 
@@ -293,8 +293,9 @@ Gezinme **başa sarar**. Sonu olan bir gezinmede son tuş devre dışı kalır v
 öğede sarma yönü kaybettirmiyor, sayaç konumu zaten söylüyor.
 
 **Destenin üstünde ince bir çizgi var ve bu süsleme değil, hiyerarşi düzeltmesi.** Prensip de
-bölüm başlığı da aynı ölçüde mono (40px); çizgisiz hâlde ikisi yan yana iki **başlık** gibi
-okunuyordu. Alternatifi denendi — prensibi 24px'e düşürmek — ve sağ kolonu yeniden boşaltıyordu,
+bölüm başlığı bir zamanlar aynı ölçüde mono'ydu (40px) ve çizgisiz hâlde ikisi yan yana iki
+**başlık** gibi okunuyordu. Başlık Display XL'e çıktıktan sonra ölçü farkı bu işi tek başına da
+yapıyor; çizgi yine de duruyor çünkü mobilde kolonlar yığıldığında ayıran tek şey o. Alternatifi denendi — prensibi 24px'e düşürmek — ve sağ kolonu yeniden boşaltıyordu,
 yani bu bölümün ilk şikâyetini geri getiriyordu. Çizgi desteyi ayrı bir modül olarak işaretliyor,
 ölçüyü düşürmeden. Mobilde de durur; orada işi daha açık, kolonlar yığıldığında manifestoyla
 prensipleri ayıran tek şey odur.
@@ -391,14 +392,30 @@ primitive'inden gelir ve 12px'e küçültülür, çünkü footer'ın mono satır
 Rollerin boyut ve satır yüksekliği değerleri `architecture.md` §4.2'de. Buradaki iş, hangi
 elemanın hangi rolü aldığı.
 
-| Rol        | Nerede                                                       |
-| ---------- | ------------------------------------------------------------ |
-| Display XL | Yalnızca Hero başlığı. Sayfada **bir kez**.                  |
-| Display L  | Bölüm başlıkları: Projects, Who we are, Team.                |
-| Display M  | Proje adı, `TeamCard` adı, `MetricRow` sayısı.               |
-| Body       | Hero alt cümlesi, proje özeti, About manifestosu.            |
-| Body S     | `TeamCard` biyografisi, About prensip listesi, footer telif. |
-| Mono label | `Tag`, `MetricRow` etiketi, nav linkleri, footer linkleri.   |
+| Rol        | Nerede                                                            |
+| ---------- | ----------------------------------------------------------------- |
+| Display XL | Hero başlığı **ve** bölüm başlıkları: Projects, Who we are, Team. |
+| Display L  | Prensip destesindeki cümle.                                       |
+| Display M  | Proje adı, `TeamCard` adı, `MetricRow` sayısı.                    |
+| Body       | Hero alt cümlesi, proje özeti, About manifestosu.                 |
+| Body S     | `TeamCard` biyografisi, About prensip listesi, footer telif.      |
+| Mono label | `Tag`, `MetricRow` etiketi, nav linkleri, footer linkleri.        |
+
+**Ölçek bir basamak büyüdü** (istek: "yazılar çok küçük", "bu sayfa çok küçük"). Önceki değerler
+sırasıyla 40/64 · 28/40 · 20/24 · 15/16 · 14 · 12; bugün 48/80 · 32/56 · 22/28 · 16/18 · 15 · 13.
+Component'lerin hiçbirine dokunulmadı — hepsi zaten bu token'ları okuyor, yani büyüme tek yerden
+geldi.
+
+**Bölüm başlığı Display L'den Display XL'e çıktı ve bu ayrı bir karar.** Yalnızca ölçeği büyütmek
+yetmedi: Who we are'da başlık ile yanındaki prensip **aynı ölçüye** düşüyor ve hiyerarşi
+düzleşiyordu — şikâyet zaten tam olarak buydu. Başlık 80px, prensip 56px; artık hangisinin başlık
+olduğu ölçüden okunuyor.
+
+Bunun sonucu olarak Display XL **sayfada bir kez değil**, her bölüm başlığında görünüyor. Hero'nun
+h1'i yerini ölçüyle değil **bağlamla** koruyor: sayfanın ilk ekranı ve tek `h1`'i (§7.1).
+
+`ch` ile tanımlı ölçü sınırları (`--max-width-prose`, `--max-width-statement`) yazı boyutuyla
+birlikte büyüdüğü için ayrıca ayarlanmadı.
 
 Mono katmanı `architecture.md` §4.2'ye göre "şablon hissi"ne karşı en büyük tekil kazanç. Bu
 yüzden nav ve footer linkleri de mono — jenerik sans nav, referans mockup'ın en jenerik yeriydi.
