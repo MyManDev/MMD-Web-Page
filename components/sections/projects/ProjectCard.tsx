@@ -22,9 +22,8 @@ import { MetricRow } from "./MetricRow";
  *   - prefers-reduced-motion altinda position: static, duz liste
  *   - z-index 10 + index, sonraki kart oncekinin ustune biner
  *
- * Baslik seviyesi total'e bagli: tek projede blok bolumun kendi basligidir
- * (h2), cok projede bolum basligi Projects'e gecer ve kartlar h3 olur - seviye
- * atlanmiyor (§7.1).
+ * Proje adi HER ZAMAN h3 (#58): bolum basligini artik Projects'in kendisi
+ * tasiyor, yani kart basligi bir alt seviyede. Seviye atlanmiyor (§7.1).
  *
  * BOLUMUN TEK YESILI Live Demo'nun primary zemini (§5.1). Proje adi, Tag'ler,
  * MetricRow sayisi ve GitHub aksiyonu yesil DEGIL.
@@ -39,7 +38,6 @@ export function ProjectCard({
   total: number;
 }) {
   const stacked = total > 1;
-  const Heading = stacked ? "h3" : "h2";
 
   return (
     <article
@@ -50,12 +48,12 @@ export function ProjectCard({
       }
     >
       <div className="flex flex-col gap-6 lg:col-span-5">
-        <Heading
+        <h3
           id={`${project.slug}-title`}
           className="font-mono text-display-m font-medium lg:text-display-m-lg"
         >
           {project.name}
-        </Heading>
+        </h3>
 
         <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
           {project.summary}

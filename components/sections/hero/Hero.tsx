@@ -1,5 +1,5 @@
 import type { Site } from "@/content";
-import { Button, Container, SectionLabel } from "@/components/ui";
+import { Button, Container } from "@/components/ui";
 
 type NavItem = Site["nav"][number];
 
@@ -46,8 +46,6 @@ export function Hero({
     <section id={section.id} aria-labelledby={headingId}>
       <Container>
         <div className="flex flex-col gap-8 py-section lg:gap-10 lg:py-section-lg">
-          <SectionLabel number={section.number}>{section.label}</SectionLabel>
-
           <h1
             id={headingId}
             className="font-mono text-display-xl font-medium lg:text-display-xl-lg"

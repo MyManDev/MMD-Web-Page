@@ -99,7 +99,6 @@ export const siteSchema = z.object({
     .array(
       z.object({
         id: z.string().min(1),
-        number: z.string().regex(/^\d{2}$/, "bolum numarasi iki haneli"),
         label: z.string().min(1),
       }),
     )

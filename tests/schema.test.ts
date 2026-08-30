@@ -54,10 +54,21 @@ describe("siteSchema", () => {
     expect(() => siteSchema.parse({ ...site, copyrightYear: 2026.5 })).toThrow();
   });
 
-  it("bolum numarasi iki haneli olmali", () => {
-    expect(() =>
-      siteSchema.parse({ ...site, nav: [{ id: "hero", number: "1", label: "Hero" }] }),
-    ).toThrow();
+  /**
+   * Bolum numarasi (`number`) #58'de kalkti - etiketler kaldirilinca sema da
+   * gevsetilmedi, alan tamamen dustu. Geriye kalan sozlesme id + label ve
+   * ikisi de zorunlu; bu test o sozlesmeyi tutuyor ki `number` gidince nav
+   * testsiz kalmasin.
+   */
+  it("nav kaydi id ve label ister", () => {
+    expect(() => siteSchema.parse({ ...site, nav: [{ id: "hero" }] })).toThrow();
+    expect(() => siteSchema.parse({ ...site, nav: [{ label: "Hero" }] })).toThrow();
+    expect(() => siteSchema.parse({ ...site, nav: [{ id: "", label: "Hero" }] })).toThrow();
+    expect(() => siteSchema.parse({ ...site, nav: [{ id: "hero", label: "Hero" }] })).not.toThrow();
+  });
+
+  it("nav bos olamaz", () => {
+    expect(() => siteSchema.parse({ ...site, nav: [] })).toThrow();
   });
 });
 

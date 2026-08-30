@@ -40,14 +40,9 @@ test("bolum kendi basligina bagli ve baslik seviyesi atlanmiyor", async ({ page 
   expect(await heading.evaluate((el) => el.tagName)).toBe("H2");
   await expect(heading).not.toBeEmpty();
 
-  // Tek projede blok bolumun kendisidir: h3 yok, ikinci bir h1 hic yok.
-  await expect(section.locator("h3")).toHaveCount(0);
+  // #58: bolum kendi basligini tasiyor, proje adi bir alt seviyede.
+  await expect(section.locator("h3")).toHaveCount(1);
   await expect(section.locator("h1")).toHaveCount(0);
-});
-
-test("bolum numarasi dekoratif - ekran okuyucuya okunmuyor", async ({ page }) => {
-  const decorative = page.locator(`${SECTION} [aria-hidden="true"]`).first();
-  await expect(decorative).toHaveText("02");
 });
 
 test("tech tag'leri liste olarak diziliyor", async ({ page }) => {

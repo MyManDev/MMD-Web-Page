@@ -44,10 +44,6 @@ test("baslik ve alt cumle dolu", async ({ page }) => {
   await expect(page.locator(`${SECTION} p`).first()).not.toBeEmpty();
 });
 
-test("bolum numarasi dekoratif - ekran okuyucuya okunmuyor", async ({ page }) => {
-  await expect(page.locator(`${SECTION} [aria-hidden="true"]`).first()).toHaveText("01");
-});
-
 /**
  * ASIL DEGISMEZ. §3.2 iki aksiyon tarif ediyor ama ikincisi Who we are'a
  * gidiyor ve o bolum henuz yok (#9). Hicbir yere goturmeyen bir dugme
