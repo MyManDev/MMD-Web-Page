@@ -222,6 +222,34 @@ Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `Section
 Prensip sayısı **3–5** ve bu sınır belgede değil şemada zorlanıyor
 (`content/schema.ts`, `.min(3).max(5)`): altıncı bir madde eklenirse `pnpm build` patlar.
 
+**Prensipler `lg` üstünde pinlenen bir dizi** (#56). Bölüm bir viewport'a sabitlenir ve scroll
+ilerledikçe prensipler tek tek değişir; her birinin üstünde `01 / 05` sayacı durur. Prensip başına
+yarım ekranlık scroll — beş kısa cümle için beş ekran istemek hareketi okunurluğun önüne geçirirdi.
+
+**Üç kapı da aynı yere düşer: düz liste.**
+
+| Kapı                                         | Sonuç                                                                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `@supports (animation-timeline: view())` yok | Hiçbir kural uygulanmaz                                                                                      |
+| `lg` altında                                 | Pin yok — mobilde viewport yüksekliği pini taşımıyor; aynı gerekçe §3.3.2'de Projects yığını için de verildi |
+| `prefers-reduced-motion: reduce`             | Pin ve mutlak konum **birlikte** kalkar                                                                      |
+
+Son satır ölçülerek bulundu ve önemli: hareketi kaldırmak **yetmiyor.** `animation-name: none`
+animasyonu durduruyor ama düzeni bırakıyordu; beş prensip mutlak konumda üst üste binip okunmaz
+oluyordu. Bu yüzden gelişmiş düzenin tamamı `prefers-reduced-motion: no-preference` kapısının
+**içinde**. Aynı sınıf hata daha önce `animation-timeline: none` ile yaşanmıştı (§6.1).
+
+**Tip rolü pinlenen biçimde yükseliyor** ve bu bilinçli bir sapma. Düz listede prensip Body S;
+pinlenen biçimde tek cümleye bütün ekran veriliyor ve Body S orada boş bir ekranda kaybolan bir
+satır olur. Ekranı hak eden cümle Display L'de durur. Ölçü genişliği de değişiyor: `65ch` gövde
+metni için doğru ama `ch` yazı boyutuyla büyüdüğü için 40px'te kapsayıcıyı aşar ve sınır işlevini
+yitirir — bu yüzden `--max-width-statement` (22ch) token'ı eklendi (§4.3).
+
+Liste her durumda gerçek bir `<ul>` ve prensiplerin hepsi DOM'da: değişen şey görünürlük, içerik
+değil. Sayaç **dekoratif değildir** — pinlenen biçimde kullanıcı dizinin neresinde olduğunu başka
+türlü bilemez, o yüzden `aria-hidden` taşımaz; düz listede madde işaretleri sırayı zaten söylediği
+için CSS ile gizlenir.
+
 ### 3.5 Team — Bölge B
 
 Üç kişiyi tek tek tanıtan kartlar.
@@ -381,6 +409,7 @@ aynı sınıf hatadır.
 | Mobil menü açılış/kapanış     | 200ms          | `opacity` + `transform: translateY`       |
 | Anchor scroll                 | —              | `scroll-behavior: smooth` (CSS)           |
 | Bölüm girişi                  | scroll'a bağlı | `opacity` + `transform: translateY(16px)` |
+| Prensip dizisi (`lg`)         | scroll'a bağlı | `opacity` + `transform: translateY(12px)` |
 
 **Bölüm girişi** `animation-timeline: view()`, `animation-range: entry 0% cover 20%`. Süre yok:
 ilerlemeyi scroll konumu belirliyor. Erken bitmesi kasıtlı — okumaya başlanan bir metin hâlâ

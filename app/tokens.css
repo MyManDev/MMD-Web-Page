@@ -101,6 +101,12 @@
      yerde yasiyordu. Ad dogru namespace'te oldugu icin token artik varsayilanin
      ustune yaziyor ve kayit tek. Deger degismedi. */
   --max-width-prose: 65ch;
+  /* Display olceginde okuma genisligi. 65ch govde metni icin dogru ama `ch`
+     yazi boyutuyla buyudugu icin 40px'te ~2600px eder - kapsayiciyi asar ve
+     sinir islevini yitirir. Pinlenen prensip dizisi (design-spec.md §3.4) tek
+     cumleyi display olceginde gosteriyor ve kendi olcusune ihtiyaci var.
+     Breakpoint'e bagli oldugu icin burada yasiyor (§4.3). */
+  --max-width-statement: 22ch;
   --aspect-screenshot: 16 / 10;
 }
 
