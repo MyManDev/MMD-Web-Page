@@ -316,9 +316,25 @@ numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket 
 başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerde değil **bilgi kattığı
 yerde** durur.
 
-**Kart fotoğrafın kendisidir.** Kutu **5/8** oranında (token: `--aspect-portrait`) ve görüntü onu
+**Kart fotoğrafın kendisidir.** Kutu **5/9** oranında (token: `--aspect-portrait`) ve görüntü onu
 tamamen kaplar; ad, rol ve linkler görüntünün alt kenarında, üzerinde durur. Hover'da görüntü
 hayaletleşir ve biyografi üstünde belirir.
+
+Oran **5/8 idi, kartlar büyüsün diye 5/9 oldu.** Kart zaten kapsayıcının tam genişliğini
+kaplıyor — üç kolon, `lg`'de 1440px'te 437px — yani büyüme ancak **yükseklikten** gelebilirdi.
+Ölçüldü: 708px → **787px**. Kolon boşluğuna dokunulmadı; 32px'ten 24px'e indirmek kart genişliğine
+yalnızca 6px katıyordu, yani gürültü.
+
+**Neden 9/16 değil:** hat yarım piksel üretmemek için genişliğin orana tam bölünmesini şart koşuyor
+(`scripts/optimize-images.mjs`). 9/16, mevcut genişliklerle (500, 1000) bu kapıyı geçemiyor; 5/9
+geçiyor (900 ve 1800) ve 0.5556 ile 0.5625 arasındaki fark gözle ayırt edilmiyor.
+
+Kutu kaynaktan **dar** olduğu için kırpma yatayda oluyor, dikeyde değil — yüzler kırpılmıyor.
+Görseller yeni oranda yeniden üretildi; `lib/image-widths.json` ile token **aynı sayıyı** söylemek
+zorunda, yoksa `cover` sessizce kırpar ve `width`/`height` nitelikleri kutuyu yanlış tarif eder.
+
+Başlıktan karta mesafe **24/32** (önce 40/56). Bölümün dış ritmi (`py-section`) değişmedi — o
+paylaşılan bir ölçü ve tek bir bölüm için oynatılmaz (§4.2).
 
 Bu düzen bir estetik tercih değil, **kaymayı ortadan kaldıran şeyin kendisi**: açılan her şey
 mutlak konumlu, yani kartın yüksekliği hiç değişmiyor. Biyografi akışa eklendiğinde bölüm hover'da

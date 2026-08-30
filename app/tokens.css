@@ -126,7 +126,18 @@
      kucultmeye baslardi. lg (1024) ile 1292 arasinda taban devrede. */
   --text-mark: max(168px, 13vw);
   --aspect-screenshot: 16 / 10;
-  --aspect-portrait: 5 / 8;
+  /* 5/8 idi, 5/9 oldu: kartlar buyusun diye (istek). Kart zaten kapsayicinin
+     tam genisligini kaplıyor, yani buyume ancak YUKSEKLIKTEN gelebiliyordu -
+     olculdu, 1440'ta 708px'ten 787px'e cikti.
+
+     Neden 9/16 degil: hat yarim piksel uretmemek icin genisligin orana tam
+     bolunmesini sart kosuyor (scripts/optimize-images.mjs). 9/16 mevcut
+     genisliklerle (500, 1000) bu kapiyi geciremiyordu; 5/9 geciyor ve
+     0.5556 ile 0.5625 arasindaki fark gozle ayirt edilmiyor.
+
+     Kutu kaynaktan DAR oldugu icin kirpma yatayda oluyor, dikeyde degil -
+     yuzler kirpilmiyor. Gorsel olarak dogrulandi. */
+  --aspect-portrait: 5 / 9;
 }
 
 /* Navbar yuksekligi breakpoint'e gore degistigi icin @theme disinda,
