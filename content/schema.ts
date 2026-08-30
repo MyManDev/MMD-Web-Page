@@ -51,17 +51,32 @@ export const teamMemberSchema = z.object({
 });
 
 /**
- * Marka ve navigasyon.
+ * Marka, metin ve navigasyon.
  *
- * NOT: `description` alani BILEREK yok. SEO aciklamasi marka metnidir ve
- * paylasilan karar alanina girer (CLAUDE.md kural 5). Metin yazildiginda
- * alan buraya zorunlu olarak eklenir - bugun uydurulmus bir varsayilanla
- * doldurulmaz.
+ * `description`, `hero` ve `whoWeAre` #15'te yazildi ve buraya ZORUNLU alan
+ * olarak girdi - `.optional()` degil. Metin silinirse `pnpm build` patlar;
+ * istenen de bu (CLAUDE.md kural 7).
+ *
+ * Olcu belgede DEGIL burada zorlaniyor: `principles` 3-5 madde alir, cunku
+ * design-spec.md §3.4 boyle diyor - ve uygulanan bir kural, yazili bir
+ * kuraldan daha uzun yasar.
  */
 export const siteSchema = z.object({
   wordmark: z.literal("MyManDev"),
   canonicalUrl: httpsUrl,
   repoUrl: httpsUrl,
+  /** SEO aciklamasi. Marka metni - paylasilan karar alani. */
+  description: z.string().min(1),
+  /** Hero basligi ve alt cumlesi. design-spec.md §3.2 */
+  hero: z.object({
+    title: z.string().min(1),
+    subtitle: z.string().min(1),
+  }),
+  /** Kolektifi birlikte anlatan bolum. design-spec.md §3.4 */
+  whoWeAre: z.object({
+    manifesto: z.string().min(1),
+    principles: z.array(z.string().min(1)).min(3).max(5),
+  }),
   /** NOTICE dosyasindaki telif satirinin yili. Footer cumleyi bundan kurar,
       metni ikinci kez yazmaz. */
   copyrightYear: z.number().int(),

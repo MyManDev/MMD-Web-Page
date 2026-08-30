@@ -9,9 +9,10 @@ uyguladığımızı** yazar. Kararların kendisi orada; burada tekrar edilmez.
 - İçerik şeması → [`architecture.md` §5](architecture.md)
 - Bölge sahipliği → [`working-agreement.md` §1](working-agreement.md)
 
-**Bu belge metin içermez.** Hero cümlesi, About manifestosu, biyografiler ve imza sayısının
-ifadesi paylaşılan karar alanıdır (`CLAUDE.md` kural 5). Hepsinin yeri ayrıldı, içi
-**metin bekliyor** olarak işaretlendi.
+**Bu belge metin içermez.** Metinler `content/site.ts`'te yaşar ve şema onları **zorunlu**
+tutar; bu belge yalnızca nereye girdiklerini söyler. Hero cümlesi, Who we are manifestosu ve
+çalışma prensipleri #15'te yazıldı; imza sayısı #17'de kapandı. Bekleyen tek metin ekip
+biyografileri ve rolleri (#16).
 
 ---
 
@@ -138,8 +139,8 @@ işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Kl
 Sıra: `SectionLabel 01` → başlık (Display XL) → alt cümle (Body) → iki aksiyon
 (`primary` Projects CTA + `ghost` About CTA).
 
-- Başlık metni: **metin bekliyor**
-- Alt cümle: **metin bekliyor**
+- Başlık metni: `site.hero.title` — #15'te yazıldı
+- Alt cümle: `site.hero.subtitle`
 
 Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
 
@@ -204,7 +205,10 @@ Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor.
 Tek kolon, okunabilirlik için metin genişliği `65ch` ile sınırlı. `SectionLabel 03` → başlık
 (Display L) → manifesto (Body) → çalışma prensipleri listesi (Body S).
 
-- Manifesto ve prensipler: **metin bekliyor**
+- Manifesto ve prensipler: `site.whoWeAre` — #15'te yazıldı
+
+Prensip sayısı **3–5** ve bu sınır belgede değil şemada zorlanıyor
+(`content/schema.ts`, `.min(3).max(5)`): altıncı bir madde eklenirse `pnpm build` patlar.
 
 ### 3.5 Team — Bölge B
 
