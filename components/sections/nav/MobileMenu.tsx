@@ -16,14 +16,14 @@ export function MobileMenu({
   id,
   open,
   items,
-  repoUrl,
+  githubUrl,
   activeId,
   onClose,
 }: {
   id: string;
   open: boolean;
   items: Site["nav"];
-  repoUrl: string;
+  githubUrl: string;
   activeId: string | null;
   onClose: () => void;
 }) {
@@ -112,7 +112,7 @@ export function MobileMenu({
         ))}
       </ul>
       <div className="mt-8">
-        <Button href={repoUrl} variant="ghost" external>
+        <Button href={githubUrl} variant="ghost" external>
           GitHub
         </Button>
       </div>
