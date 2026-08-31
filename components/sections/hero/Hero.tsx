@@ -97,7 +97,12 @@ export function Hero({
             Amblem yalnizca lg ustunde: dar ekranda metnin yanina degil, yerine
             gecerdi.
           */}
-          <div aria-hidden="true" className="hero-mark hidden lg:col-span-5 lg:block" />
+          <div
+            aria-hidden="true"
+            className="hero-mark-plate hidden lg:col-span-5 lg:grid lg:place-items-center"
+          >
+            <div className="hero-mark" />
+          </div>
         </div>
       </Container>
     </section>

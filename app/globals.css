@@ -118,11 +118,32 @@ section[id] {
    Onceki 380px tavani kaynagin 400x400 olmasindan geliyordu; vektorde
    cozunurluk tavani yok. Ust sinir hala var ama artik TASARIM sinirisi:
    amblem basligin agirligini gecmemeli. */
-.hero-mark {
+/* GORULMEK ICIN (wip): logonun orijinal bicimi - turkuaz plaka + beyaz sembol.
+   Plaka ayri bir oge cunku `mask` ogenin KENDI zeminini de kirpiyor; ayni
+   ogeye hem maske hem arka plan verilemez. Maske hala `.hero-mark`ta, yani
+   maske testleri oldugu gibi calisiyor. */
+.hero-mark-plate {
   aspect-ratio: 1;
   width: clamp(220px, 26vw, 460px);
   margin-inline: auto;
   background-color: var(--color-mark);
+  /* `display` BURADA VERILMEZ. Verildiginde Tailwind'in `hidden` utility'siyle
+     ayni specificity'de oluyor ve sira karar veriyor: globals.css sonra
+     geldigi icin `display: grid` `hidden`i sessizce yeniyor ve amblem MOBILDE
+     de gorunur hale geliyor. Olculdu - uc mobil amblem testi `skip` olmaktan
+     cikip kosmaya basladi, ve bunu yakalayan tek sinyal atlama sayisiydi.
+     Yerlesim utility'leri markup'ta: `lg:grid lg:place-items-center`. */
+}
+
+.hero-mark {
+  aspect-ratio: 1;
+  width: 100%;
+  margin-inline: auto;
+  /* Sembol beyaz: `--color-text` (#f2f5f3). Orijinal dosya #ffffff kullaniyor
+     ama turkuaz uzerinde ikisi gozle ayirt edilmiyor ve renk yalnizca
+     tokens.css'te yasar (CLAUDE.md kural 1) - saf beyaz icin yeni bir token
+     gerekirdi ve bu dal yalnizca GORMEK icin. */
+  background-color: var(--color-text);
   mask-image: url("/logo-mark.svg");
   mask-size: contain;
   mask-repeat: no-repeat;
