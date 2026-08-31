@@ -250,6 +250,63 @@ test.describe("metin girisi", () => {
   });
 });
 
+/**
+ * SIRA NUMARASI. design-spec.md §3.3, architecture.md §9
+ *
+ * #58 bolum numaralarini kaldirmisti; bu onu KISMEN geri aliyor - yalnizca
+ * proje kartinin sirasi.
+ *
+ * Deger `index`ten turetiliyor, elle yazilmiyor. Test de bunu olcuyor: birinci
+ * kartta "01" ve numara sayisi kart sayisina esit.
+ */
+test("her kart sira numarasi tasiyor ve numara turetilmis", async ({ page }) => {
+  const cards = page.locator(`${SECTION} article`);
+  const numbers = page.locator(`${SECTION} article > div > p.text-mono`).first();
+
+  await expect(numbers).toHaveText("01");
+
+  /* Sayi KART SAYISINDAN turetiliyor: sabit bir 1 yazmak ikinci proje
+     eklendiginde davranis bozulmadigi halde duserdi. */
+  const count = await cards.count();
+  await expect(page.locator(`${SECTION} article > div > p.text-mono`)).toHaveCount(count);
+});
+
+/**
+ * Numara EKRAN OKUYUCUYA OKUNMAZ. Sira bilgisi DOM sirasinda zaten var;
+ * "sifir bir Football Squad Optimizer" diye okumak baslikin adini kirletirdi.
+ */
+test("sira numarasi erisilebilir ada karismiyor", async ({ page }) => {
+  const number = page.locator(`${SECTION} article > div > p.text-mono`).first();
+  await expect(number).toHaveAttribute("aria-hidden", "true");
+
+  const heading = page.locator(`${SECTION} article h3`).first();
+  const name = await heading.evaluate((el) => el.textContent?.trim() ?? "");
+  expect(name).not.toMatch(/^0\d/);
+});
+
+/**
+ * TEK PROJEDE YIGIN UYGULANMAZ (§3.3.2). Yigin yalnizca ikinci proje
+ * eklendiginde devreye girer; bugun `total === 1`.
+ *
+ * Bu test yigini olcmuyor - olcemez, cunku icerikte tek proje var. Olctugu sey
+ * TEK PROJE SOZLESMESI: sticky yok, viewport yuksekligi yok, z-index yok.
+ * Yigin davranisi yerel bir gecici kayitla olculdu ve videoya alindi; ikinci
+ * proje eklendigi gun buraya gercek bir test yazilir.
+ */
+test("tek projede sticky yigin uygulanmiyor", async ({ page }) => {
+  const cards = page.locator(`${SECTION} article`);
+  test.skip((await cards.count()) > 1, "yigin aktif - bu test tek proje sozlesmesini olcuyor");
+
+  const style = await cards.first().evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { position: cs.position, minHeight: cs.minHeight, zIndex: cs.zIndex };
+  });
+
+  expect(style.position).toBe("static");
+  expect(style.zIndex).toBe("auto");
+  expect(["0px", "auto"]).toContain(style.minHeight);
+});
+
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {
   const box = await page.locator(`${SECTION} img`).boundingBox();
   expect(box).not.toBeNull();

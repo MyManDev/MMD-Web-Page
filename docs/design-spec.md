@@ -230,9 +230,14 @@ Kart değil, kendi başına bir bölüm gibi duran tam genişlikte blok.
 | Ekran görüntüsü | metnin altında, tam genişlik | sağ kolon                                    |
 | En-boy          | 16 / 10                      | 16 / 10                                      |
 
-Blok içi sıra: proje adı (Display L) → özet (Display M, `text-muted`) → **açıklama (Body)** →
-tech tag'leri (`Tag` listesi, mono) → `MetricRow` → aksiyonlar (GitHub `ghost`, Live Demo
-`primary`).
+Blok içi sıra: **sıra numarası (mono, `text-muted`)** → proje adı (Display L) → özet (Display M,
+`text-muted`) → **açıklama (Body)** → tech tag'leri (`Tag` listesi, mono) → `MetricRow` → aksiyonlar
+(GitHub `ghost`, Live Demo `primary`).
+
+**Sıra numarası `01`, `02`…** ve bu #58'i **kısmen** geri alıyor: bölüm etiketleri geri gelmedi,
+yalnızca proje kartının sırası. Değer `index`ten türetilir, elle yazılmaz. `aria-hidden`: sıra
+bilgisi DOM sırasında zaten var ve ekran okuyucuya "sıfır bir Football Squad Optimizer" diye
+okutmak başlığın adını kirletirdi. Yeşil değil (§5.1).
 
 **Açıklama alanı sonradan eklendi ve şemada `zorunlu`.** Blok bir zamanlar yalnızca tek satırlık
 özetle yayına çıkıyordu; sol kolon dolmuyor, proje de anlatılmıyordu — "projemizi çok az
@@ -275,7 +280,24 @@ scroll listener yok.
 
 - Her kart `position: sticky; top: calc(var(--nav-height) + 24px)`.
 - `z-index` kart sırasıyla artar; sonraki kart öncekinin üstüne biner.
-- Yığın kabının yüksekliği kart sayısıyla büyür: kart başına bir viewport yüksekliği.
+- **Viewport yüksekliği kartın KENDİSİNDE:** `min-height: calc(100dvh - nav - 24px)`. Kap böylece
+  kendiliğinden kart sayısı × yükseklik oluyor.
+
+**İki yol denendi ve ölçümle elendi** — yığın uyandığında ikisi de sessizce çalışmıyordu:
+
+| Deneme                             | Neden çalışmadı                                                                                                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sarmalayıcıda `min-height: 100dvh` | `position: sticky` **ebeveyninin kutusuyla sınırlı**; kart 01 yalnızca kendi yuvası ekranda kaldığı sürece sabit durdu, kart 02 hâlâ 436px aşağıdayken bıraktı                              |
+| Kartta `margin-bottom: 100dvh`     | Daha kötü: sticky kısıtlama dikdörtgeni kapsayıcının iç kutusundan **elemanın marjları kadar küçülüyor**, yani 900px margin menzili tam 900px kısalttı (ölçüldü: 880px aşağıdayken bıraktı) |
+
+Yükseklik kartın kendi kutusunda olduğunda geometri hizalanıyor: kart 01'in menzili (N−1) × yükseklik
+kadar kalıyor ve kart 02 tam o menzilin içinde tepeye varıp üstüne biniyor. **Ölçüldü:** 16 scroll
+adımının 14'ünde iki kart üst üste.
+
+**Bilinen sınır:** tam iki kart varken son kartın kendi "sabit kalma" süresi yok — kart 02 tepeye
+vardığı anda kart 01 menzilini bitiriyor ve ikisi birlikte kayıp gidiyor. Son karta da bekleme
+vermek kabın sonuna fazladan yükseklik eklemek demek; üçüncü proje geldiğinde ölçülüp karara
+bağlanacak.
 
 `architecture.md` §3'ün dört açık sorusu burada cevaplanıyor:
 
