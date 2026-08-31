@@ -40,21 +40,45 @@ Yayın günü gerçek domain üzerinde ölçülen sayılar:
 **#83 — mobil LCP eşiği dört koşu üst üste düştü.** Sırada bu var, çünkü #20'nin Lighthouse
 maddesi buna bağlı: sayıyı kaydetmek ile eşiği tutmak aynı şey değil.
 
-#83 üç adımı **sırayla** istiyor ve sıra önemli: (1) aynı sayfayı **gerçek domain** üzerinde ölç —
-CI `localhost:4173`'ü simüle throttling ile ölçüyor, (2) render-blocking CSS kalemini ölçerek
-uygula, (3) hâlâ tutmuyorsa §8'deki 2000 ms'i kanıtla revize et. §8 bu sayıları **rapor** olarak
-tanımlıyor, kapı olarak değil.
+**#83'ün 1. adımı bitti.** Gerçek domain ölçüldü ve **CI'dan daha kötü çıktı** — beklentinin tersi:
 
-**#20 — yayın öncesi kontrol listesi.** Engelini #19 kaldırdı. Listenin **üç maddesi bu turda
-kapandı** ve sayıları issue'ya yazıldı: sert kapılar, gerçek domainde 404, OG/metadata gerçek
-URL'de. Kalanlar:
+|             |           Gerçek domain | CI `localhost:4173` |
+| ----------- | ----------------------: | ------------------: |
+| Performance |          **81** (80–92) |               94–95 |
+| LCP         | **3754 ms** (3265–3891) |        2382–3063 ms |
+| FCP         | **2684 ms** (1794–2787) |            ~1234 ms |
+| TBT         |             **29.5 ms** |           51–121 ms |
+| CLS         |                       0 |                   0 |
+
+**FCP iki katına çıktı, TBT düştü** — yani darboğaz CPU değil, kritik yoldaki ağ. `curl` ile
+doğrudan ölçülen iki kalem:
+
+- **HTML edge'de önbelleklenmiyor:** `cf-cache-status: DYNAMIC`, `Cache-Control: max-age=0,
+must-revalidate`, TTFB 255–281 ms. Tamamen statik bir export için gereksiz.
+- **İçerik-hash'li CSS `immutable` değil:** `max-age=14400, must-revalidate` ve durum
+  `REVALIDATED` — adı içeriğine bağlı bir dosya 4 saatte bir origin'e gidiyor. TTFB 243–299 ms.
+- Sıkıştırma **sorun değil**, elendi: Brotli açık, CSS telde 7 339 B (ham 33 012 B).
+
+**Kalan adımlar:** (2) bu iki önbellek kalemini Cloudflare **Cache Rules** ile uygula — depoda
+`_headers` gerekmiyor — ve etkisini aynı üç koşuluk ölçümle oku; (3) eşik hâlâ tutmuyorsa §8'i
+kanıtla revize et. Adım 3'ün kapsamı bu turda **genişledi**: §8 eşiğin sayısını yazıyor ama
+**nerede ölçüldüğünü yazmıyor**, ve elimizdeki iki nokta 700–1400 ms farkla ayrışıyor. Ölçüm yerini
+söylemeyen bir eşik kapı değil yorumdur.
+
+**#20 — yayın öncesi kontrol listesi.** Sekiz maddenin **beşi kapandı**, sayıları issue'da. Kalan
+üç madde:
 
 - Lighthouse mobil Performance, LCP, CLS — **#83 kapanmadan işaretlenmez**
-- Klavye ile tüm sayfa gezilebiliyor, focus görünür
-- `prefers-reduced-motion` açıkken sayfa kullanılabilir
-- Live Demo ve GitHub linkleri açılıyor
-- Paylaşım kartının **büyük biçimde** göründüğü hâlâ gözle teyit edilmedi; `summary_large_image`
-  etiketi ve `og.png` gerçek URL'de doğru, ama ilk paylaşımda ekrana bakılması gerekiyor
+- LinkedIn'in üç linki **gözle** açılıyor — `curl` `999` dönüyor (LinkedIn'in bot engeli); bu ne
+  kırık link kanıtı ne de çalıştığının kanıtı, ve profilin **doğru kişiye** ait olduğunu HTTP kodu
+  hiç söylemez
+- Paylaşım kartı **büyük biçimde** görünüyor — `og.png` ve `summary_large_image` gerçek URL'de
+  doğru, ama ilk paylaşımda ekrana bakılması gerekiyor
+
+Kapanan beşi: sert kapılar · gerçek domainde 404 · OG/metadata gerçek URL'de · klavye ile tüm sayfa
+(20 durak, göstergesi olmayan 0, footer dahil, tur ilk durağa dönüyor) · reduced-motion altında
+dört bölümün dördü de görünür (opacity 1) · placeholder yok. Yani **iki madde göz istiyor, biri
+#83'ü bekliyor** — bu issue artık depodan tek başına kapatılamaz.
 
 ## Bitmemiş iş
 
@@ -132,10 +156,20 @@ rule anyway`; `Create a new proxied DNS record` custom domain'in kaydıyla çak�
   farkı sessizce kırpıyor. `tests/portrait-aspect.test.ts` o aralığı tutuyor.
 - **Lighthouse'un Accessibility skoru bizim kapımızdan düşük çıkabilir** (ölçüldü: 96). Kusur değil,
   ölçüm anı. `architecture.md` §8'de yazılı.
-- **LCP eşiği tek koşunun şansı değil, kalıcı bir sapma** (#83). `main` üzerindeki dört koşunun
-  medyanları: **2382 / 2839 / 3063 / 3063 ms**, eşik 2000 ms. Eşiği tutan tek bir medyan yok. Genlik
-  bu turda daraldı (329–427 ms, önceki ölçümde 1491 ms) ama medyan yukarı kaydı — yani genliğe
-  bakıp "gürültüdür" demek artık geçerli değil.
+- **LCP eşiği tek koşunun şansı değil, kalıcı bir sapma** (#83). CI `main` medyanları:
+  **2382 / 2839 / 3063 / 3063 / 2885 ms**, eşik 2000 ms; gerçek domainde **3754 ms**. Altı okumada
+  eşiği tutan **tek bir medyan yok.** Genliğe bakıp "gürültüdür" demek geçmiyor — ve genliğin
+  kendisi de kararsız: bir turda 329–427 ms'ye indi, sonraki turda 1167 ms'ye çıktı. **Sapmayı
+  gösteren şey genliğin küçüklüğü değil, medyanın hiç tutmaması.**
+- **Ölçüm noktası belirtilmemiş bir eşik, kapı değil yorumdur.** §8 "mobil LCP < 2000 ms" diyor ama
+  nerede ölçüldüğünü söylemiyor. İki nokta 700–1400 ms farkla ayrışıyor ve **ikisi de simülasyon:**
+  CI `localhost`'ta sıfıra yakın gerçek gecikme + sentetik throttling; gerçek domain ölçümü ise
+  gerçek gecikme **artı** aynı sentetik throttling, yani çift cezalı. Saha verisi (CrUX/RUM) yeni
+  bir domainde henüz yok.
+- **`localhost` ölçümü daha iyimser, ama sebebi tek değil.** TBT gerçek domainde **düştü**
+  (59 → 29.5 ms) ve FCP **iki katına çıktı** (1234 → 2684 ms). Bir sayının kötüleşmesi her zaman
+  aynı kalemden gelmez; hangi metriğin hangi yöne gittiğine bakmak, "site yavaşladı" demekten
+  bilgi veriyor.
 - **Performance skoru için aynı şey geçerli DEĞİL:** 94 / 98 / 95 / 94. İki kez üst üste düşmüyor,
   aradaki koşular eşiği tutuyor. Salınan bir skoru kovalamak ölçmeden düzeltmek olur; #83 bu yüzden
   yalnızca LCP için açıldı.
@@ -144,6 +178,18 @@ rule anyway`; `Create a new proxied DNS record` custom domain'in kaydıyla çak�
   alt bölümler TTFB 5 ms + element render delay 103 ms. Yani 3063 ms'in içinde gerçek render 108 ms.
   Tek somut kalem (render-blocking CSS, 7 691 B, iddia edilen kazanç 550 ms) tamamen alınsa bile
   ~2500 ms kalıyor — mikro-optimizasyonla 2000 ms'e inilmiyor.
+- **Bir yokluğu kanıt saymamak lazım.** CSS'in sıkıştırılmadığını düşündüm: `content-encoding`
+  başlığı yoktu ve dosya 33 012 B iniyordu. Sebep sunucu değildi — `curl` varsayılan olarak
+  `Accept-Encoding` göndermiyor. `--compressed` ile Brotli geldi ve 7 339 B indi. **İstemediğin bir
+  şeyin gelmemesi, sunucunun onu vermediği anlamına gelmez.**
+- **Yanlış kesme koşulu eksik kapsamı tam kapsam gibi gösterir.** Klavye turunu "aynı durak tekrar
+  geldi" diye kesince tur **19** durakta bitti ve footer kapsam dışında kaldı: footer'ın tek linki
+  nav'daki GitHub ile aynı href'i taşıyor, yani anahtar çakışıyordu. Doğru koşul "**ilk** durağa
+  dönene kadar" — o zaman 20. durak (footer) göründü.
+- **`textContent` erişilebilirlik ağacı değildir.** Nav linkleri `"HeroHero"` diye çift okunuyor
+  çünkü durumlar aynı ızgara hücresinde yığılı. Ölçüldü: ikinci kopya `visibility: hidden`, görünür
+  metin düğümü **tek** (`["Hero"]`), yani ekran okuyucu çift söylemiyor. Çifti görüp kusur sanmak
+  kolay; ölçülecek şey ağacın kendisi.
 - **Lighthouse skorları job log'unda, artifact'in içinde değil.** `scripts/lighthouse-summary.mjs`
   özeti `gh run view <id> --log` ile okunuyor; artifact yalnızca ayrıntı için gerekiyor
   (`gh run download <id> -n lighthouse-report`). Ve dikkat: Windows'ta Node, kabuğun `/tmp` yolunu
