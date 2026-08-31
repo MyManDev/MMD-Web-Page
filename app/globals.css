@@ -38,79 +38,80 @@ section[id] {
   outline-offset: 2px;
 }
 
-/* Zaffiro hareket katmani - bolum girisi. architecture.md §4.4, design-spec.md §6
+/* Metin bloklari ekrana girdiginde belirir. architecture.md §4.4, design-spec.md §6
 
-   Scroll'a bagli, saf CSS: zaman cizelgesini tarayici yurutuyor, sayfaya 0 KiB
-   JS ekleniyor ve CLAUDE.md kural 3 ("scroll listener yazma") degismeden duruyor.
+   ONCE `animation-timeline: view()` ILE YAZILDI VE BIRAKILDI. O hareket scroll
+   KONUMUNA bagli: scroll durunca animasyon da donuyor, hizli kaydirinca
+   atliyor. Aralik iki kez ayarlandi (`entry 45%`, sonra `cover 50%`) ve olcum
+   her seferinde "teknik olarak calisiyor" dedi - ama kullanici "hicbir
+   degisiklik fark etmedim" dedi ve hakliydi: donan bir animasyon "yazi geldi"
+   hissi vermiyor.
 
-   @supports SART: destegi olmayan tarayicida kural HIC uygulanmiyor ve oge dogal
-   halinde - yani son halinde - duruyor. Animasyonu kosulsuz yazip opacity: 0 ile
-   baslamak, destegin olmadigi yerde icerigi gorunmez birakirdi. Hareket ustune
-   binen bir katman, tasiyici degil.
+   Referans davranis (zaffiro-tambe.framer.website) ZAMANA bagli: oge gorunur
+   oldugu an animasyon basliyor ve kendi suresinde bitiyor. Bunu CSS ile yazmanin
+   yolu yok, cunku "gorunur oldu" bir olay - bir scroll konumu degil. Bu yuzden
+   tetikleyici artik `IntersectionObserver` (`components/ui/RevealOnView.tsx`) ve
+   CLAUDE.md kural 3 bunun icin genisletildi.
 
-   Sayfa yuklenirken giris animasyonu yasagiyla (§4.4) celismiyor: bu hareket
-   yukleme anina degil kullanicinin scroll'una bagli. Ilk ekranda duran bir bolum
-   zaten "entry" araligini gecmis sayilir ve son halinde acilir. */
-@keyframes reveal-on-enter {
+   ISARET SIRASI TERS ve bu tasarimin kendisi:
+
+     `[data-reveal]` <html>'de -> JS burada VE hareket isteniyor
+     `[data-reveal-shown]` ogede -> bu oge goruldu, animasyonu oynat
+
+   Gizleyen kural yalnizca ILK isaretin altinda calisiyor. Yani JS gelmezse,
+   reduced-motion aciksa veya observer duserse isaret hic konmaz ve butun metin
+   gorunur kalir. Tersi yazilsaydi (CSS gizler, JS gosterir) JS'in gelmedigi bir
+   sayfa bos gorunurdu.
+
+   `@supports` GEREKMIYOR artik: burada yeni bir tarayici ozelligi yok, yalnizca
+   iki oznitelik ve bir animasyon. */
+/* `@media` SART VE BUNU BIR TEST YAKALADI. Gizleyen bu kural duz bir bildirim,
+   animasyon DEGIL - yani asagidaki reduced-motion blogu (`animation-name:
+   none`) onu kaldirmiyor. JS mount aninda tercihi okuyup isareti koymuyor, ama
+   tercih SONRADAN degisirse (sistem ayari, veya bir testin `emulateMedia`
+   cagrisi) isaret zaten konmus oluyor ve belirmemis ogeler SONSUZA KADAR gizli
+   kaliyordu.
+
+   Medya sorgusu bunu tek satirda kapatiyor: hareket istenmiyorsa gizleme kurali
+   hic uygulanmiyor, isaret orada olsa bile. JS'teki erken donus de duruyor -
+   o observer'in bosa is yapmasini onluyor, gorunurlugu degil. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] .reveal-on-enter:not([data-reveal-shown]) {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+@keyframes reveal-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
+    translate: 0 14px;
   }
 }
 
-@supports (animation-timeline: view()) {
-  .reveal-on-enter {
-    animation: reveal-on-enter linear both;
-    animation-timeline: view();
-    /* `entry 45%` DENENDI VE GORUNMEZ CIKTI. Sebep olculdu: `entry` araligi
-       OGE YUKSEKLIGINE gore olcekleniyor. Sinif bolum sarmalayicisindayken
-       (yuzlerce piksel) o yuzde uzun bir yol demekti; 64px'lik bir baslikta
-       ~29px'e dusuyor. Sonuc: Projects basligi ekranin %70'indeyken opacity
-       coktan 1.00 - yani efekt, oge henuz ekranin en altindayken bitiyordu ve
-       kullanici hicbir sey gormuyordu.
-
-       `cover` ise VIEWPORT + OGE yuksekligine gore olcekleniyor. %35 denendi ve
-       YETMEDI: olculdu, 14 reveal ogesinin yalnizca 4'u gorunur alana
-       geldiginde hala animasyondaydi - o dordu de uzun olanlar (ekran
-       goruntusu, uc kart). 84px'lik bir baslikta %35 ~344px'e denk geliyor ve
-       bunun buyuk kismi oge ekranin ALT KENARINDAYKEN geciyor.
-
-       %50'de kisa bir baslik icin pencere ~490px: oge alt kenarda gorundugu
-       andan ekranin %45'ine gelene kadar hareket ediyor, yani hareket
-       okunabilir bir alanda geciyor. Uzun ogelerde de oran korunuyor.
-
-       Erken bitmesi ilkesi duruyor: okumaya baslanan bir metin hala hareket
-       ediyorsa hareket okunurlugun onune geciyor. Degisen sey "erken"in nereye
-       gore olculdugu.
-
-       KADEME YAZILMIYOR. Her ogenin kendi `view()` cizelgesi var, yani sira
-       kendiliginden olusuyor - elle `animation-delay` yazmak hizli kaydiranda
-       icerigi ekranda dururken bekletirdi. */
-    animation-range: entry 0% cover 50%;
-  }
+.reveal-on-enter[data-reveal-shown] {
+  /* 520ms: scroll'a bagli surumden belirgin sekilde daha uzun, cunku artik
+     hareketin tamami gorunur alanda geciyor - "cok az daha yavas" istegi de
+     buraya dusuyor. `ease-out` degil hafif bir yumusama: sonu daha sakin. */
+  animation: reveal-in 520ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  /* Kademeyi observer yaziyor: ayni karede acilan ogelere belge sirasinda
+     0, 1, 2... veriyor ve besten sonra sabitliyor. */
+  animation-delay: calc(var(--reveal, 0) * 90ms);
 }
 
-/* Yukleme aninda giris. design-spec.md §3.2 ve §6
+/* HERO'nun girisi - SAF CSS, JS'e bagli DEGIL. design-spec.md §3.2
 
-   AYRI BIR KURAL, cunku `view()` Hero'da CALISMAZ: Hero acilista zaten
-   ekranda, yani goruntuleme cizelgesi onu "gecmis" sayiyor ve oge son halinde
-   aciliyor. Hero'da bir efekt istiyorsak zamana bagli olmak zorunda.
+   Ayri bir mekanizma ve gerekcesi olculdu. Metin girisi
+   `IntersectionObserver` ile calisiyor ve o yol ogeyi hidrasyona kadar gizli
+   tutuyor (olculdu: ~1.5s). Hero'nun `h1`'i sayfanin LCP ogesi; onu JS gelene
+   kadar gizlemek LCP'yi dogrudan bozardi - ve LCP zaten acik bir issue (#83).
 
-   Bu, "sayfa yuklenirken giris animasyonu yok" yasagini GERI ALIYOR (§4.4).
-   Yasak sessizce kalkmadi: gerekce ve yeni sozlesme architecture.md §4.4 ile
-   §9'da, ve `tests/e2e/hero.spec.ts` eski testin yerine yenisini olcuyor.
-   Zarf KORUNDU: 240ms sure, 70ms kademe - §4.4'un 150-250ms sinirinin ust
-   ucunda (istek: "cok az daha yavas").
+   Bu kural ilk boyamada basliyor, yani hicbir bekleme yok.
 
    YALNIZCA `from` TANIMLI ve bu kritik. reduced-motion evrensel blogu
    `animation-name: none` uyguladiginda oge dinlenme haline - yani tam gorunur
    haline - donuyor. `to` yazilsaydi ayni blok onu `from` karesinde dondurur ve
-   HERO HIC GORUNMEZDI. Depo bu hatayi daha once yasadi (projects.spec.ts). */
+   HERO HIC GORUNMEZDI. Depo bu hatayi daha once yasadi. */
 @keyframes reveal-on-load {
   from {
     opacity: 0;
@@ -120,8 +121,8 @@ section[id] {
 
 .reveal-on-load {
   animation: reveal-on-load 240ms ease-out both;
-  /* Kademeyi `--reveal` tasiyor; markup 0/1/2/3 veriyor. Burada `view()` yok,
-     o yuzden sira elle soylenmek zorunda. */
+  /* Kademeyi markup veriyor (0/1/2/3). Burada observer yok, o yuzden sira elle
+     soylenmek zorunda. */
   animation-delay: calc(var(--reveal, 0) * 70ms);
 }
 
@@ -469,16 +470,16 @@ a:focus-visible .roll-track {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
 
-    /* Scroll'a bagli animasyon SUREYE degil scroll konumuna bagli; yukaridaki
-       0.01ms onu durdurmuyor, oge yine scroll'la birlikte hareket ederdi.
-       Bu yuzden animasyon tamamen kaldiriliyor ve oge dogal haliyle - yani
-       hareketin bittigi halle - render ediliyor.
+    /* Animasyon tamamen kaldiriliyor, suresi kisaltilmiyor: bir animasyonu
+       0.01ms'e indirmek onu "aninda oynatmak" demek ve `fill: both` ile
+       birlestiginde ogeyi son karede birakir - o kadar iyi. Ama scroll'a bagli
+       surumde bu yetmiyordu ve o gerekce kayitta kalsin: zaman cizelgesi
+       olmayan bir animasyonun gecerli zamani cozumlenemiyor, `both` fill de o
+       durumda `from` karesini uyguluyor, yani oge opacity: 0'da donuyordu.
 
-       `animation-timeline: none` DEGIL, ve bu olculdu: zaman cizelgesi olmayan
-       bir animasyonun gecerli zamani cozumlenemiyor, `fill-mode: both` de o
-       durumda `from` karesini uyguluyor. Oge opacity: 0'da doniyor - yani
-       reduced-motion acik bir kullanici bolumu HIC gormuyor. Testi
-       tests/e2e/projects.spec.ts'te.
+       Metin girisi artik `IntersectionObserver` ile ve orada asil koruma bu
+       satir DEGIL: JS reduced-motion altinda isareti hic koymuyor, yani
+       gizleyen kural hic uygulanmiyor. Bu satir ikinci kat.
 
        !important sart: .reveal-on-enter (0,1,0) bu evrensel seciciden (0,0,0)
        daha guclu, yani sira degil oncelik belirliyor. design-spec.md §6.1 */
