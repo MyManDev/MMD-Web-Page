@@ -6,13 +6,16 @@
 **Tarih:** 2026-08-31
 **Yer:** ev
 **Aşama:** Faz 4. **Site yayında: https://mymandev.com.** #19 ve #54 kapandı; açık issue #20 ve #83.
+Bir tur tasarım geri bildirimi de kapandı (#86–#90).
 
 ## Dal ve çalışma ağacı
 
 - Dal: `main`
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 191 E2E** (23'ü viewport'a göre
-  atlanıyor), payload **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB
+- `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 209 E2E** (23'ü viewport'a göre
+  atlanıyor), payload **133.4 KiB / 150.0 KiB**, kalan pay 16.6 KiB
+- `e2e` işi CI'da ~1m40s'den **~2m30s**'ye çıktı: otomatik geçiş testleri aralığın geçmesini
+  beklemek zorunda ve süreyi ölçen bir test kısaltılamaz
 - Açık PR: yok
 - `main`'e doğrudan push artık **kapalı** — #54 uygulandı, iş `feature/*` dallarında ve PR'dan geçer
 
@@ -25,6 +28,18 @@
 | Production dalı | `main` → otomatik deploy                        |
 | Preview         | PR başına, `*.pages.dev`                        |
 | `www`           | Zone seviyesinde Redirect Rule ile köke **301** |
+
+> **AÇIK İŞ — panelde:** `cache html at edge` Cache Rule'u **silinmeli.** Ölçüldü: üç merge'den
+> **61 dakika sonra** `mymandev.com` hâlâ eski HTML'i sunuyordu (`Age: 3665`, `cf-cache-status:
+HIT`) — em dash'ler orada, "Who We Are" yok, GitHub linkleri eski. Aynı build
+> `https://mymandev.pages.dev/` üzerinde **doğru** görünüyor, çünkü zone cache kuralları
+> `pages.dev`'e uygulanmıyor. Yani deploy zinciri sağlam, sorun yalnızca bu kural.
+>
+> Kuralın **ölçülen kazancı yok**, **ölçülen bedeli deploy başına 2 saate kadar bayatlama**.
+> `cache hashed assets` **kalsın** — hash'li adda bayatlama olamaz ve tekrar ziyarette gerçek
+> kazancı var. Panel: `Caching` → `Configuration` → `Purge Everything`, sonra `Cache Rules`.
+>
+> Bir Claude oturumu bunu yapamaz: Cloudflare API token'ı gerekir ve token sohbete girmez.
 
 Yayın günü gerçek domain üzerinde ölçülen sayılar:
 
@@ -59,11 +74,19 @@ must-revalidate`, TTFB 255–281 ms. Tamamen statik bir export için gereksiz.
   `REVALIDATED` — adı içeriğine bağlı bir dosya 4 saatte bir origin'e gidiyor. TTFB 243–299 ms.
 - Sıkıştırma **sorun değil**, elendi: Brotli açık, CSS telde 7 339 B (ham 33 012 B).
 
-**Kalan adımlar:** (2) bu iki önbellek kalemini Cloudflare **Cache Rules** ile uygula — depoda
-`_headers` gerekmiyor — ve etkisini aynı üç koşuluk ölçümle oku; (3) eşik hâlâ tutmuyorsa §8'i
-kanıtla revize et. Adım 3'ün kapsamı bu turda **genişledi**: §8 eşiğin sayısını yazıyor ama
-**nerede ölçüldüğünü yazmıyor**, ve elimizdeki iki nokta 700–1400 ms farkla ayrışıyor. Ölçüm yerini
-söylemeyen bir eşik kapı değil yorumdur.
+**#83'ün 2. adımı da bitti ve kazanç çıkmadı.** İki Cache Rule uygulandı; `cf-cache-status` HTML'de
+`DYNAMIC`→`HIT`, CSS'te `REVALIDATED`→`HIT` oldu ama **Lighthouse kıpırdamadı**: Performance 81→81,
+LCP 3754→3921 ms, FCP 2684→2662 ms. Sebep anlaşılır — Pages'in "origin"i zaten Cloudflare ağında,
+yani kısaltılacak uzun bir gidiş-dönüş hiç yoktu.
+
+O ölçümün kusuru da kayıtta: iki ölçüm arasında **iki değişken** değişti (kurallar _ve_ deploy
+edilen build), yani karşılaştırma önbelleğin etkisini yalıtamıyor. Doğru ifade "kazanç yoktur"
+değil, **"bu düzenekle görülemedi."**
+
+**Kalan tek adım (3):** eşik hâlâ tutmuyorsa §8'i kanıtla revize et. Kapsamı bu turda **genişledi**:
+§8 eşiğin sayısını yazıyor ama **nerede ölçüldüğünü yazmıyor**, ve elimizdeki iki nokta 700–1400 ms
+farkla ayrışıyor. Ölçüm yerini söylemeyen bir eşik kapı değil yorumdur. Yedi CI okuması + iki gerçek
+domain ölçümünde eşiği tutan tek bir medyan yok.
 
 **#20 — yayın öncesi kontrol listesi.** Sekiz maddenin **beşi kapandı**, sayıları issue'da. Kalan
 üç madde:
@@ -82,17 +105,47 @@ dört bölümün dördü de görünür (opacity 1) · placeholder yok. Yani **ik
 
 ## Bitmemiş iş
 
-Yok. Depoda bekleyen bir yarım iş kalmadı.
+**Depoda yok.** Panelde bir tane var ve yukarıda yazılı: `cache html at edge` kuralının silinmesi.
+O silinene kadar `mymandev.com` her deploy'dan sonra 2 saate kadar eski build'i sunar.
 
 ## Alınan kararlar
 
-Kalıcı kararlar `docs/architecture.md` §9'da. Bu turda üç satır eklendi: yayın hedefi, `www`
-yönlendirmesinin nerede yaşadığı, ve query korunumu. Burada tekrar edilmiyor.
+Kalıcı kararlar `docs/architecture.md` §9'da. Bu turda **altı** satır eklendi: yayın hedefi, `www`
+yönlendirmesinin nerede yaşadığı, query korunumu, prensip otomatik geçişi, prensip geçişinin biçimi,
+ve Hero amblemi rengi. Burada tekrar edilmiyor — ama biri **bir kuralı gevşetti** ve o yüzden burada
+adı geçiyor:
+
+**Hero'da artık iki yeşil var.** Amblem logonun kendi turkuazını (`#0D9488`) taşıyor, CTA ise
+accent'i (`#14B8A6`). `CLAUDE.md` kural 2'nin "ekran başına tek yeşil odak" cümlesi harfiyen
+okunursa bu bir ihlal. Karar sahibi verdi, azaltıcı ölçüler ölçüldü ve `design-spec.md` §5.1'e
+tablonun altına not olarak yazıldı. Yeni bir yeşil eklemek isteyen biri **önce o notu okumalı** —
+kural gevşedi ama kalkmadı.
 
 ## Tuzaklar ve notlar
 
 Ölçümle bulunan, gözle bulunamayacak olanlar:
 
+- **`count()` BEKLEMEZ, assertion bekler.** Yeni bir test span'leri doğrudan sayıyordu ve CI'da 0
+  döndü: yavaş makinede hidrasyon bitmemişti, yani component'in geliştirilmiş biçimi henüz yoktu ve
+  sunucunun bastığı düz liste duruyordu. Yerelde geçiyordu — **yani test doğru olduğu için değil,
+  makine hızlı olduğu için yeşildi.** Düzeltme sayıyı değil yapıyı değiştirmek: önce bekleyen bir
+  assertion (`expect(locator).not.toHaveCount(0)`), sonra say.
+- **Zone cache kuralları `pages.dev`'e uygulanmıyor.** Canlı domain bayatken önizlemeler ve
+  production `*.pages.dev` adresi **güncel** kalıyor. Bir değişikliğin yayına girip girmediğini
+  anlamak için ikisini yan yana ölçmek en hızlı ayrım: içerik farklıysa suçlu deploy değil önbellek.
+- **Cloudflare Pages deploy'da zone cache'ini purge ETMİYOR.** Bu varsayılmıştı ve ölçümle yanlış
+  çıktı: üç merge'den 61 dakika sonra `Age: 3665` ile aynı HTML dönüyordu.
+- **`curl` bir adresi açabiliyorsa tarayıcının açacağı garanti değil.** Önizleme adresi `200` ve
+  73 KB dönerken kullanıcının tarayıcısında boş kalıyordu; headless Chromium'da da kusursuz açıldı
+  (konsol hatası yok, düşen istek yok). Yani sorun sayfada değil o makinenin ağında/eklentisinde.
+  Bunu ayırmanın yolu **aynı sayfayı bir tarayıcıyla ölçmek**, sadece `curl` ile değil.
+- **Bir efekti JS zamanlayıcısıyla kurmak zorunda değilsin.** Prensip girişi harf harf yazılırken bir
+  `useEffect`, bir `setInterval` ve bir `matchMedia` okuması gerekiyordu. Kelime kelime belirmeye
+  geçince hepsi kalktı: animasyonu **selektörün eşleşmesi** tetikliyor — `data-active` bir öğeye
+  geçtiği an kural uymaya başlıyor ve animasyon baştan çalışıyor. Payload 0.1 KiB geri geldi.
+- **Süreyi ölçen bir test kısaltılamaz.** Otomatik geçiş testleri aralığın (7s) geçmesini beklemek
+  zorunda; `e2e` işi CI'da ~1m40s'den ~2m30s'ye çıktı. `waitForTimeout` burada meşru, çünkü ölçülen
+  şey sürenin kendisi — ama bedeli her PR'a biniyor.
 - **Cloudflare'in `Create` düğmesi Pages değil Workers akışını açıyor.** İşareti şu: "Configure your
   Worker project", `npx wrangler deploy` gibi bir deploy komutu, ve **`Build output directory`
   alanının hiç olmaması**. O akış bu depo için yanlış — `wrangler` yapılandırması ister ve 404
