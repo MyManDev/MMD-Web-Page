@@ -49,7 +49,7 @@ export function Nav({ site }: { site: Site }) {
           </nav>
 
           <div className="hidden lg:block">
-            <Button href={site.repoUrl} variant="ghost" external>
+            <Button href={site.githubUrl} variant="ghost" external>
               GitHub
             </Button>
           </div>
@@ -71,7 +71,7 @@ export function Nav({ site }: { site: Site }) {
         id={menuId}
         open={open}
         items={site.nav}
-        repoUrl={site.repoUrl}
+        githubUrl={site.githubUrl}
         activeId={active}
         onClose={close}
       />

@@ -86,7 +86,10 @@ export const teamMemberSchema = z.object({
 export const siteSchema = z.object({
   wordmark: z.literal("MyManDev"),
   canonicalUrl: httpsUrl,
-  repoUrl: httpsUrl,
+  /* Organizasyonun kendisi, tek bir depo DEGIL: nav ve footer buraya gidiyor.
+     Ad `repoUrl` degil cunku artik bir depoya isaret etmiyor - yanlis isim,
+     yanlis degerden daha uzun yasar. Projenin kendi `repoUrl`u ayri alan. */
+  githubUrl: httpsUrl,
   /** SEO aciklamasi. Marka metni - paylasilan karar alani. */
   description: z.string().min(1),
   /** Hero basligi ve alt cumlesi. design-spec.md §3.2 */

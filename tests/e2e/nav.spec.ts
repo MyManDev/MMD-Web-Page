@@ -1,4 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
+
+import { site } from "@/content/site";
 import { expect, test } from "@playwright/test";
 
 /**
@@ -298,7 +300,11 @@ test.describe("nav mikro etkilesimleri", () => {
       });
     }, NAV);
 
-    expect(names).toEqual(["Hero", "Projects", "Who we are", "Team"]);
+    /* Beklenen deger TURETILIYOR, sabit yazilmiyor: etiketler `content/site.ts`de
+       tek yerde duruyor ve baslik bicimi degistiginde (ornek: "Who we are" ->
+       "Who We Are") sabit bir liste davranis bozulmadigi halde duser. Deponun
+       daha once yasadigi hata bu. */
+    expect(names).toEqual(site.nav.map((item) => item.label));
 
     // Gorsel kopya gercekten VAR - yoksa test bir sey kanitlamiyor olurdu.
     const rendered = await page.locator(`${NAV} a`).first().innerText();

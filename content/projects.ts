@@ -46,7 +46,7 @@ export const projects: Project[] = [
       "A Fantasy Premier League squad is a constrained optimisation problem, so SquadOpt solves it " +
       "as one: a £100m budget, the squad rules and a projection for every player go in, and " +
       "CP-SAT returns not a good squad but a proof that no better one exists under those " +
-      "constraints. Every gameweek it publishes what it projected beside what actually happened — " +
+      "constraints. Every gameweek it publishes what it projected beside what actually happened, " +
       "including the weeks the projection lost.",
     tags: ["Python", "OR-Tools CP-SAT", "ML", "React"],
     repoUrl: "https://github.com/MyManDev/football-squad-optimizer",

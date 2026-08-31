@@ -85,7 +85,7 @@ V1'de `disabled` kullanan bir yüzey **yok**; durum tanımlı ki sonradan uyduru
 | `Projects`    | Projects   | **A** | `projects: Project[]`           | —                                    |
 | `ProjectCard` | Projects   | **A** | `project`, `index`, `total`     | default · hover · focus-within       |
 | `MetricRow`   | Projects   | **A** | `metrics: Metric[]`             | —                                    |
-| `WhoWeAre`    | Who we are | **B** | `site.whoWeAre`                 | —                                    |
+| `WhoWeAre`    | Who We Are | **B** | `site.whoWeAre`                 | —                                    |
 | `Team`        | Team       | **B** | `members: TeamMember[]`         | —                                    |
 | `TeamCard`    | Team       | **B** | `member`                        | default · hover · focus-within       |
 | `Footer`      | Footer     | **B** | `site.footer`                   | —                                    |

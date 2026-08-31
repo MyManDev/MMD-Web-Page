@@ -18,7 +18,7 @@ export const team: TeamMember[] = [
     slug: "ibrahim-ersan-ozdemir",
     name: "İbrahim Ersan Özdemir",
     role: "Full-stack & applied AI",
-    bio: "Computer engineering graduate. React and React Native on the surface; ANNs, LLMs and retrieval pipelines underneath — RAG with local inference, computer vision, and machine learning on real datasets.",
+    bio: "Computer engineering graduate. React and React Native on the surface; ANNs, LLMs and retrieval pipelines underneath: RAG with local inference, computer vision, and machine learning on real datasets.",
     githubUrl: "https://github.com/SpeedyV5",
     linkedinUrl: "https://www.linkedin.com/in/ibrahim-ersan-ozdemir15",
     photo: "/people/ibrahim-ersan-ozdemir-1000.webp",
