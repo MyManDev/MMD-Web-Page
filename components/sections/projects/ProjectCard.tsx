@@ -44,10 +44,49 @@ export function ProjectCard({
       style={stacked ? { zIndex: 10 + index } : undefined}
       className={
         "grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)]" +
-        (stacked ? " lg:sticky lg:top-[calc(var(--nav-height)+24px)] motion-reduce:lg:static" : "")
+        /* YUKSEKLIK KARTIN KENDISINDE ve bu iki denemeden sonra OLCULEREK
+           bulundu:
+
+             1. sarmalayicida `min-h-dvh` -> sticky sarmalayicinin kutusuna
+                hapsoluyor; kart 01, kart 02 hala 436px asagidayken birakiyor
+             2. kartta `margin-bottom: 100dvh` -> DAHA KOTU. Sticky kisitlama
+                dikdortgeni kapsayicinin ic kutusundan ELEMANIN MARJLARI KADAR
+                kuculuyor, yani 900px'lik margin menzili tam 900px kisaltiyor.
+                Olculdu: kart 01, kart 02 880px asagidayken birakti.
+
+           Yukseklik kartin KENDI kutusunda oldugunda ikisi hizalaniyor: kap
+           kendiliginden N x yukseklik oluyor, kart 01'in menzili (N-1) x
+           yukseklik kadar kaliyor, ve kart 02 tam o menzilin icinde tepeye
+           varip ustune biniyor.
+
+           Olcu `100dvh` DEGIL `100dvh - nav - 24px`: sabitlenen kart tam
+           sabitlendigi yerden ekranin altina kadar dolsun, tasmasin. */
+        (stacked
+          ? " lg:sticky lg:top-[calc(var(--nav-height)+24px)]" +
+            " lg:min-h-[calc(100dvh-var(--nav-height)-24px)]" +
+            " motion-reduce:lg:static motion-reduce:lg:min-h-0"
+          : "")
       }
     >
       <div className="flex flex-col gap-6 lg:col-span-5">
+        {/*
+          SIRA NUMARASI. #58 bolum numaralarini kaldirmisti ve bu onu KISMEN
+          geri aliyor: bolum etiketleri geri gelmedi, yalnizca proje kartinin
+          sirasi. Karar sahibinin istegi; §9'da kayitli.
+
+          Deger `index`ten TURETILIYOR, elle yazilmiyor - iki kayit arasinda
+          sira degistiginde numara kendiliginden takip ediyor.
+
+          `aria-hidden`: sira bilgisi DOM sirasinda zaten var, ekran okuyucuya
+          "sifir bir Football Squad Optimizer" diye okutmak baslikin adini
+          kirletirdi. Gorsel bir isaret, bilgi degil.
+
+          Yesil DEGIL (§5.1): bolumun tek yesili Live Demo'nun zemini.
+        */}
+        <p aria-hidden="true" className="reveal-on-enter font-mono text-mono text-text-muted">
+          {String(index + 1).padStart(2, "0")}
+        </p>
+
         <h3
           id={`${project.slug}-title`}
           className="reveal-on-enter font-mono text-display-l font-medium lg:text-display-l-lg"

@@ -58,14 +58,27 @@ test("skip link klavyeyle erisilebilir ve gorunur oluyor", async ({ page }) => {
 });
 
 /**
- * §58: bolum numaralari (`01`-`04`) kalkti ve `SectionLabel` primitive'i silindi.
+ * §58: BOLUM numaralari (`01`-`04`) kalkti ve `SectionLabel` primitive'i silindi.
  *
  * Testi tek tek bolumlere degil SAYFAYA yaziyorum: kaldirma isi dort bolumu
  * birden ilgilendiriyor ve geri gelmesi de oyle olur. Numaranin bir bolume
  * sessizce geri donmesi, kaldirma gerekcesini (etiket bilgi katmadigi yerde
  * durmaz, §3.5) ihlal eder.
+ *
+ * KALDIRILAN SEY BOLUM ETIKETIYDI, HER SAYI DEGIL. Iki mesru sayi var ve ikisi
+ * de bilgi katiyor - #58'in gerekcesi tam olarak buydu:
+ *
+ *   karusel sayaci -> "kacinci prensipteyim"; gezinen kullanici konumu baska
+ *                     turlu bilemez
+ *   kart sira no   -> "kacinci proje"; yigin uyandiginda ust uste binen
+ *                     kartlarin sirasini soyluyor (§3.3, karar sahibinin
+ *                     istegi, architecture.md §9'da kayitli)
+ *
+ * Ikisinin dislanmasi da SECICIYE DEGIL YAPIYA bagli: rol (`carousel`) ve oge
+ * (`article`). Sinif adiyla dislamak yeniden adlandirmada testi sessizce kor
+ * birakirdi - bu dersi ayni test bir kez ogrendi.
  */
-test("bolumlerde 01-04 numarasi kalmadi", async ({ page }) => {
+test("bolum numarasi kalmadi - kart ve karusel sayilari ayri", async ({ page }) => {
   await page.goto("/");
 
   const markers = await page.evaluate(() =>
@@ -83,6 +96,9 @@ test("bolumlerde 01-04 numarasi kalmadi", async ({ page }) => {
           yeniden adlandirma testi sessizce kor birakirdi.
         */
         .filter((el) => el.closest('[aria-roledescription="carousel"]') === null)
+        /* Kartin kendi sira numarasi da bolum etiketi degil: bir KARTIN
+           icinde yasiyor ve o kartin yigindaki yerini soyluyor. */
+        .filter((el) => el.closest("article") === null)
         .map((el) => `${section.id}: ${el.textContent?.trim()}`),
     ),
   );

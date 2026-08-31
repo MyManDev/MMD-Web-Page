@@ -46,14 +46,30 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
           </h2>
 
           {/*
-            Yigin kabi: kart basina bir viewport yuksekligi (§3.3.2). Tek
-            projede yigin uygulanmadigi icin kap da normal akista kaliyor.
+            Yigin kabi. KARTLAR DOGRUDAN COCUK ve bu duzeltme olcumle geldi.
+
+            Once her kart kendi `lg:min-h-dvh` sarmalayicisinin icindeydi ve
+            yigin CALISMIYORDU: `position: sticky` ebeveyninin kutusuyla
+            sinirli, yani kart 01 yalnizca kendi 100vh'lik yuvasi ekranda
+            kaldigi surece sabit durabiliyordu. Yerel bir ikinci kayitla
+            olculdu - kart 01, kart 02 hala 436px asagidayken sabitlenmeyi
+            birakiyordu; ikisi hic ust uste gelmiyordu. §3.3.2 "sonraki kart
+            oncekinin ustune biner" diyor ve bu olmuyordu.
+
+            Simdi araligi kartin kendi `margin-bottom`u veriyor (ProjectCard),
+            yani her kartin sticky menzili KABIN TAMAMINI kapsiyor.
+
+            Mobil bosluk `gap` ile ve `lg`de sifirlaniyor: orada araligi margin
+            tasiyor, ikisi birlikte cift bosluk yapardi.
           */}
-          <div className={stacked ? "flex flex-col lg:gap-0" : "flex flex-col"}>
+          <div className={stacked ? "flex flex-col gap-16 lg:gap-0" : "flex flex-col"}>
             {projects.map((project, index) => (
-              <div key={project.slug} className={stacked ? "lg:min-h-dvh" : undefined}>
-                <ProjectCard project={project} index={index} total={projects.length} />
-              </div>
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                index={index}
+                total={projects.length}
+              />
             ))}
           </div>
         </div>
