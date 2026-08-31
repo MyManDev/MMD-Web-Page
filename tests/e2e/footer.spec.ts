@@ -117,6 +117,19 @@ test("mobilde dikey, md ustunde yatay", async ({ page }, testInfo) => {
  * burada cizginin DAVRANISI olculuyor.
  */
 test("GitHub linki hover'da alt cizgi aliyor", async ({ page }) => {
+  /*
+    REDUCED-MOTION ALTINDA, ve sebebi olculdu: giris animasyonu bolum
+    sarmalayicisindan METIN BLOKLARINA tasindiginda bu test dustu. Footer
+    linkinin kendi `view()` cizelgesi var, yani `hover()` sayfayi kaydirirken
+    oge de hareket ediyor - Playwright kutuyu hesapladiktan sonra hedef yer
+    degistiriyor ve isaretci yanina dusuyor. Alt cizgi hic acilmiyordu (olculdu:
+    beklenen 1, gelen 0).
+
+    Depo bu sinifi zaten kaydetmis: "hareketli sayfada ilk tiklama bosa duser,
+    tiklayan testler reduced-motion altinda kosmali".
+  */
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
   const rule = page.locator("footer .rule");
   await expect(rule).toHaveCount(1);
 

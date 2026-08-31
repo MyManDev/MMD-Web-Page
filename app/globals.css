@@ -67,11 +67,50 @@ section[id] {
   .reveal-on-enter {
     animation: reveal-on-enter linear both;
     animation-timeline: view();
-    /* Bolum viewport'a girmeye basladiginda basliyor, %20 kaplamisken bitiyor.
-       Erken bitmesi kasitli: okumaya baslanan bir metin hala hareket ediyorsa
-       hareket okunurlugun onune geciyor. */
-    animation-range: entry 0% cover 20%;
+    /* Oge viewport'a girmeye basladiginda basliyor, girisin %45'inde bitiyor.
+       ONCE `cover 20%` idi ve o zaman sinif BOLUM sarmalayicisindaydi; artik
+       metin bloklarinin kendisinde, yani aralik da kisaldi: istek "cok kisa bir
+       surede gelsin" idi ve scroll'a bagli bir animasyonda "sure" saniye degil
+       SCROLL ARALIGI.
+
+       Erken bitmesi kasitli ve bu ilke degismedi: okumaya baslanan bir metin
+       hala hareket ediyorsa hareket okunurlugun onune geciyor.
+
+       KADEME YAZILMIYOR. Her ogenin kendi `view()` cizelgesi var, yani sira
+       kendiliginden olusuyor - elle `animation-delay` yazmak hem fazla kod hem
+       yanlis olurdu: hizli kaydiran birinde sabit gecikmeler icerigi ekranda
+       dururken bekletir. */
+    animation-range: entry 0% entry 45%;
   }
+}
+
+/* Yukleme aninda giris. design-spec.md §3.2 ve §6
+
+   AYRI BIR KURAL, cunku `view()` Hero'da CALISMAZ: Hero acilista zaten
+   ekranda, yani goruntuleme cizelgesi onu "gecmis" sayiyor ve oge son halinde
+   aciliyor. Hero'da bir efekt istiyorsak zamana bagli olmak zorunda.
+
+   Bu, "sayfa yuklenirken giris animasyonu yok" yasagini GERI ALIYOR (§4.4).
+   Yasak sessizce kalkmadi: gerekce ve yeni sozlesme architecture.md §4.4 ile
+   §9'da, ve `tests/e2e/hero.spec.ts` eski testin yerine yenisini olcuyor.
+   Zarf KORUNDU: 180ms sure, 60ms kademe - §4.4'un 150-250ms siniri icinde.
+
+   YALNIZCA `from` TANIMLI ve bu kritik. reduced-motion evrensel blogu
+   `animation-name: none` uyguladiginda oge dinlenme haline - yani tam gorunur
+   haline - donuyor. `to` yazilsaydi ayni blok onu `from` karesinde dondurur ve
+   HERO HIC GORUNMEZDI. Depo bu hatayi daha once yasadi (projects.spec.ts). */
+@keyframes reveal-on-load {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+.reveal-on-load {
+  animation: reveal-on-load 180ms ease-out both;
+  /* Kademeyi `--reveal` tasiyor; markup 0/1/2/3 veriyor. Burada `view()` yok,
+     o yuzden sira elle soylenmek zorunda. */
+  animation-delay: calc(var(--reveal, 0) * 60ms);
 }
 
 /* Navbar zemini. design-spec.md §3.1
@@ -118,11 +157,77 @@ section[id] {
    Onceki 380px tavani kaynagin 400x400 olmasindan geliyordu; vektorde
    cozunurluk tavani yok. Ust sinir hala var ama artik TASARIM sinirisi:
    amblem basligin agirligini gecmemeli. */
-.hero-mark {
+/* GORULMEK ICIN (wip): logonun orijinal bicimi - turkuaz plaka + beyaz sembol.
+   Plaka ayri bir oge cunku `mask` ogenin KENDI zeminini de kirpiyor; ayni
+   ogeye hem maske hem arka plan verilemez. Maske hala `.hero-mark`ta, yani
+   maske testleri oldugu gibi calisiyor. */
+/* Plakanin acisi. `@property` sart: ozel bir ozellik ancak TIPI bildirilmisse
+   animasyonlanabilir - bildirilmezse tarayici onu metin gibi gorur ve aradaki
+   kareleri hesaplamaz, yani gradyan donmez, sicrardi. */
+@property --mark-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.hero-mark-plate {
   aspect-ratio: 1;
   width: clamp(220px, 26vw, 460px);
   margin-inline: auto;
+  /* Duz renk DEGIL: uc tonlu conic gradyan, acisi `--mark-angle`den geliyor.
+     Duraklar tokens.css'te `color-mix` ile turetildi (§4.5). */
+  background-image: conic-gradient(
+    from var(--mark-angle),
+    var(--mark-sweep-deep),
+    var(--color-mark),
+    var(--mark-sweep-lift),
+    var(--color-mark),
+    var(--mark-sweep-deep)
+  );
+  /* Gradyan cizilemezse ardinda duz marka rengi kaliyor - plaka hicbir durumda
+     bos kalmiyor. */
   background-color: var(--color-mark);
+  /* `display` BURADA VERILMEZ. Verildiginde Tailwind'in `hidden` utility'siyle
+     ayni specificity'de oluyor ve sira karar veriyor: globals.css sonra
+     geldigi icin `display: grid` `hidden`i sessizce yeniyor ve amblem MOBILDE
+     de gorunur hale geliyor. Olculdu - uc mobil amblem testi `skip` olmaktan
+     cikip kosmaya basladi, ve bunu yakalayan tek sinyal atlama sayisiydi.
+     Yerlesim utility'leri markup'ta. */
+}
+
+/* Gradyan SCROLL'A BAGLI doniyor - zamana degil. Sayfa dururken plaka sakin,
+   kaydirdikca aci ilerliyor ve bir tam tur atiyor.
+
+   Sonsuz dongu YOK ve bu kasitli: sayfada kalici olarak oynayan bir sey
+   olmuyor, yani WCAG 2.2.2'nin duraklatma mekanizmasi istedigi durum hic
+   dogmuyor. Hareketi kullanici yurutuyor.
+
+   UC KATMANLI DUSUS, hicbirinde icerik kaybi yok:
+     `animation-timeline` desteklenmiyor  -> aci 0deg, STATIK gradyan
+     reduced-motion acik                  -> `animation-name: none`, STATIK gradyan
+     `@property` desteklenmiyor           -> gradyan cizilir, yalnizca donmez */
+@keyframes mark-sweep {
+  to {
+    --mark-angle: 360deg;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-mark-plate {
+    animation: mark-sweep linear both;
+    animation-timeline: scroll();
+  }
+}
+
+.hero-mark {
+  aspect-ratio: 1;
+  width: 100%;
+  margin-inline: auto;
+  /* Sembol beyaz: `--color-text` (#f2f5f3). Orijinal dosya #ffffff kullaniyor
+     ama turkuaz uzerinde ikisi gozle ayirt edilmiyor ve renk yalnizca
+     tokens.css'te yasar (CLAUDE.md kural 1) - saf beyaz icin yeni bir token
+     gerekirdi ve bu dal yalnizca GORMEK icin. */
+  background-color: var(--color-text);
   mask-image: url("/logo-mark.svg");
   mask-size: contain;
   mask-repeat: no-repeat;

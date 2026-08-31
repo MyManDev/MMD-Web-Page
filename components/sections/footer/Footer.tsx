@@ -19,7 +19,10 @@ export function Footer({ site }: { site: Site }) {
     <footer className="border-t border-border bg-surface">
       <Container>
         <div className="flex flex-col gap-4 py-8 font-mono text-mono uppercase md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-4">
+          {/* Sinif SPAN'lere degil bu kapsayiciya: `translate` inline bir
+              ogede hic uygulanmiyor, yani span'de efektin yarisi sessizce
+              kaybolurdu. */}
+          <div className="reveal-on-enter flex flex-col gap-1 md:flex-row md:items-center md:gap-4">
             <span className="text-text">{site.wordmark}</span>
             <span className="text-text-muted">
               © {site.copyrightYear} {site.wordmark}
@@ -36,7 +39,7 @@ export function Footer({ site }: { site: Site }) {
             href={site.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
+            className="reveal-on-enter inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
           >
             {/*
               `rule` ikonu DEGIL yalnizca metni kapsiyor: alt cizgi dis link

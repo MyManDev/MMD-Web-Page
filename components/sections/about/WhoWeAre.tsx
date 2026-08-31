@@ -32,11 +32,11 @@ export function WhoWeAre({ section, whoWeAre }: { section: NavItem; whoWeAre: Si
         {/*
           Bolum girisi ICERIGE bagli, section'a degil - kural globals.css'te (§6).
         */}
-        <div className="reveal-on-enter grid grid-cols-1 gap-10 py-section lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)] lg:py-section-lg">
+        <div className="grid grid-cols-1 gap-10 py-section lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)] lg:py-section-lg">
           <div className="flex flex-col gap-8 lg:col-span-6 lg:gap-10">
             <h2
               id={headingId}
-              className="font-mono text-display-xl font-medium lg:text-display-xl-lg"
+              className="reveal-on-enter font-mono text-display-xl font-medium lg:text-display-xl-lg"
             >
               {section.label}
             </h2>
@@ -46,7 +46,7 @@ export function WhoWeAre({ section, whoWeAre }: { section: NavItem; whoWeAre: Si
               degil. Iki kolonda dahi gecerli - kolon 65ch'ten genis oldugunda
               satir yine 65ch'te kesiliyor.
             */}
-            <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
+            <p className="reveal-on-enter max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
               {whoWeAre.manifesto}
             </p>
           </div>

@@ -164,8 +164,17 @@ Sıra: başlık (Display XL) → alt cümle (Body) → iki aksiyon
 
 Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
 
-Sayfa yüklenirken **giriş animasyonu yok** (§4.4). Hero açılışta zaten ekranda; `reveal-on-enter`
-burada bilerek uygulanmıyor.
+**Hero yüklenirken kademeli belirir:** başlık → alt cümle → aksiyonlar → amblem, 180ms süre ve
+kelime başına değil öğe başına 60ms kademe. Bu, "sayfa yüklenirken giriş animasyonu yok" yasağını
+geri alıyor (§4.4) — yasak kaldırıldı, zarf korundu.
+
+Sınıf `reveal-on-enter` **değil** `reveal-on-load` ve sebep teknik: Hero açılışta ekranda olduğu için
+`animation-timeline: view()` onu "geçmiş" sayar ve öğe son hâlinde açılır. Hero'daki efekt yükleme
+anına bağlı olmak zorunda.
+
+Keyframe'de **yalnızca `from`** tanımlı. `prefers-reduced-motion` bloğu `animation-name: none`
+uyguladığında öğe tam görünür hâline döner; `to` yazılsaydı aynı blok onu `from` karesinde dondurur
+ve **Hero hiç görünmezdi**.
 
 **Sağ kolonda amblem var.** Markanın kendi işareti — üç kafa ve bir "m", yani üç kişi.
 
@@ -554,8 +563,11 @@ Kararı karar sahibi verdi; azaltıcı ölçüler ölçüldü ve yazılı:
 - Amblemin turkuazı (`#0D9488`) accent'ten (`#14B8A6`) **daha koyu**, yani ikisi aynı tonda yarışmıyor.
 - Amblem **tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor** — `aria-hidden`, saf dekorasyon.
   Accent hâlâ ekrandaki tek etkileşimli yeşil.
-- **Kare zemin yok.** Dolu bir blok ağırlık merkezini başlıktan alıp amblemin üstüne veriyordu; şekil
-  orijinal, zemin değil.
+- **Kare zemin geri geldi ve artık gradyanlı.** Plaka üç tonlu bir conic gradyan taşıyor ve açısı
+  scroll'a bağlı dönüyor. Durakları uydurulmadı: `--color-mark`tan `color-mix` ile türetildi (§4.5),
+  biri sayfa zeminine biri metin rengine doğru. Yani palet büyümedi, aynı renk derinlik kazandı.
+- **Sonsuz döngü yok.** Gradyan yalnızca kullanıcı kaydırdıkça dönüyor; sayfa dururken plaka sakin.
+  WCAG 2.2.2'nin duraklatma mekanizması istediği durum hiç doğmuyor.
 - `tests/e2e/hero.spec.ts` "amblem accent renk kullanmiyor" testi **duruyor ve hâlâ anlamlı**: accent'in
   amblemde kullanılmasını engelliyor.
 
@@ -575,8 +587,8 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 
 ## 6 · Etkileşim ve motion
 
-§4.4 sınırları: CSS öncelikli, 150–250ms, `ease-out`, sayfa yüklenirken giriş animasyonu yok,
-motion kütüphanesi yok. Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
+§4.4 sınırları: CSS öncelikli, 150–250ms, `ease-out`, motion kütüphanesi yok. **Yükleme anında
+giriş animasyonu yasağı kaldırıldı** (§4.4); zarf aynen duruyor. Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
 değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler

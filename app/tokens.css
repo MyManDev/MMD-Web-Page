@@ -163,6 +163,20 @@
    :root uzerinde tanimlanir - scroll-margin-top hesabi buna bagli. */
 :root {
   --nav-height: var(--height-nav);
+
+  /* Amblem plakasinin gradyan duraklari. architecture.md §4.5
+
+     TURETILDI, UYDURULMADI: §4.5 "ara tonlar gerektiginde yeni hex uydurulmaz,
+     mevcut token'in opakligi kullanilir" diyor. Ikisi de `--color-mark`tan
+     `color-mix` ile cikiyor - biri sayfa zeminine, digeri metin rengine dogru.
+     Yani palet buyumuyor, ayni renk derinlik kazaniyor.
+
+     `@theme` ICINDE DEGIL ve bu kasitli: `@theme`e konan her `--color-*`
+     Tailwind'de bir utility uretiyor. Bu ikisi yalnizca globals.css'teki tek
+     bir gradyanda kullaniliyor, yani uretilen siniflar kullanilmadan payload'a
+     binerdi. Renk yine tek kaynakta (CLAUDE.md kural 1). */
+  --mark-sweep-deep: color-mix(in oklab, var(--color-mark) 72%, var(--color-page));
+  --mark-sweep-lift: color-mix(in oklab, var(--color-mark) 86%, var(--color-text));
 }
 
 @media (width >= 1024px) {

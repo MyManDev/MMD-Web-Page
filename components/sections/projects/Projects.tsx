@@ -37,10 +37,10 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
           transform bir kapsayici blok yaratiyor ve sticky kartlarin ona gore
           konumlanmasi kontrol edilmeli. Bugun total === 1, sticky hic uygulanmiyor.
         */}
-        <div className="reveal-on-enter flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
+        <div className="flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
           <h2
             id={headingId}
-            className="font-mono text-display-xl font-medium lg:text-display-xl-lg"
+            className="reveal-on-enter font-mono text-display-xl font-medium lg:text-display-xl-lg"
           >
             {section.label}
           </h2>

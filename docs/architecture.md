@@ -180,14 +180,27 @@ söyler.
 §4.1 ve §4.2 aynen geçerli. Değişen: ölçek, hareket ve mikro detaylar. Yani bu bir tema değişikliği
 değil; aynı palet üstünde hareketin ve ayrıntının sıkılaşması.
 
-Öncelik CSS: hover, sticky, smooth scroll. Geçiş süresi 150–250ms, `ease-out`. Sayfa yüklenirken
-giriş animasyonu yok.
+Öncelik CSS: hover, sticky, smooth scroll. Geçiş süresi 150–250ms, `ease-out`.
+
+**Sayfa yüklenirken giriş animasyonu yasağı KALDIRILDI.** Karar sahibi kaldırdı ("her şeyde
+animasyon olabilir"). Kalkan şey yasak, **ölçü değil**: yükleme anındaki giriş de 150–250ms zarfında
+kalır ve `ease-out` kullanır — bugünkü uygulama 180ms süre, 60ms kademe. "Hareket taşıyıcı değil,
+üstüne binen bir katman" ilkesi aynen geçerli: animasyon çalışmadığı her durumda içerik tam görünür
+olmak zorunda, ve bu bir kapıyla ölçülüyor (`tests/e2e/hero.spec.ts`).
+
+Yasağın gerekçesi geçersiz olmadı, kapsamı daraldı: Hero açılışta ekranda olduğu için scroll'a bağlı
+bir reveal orada ya hiç görünmez ya da sayfayı yanıp sönüyormuş gibi gösterir. Bu yüzden Hero
+`view()` değil **zamana bağlı** bir animasyon kullanır; scroll'a bağlı olanlar ekrana sonradan giren
+bölümlerde kalır.
 
 **Hareket sistemi saf CSS.** Scroll'a bağlı hareket `animation-timeline: view()` ve `scroll()` ile
 yazılır; iki özelliğin de desteklendiği doğrulandı. Kazanç iki katmanlı: sayfaya **0 KiB JS**
 eklenmiyor, ve `CLAUDE.md` kural 3 ("scroll listener yazma") değişmeden duruyor çünkü zaman
-çizelgesini tarayıcının kendisi yürütüyor. Sayfa yüklenirken çalışan giriş animasyonu yasağıyla
-çelişmiyor: bu hareketler yükleme anına değil kullanıcının scroll'una bağlı.
+çizelgesini tarayıcının kendisi yürütüyor.
+
+Scroll'a bağlı giriş **öğe seviyesinde**: her metin bloğunun kendi `view()` çizelgesi var, yani
+kademe kendiliğinden oluşuyor ve elle `animation-delay` yazılmıyor. Sabit gecikmeler hızlı kaydıran
+birinde içeriği ekranda dururken bekletirdi.
 
 Desteklemeyen tarayıcıda öğe **son halinde** durur. Hiçbir içerik, okunabilirlik veya aksiyon
 hareket desteğine bağlı olmaz; hareket üstüne binen bir katman, taşıyıcı değil.
@@ -520,3 +533,6 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Prensip otomatik geçişi | 7s; etkileşimde duraklar, bırakınca sürer — kalıcı durdurma yok                 | §4.4   |
 | Prensip geçişi          | **Kelime kelime belirme**, saf CSS; daktilo ve blok girişi bırakıldı            | §4.4   |
 | Hero amblemi rengi      | Logonun turkuazi `#0D9488`; accent degil — §5.1'in tek-yesil okumasi gevsetildi | §4.1   |
+| Yükleme animasyonu      | Yasak **kaldırıldı**; zarf (150–250ms, `ease-out`) korundu                      | §4.4   |
+| Metin girişi            | Bölüm sarmalayıcısı değil **öğe seviyesi**; kademe `view()`'den, elle değil     | §4.4   |
+| Amblem gradyanı         | Conic, açısı **scroll'a bağlı**; sonsuz döngü yok, durakları `color-mix`        | §4.1   |
