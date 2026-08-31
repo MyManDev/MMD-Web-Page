@@ -8,10 +8,18 @@
   --color-surface: #111b1d;
   --color-surface-2: #2a3a34;
 
-  /* Hero amblemi. Accent DEGIL: Hero'nun tek yesili primary CTA (§5.1) ve
-     amblemi de yesil yapmak ekranda ikinci bir odak acardi. Zeminden ayrilan
-     ama okumaya davet etmeyen bir ton - amblem bir DUZLEM, bir baslik degil. */
-  --color-mark: #3d5a53;
+  /* Hero amblemi. Artik LOGONUN KENDI TURKUAZI - onceki sessiz ton (#3d5a53)
+     amblemi zemine karistiriyordu ve karar sahibi orijinal rengi istedi.
+
+     ACCENT DEGIL ve bu ayrim korunuyor: accent #14B8A6, amblem #0D9488. Amblem
+     tiklanmiyor, metin tasimiyor ve hicbir aksiyonu isaret etmiyor; CTA hala
+     ekrandaki tek accent ve tek etkilesimli yesil.
+
+     Ama durust olmak gerekirse §4.1'in "ekran basina tek yesil odak" okumasi
+     GEVSEDI: Hero'da artik iki yesil var. Gerekce ve azaltici olculer
+     design-spec.md §5.1'de ve architecture.md §9'da yazili - sessizce
+     degistirilmedi. */
+  --color-mark: #0d9488;
   --color-border: #486354;
   /* Etkilesim rengi. Logonun kendi turkuazi DEGIL ve sebebi olculdu:
      #0d9488 uzerinde page rengi metin 3.66:1 veriyor, WCAG AA 4.5 istiyor -

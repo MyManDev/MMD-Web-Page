@@ -105,8 +105,10 @@ section[id] {
 /* Hero amblemi. design-spec.md §3.2
 
    Marka isareti - uc kafa ve bir "m". Kaynak dolu turkuaz bir kare; zemin
-   `scripts/extract-mark.mjs` ile ayrildi, cunku kareyi oldugu gibi koymak
-   ekran boyunda ikinci bir yesil odak eklerdi (§5.1).
+   `scripts/extract-mark.mjs` ile ayrildi. Renk artik logonun kendi turkuazi
+   (`--color-mark`), ama KARE hala yok: 460px'lik dolu bir blok Hero'nun
+   agirlik merkezini baslikdan amblemin ustune kaydiriyordu. Sekil orijinal,
+   zemin degil (§5.1).
 
    `mask-image` + `background-color`, `<img>` DEGIL: renk token'dan geliyor ve
    dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).

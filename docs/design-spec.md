@@ -181,8 +181,11 @@ Kuralları:
   yeşil odak eklerdi (§5.1). Tam logo ayrı dosyada: `public/logo.svg`.
 - **`mask-image` + `background-color`, `<img>` değil.** Renk token'dan (`--color-mark`) geliyor ve
   bir dosyanın içine gömülü kalmıyor (`CLAUDE.md` kural 1).
-- **Accent değil.** Hero'nun tek yeşili primary CTA (§5.1). Amblemi de yeşil yapmak ekranda ikinci
-  bir odak açardı; ton zeminden ayrılıyor ama okumaya davet etmiyor.
+- **Rengi logonun kendi turkuazı** (`--color-mark`, `#0D9488`). Önceki sessiz ton (`#3d5a53`) amblemi
+  zemine karıştırıyordu; karar sahibi orijinal rengi istedi. **Accent değil** (`#14B8A6`) ve bu ayrım
+  korunuyor: amblem tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor. Kare zemin **yok**
+  — 460px'lik dolu bir blok Hero'nun ağırlık merkezini başlıktan amblemin üstüne kaydırıyor. Şekil
+  orijinal, zemin değil. §5.1'in tek-yeşil okumasına etkisi orada yazılı.
 - **Bütün durur, taşmaz.** Yerini aldığı wordmark'ın tam tersi sözleşme: yarısı kırpılmış bir logo
   bozuk görünür.
 - **Ölçü 460px'te kapanıyor** ve bu artık bir **tasarım** sınırı, çözünürlük sınırı değil. Vektöre
@@ -533,14 +536,28 @@ Component'te literal renk yok (`CLAUDE.md` kural 1).
 
 §4.1 kuralı: ekran başına tek yeşil odak. Bölüm bölüm bağlandı:
 
-| Bölüm      | **Tek** yeşil odak              | Yeşil **olmayan**                                                 |
-| ---------- | ------------------------------- | ----------------------------------------------------------------- |
-| Navigation | aktif nav linki                 | wordmark, diğer linkler, GitHub aksiyonu                          |
-| Hero       | `primary` CTA zemini            | başlık, alt cümle, `ghost` CTA                                    |
-| Projects   | Live Demo `primary` zemini      | başlık, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu |
-| Who we are | yok                             | başlık, manifesto, liste madde işaretleri                         |
-| Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                             |
-| Footer     | yok                             | wordmark, linkler, telif                                          |
+| Bölüm      | **Tek** yeşil odak              | Yeşil **olmayan**                                                  |
+| ---------- | ------------------------------- | ------------------------------------------------------------------ |
+| Navigation | aktif nav linki                 | wordmark, diğer linkler, GitHub aksiyonu                           |
+| Hero       | `primary` CTA zemini            | başlık, alt cümle, `ghost` CTA — amblem ayrı, aşağıdaki nota bakın |
+| Projects   | Live Demo `primary` zemini      | başlık, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu  |
+| Who we are | yok                             | başlık, manifesto, liste madde işaretleri                          |
+| Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                              |
+| Footer     | yok                             | wordmark, linkler, telif                                           |
+
+**Hero amblemi bu okumayı gevşetti ve bu sessizce olmadı.** Amblem artık logonun kendi turkuazını
+taşıyor (`#0D9488`), yani Hero'da **iki yeşil** var: CTA'nın accent'i ve amblem. §4.1'in "ekran
+başına tek yeşil odak" cümlesi harfiyen okunursa bu bir ihlal.
+
+Kararı karar sahibi verdi; azaltıcı ölçüler ölçüldü ve yazılı:
+
+- Amblemin turkuazı (`#0D9488`) accent'ten (`#14B8A6`) **daha koyu**, yani ikisi aynı tonda yarışmıyor.
+- Amblem **tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor** — `aria-hidden`, saf dekorasyon.
+  Accent hâlâ ekrandaki tek etkileşimli yeşil.
+- **Kare zemin yok.** Dolu bir blok ağırlık merkezini başlıktan alıp amblemin üstüne veriyordu; şekil
+  orijinal, zemin değil.
+- `tests/e2e/hero.spec.ts` "amblem accent renk kullanmiyor" testi **duruyor ve hâlâ anlamlı**: accent'in
+  amblemde kullanılmasını engelliyor.
 
 Who we are, Team ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve o üç bölümde
 birincil aksiyon yok. Her bölüme bir yeşil serpmek §4.1'in tarif ettiği hatanın kendisi.
