@@ -164,8 +164,8 @@ Sıra: başlık (Display XL) → alt cümle (Body) → iki aksiyon
 
 Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
 
-**Hero yüklenirken kademeli belirir:** başlık → alt cümle → aksiyonlar → amblem, 180ms süre ve
-kelime başına değil öğe başına 60ms kademe. Bu, "sayfa yüklenirken giriş animasyonu yok" yasağını
+**Hero yüklenirken kademeli belirir:** başlık → alt cümle → aksiyonlar → amblem, 240ms süre ve
+kelime başına değil öğe başına 70ms kademe. Bu, "sayfa yüklenirken giriş animasyonu yok" yasağını
 geri alıyor (§4.4) — yasak kaldırıldı, zarf korundu.
 
 Sınıf `reveal-on-enter` **değil** `reveal-on-load` ve sebep teknik: Hero açılışta ekranda olduğu için
@@ -563,6 +563,11 @@ Kararı karar sahibi verdi; azaltıcı ölçüler ölçüldü ve yazılı:
 - Amblemin turkuazı (`#0D9488`) accent'ten (`#14B8A6`) **daha koyu**, yani ikisi aynı tonda yarışmıyor.
 - Amblem **tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor** — `aria-hidden`, saf dekorasyon.
   Accent hâlâ ekrandaki tek etkileşimli yeşil.
+- **Hero'nun zemini de geçişli** (`.hero-field`): sayfa renginden marka rengine doğru `118deg`'lik
+  bir tint, yönü amblemin durduğu köşeye bakıyor — plaka sayfanın üzerinde duran ayrı bir blok
+  olmaktan çıkıp zeminin koyulaştığı yerde oturuyor. **Bu bir glow değil:** ölçüldü, iki ucun
+  kontrastı 1.6'nın altında ve bir kapı bunu tutuyor. Metin solda, orada zemin saf `page` rengi;
+  en kötü noktada bile başlık ve alt cümle AA'yı geçiyor (ölçüldü: 11.9:1 ve 6.5:1).
 - **Kare zemin geri geldi ve artık gradyanlı.** Plaka üç tonlu bir conic gradyan taşıyor ve açısı
   scroll'a bağlı dönüyor. Durakları uydurulmadı: `--color-mark`tan `color-mix` ile türetildi (§4.5),
   biri sayfa zeminine biri metin rengine doğru. Yani palet büyümedi, aynı renk derinlik kazandı.

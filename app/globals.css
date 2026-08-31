@@ -67,20 +67,31 @@ section[id] {
   .reveal-on-enter {
     animation: reveal-on-enter linear both;
     animation-timeline: view();
-    /* Oge viewport'a girmeye basladiginda basliyor, girisin %45'inde bitiyor.
-       ONCE `cover 20%` idi ve o zaman sinif BOLUM sarmalayicisindaydi; artik
-       metin bloklarinin kendisinde, yani aralik da kisaldi: istek "cok kisa bir
-       surede gelsin" idi ve scroll'a bagli bir animasyonda "sure" saniye degil
-       SCROLL ARALIGI.
+    /* `entry 45%` DENENDI VE GORUNMEZ CIKTI. Sebep olculdu: `entry` araligi
+       OGE YUKSEKLIGINE gore olcekleniyor. Sinif bolum sarmalayicisindayken
+       (yuzlerce piksel) o yuzde uzun bir yol demekti; 64px'lik bir baslikta
+       ~29px'e dusuyor. Sonuc: Projects basligi ekranin %70'indeyken opacity
+       coktan 1.00 - yani efekt, oge henuz ekranin en altindayken bitiyordu ve
+       kullanici hicbir sey gormuyordu.
 
-       Erken bitmesi kasitli ve bu ilke degismedi: okumaya baslanan bir metin
-       hala hareket ediyorsa hareket okunurlugun onune geciyor.
+       `cover` ise VIEWPORT + OGE yuksekligine gore olcekleniyor. %35 denendi ve
+       YETMEDI: olculdu, 14 reveal ogesinin yalnizca 4'u gorunur alana
+       geldiginde hala animasyondaydi - o dordu de uzun olanlar (ekran
+       goruntusu, uc kart). 84px'lik bir baslikta %35 ~344px'e denk geliyor ve
+       bunun buyuk kismi oge ekranin ALT KENARINDAYKEN geciyor.
+
+       %50'de kisa bir baslik icin pencere ~490px: oge alt kenarda gorundugu
+       andan ekranin %45'ine gelene kadar hareket ediyor, yani hareket
+       okunabilir bir alanda geciyor. Uzun ogelerde de oran korunuyor.
+
+       Erken bitmesi ilkesi duruyor: okumaya baslanan bir metin hala hareket
+       ediyorsa hareket okunurlugun onune geciyor. Degisen sey "erken"in nereye
+       gore olculdugu.
 
        KADEME YAZILMIYOR. Her ogenin kendi `view()` cizelgesi var, yani sira
-       kendiliginden olusuyor - elle `animation-delay` yazmak hem fazla kod hem
-       yanlis olurdu: hizli kaydiran birinde sabit gecikmeler icerigi ekranda
-       dururken bekletir. */
-    animation-range: entry 0% entry 45%;
+       kendiliginden olusuyor - elle `animation-delay` yazmak hizli kaydiranda
+       icerigi ekranda dururken bekletirdi. */
+    animation-range: entry 0% cover 50%;
   }
 }
 
@@ -93,7 +104,8 @@ section[id] {
    Bu, "sayfa yuklenirken giris animasyonu yok" yasagini GERI ALIYOR (§4.4).
    Yasak sessizce kalkmadi: gerekce ve yeni sozlesme architecture.md §4.4 ile
    §9'da, ve `tests/e2e/hero.spec.ts` eski testin yerine yenisini olcuyor.
-   Zarf KORUNDU: 180ms sure, 60ms kademe - §4.4'un 150-250ms siniri icinde.
+   Zarf KORUNDU: 240ms sure, 70ms kademe - §4.4'un 150-250ms sinirinin ust
+   ucunda (istek: "cok az daha yavas").
 
    YALNIZCA `from` TANIMLI ve bu kritik. reduced-motion evrensel blogu
    `animation-name: none` uyguladiginda oge dinlenme haline - yani tam gorunur
@@ -107,10 +119,10 @@ section[id] {
 }
 
 .reveal-on-load {
-  animation: reveal-on-load 180ms ease-out both;
+  animation: reveal-on-load 240ms ease-out both;
   /* Kademeyi `--reveal` tasiyor; markup 0/1/2/3 veriyor. Burada `view()` yok,
      o yuzden sira elle soylenmek zorunda. */
-  animation-delay: calc(var(--reveal, 0) * 60ms);
+  animation-delay: calc(var(--reveal, 0) * 70ms);
 }
 
 /* Navbar zemini. design-spec.md §3.1
@@ -139,6 +151,33 @@ section[id] {
   .nav-bar {
     background-color: var(--color-page);
   }
+}
+
+/* HERO ZEMINI - tema uyumlu renk gecisi. design-spec.md §3.2
+
+   Istek "temayi uygun yapacak bir renk gecisi" idi ve onceki tur bunu
+   karsilamiyordu: plakanin gradyani vardi ama duraklari o kadar zayifti ki
+   (olculdu: %72 ve %86 karisim) bir tasarim hareketi olarak okunmuyordu.
+
+   Burada sayfanin kendi zemininden marka rengine dogru bir gecis var ve YONU
+   tesadufi degil: aci amblemin durdugu sag ust kosere bakiyor, yani plaka
+   sayfanin uzerinde duran ayri bir blok olmaktan cikip zeminin koyulastigi
+   yerde oturuyor.
+
+   BU BIR GLOW DEGIL ve olcusu bunun icin secildi: kural 2 "buyuk neon glow
+   yok" diyor. Radyal bir parlama degil, dogrusal bir TINT - luminans farki
+   kucuk, ama alan buyuk oldugu icin gorunuyor. Metin solda ve orada zemin saf
+   `page` rengi, yani baslikla alt cumlenin kontrasti HIC degismiyor (olculdu).
+
+   Ilk durak iki kez yaziliyor: gecisin ilk %40'i tamamen duz kalsin, renk
+   ancak metnin bittigi yerden sonra donmeye baslasin. */
+.hero-field {
+  background-image: linear-gradient(
+    118deg,
+    var(--color-page) 0%,
+    var(--color-page) 40%,
+    var(--hero-field-far) 100%
+  );
 }
 
 /* Hero amblemi. design-spec.md §3.2

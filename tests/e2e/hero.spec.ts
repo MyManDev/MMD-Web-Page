@@ -71,6 +71,77 @@ test("birincil aksiyon Projects'e gidiyor", async ({ page }) => {
 });
 
 /**
+ * HERO ZEMINI - tema uyumlu renk gecisi. design-spec.md §3.2
+ *
+ * Iki sey birden olculuyor ve ikincisi kapinin kendisi:
+ *
+ * 1. Zeminde gercekten bir gecis var mi (duz renk degil).
+ * 2. Gecis metni okunmaz yapiyor mu. Olcum EN KOTU DURUM uzerinden: metin
+ *    gradyanin EN UZAK ucunda bile AA'yi geciyorsa arada kalan her noktada
+ *    geciyor - luminans iki durak arasinda tekduze degisiyor. Bu, piksel
+ *    ornekleyip "en acik piksel hangisi" diye aramaktan hem daha saglam hem
+ *    daha hizli (o tuzak navbar'da bir kez yasandi: en acik piksel zemin degil
+ *    YAZI cikti).
+ *
+ * Gecisin BIR TINT oldugu de olculuyor: iki durak arasindaki kontrast 1.6'nin
+ * altinda kalmali. Ustune cikarsa bu artik bir tint degil bir parlama olur ve
+ * CLAUDE.md kural 2 onu yasakliyor.
+ */
+test("Hero zemini gecisli, ama metin en kotu noktada bile okunuyor", async ({ page }) => {
+  const field = page.locator("#hero");
+
+  const image = await field.evaluate((el) => getComputedStyle(el).backgroundImage);
+  expect(image).toContain("gradient");
+
+  /*
+    Renkler CANVAS'TAN okunuyor, `getComputedStyle` dizesinden DEGIL. Sebep
+    olculdu: `color-mix(in oklab, ...)` ile yazilmis bir token Chrome'da
+    `oklab(0.515 -0.079 ...)` olarak seri hale geliyor ve dizeden sayi
+    ayiklamak ondalik basamaklari kanal saniyor - ilk denemede "kontrast"
+    280 milyon cikti. Canvas hangi notasyonda yazildigina bakmadan sRGB
+    baytlarini veriyor.
+  */
+  const measured = await page.evaluate(() => {
+    const root = getComputedStyle(document.documentElement);
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext("2d")!;
+    const toRgb = (value: string): [number, number, number] => {
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = value;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return [r!, g!, b!];
+    };
+    return {
+      far: toRgb(root.getPropertyValue("--hero-field-far").trim()),
+      pageColor: toRgb(root.getPropertyValue("--color-page").trim()),
+      heading: toRgb(getComputedStyle(document.querySelector("#hero h1")!).color),
+      body: toRgb(getComputedStyle(document.querySelector("#hero p")!).color),
+    };
+  });
+
+  const channel = (raw: number) => {
+    const v = raw / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = ([r, g, b]: [number, number, number]) =>
+    0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  const contrast = (a: [number, number, number], b: [number, number, number]) => {
+    const [high, low] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
+    return (high + 0.05) / (low + 0.05);
+  };
+
+  // 1 - Gecis bir TINT: iki ucun kontrasti kucuk.
+  expect(contrast(measured.pageColor, measured.far)).toBeLessThan(1.6);
+
+  // 2 - Metin gradyanin en uzak ucunda bile AA geciyor.
+  expect(contrast(measured.heading, measured.far)).toBeGreaterThanOrEqual(4.5);
+  expect(contrast(measured.body, measured.far)).toBeGreaterThanOrEqual(4.5);
+});
+
+/**
  * YUKLEME ANINDA KADEMELI GIRIS. design-spec.md §3.2, §6 ve architecture.md §4.4
  *
  * Burada once "Hero'da acilis animasyonu yok" testi duruyordu ve yasagi
