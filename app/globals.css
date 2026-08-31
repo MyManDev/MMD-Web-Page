@@ -250,7 +250,10 @@ a:focus-visible .roll-track {
 }
 
 .principle-slot[data-active] {
-  animation: principle-enter 240ms ease-out both;
+  /* 240ms -> 600ms: yedi saniyelik otomatik aralikta 240ms bir gecis degil bir
+     sicrama gibi okunuyordu. Sure literal, cunku depoda sure token'i yok ve
+     yalnizca bu bir yer icin token uretmek olcusuz olurdu. */
+  animation: principle-enter 600ms ease-out both;
 }
 
 /* Deste tuslari. Yesil YOK - §5.1 bu bolume accent kotasi vermiyor; tuslar

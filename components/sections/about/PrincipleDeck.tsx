@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+/*
+  Aralik DISA AKTARILIYOR cunku testin "o gunku sayiyi" tekrar yazmasi bir
+  kusurdur - beklenen deger turetilebiliyorsa turetilir. E2E bu sabiti import
+  edip bekleme suresini ondan hesapliyor.
+*/
+export const AUTO_ADVANCE_MS = 7000;
 
 /**
  * Prensip destesi. design-spec.md §3.4
@@ -25,6 +32,25 @@ import { useState, useSyncExternalStore } from "react";
  * Basa saran gezinme (5'ten sonra 1): sonu olan bir gezinmede son tus devre
  * disi kalir ve odak bosa duser. Bes ogede sarma yonunu kaybettirmiyor, sayac
  * konumu zaten soyluyor.
+ *
+ * OTOMATIK GECIS. Deste 7 saniyede bir kendiliginden ilerliyor. WCAG 2.2.2
+ * kendiliginden baslayan ve bes saniyeden uzun suren otomatik guncellemede bir
+ * duraklatma mekanizmasi istiyor; buradaki mekanizma ETKILESIM: fare uzerine
+ * gelince veya iceriye odak dusunce duruyor, etkilesim bitince kaldigi yerden
+ * devam ediyor. Gorunur yeni bir tus eklenmedi - design-spec.md §3.4'te olmayan
+ * bir kontrol tasarim karari olurdu.
+ *
+ * `prefers-reduced-motion` acikken otomatik gecis HIC calismiyor. Bu ayni
+ * zamanda tiklayan E2E testlerini deterministik tutuyor: onlar zaten
+ * reduced-motion altinda kosuyor, yani zamanlayici oraya hic girmiyor.
+ *
+ * CANLI BOLGE OTOMATIK GECISTE SUSUYOR. `aria-live="polite"` her degisikligi
+ * duyurursa ekran okuyucu kullanicisi yedi saniyede bir, istemedigi halde
+ * sozunun kesildigini yasar. Bu yuzden otomatik ilerleme `aria-live="off"`
+ * yaziyor; kullanici etkilesimi (odak veya fare) bolgeyi yeniden `polite`
+ * yapiyor. Sira onemli ve tesadufi degil: odak olayi tiklamadan ONCE geliyor
+ * (mousedown -> focus -> click), yani tusa basildigi commit'te bolge zaten
+ * canli. Ikisini ayni commit'te degistirmek gerekmiyor.
  */
 export function PrincipleDeck({ principles }: { principles: readonly string[] }) {
   /*
@@ -42,11 +68,60 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
     () => true,
     () => false,
   );
+  /*
+    Reduced-motion CSS'te tek yerde ele aliniyor (globals.css), ama bir
+    ZAMANLAYICI CSS ile ifade edilemez - bu yuzden burada ikinci bir okuma var.
+    Ayni kanca, ayni gerekce: tek render, hidrasyon uyusmazligi yok.
+  */
+  const reducedMotion = useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  /* Baslangicta `true`: ilk render'da bolge canli, kullanici bir sey yapmadan
+     once de oyle. Yalnizca otomatik ilerleme onu susturuyor. */
+  const [announce, setAnnounce] = useState(true);
 
   const total = principles.length;
   const pad = (value: number) => String(value).padStart(2, "0");
   const step = (delta: number) => setIndex((current) => (current + delta + total) % total);
+
+  /*
+    `index` bagimlilikta: her degisiklikten sonra zamanlayici bastan kuruluyor.
+    Yani kullanici ileri tusuna bastiginda yedi saniye sifirdan sayiliyor -
+    tusa basip yarim saniye sonra kendiliginden atlamasi olmuyor.
+
+    `setInterval` DEGIL `setTimeout`: aralik degil tek adim kuruluyor ve her
+    adimdan sonra yeniden. Interval, duraklatma sirasinda gecen sureyi
+    biriktirip birden fazla atlama uretebilir.
+  */
+  useEffect(() => {
+    if (!enhanced || reducedMotion || paused) return;
+
+    const timer = setTimeout(() => {
+      setAnnounce(false);
+      /* Fonksiyonel guncelleyici DEGIL: `index` boylece gercekten bir
+         bagimlilik oluyor ve `exhaustive-deps` onu gereksiz gormuyor. */
+      setIndex((index + 1) % total);
+    }, AUTO_ADVANCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [enhanced, reducedMotion, paused, index, total]);
+
+  /* Etkilesim BASLAYINCA: durakla ve bolgeyi yeniden canli yap. Ikincisi
+     onemli - kullanici birazdan tusa basacak ve degisikligi duymali. */
+  const hold = () => {
+    setPaused(true);
+    setAnnounce(true);
+  };
+  const release = () => setPaused(false);
 
   /*
     Etiket UYDURULMUS MARKA METNI DEGIL: alanin `content/site.ts`'teki adi
@@ -73,12 +148,22 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
       aria-label={label}
       aria-roledescription="carousel"
       className="flex flex-col gap-6"
+      /* `onFocus`/`onBlur` React'te baloncuklaniyor, yani bunlar kapsayici
+         icin `focusin`/`focusout` gibi davraniyor - `:focus-within`in JS
+         karsiligi. Klavye kullanicisi deste icine girdiginde duraklatiyor. */
+      onBlur={release}
+      onFocus={hold}
+      onPointerEnter={hold}
+      onPointerLeave={release}
       role="group"
     >
       {/*
-        `aria-live="polite"`: tusa basildiginda odak tusta kaliyor, yani degisen
-        metin kendiliginden duyulmaz. Canli bolge olmadan ekran okuyucu
-        kullanicisi tusun bir sey yaptigini anlamaz.
+        Canli bolge KOSULLU. `polite` oldugunda: tusa basildiginda odak tusta
+        kaliyor, yani degisen metin kendiliginden duyulmaz - canli bolge olmadan
+        ekran okuyucu kullanicisi tusun bir sey yaptigini anlamaz.
+
+        `off` oldugunda: gecis otomatikti ve kimse bir sey istememisti. Yedi
+        saniyede bir sozu kesmek, tusun ne yaptigini soylemekle ayni sey degil.
       */}
       {/*
         BES PRENSIP DE basiliyor ve hepsi ayni izgara hucresinde ust uste
@@ -98,7 +183,7 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
         `key` prensip metni - indeks DEGIL. Indeks olsaydi React her adimda
         ayni dugumu geri kullanip animasyonu tetiklemezdi.
       */}
-      <div aria-live="polite" className="principle-stage">
+      <div aria-live={announce ? "polite" : "off"} className="principle-stage">
         {principles.map((principle, slot) => (
           <p
             key={principle}
