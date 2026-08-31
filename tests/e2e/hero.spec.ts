@@ -71,19 +71,68 @@ test("birincil aksiyon Projects'e gidiyor", async ({ page }) => {
 });
 
 /**
- * §3.2 ve §4.4: sayfa yuklenirken giris animasyonu YOK. Hero acilista zaten
- * ekranda; scroll'a bagli bir reveal burada sayfayi yanip sonuyormus gibi
- * gosterirdi.
+ * YUKLEME ANINDA KADEMELI GIRIS. design-spec.md §3.2, §6 ve architecture.md §4.4
+ *
+ * Burada once "Hero'da acilis animasyonu yok" testi duruyordu ve yasagi
+ * tutuyordu. Yasak karar sahibi tarafindan kaldirildi; test SILINMEDI, yeni
+ * sozlesmeyi olcecek bicimde yeniden yazildi - cunku kalkan sey yasak, kapi
+ * degil.
+ *
+ * `reveal-on-enter` DEGIL `reveal-on-load`: Hero acilista ekranda oldugu icin
+ * `view()` cizelgesi onu "gecmis" sayiyor ve oge son halinde aciliyor.
  */
-test("Hero'da acilis animasyonu yok", async ({ page }) => {
-  const running = await page
-    .locator(SECTION)
-    .evaluate((section) =>
-      Array.from(section.querySelectorAll("*")).some(
-        (el) => getComputedStyle(el).animationName !== "none",
-      ),
+test.describe("Hero yukleme girisi", () => {
+  const REVEAL = `${SECTION} .reveal-on-load`;
+
+  test("dort oge kademeli beliriyor", async ({ page }) => {
+    const reveal = page.locator(REVEAL);
+    await expect(reveal).not.toHaveCount(0);
+
+    const rows = await reveal.evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const computed = getComputedStyle(node);
+        return { name: computed.animationName, delay: parseFloat(computed.animationDelay) || 0 };
+      }),
     );
-  expect(running).toBe(false);
+
+    for (const row of rows) expect(row.name).not.toBe("none");
+
+    /* Olculen sey SURE DEGIL SIRA: 180ms veya 60ms yazsam sure degistiginde
+       davranis bozulmadigi halde test duserdi. Kademenin ARTTIGI olculuyor. */
+    expect(rows.length).toBeGreaterThan(2);
+    rows
+      .map((row) => row.delay)
+      .reduce((previous, current) => {
+        expect(current).toBeGreaterThan(previous);
+        return current;
+      });
+  });
+
+  test("reduced-motion altinda animasyon kalmiyor", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const names = await page
+      .locator(REVEAL)
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).animationName));
+    expect(names.length).toBeGreaterThan(2);
+    for (const name of names) expect(name).toBe("none");
+  });
+
+  /**
+   * EN ONEMLI TEST. Keyframe'de yalnizca `from` tanimli olmasinin kapisi:
+   * `to` yazilirsa reduced-motion blogu ogeleri `from` karesinde dondurur ve
+   * HERO HIC GORUNMEZ. Depo bu hatayi daha once yasadi.
+   */
+  test("reduced-motion altinda Hero icerigi tam gorunur", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const opacities = await page
+      .locator(REVEAL)
+      .evaluateAll((nodes) => nodes.map((node) => Number(getComputedStyle(node).opacity)));
+    for (const opacity of opacities) expect(opacity).toBe(1);
+  });
 });
 
 test("aksiyonlar mobilde alt alta, sm ustunde yan yana", async ({ page }, testInfo) => {
@@ -231,5 +280,54 @@ test.describe("hero amblemi", () => {
     });
 
     expect(markColor).not.toBe(accent);
+  });
+
+  /**
+   * PLAKA GRADYAN TASIYOR. design-spec.md §6
+   *
+   * Duz renk degil uc tonlu conic gradyan; duraklar tokens.css'te `color-mix`
+   * ile turetildi (architecture.md §4.5 - yeni hex uydurulmaz).
+   */
+  test("plaka conic gradyan tasiyor", async ({ page }) => {
+    const plate = page.locator(".hero-mark-plate");
+    test.skip(!(await plate.isVisible()), "amblem yalnizca lg ustunde");
+
+    const image = await plate.evaluate((el) => getComputedStyle(el).backgroundImage);
+    expect(image).toContain("conic-gradient");
+  });
+
+  /** Hareket SCROLL'A bagli, zamana degil - sayfada kalici bir dongu yok. */
+  test("gradyan scroll'a bagli doniyor", async ({ page }) => {
+    const plate = page.locator(".hero-mark-plate");
+    test.skip(!(await plate.isVisible()), "amblem yalnizca lg ustunde");
+
+    const timeline = await plate.evaluate((el) => getComputedStyle(el).animationTimeline);
+    expect(timeline).toContain("scroll");
+  });
+
+  /**
+   * Hareket kalktiginda plaka BOS KALMIYOR - statik dususun kanıtı. Gradyan
+   * hala cizili, yalnizca aci baslangic degerinde duruyor. Ayrica zeminde duz
+   * marka rengi var, yani gradyan hic cizilemese bile kutu dolu.
+   */
+  test("reduced-motion altinda gradyan duruyor ama cizili kaliyor", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const plate = page.locator(".hero-mark-plate");
+    test.skip(!(await plate.isVisible()), "amblem yalnizca lg ustunde");
+
+    const style = await plate.evaluate((el) => {
+      const computed = getComputedStyle(el);
+      return {
+        name: computed.animationName,
+        image: computed.backgroundImage,
+        color: computed.backgroundColor,
+      };
+    });
+
+    expect(style.name).toBe("none");
+    expect(style.image).toContain("conic-gradient");
+    expect(style.color).not.toBe("rgba(0, 0, 0, 0)");
   });
 });

@@ -35,7 +35,7 @@ import { BioTypewriter } from "./BioTypewriter";
  */
 export function TeamCard({ member }: { member: TeamMember }) {
   return (
-    <article className="group relative aspect-portrait w-full overflow-hidden rounded-card border border-border bg-surface transition-[translate] duration-200 ease-out hover:-translate-y-2.5 focus-within:-translate-y-2.5">
+    <article className="reveal-on-enter group relative aspect-portrait w-full overflow-hidden rounded-card border border-border bg-surface transition-[translate] duration-200 ease-out hover:-translate-y-2.5 focus-within:-translate-y-2.5">
       {/* eslint-disable-next-line @next/next/no-img-element -- olculdu, #34: next/image 5.5 KiB client JS ekliyor, statik export'ta karsiligi sifir */}
       <img
         src={member.photo}

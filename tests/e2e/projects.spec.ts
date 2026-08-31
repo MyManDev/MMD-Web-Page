@@ -166,8 +166,14 @@ test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
 test.describe("bolum girisi", () => {
   const REVEAL = `${SECTION} .reveal-on-enter`;
 
-  test("icerige bagli, zeminin kendisine degil", async ({ page }) => {
-    await expect(page.locator(REVEAL)).toHaveCount(1);
+  /**
+   * Giris artik BOLUM SARMALAYICISINDA DEGIL, metin bloklarinin kendisinde.
+   * Once tek bir sarmalayici vardi ve bolumun tamami birlikte soluyordu; istek
+   * her yazinin kendi girisini yapmasi. Bu yuzden sayi 1 degil COKLU olcuuluyor.
+   */
+  test("her metin blogu ayri ayri, zeminin kendisi degil", async ({ page }) => {
+    const revealCount = await page.locator(REVEAL).count();
+    expect(revealCount).toBeGreaterThan(1);
 
     // Zemin animasyonun disinda kalmali: soldurulan sey bolumun kendisi degil.
     const sectionIsTarget = await page
@@ -176,11 +182,17 @@ test.describe("bolum girisi", () => {
     expect(sectionIsTarget).toBe(false);
   });
 
+  /**
+   * HEPSI olculuyor, ilki degil: bir tanesini kontrol etmek "sozlesme tutuyor"
+   * demek olmaz - sinifi elle eklerken biri atlanirsa o oge sessizce zamana
+   * bagli calisir veya hic calismaz.
+   */
   test("zaman cizelgesi scroll'a bagli - sure degil", async ({ page }) => {
-    const timeline = await page
+    const timelines = await page
       .locator(REVEAL)
-      .evaluate((el) => getComputedStyle(el).animationTimeline);
-    expect(timeline).toContain("view");
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).animationTimeline));
+    expect(timelines.length).toBeGreaterThan(1);
+    for (const timeline of timelines) expect(timeline).toContain("view");
   });
 
   /**
@@ -193,32 +205,37 @@ test.describe("bolum girisi", () => {
     await page.goto("/");
 
     const reveal = page.locator(REVEAL);
-    await reveal.scrollIntoViewIfNeeded();
+    await reveal.first().scrollIntoViewIfNeeded();
 
-    const style = await reveal.evaluate((el) => {
-      const computed = getComputedStyle(el);
-      return {
-        name: computed.animationName,
-        opacity: computed.opacity,
-        transform: computed.transform,
-      };
-    });
+    const styles = await reveal.evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const computed = getComputedStyle(node);
+        return {
+          name: computed.animationName,
+          opacity: computed.opacity,
+          transform: computed.transform,
+        };
+      }),
+    );
 
     // Animasyon tamamen kaldirildi. `animation-timeline: none` ise oge'yi
     // opacity: 0'da dondururdu - zaman cizelgesi yoksa `both` fill `from`
     // karesini uyguluyor. Bu test o hatayi bir kez yakaladi; ondan duruyor.
-    expect(style.name).toBe("none");
-    expect(Number(style.opacity)).toBe(1);
-    expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(style.transform);
+    expect(styles.length).toBeGreaterThan(1);
+    for (const style of styles) {
+      expect(style.name).toBe("none");
+      expect(Number(style.opacity)).toBe(1);
+      expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(style.transform);
+    }
   });
 
   test("scroll edildiginde icerik tam gorunur hale geliyor", async ({ page }) => {
-    const reveal = page.locator(REVEAL);
-    await reveal.scrollIntoViewIfNeeded();
+    const first = page.locator(REVEAL).first();
+    await first.scrollIntoViewIfNeeded();
     // Bolum tamamen gecilene kadar scroll: animasyon araligi bitmis olmali.
     await page.mouse.wheel(0, 1200);
 
-    await expect.poll(() => reveal.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+    await expect.poll(() => first.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
   });
 });
 

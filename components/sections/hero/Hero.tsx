@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type { Site } from "@/content";
 import { Button, Container } from "@/components/ui";
 
@@ -9,10 +11,17 @@ type NavItem = Site["nav"][number];
  * Sayfanin TEK h1'i burada (§7.1). Metin #15'te yazildi ve semada zorunlu:
  * site.hero.title ve site.hero.subtitle.
  *
- * GIRIS ANIMASYONU YOK - `reveal-on-enter` bilerek uygulanmadi. §3.2 ve §4.4
- * "sayfa yuklenirken giris animasyonu yok" diyor; Hero acilista zaten
- * ekranda, yani scroll'a bagli bir reveal burada ya hic gorunmez ya da
- * sayfayi yanip sonuyormus gibi gosterir.
+ * YUKLEME ANINDA KADEMELI GIRIS - ve bu bir kurali geri aliyor. §4.4 "sayfa
+ * yuklenirken giris animasyonu yok" diyordu; karar sahibi kaldirdi. Yasak
+ * sessizce kalkmadi: gerekce architecture.md §4.4 ile §9'da, ve eski test
+ * silinmedi, yeni sozlesmeyi olcecek bicimde yeniden yazildi.
+ *
+ * `reveal-on-enter` DEGIL `reveal-on-load`, ve sebep teknik: `view()` cizelgesi
+ * Hero'yu "gecmis" sayiyor cunku Hero acilista zaten ekranda - scroll'a bagli
+ * bir reveal burada ya hic gorunmez ya da yanip sonuyormus gibi gorunur.
+ * Zarf korundu: 180ms sure, 60ms kademe (§4.4'un 150-250ms sinirinin icinde).
+ *
+ * Sira `--reveal` ile veriliyor: baslik -> alt cumle -> aksiyonlar -> amblem.
  *
  * SAG KOLONDA AMBLEM var. §3.2 orada bir gorsel istiyor ve artik bir tane var:
  * markanin kendi isareti - uc kafa ve bir "m", yani uc kisi.
@@ -71,17 +80,24 @@ export function Hero({
             */}
             <h1
               id={headingId}
-              className="font-mono text-display-xl font-medium text-balance lg:text-display-xl-lg"
+              className="reveal-on-load font-mono text-display-xl font-medium text-balance lg:text-display-xl-lg"
+              style={{ "--reveal": 0 } as CSSProperties}
             >
               {hero.title}
             </h1>
 
-            <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
+            <p
+              className="reveal-on-load max-w-prose font-sans text-body text-text-muted lg:text-body-lg"
+              style={{ "--reveal": 1 } as CSSProperties}
+            >
               {hero.subtitle}
             </p>
 
             {/* Mobilde alt alta ve tam genislik, sm'den itibaren yan yana (§3.2). */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div
+              className="reveal-on-load flex flex-col gap-3 sm:flex-row sm:items-center"
+              style={{ "--reveal": 2 } as CSSProperties}
+            >
               <Button href={`#${primary.id}`} variant="primary">
                 {primary.label}
               </Button>
@@ -97,11 +113,24 @@ export function Hero({
             Amblem yalnizca lg ustunde: dar ekranda metnin yanina degil, yerine
             gecerdi.
           */}
+          {/*
+            IKI ANIMASYON, IKI OGE - ve bu ayrim olcumle ogrenildi. Once ikisi
+            ayni ogedeydi: `reveal-on-load` (yukleme girisi) ve `mark-sweep`
+            (scroll'a bagli gradyan). Ikisi de `animation` yaziyor ve ayni
+            specificity'de, yani sonra gelen kazandi - amblemin yukleme girisi
+            SESSIZCE kayboldu, gecikmesi 0s'e dondu. Kademe sirasini olcen test
+            bunu yakaladi.
+
+            Simdi disardaki sarmalayici giriyor, icerdeki plaka doniyor.
+          */}
           <div
             aria-hidden="true"
-            className="hero-mark-plate hidden lg:col-span-5 lg:grid lg:place-items-center"
+            className="reveal-on-load hidden lg:col-span-5 lg:block"
+            style={{ "--reveal": 3 } as CSSProperties}
           >
-            <div className="hero-mark" />
+            <div className="hero-mark-plate grid place-items-center">
+              <div className="hero-mark" />
+            </div>
           </div>
         </div>
       </Container>

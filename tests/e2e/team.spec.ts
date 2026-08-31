@@ -134,6 +134,19 @@ test("fare hover'i aciklamayi aciyor ve metni gorunur kiliyor", async ({ page })
 test("kart hover'da kalkiyor, komsusu yerinde kaliyor", async ({ page }) => {
   test.skip(!(await hoverCapable(page)), "hoversiz cihazda hover yok");
 
+  /*
+    REDUCED-MOTION ALTINDA. Giris animasyonu artik KARTIN KENDISINDE ve her
+    kartin kendi `view()` cizelgesi var; `hover()` sayfayi kaydirdigi icin komsu
+    kartin kendi giris ilerlemesi de degisiyor. Yani asagidaki "komsu yerinde
+    kaldi mi" olcumu hover'i degil reveal'i olcmeye baslamisti (olculdu:
+    beklenen 16, gelen 0).
+
+    Hareket kapatilinca geriye yalnizca hover'in `translate`i kaliyor - testin
+    sordugu sey tam olarak o. Gecis suresi 0.01ms'e indigi icin hover hala
+    uyguluyor, sadece aninda.
+  */
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
   const cards = page.locator(CARD);
   if ((await cards.count()) < 2) test.skip(true, "komsu kart yok");
 

@@ -50,7 +50,7 @@ export function ProjectCard({
       <div className="flex flex-col gap-6 lg:col-span-5">
         <h3
           id={`${project.slug}-title`}
-          className="font-mono text-display-l font-medium lg:text-display-l-lg"
+          className="reveal-on-enter font-mono text-display-l font-medium lg:text-display-l-lg"
         >
           {project.name}
         </h3>
@@ -60,23 +60,28 @@ export function ProjectCard({
           uygulamanin kendi basligi ve tek satir, aciklama projenin ne yaptigini
           anlatiyor. Ayni boyutta bassaydik iki paragraf birbirine karisirdi.
         */}
-        <p className="max-w-prose font-mono text-display-m text-text-muted lg:text-display-m-lg">
+        <p className="reveal-on-enter max-w-prose font-mono text-display-m text-text-muted lg:text-display-m-lg">
           {project.summary}
         </p>
 
-        <p className="max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
+        <p className="reveal-on-enter max-w-prose font-sans text-body text-text-muted lg:text-body-lg">
           {project.description}
         </p>
 
-        <ul className="flex flex-wrap gap-2">
+        <ul className="reveal-on-enter flex flex-wrap gap-2">
           {project.tags.map((tag) => (
             <Tag key={tag}>{tag}</Tag>
           ))}
         </ul>
 
-        <MetricRow metrics={project.metrics} />
+        {/* Sarmalayici yalnizca giris icin: `MetricRow` paylasilan bir
+            primitive ve ona bir animasyon sinifi gecirmek onu bu bolume
+            baglardi. */}
+        <div className="reveal-on-enter">
+          <MetricRow metrics={project.metrics} />
+        </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="reveal-on-enter flex flex-col gap-3 sm:flex-row sm:items-center">
           <Button href={project.repoUrl} variant="ghost" external>
             GitHub
           </Button>
@@ -113,7 +118,7 @@ export function ProjectCard({
         (< 0.05) goruntu inmeden once de korunuyor. Semada boyut alani yok cunku
         oran her proje icin ayni.
       */}
-      <div className="overflow-hidden rounded-card border border-border lg:col-span-7">
+      <div className="reveal-on-enter overflow-hidden rounded-card border border-border lg:col-span-7">
         {/* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */}
         <img
           src={project.screenshot}
