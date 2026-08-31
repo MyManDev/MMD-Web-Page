@@ -27,7 +27,7 @@ export function WhoWeAre({ section, whoWeAre }: { section: NavItem; whoWeAre: Si
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId}>
+    <section id={section.id} aria-labelledby={headingId} className="section-edge">
       <Container>
         {/*
           Bolum girisi ICERIGE bagli, section'a degil - kural globals.css'te (§6).

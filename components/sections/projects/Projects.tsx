@@ -26,7 +26,7 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId} className="bg-surface">
+    <section id={section.id} aria-labelledby={headingId} className="section-edge bg-surface">
       <Container>
         {/*
           Bolum girisi ICERIGE bagli, section'a degil: zemin viewport genisliginde

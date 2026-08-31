@@ -154,6 +154,37 @@ section[id] {
   }
 }
 
+/* TEPEDE SESSIZ, SCROLL'DA BELIRGIN. design-spec.md §3.1
+
+   Istek "sticky olsun ama surekli bu kadar gorunur olmasin" idi. Blur ve yari
+   saydam zemin ZATEN vardi; eksik olan tek sey barin tepede ve scroll'da AYNI
+   gorunmesiydi.
+
+   Tetikleyici scroll listener DEGIL - `animation-timeline: scroll()`, tipki
+   amblem gradyani gibi. CLAUDE.md kural 3 degismeden duruyor.
+
+   YALNIZCA `from` TANIMLI ve bu kritik: dinlenme hali bugunku OKUNUR bar.
+   Yani `animation-timeline` desteklenmiyorsa, `prefers-reduced-motion` aciksa
+   veya animasyon kalkarsa bar tanimli haline duser - okunurluk hicbir yolda
+   kaybolmuyor. Ters yazilsaydi bar saydam kalirdi ve Team'in acik gokyuzlu
+   fotograflari uzerinde nav yazisi okunmaz olurdu. */
+@keyframes nav-settle {
+  from {
+    background-color: transparent;
+    backdrop-filter: blur(0px) saturate(100%);
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .nav-bar {
+    animation: nav-settle linear both;
+    animation-timeline: scroll();
+    /* 120px: bir ekranin yaklasik %13'u. Daha kisa bir aralikta bar sicriyor,
+       daha uzunda kullanici zaten icerige gecmisken hala saydam kaliyor. */
+    animation-range: 0 120px;
+  }
+}
+
 /* HERO ZEMINI - tema uyumlu renk gecisi. design-spec.md §3.2
 
    Istek "temayi uygun yapacak bir renk gecisi" idi ve onceki tur bunu
@@ -172,13 +203,19 @@ section[id] {
 
    Ilk durak iki kez yaziliyor: gecisin ilk %40'i tamamen duz kalsin, renk
    ancak metnin bittigi yerden sonra donmeye baslasin. */
+/* IKI KATMAN: ustte ince cizgiler, altta tint.
+
+   Cizgiler NOISE DEGIL ve bu bir secim: noise bir gorsel dosya ister ve
+   payload'a biner; `repeating-linear-gradient` saf CSS ve 0 bayt. Aci tint ile
+   ayni yonde (118deg), yani iki katman ayri iki desen gibi okunmuyor.
+
+   88px araliğin sebebi ritim: 40px'te izgara, 160px'te tesadufi gorunuyordu.
+   Cizgi 1px ve rengi `--hero-line` (metin renginin %6'si) - kural 2'nin
+   yasakladigi parlama degil, doku. */
 .hero-field {
-  background-image: linear-gradient(
-    118deg,
-    var(--color-page) 0%,
-    var(--color-page) 40%,
-    var(--hero-field-far) 100%
-  );
+  background-image:
+    repeating-linear-gradient(118deg, var(--hero-line) 0 1px, transparent 1px 88px),
+    linear-gradient(118deg, var(--color-page) 0%, var(--color-page) 40%, var(--hero-field-far) 100%);
 }
 
 /* Hero amblemi. design-spec.md §3.2
@@ -212,7 +249,11 @@ section[id] {
 
 .hero-mark-plate {
   aspect-ratio: 1;
-  width: clamp(220px, 26vw, 460px);
+  /* %18 KUCULDU (istek: "biraz fazla buyuk, ayri bir banner gibi duruyor").
+     Onceki olcu clamp(220px, 26vw, 460px) idi; 1440'ta 374px'ten ~307px'e
+     iniyor. Ust sinir hala TASARIM sinirisi: amblem basligin agirligini
+     gecmemeli. */
+  width: clamp(180px, 21vw, 380px);
   margin-inline: auto;
   /* Duz renk DEGIL: uc tonlu conic gradyan, acisi `--mark-angle`den geliyor.
      Duraklar tokens.css'te `color-mix` ile turetildi (§4.5). */
@@ -383,6 +424,64 @@ a:focus-visible .roll-track {
 
 .principle-slot[data-active] {
   visibility: visible;
+}
+
+/* SCROLL GOSTERGESI. design-spec.md §3.2
+
+   Hero'nun alt kenarinda ince bir dikey cizgi; icinde asagi dogru inen kucuk
+   bir isaret. Ne oldugunu soyluyor: "asagida devam ediyor".
+
+   METIN YOK. "SCROLL" yazmak yeni bir UI metni uydurmak olurdu; ayrica
+   `aria-hidden` bir metin kontrast icin yine tartiliyor (depo bunu bir kez
+   yasadi). Cizgi ve nokta metin dugumu tasimiyor, yani o siniftan tumden
+   cikiyor.
+
+   YESIL DEGIL (§5.1): Hero'nun accent kotasi CTA'da.
+
+   Yalnizca `from` tanimli: reduced-motion animasyonu kaldirdiginda isaret
+   dinlenme yerinde - yani GORUNUR - kaliyor. `to` yazilsaydi ayni blok onu
+   cizginin ustunde dondurur veya gorunmez birakirdi. */
+.scroll-hint {
+  position: relative;
+  width: 1px;
+  height: 56px;
+  overflow: hidden;
+  background-color: var(--color-border);
+}
+
+.scroll-hint::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 18px;
+  background-color: var(--color-text-muted);
+  /* IKI TUR, `infinite` DEGIL. WCAG 2.2.2 kendiliginden baslayan ve BES
+     SANIYEDEN uzun suren hareket icin duraklatma mekanizmasi istiyor;
+     2 x 2200ms = 4400ms o cizginin altinda kaliyor, yani madde hic
+     tetiklenmiyor. Gosterge isini ilk saniyelerde yapiyor: "asagida devam
+     ediyor". Sonsuz donen bir isaret ayni bilgiyi vermiyor, yalnizca
+     tekrar ediyor. */
+  animation: scroll-hint-travel 2200ms ease-in-out 2;
+}
+
+@keyframes scroll-hint-travel {
+  from {
+    translate: 0 -100%;
+  }
+
+  to {
+    translate: 0 340%;
+  }
+}
+
+/* Bolum siniri. design-spec.md §3.2
+
+   Ince bir cizgi: Hero -> Projects gecisi bugun yalnizca renk degistiriyor ve
+   sinir yumusak kaliyor. Footer'in ust kenarinda ayni cizgi zaten var, yani
+   kalip tutuyor. */
+.section-edge {
+  border-top: 1px solid var(--color-border);
 }
 
 /* Prensip KELIME KELIME beliriyor. design-spec.md §6

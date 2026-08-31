@@ -24,6 +24,12 @@ export function Footer({ site }: { site: Site }) {
               kaybolurdu. */}
           <div className="reveal-on-enter flex flex-col gap-1 md:flex-row md:items-center md:gap-4">
             <span className="text-text">{site.wordmark}</span>
+            {/*
+              Iki cumle de `content/site.ts`ten geliyor, burada SABIT
+              YAZILMIYOR: marka metni paylasilan karar alani (CLAUDE.md kural 5)
+              ve component onu okur, yeniden yazmaz.
+            */}
+            <span className="text-text-muted">{site.footer.tagline}</span>
             <span className="text-text-muted">
               © {site.copyrightYear} {site.wordmark}
             </span>
@@ -51,6 +57,18 @@ export function Footer({ site }: { site: Site }) {
             <ExternalIcon className="h-3 w-3" />
           </a>
         </div>
+
+        {/*
+          KAPANIS CUMLESI ayri bir satirda ve sayfanin son sozu. Ustteki satirin
+          icine sikistirmak onu bir etikete cevirirdi; burada kendi satirinda
+          durdugu icin okunuyor.
+
+          `border-t` YOK: footer'in kendi ust kenari zaten bir cizgi, ikincisi
+          bandi ikiye bolerdi.
+        */}
+        <p className="reveal-on-enter pb-8 font-mono text-mono text-text-muted uppercase">
+          {site.footer.closing}
+        </p>
       </Container>
     </footer>
   );

@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { projects } from "@/content";
+
 /**
  * Projects bolumu. docs/design-spec.md §3.3.1 ve §5.1
  *
@@ -305,6 +307,33 @@ test("tek projede sticky yigin uygulanmiyor", async ({ page }) => {
   expect(style.position).toBe("static");
   expect(style.zIndex).toBe("auto");
   expect(["0px", "auto"]).toContain(style.minHeight);
+});
+
+/**
+ * METRIK SATIRI - uc kisit. architecture.md §4.6 (karar sahibi tarafindan
+ * degistirildi), design-spec.md §3.3.1
+ *
+ * Beklenen sayi ICERIKTEN turetiliyor, elle yazilmiyor: metrik listesi
+ * degistiginde test degeri kendisi takip ediyor.
+ */
+test("metrik satiri icerikteki kisitlari basiyor", async ({ page }) => {
+  const expected = projects[0]?.metrics ?? [];
+  expect(expected.length).toBeGreaterThan(0);
+
+  const values = page.locator(`${SECTION} dl dd`);
+  await expect(values).toHaveCount(expected.length);
+  expect(await values.allTextContents()).toEqual(expected.map((metric) => metric.value));
+});
+
+/**
+ * IMZA SAYISI KALDIRILDI ve bu onun kapisi. §4.6 bir zamanlar
+ * `0 - ML models promoted to production` satirini imza oge olarak seciyordu;
+ * karar sahibi uc kisitla degistirdi. Ibarenin sessizce geri donmesi kararin
+ * uygulanmadigi anlamina gelir.
+ */
+test("eski imza sayisi sayfada kalmadi", async ({ page }) => {
+  const text = await page.locator(SECTION).innerText();
+  expect(text).not.toMatch(/ML models promoted/i);
 });
 
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {

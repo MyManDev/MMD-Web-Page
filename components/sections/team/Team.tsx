@@ -27,9 +27,31 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId}>
-      <Container>
-        <div className="flex flex-col gap-6 py-section lg:gap-8 lg:py-section-lg">
+    /*
+      TAM EKRAN (istek: "team tek basina ekrana sigmiyor, tam bir ekran boyutu
+      olmali"). Onceki hali viewport'un %115'i, 1600x900'de %125 - yani ucuncu
+      kart her zaman kesiliyordu.
+
+      YUKSEKLIK ORANDAN DEGIL KALAN ALANDAN geliyor ve bu hesaplanarak secildi:
+      1440x900'de 2/3 orani sigdiriyor, ama 1600x900'de kart genisligi 490px'e
+      ciktigi icin yine %109 tasiyor. Kart genisligi kapsayiciyla buyurken ekran
+      yuksekligi sabit kaliyor, yani TEK BIR SABIT ORAN her viewport'ta
+      sigdiramaz.
+
+      Zincir: bolum `h-dvh` -> Container `flex-1` -> ic sarmalayici `flex-1` ->
+      liste `flex-1`. Her halka `min-h-0` tasimak zorunda; taşimazsa flex
+      cocugu icerigin dogal yuksekliginden kucuk olamiyor ve tasma geri geliyor.
+
+      Yalnizca `lg`de: mobilde bolum dogal akista kaliyor ve oran token'i
+      (`--aspect-portrait`) orada gecerli.
+    */
+    <section
+      id={section.id}
+      aria-labelledby={headingId}
+      className="section-edge lg:flex lg:h-dvh lg:flex-col"
+    >
+      <Container className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+        <div className="flex flex-col gap-6 py-section lg:min-h-0 lg:flex-1 lg:gap-8 lg:py-section-lg">
           {/*
             Basliktan karta mesafe 40/56'dan 24/32'ye indi (istek: "baslik biraz
             yukari"). Bolumun dis ritmi (py-section) DEGISMEDI - o paylasilan bir
@@ -47,7 +69,10 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
             (§3.5). Kolon sayisi icerikten degil breakpoint'ten geliyor;
             grid-cols dizinin uzunluguyla hesaplanmiyor.
           */}
-          <ul data-cards className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <ul
+            data-cards
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:min-h-0 lg:flex-1 lg:grid-cols-3"
+          >
             {members.map((member) => (
               <li key={member.slug}>
                 <TeamCard member={member} />

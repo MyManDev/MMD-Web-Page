@@ -186,6 +186,14 @@
      kayma: buyuk bir alanda gorunur, ama bir parlama degil. Metnin durdugu
      sol tarafta zemin saf `page` kaliyor. */
   --hero-field-far: color-mix(in oklab, var(--color-page) 82%, var(--color-mark));
+
+  /* Hero zeminindeki ince cizgi. Metin renginin cok kucuk bir orani - amac
+     desen degil DOKU: amblem plakasi "duz kare" gibi durmayi biraksin.
+
+     %6 olculerek secildi: %10'da cizgiler bir izgara gibi okunuyor ve sayfaya
+     ikinci bir grafik katman ekliyordu; %3'te hic gorunmuyordu. Yeni hex
+     uydurulmadi, `--color-text`ten turetildi (§4.5). */
+  --hero-line: color-mix(in oklab, var(--color-text) 6%, transparent);
 }
 
 @media (width >= 1024px) {
