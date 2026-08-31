@@ -12,7 +12,7 @@ Bir tur tasarım geri bildirimi de kapandı (#86–#90).
 
 - Dal: `main`
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 209 E2E** (23'ü viewport'a göre
+- `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 216 E2E** (26'sı viewport'a göre
   atlanıyor), payload **133.4 KiB / 150.0 KiB**, kalan pay 16.6 KiB
 - `e2e` işi CI'da ~1m40s'den **~2m30s**'ye çıktı: otomatik geçiş testleri aralığın geçmesini
   beklemek zorunda ve süreyi ölçen bir test kısaltılamaz
@@ -115,6 +115,13 @@ yönlendirmesinin nerede yaşadığı, query korunumu, prensip otomatik geçişi
 ve Hero amblemi rengi. Burada tekrar edilmiyor — ama biri **bir kuralı gevşetti** ve o yüzden burada
 adı geçiyor:
 
+**§4.4'ün "sayfa yüklenirken giriş animasyonu yok" yasağı KALDIRILDI** (#93). Karar sahibi kaldırdı.
+Kalkan şey yasak, **zarf değil**: yükleme girişi de 150–250ms içinde (uygulama 180ms + 60ms kademe).
+Eski test silinmedi, yeni sözleşmeyi ölçecek biçimde yeniden yazıldı. Metin girişi artık bölüm
+sarmalayıcısında değil **öğe seviyesinde** (16 blok), kademe `view()`'den geliyor — elle
+`animation-delay` yazılmıyor. Amblem plakası conic gradyan taşıyor ve açısı **scroll'a bağlı**
+dönüyor (ölçüldü: 0° → 360°, sayfa boyunca); sonsuz döngü yok.
+
 **Hero'da artık iki yeşil var.** Amblem logonun kendi turkuazını (`#0D9488`) taşıyor, CTA ise
 accent'i (`#14B8A6`). `CLAUDE.md` kural 2'nin "ekran başına tek yeşil odak" cümlesi harfiyen
 okunursa bu bir ihlal. Karar sahibi verdi, azaltıcı ölçüler ölçüldü ve `design-spec.md` §5.1'e
@@ -125,6 +132,26 @@ kural gevşedi ama kalkmadı.
 
 Ölçümle bulunan, gözle bulunamayacak olanlar:
 
+- **İki CSS kuralı aynı ögede `animation` yazarsa biri SESSIZCE kaybolur.** Amblem plakası hem
+  `reveal-on-load` hem `mark-sweep` taşıyordu; ikisi de `animation` yazıyor ve aynı specificity'de,
+  yani sıra karar verdi. Sonuç: amblemin yükleme girişi hiç çalışmadı, gecikmesi `0s`'e döndü.
+  **Yakalayan şey testin SABİT bir süre değil SIRA ölçmesiydi** — "gecikme 180ms mi" diye sorsam
+  yakalamazdım, "her öğe öncekinden sonra mı başlıyor" diye sorunca yakaladım. İki animasyon iki
+  ayrı ögeye ayrıldı.
+- **`globals.css`'te bir sınıfa `display` vermek Tailwind'in `hidden` utility'sini yenebilir.** Aynı
+  specificity (0,1,0) ve `globals.css` sonra geldiği için kazanıyor. Amblem plakasına `display: grid`
+  yazıldığında amblem **mobilde de** görünür hâle geldi. **Tek sinyal atlanan test sayısıydı:** üç
+  mobil amblem testi `skip` olmaktan çıkıp koşmaya başladı (23 → 20). Yerleşim utility'leri markup'ta
+  kalmalı, renk ve ölçü CSS'te.
+- **Sayfa hareketlenince hover testleri de düşer, tıklama testleri gibi.** Giriş animasyonu öğe
+  seviyesine taşınınca Footer ve Team hover testleri düştü: `hover()` sayfayı kaydırıyor, hedef
+  Playwright kutuyu hesapladıktan sonra yer değiştiriyor ve işaretçi yanına düşüyor (ölçüldü:
+  beklenen 1 → gelen 0, beklenen 16 → gelen 0). Çözüm tıklama testlerindekiyle aynı: o testler
+  `reducedMotion: "reduce"` altında koşar.
+- **Bir efekti iki kez ölçmeden "aynı" sanma.** TBT bu turda CI'da **47 ms** çıktı ve plan "24 ms'ten
+  belirgin artarsa kapsamı daralt" diyordu — ama o 24 ms **gerçek domain** ölçümüydü. CI'ın kendi
+  bandı 51–121 ms; yani 47 ms bir gerileme değil, iyileşme. **Ölçüm noktası değişmişse sayılar
+  karşılaştırılamaz** (#83 aynı şeyi söylüyor).
 - **`count()` BEKLEMEZ, assertion bekler.** Yeni bir test span'leri doğrudan sayıyordu ve CI'da 0
   döndü: yavaş makinede hidrasyon bitmemişti, yani component'in geliştirilmiş biçimi henüz yoktu ve
   sunucunun bastığı düz liste duruyordu. Yerelde geçiyordu — **yani test doğru olduğu için değil,
