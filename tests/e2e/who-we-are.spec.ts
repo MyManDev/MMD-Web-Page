@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { AUTO_ADVANCE_MS } from "@/components/sections/about/PrincipleDeck";
+
 /**
  * Who we are bolumu. docs/design-spec.md §3.4 ve §5.1
  *
@@ -248,5 +250,78 @@ test.describe("prensip destesi - bicim", () => {
     expect(deck!.x).toBeGreaterThan(manifesto!.x + manifesto!.width);
     // ...ve ayni ekranda: dikey olarak ortusuyorlar.
     expect(deck!.y).toBeLessThan(manifesto!.y + manifesto!.height);
+  });
+});
+
+/**
+ * OTOMATIK GECIS. design-spec.md §3.4
+ *
+ * Bu blok reduced-motion ALTINDA DEGIL, cunku olculen sey hareketin kendisi.
+ * Tiklayan testler yukarida reduced-motion altinda kaliyor ve zamanlayici
+ * oraya hic girmiyor - iki blok birbirini bozmuyor.
+ *
+ * Bekleme suresi `AUTO_ADVANCE_MS`ten TURETILIYOR, elle yazilmiyor: testin "o
+ * gunku sayiyi" tutmasi bir kusurdur, aralik degisirse test degeri kendisi
+ * takip etmeli.
+ *
+ * `waitForTimeout` burada mesru: olculen sey SURENIN GECMESI. Duraklatma
+ * testinde "hala 01" iddiasi ancak aralik gectikten sonra bir sey soyler.
+ */
+test.describe("prensip destesi - otomatik gecis", () => {
+  const counterOf = (page: import("@playwright/test").Page) =>
+    page.locator(`${SECTION} [aria-roledescription="carousel"] p`).last();
+
+  test("kendiliginden ilerliyor", async ({ page }) => {
+    const counter = counterOf(page);
+    await expect(counter).toContainText("01");
+
+    await expect(counter).toContainText("02", { timeout: AUTO_ADVANCE_MS * 2 });
+  });
+
+  test("iceriye odak dusunce duruyor", async ({ page }) => {
+    const counter = counterOf(page);
+    await expect(counter).toContainText("01");
+
+    await page.getByLabel("Next principle").focus();
+    await page.waitForTimeout(AUTO_ADVANCE_MS + 1500);
+
+    await expect(counter).toContainText("01");
+  });
+
+  /** Kalici durdurma DEGIL: etkilesim bitince devam etmeli. */
+  test("odak cikinca kaldigi yerden devam ediyor", async ({ page }) => {
+    const counter = counterOf(page);
+    await page.getByLabel("Next principle").focus();
+    await page.waitForTimeout(1000);
+    await page.getByLabel("Next principle").blur();
+
+    await expect(counter).toContainText("02", { timeout: AUTO_ADVANCE_MS * 2 });
+  });
+
+  test("reduced-motion altinda hic ilerlemiyor", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const counter = counterOf(page);
+    await expect(counter).toContainText("01");
+
+    await page.waitForTimeout(AUTO_ADVANCE_MS + 1500);
+
+    await expect(counter).toContainText("01");
+  });
+
+  /**
+   * Otomatik gecis SESSIZ. Yedi saniyede bir ekran okuyucunun sozunu kesmek,
+   * tusun ne yaptigini soylemekle ayni sey degil - ve bu gozle bakinca hic
+   * fark edilmez, yalnizca oznitelik olculebilir.
+   */
+  test("otomatik geciste canli bolge susuyor, etkilesimde geri aciliyor", async ({ page }) => {
+    const stage = page.locator(`${SECTION} .principle-stage`);
+    await expect(stage).toHaveAttribute("aria-live", "polite");
+
+    await expect(stage).toHaveAttribute("aria-live", "off", { timeout: AUTO_ADVANCE_MS * 2 });
+
+    await page.getByLabel("Next principle").focus();
+    await expect(stage).toHaveAttribute("aria-live", "polite");
   });
 });
