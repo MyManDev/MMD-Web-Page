@@ -514,3 +514,6 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Proje açıklaması       | Şemada **zorunlu** alan; tek satırla proje yayınlanmaz                    | §5     |
 | Logo SVG               | Vektör kaynağı yok; PNG'den türetildi, sapması ölçülü (0.098px)           | §6     |
 | OG kartı               | Siteden üretiliyor — renk ve font ikinci kez yazılmıyor                   | §6     |
+| Yayın                  | Pages projesi `mymandev`; `main` → `mymandev.com`, preview `*.pages.dev`  | §7     |
+| `www` yönlendirmesi    | Zone seviyesinde Redirect Rule; Pages `_redirects` hostname'e bakmaz      | §7     |
+| Query korunumu         | Şablon wildcard'ı query'yi taşıyor — `Preserve query string` **kapalı**   | §7     |

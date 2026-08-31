@@ -3,65 +3,88 @@
 > Bu dosya **şu anki durumu** tutar, geçmişi tutmaz — geçmiş git log'unda yaşar.
 > Her devirde üzerine yazılır. Protokol: `docs/working-agreement.md` §7.
 
-**Tarih:** 2026-08-30
+**Tarih:** 2026-08-31
 **Yer:** ev
-**Aşama:** Faz 3 bitti; iki tur tasarım geri bildirimi de kapandı. Kalan her şey Faz 4 — ve
-**hepsi depo dışında bir erişim bekliyor.**
+**Aşama:** Faz 4. **Site yayında: https://mymandev.com.** #19 ve #54 kapandı; açık tek issue #20.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`b8234b0`)
+- Dal: `main`
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` uçtan uca geçiyor; CI'da da yeşil (`gates` · `e2e` · `lighthouse`)
-- Payload: **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB
-- Test: **47 birim, 191 E2E** (23'ü viewport'a göre atlanıyor)
+- `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 191 E2E** (23'ü viewport'a göre
+  atlanıyor), payload **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB
+- Açık PR: yalnızca bu devir PR'ı (merge edilince yok)
+- `main`'e doğrudan push artık **kapalı** — #54 uygulandı, iş `feature/*` dallarında ve PR'dan geçer
 
-## Açık PR'lar
+## Yayın
 
-**Yok.** #67–#80 merge edildi.
+| Ne              | Nerede                                          |
+| --------------- | ----------------------------------------------- |
+| Kanonik adres   | `https://mymandev.com`                          |
+| Host            | Cloudflare Pages, proje adı `mymandev`          |
+| Production dalı | `main` → otomatik deploy                        |
+| Preview         | PR başına, `*.pages.dev`                        |
+| `www`           | Zone seviyesinde Redirect Rule ile köke **301** |
 
-#18 ve #11 kapandı: logo SVG, OG görseli ve paylaşım etiketleri yayında. Ayrıntı
-`docs/design-spec.md` ve `docs/architecture.md` §9'da; burada tekrar edilmiyor.
+Yayın günü gerçek domain üzerinde ölçülen sayılar:
+
+- `GET /` → `200`, 73 213 B · `GET /og.png` → `200 image/png` **13 806 B** (yerel dosyayla birebir)
+- `GET /yok-1234` → **`404`**, 10 454 B, gövdede `This page does not exist.` — yani `out/404.html`
+  dönüyor, 73 KB'lik `index.html` kabuğu değil
+- `www/x?y=1` → `301` → `https://mymandev.com/x?y=1` (yol ve query korunuyor)
+- `http://` → `https://` `301`; `robots.txt`, `sitemap.xml`, `logo.svg` → `200`
+- canonical `https://mymandev.com` · `og:image` `…/og.png` · `twitter:card` `summary_large_image`
 
 ## Sıradaki tek iş
 
-**#19 — Cloudflare Pages bağlantısı ve alan adı.**
+**#20 — yayın öncesi kontrol listesini koştur ve raporlanan eşikleri ölç.**
 
-**Depoda yapılabilecek iş kalmadı.** Açık üç issue'nun üçü de depo dışında bir erişim bekliyor:
+Artık depodan yapılabilir; engelini #19 kaldırdı. Listenin **iki maddesi bu turda kapandı** ve
+sayıları issue'ya yazıldı: gerçek domainde 404, ve OG/metadata gerçek URL'de. Kalanlar:
 
-| Issue | Neden burada yapılamaz                                         |
-| ----- | -------------------------------------------------------------- |
-| #19   | Cloudflare hesabı ve DNS erişimi gerekiyor                     |
-| #54   | Depo ayarı; `gh api --method PUT` izin katmanınca reddediliyor |
-| #20   | Yayın sonrası ölçüm — #19'a bağlı, en sona kalmalı             |
-
-#19 sırada çünkü diğer ikisini de o açıyor: #20 yayın olmadan koşamaz, ve yayın sonrası
-doğrulama listesine #18'den taşınan **"OG görseli gerçek URL'de doğru görünüyor"** maddesi de
-eklendi.
-
-**API token'ı gerekmiyor:** dashboard'dan "Connect to Git" GitHub App yetkisi kullanılıyor. Token
-yalnızca CI'dan deploy edilirse gerekir, ve o token sohbete yapıştırılmaz — gerekirse arayüzden
-uygulanır.
+- Lighthouse mobil Performance, LCP, CLS — **sayıyla** kaydedilecek (§8: üç koşunun medyanı,
+  aralığıyla birlikte; tek koşuya bakıp kovalamak yok)
+- Klavye ile tüm sayfa gezilebiliyor, focus görünür
+- `prefers-reduced-motion` açıkken sayfa kullanılabilir
+- Live Demo ve GitHub linkleri açılıyor
 
 ## Bitmemiş iş
 
-- **#54 — branch protection hâlâ uygulanmadı.** Ruleset `main protect` yalnızca `deletion` ve
-  `non_fast_forward` içeriyor; §3'ün istediği beş maddenin hiçbiri yok. Hazırlanan payload
-  uygulanamadı: `gh api --method PUT` çağrısı izin katmanı tarafından reddedildi. Uygulamak için
-  ya depo ayarlarından elle, ya da `gh api` için Bash izni gerekiyor.
-- **#19 Cloudflare depodan yapılamaz** — hesap ve DNS erişimi gerekiyor. **API token'ı gerekmiyor:**
-  dashboard'dan "Connect to Git" GitHub App yetkisi kullanılıyor. Token yalnızca CI'dan deploy
-  edilirse gerekir. Token sohbete yapıştırılmaz; gerekirse arayüzden uygulanır.
+Yok. Depoda bekleyen bir yarım iş kalmadı.
 
 ## Alınan kararlar
 
-Kalıcı kararlar `docs/architecture.md` §9'da. Bu turda dört satır eklendi: tip ölçeği, navbar
-zemini, Hero sağ kolonu, proje açıklamasının zorunluluğu. Burada tekrar edilmiyor.
+Kalıcı kararlar `docs/architecture.md` §9'da. Bu turda üç satır eklendi: yayın hedefi, `www`
+yönlendirmesinin nerede yaşadığı, ve query korunumu. Burada tekrar edilmiyor.
 
 ## Tuzaklar ve notlar
 
 Ölçümle bulunan, gözle bulunamayacak olanlar:
 
+- **Cloudflare'in `Create` düğmesi Pages değil Workers akışını açıyor.** İşareti şu: "Configure your
+  Worker project", `npx wrangler deploy` gibi bir deploy komutu, ve **`Build output directory`
+  alanının hiç olmaması**. O akış bu depo için yanlış — `wrangler` yapılandırması ister ve 404
+  davranışını elle kurmayı gerektirir. Doğru yol `Compute` → `Workers & Pages` → Pages'in kendi
+  `Get started` ekranı → `Import an existing Git repository`. Doğru ekranın işareti `Framework
+preset` + `Build command` + `Build output directory` üçünün birlikte görünmesi.
+- **Cloudflare'in "DNS may not be proxying traffic for www" uyarısı yanlış olabilir.** Kural deploy
+  edilmeden modalda bekletiyor. `www` Pages custom domain'i üzerinden proxy'liydi — ölçüldü:
+  Cloudflare IP + `Server: cloudflare` — kontrol o kaydı görmüyor. Doğru seçim `Ignore and deploy
+rule anyway`; `Create a new proxied DNS record` custom domain'in kaydıyla çakışır.
+- **Bir kuralın deploy edilmediğini `cf-cache-status` ayırt ettirir.** `www` 301 yerine 200
+  dönüyordu; `DYNAMIC` görmek "bu önbellekten gelmiyor, kural gerçekten eşleşmiyor" demekti ve
+  şüpheyi doğrudan kuralın kendisine getirdi. Sebep basitti: modal açık kalmıştı.
+- **`Preserve query string`'i belgeye göre değil ölçüme göre ayarla.** `Redirect from WWW to root`
+  şablonu wildcard kullanıyor (`https://www.*` → `https://${1}`) ve `${1}` query'yi **zaten**
+  taşıyor: kutu kapalıyken `www/x?y=1` → `…/x?y=1` çıktı. İşaretlemiş olsaydık query iki kez
+  eklenecekti — ve bu, kimsenin bakmadığı bir yerde sessizce bozulan türden bir hata.
+- **`curl -w` format string'ine `\n` yazarken dikkat.** Bir ölçümde `Location` değeri
+  `https://www.mymandev.com//n` gibi göründü; gerçek header değil, format string'in artığıydı.
+  Şüpheli bir çıktıyı düzeltmenin yolu `printf` ile tek satırlık temiz bir format kullanmak.
+- **GitHub, ruleset PUT'unda göndermediğin varsayılanı ekliyor.**
+  `require_extra_approval_for_unattributed_changes: true` kendiliğinden geldi. Atfedilemeyen bir
+  commit için 1 onay ister; `@tunayaslan` onay veremediği için böyle bir commit merge edilemez.
+  Şu an tetiklenmiyor (commit'ler atfedilebiliyor, trailer yazılmıyor) — ölçmeden değiştirilmedi.
 - **Testin "o günkü sayıyı" tutması bir kusurdur.** Bu turda iki test **davranış bozulmadığı hâlde**
   düştü: biri `scroll-margin`'i `"88px"` diye sabit yazmıştı, diğeri bölümün **tamamında** uzun
   tire arıyordu ve bir cümlenin noktalamasını yakaladı. İkisi de gerçek sözleşmeyi ölçmüyordu.
