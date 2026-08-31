@@ -152,6 +152,86 @@ test("Hero zemini gecisli, ama metin en kotu noktada bile okunuyor", async ({ pa
  * `reveal-on-enter` DEGIL `reveal-on-load`: Hero acilista ekranda oldugu icin
  * `view()` cizelgesi onu "gecmis" sayiyor ve oge son halinde aciliyor.
  */
+/**
+ * TAM EKRAN. design-spec.md §3.2
+ *
+ * Onceki hali viewport'un %53'uydu (478px / 900px) ve Projects'in ustu acilista
+ * ekrana giriyordu. Olculen sey ORAN degil ESIK: bolum en az bir ekran kadar
+ * olmali. Tam esitlik aranmiyor cunku icerik daha uzun olabilir.
+ */
+test("Hero en az bir ekran yuksekliginde", async ({ page }, testInfo) => {
+  const viewport = testInfo.project.use.viewport?.height ?? 0;
+  expect(viewport).toBeGreaterThan(0);
+
+  const height = await page.locator(SECTION).evaluate((el) => el.getBoundingClientRect().height);
+  /* 1px tolerans: `dvh` ile piksel yuvarlanmasi arasinda yarim piksel fark
+     olabiliyor ve bu testin sordugu sey o degil. */
+  expect(height).toBeGreaterThanOrEqual(viewport - 1);
+});
+
+/**
+ * ZEMIN IKI KATMANLI: ince cizgiler + tint. Cizgiler "duz kare" hissini
+ * kirmak icin; noise bir gorsel dosya isteyecegi ve payload'a binecegi icin
+ * secilmedi.
+ */
+test("Hero zemini cizgi katmani tasiyor", async ({ page }) => {
+  const image = await page.locator(SECTION).evaluate((el) => getComputedStyle(el).backgroundImage);
+  expect(image).toContain("repeating-linear-gradient");
+  expect(image).toContain("linear-gradient");
+});
+
+/**
+ * SCROLL GOSTERGESI. §3.2
+ *
+ * Uc sey birden olculuyor ve ucu de sozlesme:
+ *   - var ve `aria-hidden` (bilgi tasimiyor, scroll cubugu zaten soyluyor)
+ *   - accent rengi KULLANMIYOR (§5.1: Hero'nun tek yesili CTA)
+ *   - reduced-motion altinda animasyon yok ama GORUNUR kaliyor
+ */
+test.describe("scroll gostergesi", () => {
+  test("var, gizli degil, accent kullanmiyor", async ({ page }) => {
+    const hint = page.locator(".scroll-hint");
+    await expect(hint).toHaveCount(1);
+
+    const state = await hint.evaluate((el) => {
+      const probe = document.createElement("span");
+      probe.style.color = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-accent")
+        .trim();
+      document.body.appendChild(probe);
+      const accent = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        hidden: el.closest("[aria-hidden='true']") !== null,
+        background: getComputedStyle(el).backgroundColor,
+        accent,
+        visible: Number(getComputedStyle(el).opacity) > 0,
+      };
+    });
+
+    expect(state.hidden).toBe(true);
+    expect(state.background).not.toBe(state.accent);
+    expect(state.visible).toBe(true);
+  });
+
+  test("reduced-motion altinda durur ama gorunur kalir", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const state = await page.locator(".scroll-hint").evaluate((el) => ({
+      own: getComputedStyle(el).animationName,
+      marker: getComputedStyle(el, "::after").animationName,
+      opacity: Number(getComputedStyle(el).opacity),
+      height: Math.round(el.getBoundingClientRect().height),
+    }));
+
+    expect(state.own).toBe("none");
+    expect(state.marker).toBe("none");
+    expect(state.opacity).toBe(1);
+    expect(state.height).toBeGreaterThan(0);
+  });
+});
+
 test.describe("Hero yukleme girisi", () => {
   const REVEAL = `${SECTION} .reveal-on-load`;
 

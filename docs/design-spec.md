@@ -122,6 +122,17 @@ olmayan ayrı bir bant. Kaldırıldı.
 Yerine `backdrop-filter`: bar arkasındaki neyse onu alıp bulanıklaştırıyor ve hafifçe koyultuyor.
 Düz bir bant değil, ama üzerinden geçen her şeyde yazı okunur kalıyor.
 
+**Bar tepede sessiz, scroll'da belirgin.** İlk 120px boyunca saydam ve blur'suz; sonra bugünkü
+tanımlı hâline yerleşiyor. Tetikleyici **scroll listener değil** — `animation-timeline: scroll()`,
+yani kural 3 değişmedi.
+
+Keyframe'de **yalnızca `from`** tanımlı: dinlenme hâli tanımlı (okunur) bar. Destek yoksa,
+`prefers-reduced-motion` açıksa veya animasyon kalkarsa bar okunur tarafa düşer. Ters yazılsaydı bar
+saydam kalırdı ve Team'in açık gökyüzlü fotoğrafları üzerinde nav yazısı okunmaz olurdu.
+
+Ölçüldü: bar saydamken bile wordmark **12.49:1**, nav linkleri **6.65:1** — ikisi de AA'nın
+üstünde.
+
 **Okunurluk ölçüldü, göz kararı değil.** Sayfa baştan sona kaydırılıp nav yazısının arkasındaki
 zemin her 100px'te örneklendi; en kötü durum **5.49:1** — AA eşiği 4.5. Team'in açık gökyüzlü
 fotoğrafları dahil. Düz saydam bırakmak orada beyaz mono yazıyı okunmaz yapardı; tint'in görevi
@@ -176,6 +187,21 @@ Keyframe'de **yalnızca `from`** tanımlı. `prefers-reduced-motion` bloğu `ani
 uyguladığında öğe tam görünür hâline döner; `to` yazılsaydı aynı blok onu `from` karesinde dondurur
 ve **Hero hiç görünmezdi**.
 
+**Bölüm bir ekran yüksekliğinde** (`min-h-dvh`), içerik dikeyde ortalı. Önceki hâli **478px**, yani
+900px'lik bir ekranın %53'ü — Projects'in üstü açılışta ekrana giriyordu. Yan fayda: metin giriş
+efekti artık Projects'te de çalışıyor, çünkü o öğeler ilk ekranın altına indi.
+
+**Zemin iki katmanlı:** ince çizgiler (`repeating-linear-gradient`, 118 derece, 1px, 88px aralık) ve
+altında tint. Çizgiler **noise değil** ve bu bir seçim — noise bir görsel dosya ister ve payload'a
+biner; çizgi deseni saf CSS ve 0 bayt. Rengi `--hero-line`, metin renginin **%6'sı**: %10'da bir
+ızgara gibi okunuyor, %3'te hiç görünmüyor.
+
+**Alt kenarda scroll göstergesi:** ince dikey bir çizgi ve içinde aşağı inen küçük bir işaret.
+**Metin yok** — "SCROLL" yazmak yeni bir UI metni uydurmak olurdu, ve `aria-hidden` bir metin
+kontrast için yine tartılır (depo bunu bir kez yaşadı). `aria-hidden`, yeşil değil, ve **iki tur**
+oynayıp duruyor: iki kez 2200ms, yani 4400ms — WCAG 2.2.2'nin beş saniye çizgisinin altında, o
+yüzden duraklatma mekanizması maddesi hiç tetiklenmiyor.
+
 **Sağ kolonda amblem var.** Markanın kendi işareti — üç kafa ve bir "m", yani üç kişi.
 
 Orada bir zamanlar **büyütülmüş wordmark** duruyordu ve kaldırıldı. Bir kelime ancak kenardan
@@ -199,7 +225,9 @@ Kuralları:
   bozuk görünür.
 - **Ölçü 460px'te kapanıyor** ve bu artık bir **tasarım** sınırı, çözünürlük sınırı değil. Vektöre
   geçmeden önce tavan 380px'ti ve sebebi kaynağın 400×400 olmasıydı; vektörde öyle bir tavan yok.
-  Bugünkü sınırın gerekçesi: amblem başlığın ağırlığını geçmemeli.
+  Bugünkü sınırın gerekçesi: amblem başlığın ağırlığını geçmemeli. **Ölçü %18 küçüldü** (istek:
+  "biraz fazla büyük, ayrı bir banner görseli gibi duruyor"): `clamp(220px, 26vw, 460px)` yerine
+  `clamp(180px, 21vw, 380px)`, 1440'ta 374px'ten **302px**'e.
 - **`aria-hidden`.** Marka adı sayfada zaten navbar ve footer'da okunuyor; amblem bilgi değil
   ağırlık taşıyor.
 - **Yalnızca `lg` üstünde.** Dar ekranda metnin yanına değil, yerine geçerdi.
@@ -233,6 +261,11 @@ Kart değil, kendi başına bir bölüm gibi duran tam genişlikte blok.
 Blok içi sıra: **sıra numarası (mono, `text-muted`)** → proje adı (Display L) → özet (Display M,
 `text-muted`) → **açıklama (Body)** → tech tag'leri (`Tag` listesi, mono) → `MetricRow` → aksiyonlar
 (GitHub `ghost`, Live Demo `primary`).
+
+**Metrik satırı üç kısıt taşır:** `15 PLAYERS OPTIMISED`, `£100M BUDGET CONSTRAINT`,
+`1 OPTIMAL SQUAD`. Önceki tek sayı (`0`, "ML models promoted to production")
+`architecture.md` §4.6'nın imza öğesiydi ve karar sahibi tarafından değiştirildi; **ne
+kaybedildiği** §4.6'da yazılı.
 
 **Sıra numarası `01`, `02`…** ve bu #58'i **kısmen** geri alıyor: bölüm etiketleri geri gelmedi,
 yalnızca proje kartının sırası. Değer `index`ten türetilir, elle yazılmaz. `aria-hidden`: sıra
@@ -421,6 +454,18 @@ numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket 
 başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerde değil **bilgi kattığı
 yerde** durur.
 
+**Bölüm `lg`de bir ekran yüksekliğinde.** Önceki hâli viewport'un **%115'i** (1600x900'de %125),
+yani üçüncü kart her zaman kesiliyordu.
+
+**Yükseklik orandan değil kalan alandan gelir** ve bu hesaplanarak seçildi: 1440x900'de 2/3 oranı
+sığdırıyor, ama 1600x900'de kart genişliği 490px'e çıktığı için yine %109 taşıyor. Kart genişliği
+kapsayıcıyla büyürken ekran yüksekliği sabit kalıyor — yani **tek bir sabit oran her viewport'ta
+sığdıramaz.** Zincir: bölüm `h-dvh`, `Container` `flex-1`, sarmalayıcı `flex-1`, liste `flex-1` — her
+halkada `min-h-0`. Ölçüldü: 1440x900, 1600x900 ve 1920x1080'de bölüm tam %100 ve üç kart da içinde.
+
+Oran token'ı (`--aspect-portrait`, 5/9) **mobilde** geçerli kalır; `tests/portrait-aspect.test.ts`
+anlamını korur çünkü görsel hattı ile token hâlâ aynı sayıyı söylüyor. Görseller yeniden üretilmedi.
+
 **Kart fotoğrafın kendisidir.** Kutu **5/9** oranında (token: `--aspect-portrait`) ve görüntü onu
 tamamen kaplar; ad, rol ve linkler görüntünün alt kenarında, üzerinde durur. Hover'da görüntü
 hayaletleşir ve biyografi üstünde belirir.
@@ -479,7 +524,16 @@ Navbar'ın aynası: `surface` zemin, üstte 1px `border`.
 | ---- | ---------------- | ----------------------------- |
 | Yapı | tek kolon, dikey | wordmark solda, linkler sağda |
 
-İçerik: wordmark, telif satırı, GitHub linki. Tamamı mono rolü. Sosyal ikon duvarı yok.
+İçerik: wordmark, **tagline**, telif satırı, GitHub linki, ve ayrı bir satırda **kapanış cümlesi**.
+Tamamı mono rolü. Sosyal ikon duvarı yok.
+
+İki cümle de **marka metni** ve ikisini karar sahibi yazdı (`CLAUDE.md` kural 5).
+`content/site.ts`te `footer.tagline` ("Built by friends.") ve `footer.closing`
+("Still building.") olarak yaşıyorlar; component onları okur, yeniden yazmaz. Şemada `.optional()`
+yok (kural 7) — bir footer cümlesinin sessizce kaybolması, olmamasından kötüdür çünkü kimse fark
+etmez.
+
+Kapanış cümlesi **ayrı bir satırda**: üstteki satırın içine sıkıştırmak onu bir etikete çevirirdi.
 
 GitHub linki `Button` **değil**, düz mono `<a>` — footer'da 44px'lik bir dokunma hedefi fazla
 ağır durur. Ama dış link olduğu için §7.5'in görünür ikonunu taşır; ikon `ExternalIcon`

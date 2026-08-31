@@ -104,6 +104,19 @@ export const siteSchema = z.object({
   }),
   /** NOTICE dosyasindaki telif satirinin yili. Footer cumleyi bundan kurar,
       metni ikinci kez yazmaz. */
+  /**
+   * Footer'in iki cumlesi. MARKA METNI ve ikisini de karar sahibi yazdi
+   * (CLAUDE.md kural 5 - uydurulmaz, sorulur).
+   *
+   * `.optional()` YOK (kural 7): alan eksikse build patlar. Bir footer
+   * cumlesinin sessizce kaybolmasi, olmamasindan kotudur - kimse fark etmez.
+   */
+  footer: z.object({
+    /** Wordmark'in yanindaki cumle. */
+    tagline: z.string().min(1),
+    /** Sayfayi kapatan son cumle. */
+    closing: z.string().min(1),
+  }),
   copyrightYear: z.number().int(),
   nav: z
     .array(

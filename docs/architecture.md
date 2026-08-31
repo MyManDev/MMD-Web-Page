@@ -246,12 +246,22 @@ Kullanılabilir gerçek malzeme: 15 günde 215 commit, ~2.600 test, 17 sprint, v
 sayısı sıfır** — sistem hâlâ deterministik temelle karar veriyor. İlk canlı hafta 56.08 projekte
 edildi, 26 gerçekleşti.
 
-**Seçilen sayı: `0` — "ML models promoted to production".** Yukarıdaki malzemenin en ayırt edici
-olanı bu: 215 commit ve 2.600 test çalışma hacmini gösterir, her vitrinde benzeri vardır. Terfi
-etmemiş model ise ölçülmüş bir başarısızlık ve §4.6'nın tarif ettiği şeyin ta kendisi.
+**Seçilen sayı `0` — "ML models promoted to production" idi. KARAR SAHİBİ DEĞİŞTİRDİ.** Yerine üç
+kısıt geçti: `15 PLAYERS OPTIMISED`, `£100M BUDGET CONSTRAINT`, `1 OPTIMAL SQUAD`.
 
-Etiket kısaltılmadı: `0` tek başına güçlü bir sayı değil, gücü **neyin** sayıldığından geliyor.
-"Models promoted" okuyucuya "neye terfi?" sorusunu bırakırdı.
+**Ne kaybedildiği burada yazılı, çünkü kaybedilen bir şey var.** `0`ın seçilme gerekçesi şuydu:
+215 commit ve 2.600 test çalışma hacmini gösterir ve **her vitrinde benzeri vardır**; terfi etmemiş
+model ise ölçülmüş bir başarısızlık ve bu bölümün tarif ettiği şeyin ta kendisi. Üç yeni sayı o
+işlevi görmüyor.
+
+Üç yeni sayı **uydurma değil**, hepsi doğrulanabilir: FPL kadrosu 15 oyuncu, £100m bütçe
+uygulamanın kendi ekranında yazılı, "1 optimal squad" CP-SAT'ın döndürdüğü kanıt. Övünme de
+değiller — üçü de projenin **kısıtları**, yani "ne kadar iyiyiz" değil "hangi kutuya sığmak
+zorundaydı" diyorlar.
+
+Yani kaybedilen şey **doğruluk değil, imza.** Bu bölümün "vitrinde ölçülmüş bir başarısızlık
+göstermek nadir ve tamamen size ait" cümlesi hâlâ doğru; sitede artık karşılığı yok. Geri gelmesi
+istenirse yapılacak şey dördüncü bir metrik eklemek.
 
 Gerekçe: sticky kart ödünç alınmış ve yaygın bir davranış, imza olamaz. Bir vitrinde ölçülmüş bir
 başarısızlık göstermek ise nadir ve tamamen size ait.
@@ -557,3 +567,8 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Metin girişi tetikleyicisi | `IntersectionObserver` — `view()` scroll konumuna bağlıydı, "geldi" hissi vermedi            | §4.4   |
 | Proje sıra numarası        | `01`, `02` geri geldi — #58'i **kısmen** geri alır, bölüm etiketleri gelmedi                 | §3     |
 | Yığın yüksekliği           | Viewport yüksekliği **kartın kendisinde**; sarmalayıcı ve margin sticky menzilini kısaltıyor | §3     |
+| İmza sayısı                | `0 ML models promoted` **kaldırıldı**; yerine üç kısıt — imza kayboldu                       | §4.6   |
+| Hero yüksekliği            | `min-h-dvh`; amblem %18 küçüldü, zemine ince çizgi dokusu                                    | §3     |
+| Team yüksekliği            | `lg`de bir ekran; kutu orandan değil **kalan alandan**                                       | §3     |
+| Navbar scroll davranışı    | Tepede saydam, 120px'te yerleşiyor; `animation-timeline: scroll()`                           | §4.4   |
+| Bölüm sınırı               | `1px` çizgi + Hero'da metinsiz scroll göstergesi (iki tur)                                   | §4.4   |

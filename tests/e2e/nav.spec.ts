@@ -71,6 +71,61 @@ test.describe("navbar", () => {
   });
 });
 
+/**
+ * TEPEDE SESSIZ, SCROLL'DA BELIRGIN. design-spec.md §3.1
+ *
+ * Blur ve yari saydam zemin ZATEN vardi; degisen sey barin tepede ve scroll'da
+ * ayni gorunmemesi. Tetikleyici `animation-timeline: scroll()` - scroll
+ * listener degil, yani CLAUDE.md kural 3 degismedi.
+ *
+ * Olculen sey FARK, sabit degerler degil: iki durumdaki `background-color`
+ * ayni olmamali. Degeri yazsam opaklik ayarlandiginda davranis bozulmadigi
+ * halde test duserdi.
+ */
+test.describe("navbar scroll'da yerlesiyor", () => {
+  const bar = ".nav-bar";
+
+  /* Bu dosyada her `describe` sayfayi KENDI `beforeEach`inde aciyor. Ilk
+     yazimda atlamistim ve iki test `about:blank` uzerinde kosup 30s zaman
+     asimina dustu - locator hic cozulmedi. Hata mesaji "element bulunamadi"
+     demiyor, "timeout" diyor; kalibi bilmeyen biri buna bakip animasyonda
+     sorun arar. */
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
+  });
+
+  test("scroll 0 ile scroll sonrasi ayni degil", async ({ page }) => {
+    const read = () => page.locator(bar).evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const top = await read();
+
+    await page.evaluate(() => window.scrollTo(0, 400));
+    await expect.poll(read).not.toBe(top);
+  });
+
+  /**
+   * EN ONEMLI TEST: bar dinlenme halinde OKUNUR olan tarafa dusuyor.
+   * Keyframe'de yalnizca `from` tanimli, yani animasyon kalktiginda tanimli
+   * zemin kaliyor. Ters yazilsaydi bar saydam kalirdi ve Team'in acik gokyuzlu
+   * fotograflari uzerinde nav yazisi okunmaz olurdu.
+   */
+  test("reduced-motion altinda bar tanimli zemine dusuyor", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const state = await page.locator(bar).evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { name: cs.animationName, background: cs.backgroundColor };
+    });
+
+    expect(state.name).toBe("none");
+    /* Saydam DEGIL: alfa 0 olan bir zemin okunurlugu fotografa birakirdi. */
+    expect(state.background).not.toBe("rgba(0, 0, 0, 0)");
+    expect(state.background).not.toMatch(/\/\s*0\s*\)$/);
+  });
+});
+
 test.describe("mobil menu", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     const width = testInfo.project.use.viewport?.width ?? 0;

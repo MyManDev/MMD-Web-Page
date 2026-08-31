@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { site } from "@/content";
+
 /**
  * Footer davranisi. docs/design-spec.md §3.6 ve §5.1
  *
@@ -149,4 +151,18 @@ test("GitHub linki hover'da alt cizgi aliyor", async ({ page }) => {
 
   await page.getByRole("contentinfo").getByRole("link", { name: "GitHub" }).hover();
   await expect.poll(read).toBe(1);
+});
+
+/**
+ * Footer'in iki cumlesi. design-spec.md §3.6
+ *
+ * Beklenen metin `content/site.ts`ten TURETILIYOR, testte tekrar yazilmiyor:
+ * marka metni paylasilan karar alani (CLAUDE.md kural 5) ve iki yerde
+ * yasamasi, ayrildiklarinda kimsenin fark etmeyecegi bir sessiz hata olurdu.
+ */
+test("iki cumle icerikten geliyor", async ({ page }) => {
+  const footer = page.locator("footer");
+
+  await expect(footer).toContainText(site.footer.tagline);
+  await expect(footer).toContainText(site.footer.closing);
 });

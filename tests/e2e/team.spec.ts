@@ -318,6 +318,64 @@ test("ad ve rolun zemini fotograftan bagimsiz okunabilir", async ({ page }) => {
   expect(alpha).toBeGreaterThanOrEqual(0.9);
 });
 
+/**
+ * TAM EKRAN - yalnizca `lg`de. design-spec.md §3.5
+ *
+ * Onceki hali viewport'un %115'iydi (1600x900'de %125), yani ucuncu kart her
+ * zaman kesiliyordu. Yukseklik ORANDAN DEGIL KALAN ALANDAN geliyor: tek bir
+ * sabit oran her viewport'ta sigdiramaz, cunku kart genisligi kapsayiciyla
+ * buyurken ekran yuksekligi sabit kaliyor (hesaplandi: 2/3 orani 1440'ta
+ * sigiyor, 1600x900'de %109 tasiyor).
+ *
+ * Olculen sey iki parcali: bolum bir ekran kadar, VE uc kart gercekten gorunur
+ * alanda. Ikincisi olmadan birincisi bir sey kanitlamiyor - bolum bir ekran
+ * olup kartlari tasirabilirdi.
+ */
+test("lg'de bolum bir ekrana sigiyor ve uc kart da gorunuyor", async ({ page }, testInfo) => {
+  const width = testInfo.project.use.viewport?.width ?? 0;
+  const height = testInfo.project.use.viewport?.height ?? 0;
+  test.skip(width < 1024, "tam ekran yalnizca lg ustunde");
+
+  const section = await page.locator("#team").evaluate((el) => el.getBoundingClientRect().height);
+  /* 2px tolerans: `dvh` ve piksel yuvarlanmasi. */
+  expect(Math.abs(section - height)).toBeLessThanOrEqual(2);
+
+  const fits = await page.evaluate(() => {
+    /* `!` yerine kontrol: `strictNullChecks` altinda `querySelector` null
+       dondurebilir ve susturmak yerine olcuyu once dogrulamak dogru - bozuk bir
+       secici burada dussun, asagida sessizce true uretmesin. */
+    const section = document.querySelector("#team");
+    if (!section) return false;
+    const rect = section.getBoundingClientRect();
+    return [...document.querySelectorAll("#team article")].every((card) => {
+      const box = card.getBoundingClientRect();
+      return box.top >= rect.top - 1 && box.bottom <= rect.bottom + 1;
+    });
+  });
+  expect(fits, "uc kart da bolumun icinde kalmali").toBe(true);
+});
+
+/**
+ * UC KART AYNI MUAMELEDEN GECIYOR. Istek "ucu ayni sistemin parcasi gibi
+ * gorunsun" idi; olculdu, portrelerin ortalama parlakligi 86 / 118 / 114.
+ *
+ * Olculen sey PERDENIN ESITLIGI, fotografin parlakligi degil - CSS pozlamayi
+ * esitlemez ve bunu iddia etmiyoruz. Perde ayrilirsa kartlar yeniden uc ayri
+ * sistem gibi gorunur ve bunu gozle yakalamak zor.
+ */
+test("uc kartin karartmasi birebir ayni", async ({ page }) => {
+  const scrims = await page.evaluate(() =>
+    [...document.querySelectorAll("#team article")].map((card) => {
+      const layer = card.querySelector(":scope > div[aria-hidden='true']");
+      return layer ? getComputedStyle(layer).backgroundColor : null;
+    }),
+  );
+
+  expect(scrims.length).toBeGreaterThan(1);
+  expect(new Set(scrims).size, `karartmalar ayrildi: ${scrims.join(" | ")}`).toBe(1);
+  expect(scrims[0]).not.toBeNull();
+});
+
 test("mobilde tek kolon, sm'de iki, lg'de uc", async ({ page }, testInfo) => {
   const width = testInfo.project.use.viewport?.width ?? 0;
   const columns = await page

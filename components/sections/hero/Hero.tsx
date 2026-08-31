@@ -64,7 +64,16 @@ export function Hero({
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId} className="hero-field">
+    /*
+      TAM EKRAN (istek). Onceki hali 478px, yani 900px'lik bir ekranin %53'u -
+      Projects'in ustu acilista ekrana giriyordu. `relative` scroll gostergesi
+      icin: gosterge bolumun alt kenarina konumlaniyor.
+    */
+    <section
+      id={section.id}
+      aria-labelledby={headingId}
+      className="hero-field relative flex min-h-dvh items-center"
+    >
       <Container>
         <div className="grid grid-cols-1 items-center lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)]">
           <div className="flex flex-col gap-8 py-section lg:col-span-7 lg:gap-10 lg:py-section-lg">
@@ -134,6 +143,22 @@ export function Hero({
           </div>
         </div>
       </Container>
+
+      {/*
+        SCROLL GOSTERGESI - `aria-hidden`, saf dekorasyon. Bilgi tasimiyor:
+        "asagida devam ediyor" zaten scroll cubugunun ve nav linklerinin
+        soyledigi sey; bu yalnizca gorsel bir davet.
+
+        Bicim ve hareket globals.css'te (`.scroll-hint`), burada yalnizca
+        konumlaniyor. Mobilde de duruyor - dar ekranda "asagi bak" daha da
+        gerekli.
+      */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center"
+      >
+        <span className="scroll-hint" />
+      </div>
     </section>
   );
 }

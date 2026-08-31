@@ -38,6 +38,10 @@ export const site: Site = {
       "A claim is not a measurement.",
     ],
   },
+  footer: {
+    tagline: "Built by friends.",
+    closing: "Still building.",
+  },
   copyrightYear: 2026,
   nav: [
     { id: "hero", label: "Hero" },

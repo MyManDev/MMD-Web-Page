@@ -26,10 +26,8 @@ import type { Project } from "./schema";
  * yayinliyor. Ayni durustluk bu deponun kendi sayisinda da var - "0 ML models
  * promoted to production".
  *
- * `metrics` imza ogesi (architecture.md §4.6): olculmus, dogrulanabilir ve
- * ovunme olmayan tek sayi. Deger uydurulmadi - §4.6'nin sayilan gercek
- * malzemesinden secildi ve ifadesi paylasilan karar alaninda onaylandi (#17).
- * Etiket dogal yazimda duruyor; buyuk harfe MetricRow'un CSS'i ceviriyor,
+ * `metrics` artik UC KISIT tasiyor (§4.6, karar sahibi tarafindan degistirildi).
+ * Etiketler dogal yazimda duruyor; buyuk harfe MetricRow'un CSS'i ceviriyor,
  * metin iki farkli bicimde iki kez yazilmiyor.
  *
  * `screenshot` en buyuk uretilmis varyanti gosterir - srcset destegi olmayan
@@ -53,6 +51,23 @@ export const projects: Project[] = [
     liveUrl: "https://squadopt.mymandev.com/",
     screenshot: "/projects/football-squad-optimizer-1792.webp",
     order: 0,
-    metrics: [{ value: "0", label: "ML models promoted to production" }],
+    /* UC KISIT, ve bu bir kararı geri aliyor. Once burada tek bir sayi vardi:
+       `0 - ML models promoted to production`. architecture.md §4.6 onu IMZA OGE
+       olarak secmisti ve gerekcesi yaziliydi: 215 commit ve 2.600 test her
+       vitrinde bulunur, terfi etmemis model ise olculmus bir basarisizlik ve
+       tamamen size ait.
+
+       Karar sahibi degistirdi ve NE KAYBEDILDIGI §4.6'da yazili: uc yeni sayi
+       da dogrulanabilir (FPL kadrosu 15 oyuncu, £100m butce uygulamanin kendi
+       ekraninda, "1 optimal squad" CP-SAT'in dondurdugu kanit) - yani kaybedilen
+       sey dogruluk degil, IMZA.
+
+       Sayilar uydurulmadi ve ovunme de degil: ucu de projenin KISITLARI, yani
+       "ne kadar iyiyiz" degil "hangi kutuya sigmak zorundaydi" diyor. */
+    metrics: [
+      { value: "15", label: "Players optimised" },
+      { value: "£100m", label: "Budget constraint" },
+      { value: "1", label: "Optimal squad" },
+    ],
   },
 ];

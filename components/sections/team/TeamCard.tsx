@@ -35,7 +35,7 @@ import { BioTypewriter } from "./BioTypewriter";
  */
 export function TeamCard({ member }: { member: TeamMember }) {
   return (
-    <article className="reveal-on-enter group relative aspect-portrait w-full overflow-hidden rounded-card border border-border bg-surface transition-[translate] duration-200 ease-out hover:-translate-y-2.5 focus-within:-translate-y-2.5">
+    <article className="reveal-on-enter group relative aspect-portrait w-full overflow-hidden lg:aspect-auto lg:h-full rounded-card border border-border bg-surface transition-[translate] duration-200 ease-out hover:-translate-y-2.5 focus-within:-translate-y-2.5">
       {/* eslint-disable-next-line @next/next/no-img-element -- olculdu, #34: next/image 5.5 KiB client JS ekliyor, statik export'ta karsiligi sifir */}
       <img
         src={member.photo}
@@ -48,6 +48,21 @@ export function TeamCard({ member }: { member: TeamMember }) {
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
       />
+
+      {/*
+        TEK VE AYNI KARARTMA - uc kartta birebir ayni oran. Istek "ucu ayni
+        sistemin parcasi gibi gorunsun" idi ve olculdu: portrelerin ortalama
+        parlakligi Ibrahim 86, Tunay 118, Ertugrul 114 (0-255). Yani ilk
+        fotograf gercekten ~%28 daha koyu.
+
+        DURUST SINIR: bu perde uc karti ayni MUAMELEDEN geciriyor, pozlamayi
+        esitlemiyor. Fark orani korunuyor; gercek cozum o fotografi daha
+        aydinlik yeniden disa aktarmak. Kisi basina `filter: brightness()`
+        yazmak paletin disinda, kisiye gomulu bir sayi uretirdi - yapilmadi.
+
+        Renk token'dan (`--color-page`), sabit rgba() degil (kural 1).
+      */}
+      <div aria-hidden="true" className="absolute inset-0 bg-page/25" />
 
       {/*
         Hover perdesi: kartin tamami. Goruntu ardinda hayalet gibi kaliyor.
