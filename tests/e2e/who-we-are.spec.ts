@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { AUTO_ADVANCE_MS } from "@/components/sections/about/PrincipleDeck";
+import { AUTO_ADVANCE_MS, TYPE_STEP_MS } from "@/components/sections/about/PrincipleDeck";
 
 /**
  * Who we are bolumu. docs/design-spec.md §3.4 ve §5.1
@@ -323,5 +323,65 @@ test.describe("prensip destesi - otomatik gecis", () => {
 
     await page.getByLabel("Next principle").focus();
     await expect(stage).toHaveAttribute("aria-live", "polite");
+  });
+});
+
+/**
+ * PRENSIP HARF HARF YAZILIYOR. design-spec.md §6
+ *
+ * Sozlesme `BioTypewriter`in sozlesmesi: metin DOM'da HER ZAMAN tam, gizleme
+ * `opacity` ile, ve gizleme kuralini tetikleyen `data-typing` isaretini
+ * YALNIZCA JS koyuyor.
+ *
+ * Bekleme suresi `TYPE_STEP_MS`ten turetiliyor - testin o gunku sayiyi tekrar
+ * yazmasi bir kusurdur.
+ */
+test.describe("prensip destesi - yazma", () => {
+  const activeSlot = (page: import("@playwright/test").Page) =>
+    page.locator(`${SECTION} .principle-slot[data-active]`);
+
+  test("aktif prensip yazilirken isaret tasiyor ve sonunda tamamlaniyor", async ({ page }) => {
+    const slot = activeSlot(page);
+    await expect(slot).toHaveAttribute("data-typing", "");
+
+    const text = (await slot.textContent()) ?? "";
+    expect(text.length).toBeGreaterThan(10);
+
+    await expect(slot.locator("span[data-pending]")).toHaveCount(0, {
+      timeout: text.length * TYPE_STEP_MS * 3,
+    });
+  });
+
+  /**
+   * ERISILEBILIRLIK KAPISI: yazma sirasinda bile metin eksik degil. Gizleme
+   * `opacity` ile oldugu icin ogeler erisilebilirlik agacinda kaliyor - ekran
+   * okuyucu yarim cumle duymuyor. `display` veya `visibility` kullanilsaydi bu
+   * test duserdi.
+   */
+  test("metin yazilirken de DOM'da tam duruyor", async ({ page }) => {
+    const slot = activeSlot(page);
+    const pending = await slot.locator("span[data-pending]").count();
+    const total = await slot.locator("span").count();
+
+    /* Bir sey henuz yazilmamis olabilir ya da yazma bitmis olabilir; iki
+       durumda da HARF SAYISI degismiyor - olculen sey bu. */
+    expect(total).toBeGreaterThan(10);
+    expect(pending).toBeLessThanOrEqual(total);
+    expect(((await slot.textContent()) ?? "").length).toBe(total);
+  });
+
+  test("reduced-motion altinda hic yazilmiyor, butun harfler gorunur", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const slot = activeSlot(page);
+    await expect(slot).not.toHaveAttribute("data-typing", "");
+    await expect(slot.locator("span[data-pending]")).toHaveCount(0);
+  });
+
+  /** Giris animasyonu kaldirildi - gecis artik yazmanin kendisi. */
+  test("slot'ta giris animasyonu kalmadi", async ({ page }) => {
+    const name = await activeSlot(page).evaluate((el) => getComputedStyle(el).animationName);
+    expect(name).toBe("none");
   });
 });

@@ -296,6 +296,26 @@ konumu söyler. Prensip Display L'de durur — ekranı hak eden cümle Body S'te
 genişliği `--max-width-statement` (22ch): `65ch` gövde metni için doğru ama `ch` yazı boyutuyla
 büyüdüğü için 40px'te sınır işlevini yitirir (§4.3).
 
+**Deste kendiliğinden ilerler: 7 saniyede bir sonraki prensip.** Duraklatma mekanizması
+**etkileşim** — fare desteye girdiğinde veya içeriye odak düştüğünde durur, çıkınca kaldığı yerden
+sürer. Kalıcı durdurma değil. WCAG 2.2.2 kendiliğinden başlayan ve beş saniyeden uzun süren
+otomatik güncellemede bir duraklatma yolu istiyor; bu o yol. **Görünür bir Pause tuşu eklenmedi:**
+burada olmayan bir kontrol demekti ve klavye turunu bir durak uzatırdı. Bilinen sınır — dokunmatikte
+hover yok; tuşa dokunulduğunda odak orada kaldığı için duraklama yolu var, ama sayfayı yalnızca
+kaydırarak okuyan bir dokunmatik kullanıcısının yolu yok.
+
+**Geçiş, prensibin harf harf yazılmasıdır.** Önce blok birlikte kayıp soluyordu (240ms, sonra
+600ms); yazma gelince iki hareket birbiriyle yarıştı ve giriş animasyonu kaldırıldı. Sözleşme
+daktilo efektinin sözleşmesi (§6) ve **kural tek yerde**: metin DOM'da her zaman tam, gizleme
+`opacity` ile, ve gizleme kuralını tetikleyen işareti yalnızca JS koyar. `prefers-reduced-motion`
+açıkken hem yazma hem otomatik geçiş **hiç çalışmaz** — prensip anında yer değiştirir ve bütün
+harfler görünür başlar.
+
+**Canlı bölge otomatik geçişte susar.** `aria-live` her değişikliği duyurursa ekran okuyucu
+kullanıcısı yedi saniyede bir, istemediği hâlde sözünün kesildiğini yaşar. Otomatik ilerleme
+`off` yazar; kullanıcı etkileşimi `polite`'a döndürür. Sıra çalışır durumda: odak olayı tıklamadan
+önce geldiği için kullanıcının adımı zaten canlı bir bölgede iner.
+
 **Burada pinlenen bir dizi vardı (#56) ve kaldırıldı.** O biçim bölümü bir viewport'a sabitleyip
 prensipleri scroll'la değiştiriyordu. Kusuru yapısaldı, ayarla düzelmiyordu: **manifestoyu ekrandan
 atıyordu.** Geriye bir viewport dolusu boşlukta tek bir cümle kalıyordu — bölümün boş görünmesinin
@@ -554,7 +574,8 @@ aynı sınıf hatadır.
 | Mobil menü açılış/kapanış | 200ms          | `opacity` + `transform: translateY`        |
 | Anchor scroll             | —              | `scroll-behavior: smooth` (CSS)            |
 | Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
-| Prensip dizisi (`lg`)     | scroll'a bağlı | `opacity` + `transform: translateY(12px)`  |
+| Prensip yazımı            | ~28ms/harf     | daktilo — geçiş **yazmanın kendisi**       |
+| Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer      |
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
 hover'a bağlanan bir detayı klavye kullanıcısı hiç görmez, yani detay olmaktan çıkıp fare
@@ -591,8 +612,13 @@ komşu kartlar kaymıyor.
 > listesi ve testi de onu okur; `transform` bu kartta `none` kalır.
 
 **Daktilo efekti kalıcı** (#57). Gerçek portrelerle bakıldı ve benimsendi; deneme dönemi kapandı.
-Tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`) ve şu koşulları karşıladığı için
-kalıyor:
+Artık **iki yerde** kullanılıyor: ekip biyografisi (`components/sections/team/BioTypewriter.tsx`,
+hover'da) ve prensip destesi (`components/sections/about/PrincipleDeck.tsx` içindeki
+`TypedPrinciple`, prensip aktif olunca). **Gizleme kuralı tek**, `app/globals.css`'te — ikinci bir
+kural yazmak aynı olguyu iki yerde yaşatmak olurdu ve ayrıldıklarında hiçbir şey patlamaz, yalnızca
+biri sessizce yazmayı bırakır. Hız ikisinde farklı ve bilerek: biyografi Body S'te küçük bir metin
+ve hover'da bir kez yazılıyor (~12ms/harf), prensip Display ölçüsünde bir cümle ve yedi saniyede bir
+kendiliğinden yazılıyor (~28ms/harf). Efekt şu koşulları karşıladığı için kalıyor:
 
 - Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel
   **+0.3 KiB** (132.3 → 132.6 KiB).

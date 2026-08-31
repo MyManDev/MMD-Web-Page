@@ -477,43 +477,45 @@ o zaman eklenir.
 
 Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 
-| Konu                   | Karar                                                                     | Nerede |
-| ---------------------- | ------------------------------------------------------------------------- | ------ |
-| Yığın vs tek proje     | V1'de tek proje bloğu, mimari çok-projeli                                 | §3     |
-| Placeholder proje      | Yayınlanmaz                                                               | §3     |
-| Font                   | IBM Plex Sans + Mono; **display rolü de mono** (bayt farkı yok)           | §4.2   |
-| Sayfa genişliği        | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                    | §4.3   |
-| Bölüm dikey boşluğu    | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı   | §4.3   |
-| İmza öğe               | Dürüst sayı satırı; sayı `0` — ML models promoted to production           | §4.6   |
-| İçerik formatı         | TS + Zod, MDX yok                                                         | §5     |
-| Render                 | Tamamen statik export                                                     | §6     |
-| Styling                | Tailwind v4                                                               | §6     |
-| Lint                   | ESLint + Prettier                                                         | §6     |
-| Analytics              | Yok                                                                       | §6     |
-| Domain                 | `mymandev.com` kanonik, wordmark `MyManDev`                               | §7     |
-| Hosting                | Cloudflare Pages                                                          | §7     |
-| Lighthouse             | Raporlanır, kapı değil                                                    | §8     |
-| axe taraması           | `prefers-reduced-motion` altında, sayfa duragan halde                     | §8     |
-| Lighthouse ölçümü      | Üç koşunun medyanı, aralığıyla birlikte                                   | §8     |
-| Daktilo efekti         | Kalıcı; `TeamCard` biyografisi harf harf yazılıyor                        | §6     |
-| Bölüm numaraları       | Kaldırıldı; her bölüm kendi başlığını taşır                               | §3     |
-| Component render testi | V1'de yok                                                                 | §8     |
-| Payload ölçümü         | Sayfa başına first-load; `nomodule` script'leri hariç                     | §8     |
-| Toolchain sürümleri    | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor     | §6     |
-| İçerik dosyaları V1'de | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                       | §5     |
-| Bölüm sırası           | 03 Who we are (kolektif) → 04 Team (kişiler); genelden tekile             | §2     |
-| Marka rengi            | Logo `#0D9488`; accent `#14B8A6` — logo rengi kontrast kapısını düşürüyor | §4.1   |
-| İçerik genişliği       | 1180px → 1320px; 1440'lık ekranda kenarlar 130'ar pikselden 60'a iniyor   | §4.3   |
-| Görsel yüzeyi          | `next/image` değil düz `<img>` + elle `srcset`; ölçülmüş 5.5 KiB          | §6     |
-| Görsel pipeline        | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor       | §6     |
-| Etkileşim dili         | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor              | §4.4   |
-| Hareket sistemi        | Saf CSS `animation-timeline`; 0 KiB JS, motion kütüphanesi yok            | §4.4   |
-| Tip ölçeği             | Bir basamak büyütüldü; bölüm başlıkları da **Display XL**                 | §4.2   |
-| Navbar zemini          | Ayrı bar rengi yok — blur + tint; desteklenmiyorsa **dolu** zemine düşer  | §4.1   |
-| Hero sağ kolonu        | Wordmark değil **marka amblemi**; zemini ayrılmış PNG, rengi token'dan    | §4.1   |
-| Proje açıklaması       | Şemada **zorunlu** alan; tek satırla proje yayınlanmaz                    | §5     |
-| Logo SVG               | Vektör kaynağı yok; PNG'den türetildi, sapması ölçülü (0.098px)           | §6     |
-| OG kartı               | Siteden üretiliyor — renk ve font ikinci kez yazılmıyor                   | §6     |
-| Yayın                  | Pages projesi `mymandev`; `main` → `mymandev.com`, preview `*.pages.dev`  | §7     |
-| `www` yönlendirmesi    | Zone seviyesinde Redirect Rule; Pages `_redirects` hostname'e bakmaz      | §7     |
-| Query korunumu         | Şablon wildcard'ı query'yi taşıyor — `Preserve query string` **kapalı**   | §7     |
+| Konu                    | Karar                                                                     | Nerede |
+| ----------------------- | ------------------------------------------------------------------------- | ------ |
+| Yığın vs tek proje      | V1'de tek proje bloğu, mimari çok-projeli                                 | §3     |
+| Placeholder proje       | Yayınlanmaz                                                               | §3     |
+| Font                    | IBM Plex Sans + Mono; **display rolü de mono** (bayt farkı yok)           | §4.2   |
+| Sayfa genişliği         | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                    | §4.3   |
+| Bölüm dikey boşluğu     | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı   | §4.3   |
+| İmza öğe                | Dürüst sayı satırı; sayı `0` — ML models promoted to production           | §4.6   |
+| İçerik formatı          | TS + Zod, MDX yok                                                         | §5     |
+| Render                  | Tamamen statik export                                                     | §6     |
+| Styling                 | Tailwind v4                                                               | §6     |
+| Lint                    | ESLint + Prettier                                                         | §6     |
+| Analytics               | Yok                                                                       | §6     |
+| Domain                  | `mymandev.com` kanonik, wordmark `MyManDev`                               | §7     |
+| Hosting                 | Cloudflare Pages                                                          | §7     |
+| Lighthouse              | Raporlanır, kapı değil                                                    | §8     |
+| axe taraması            | `prefers-reduced-motion` altında, sayfa duragan halde                     | §8     |
+| Lighthouse ölçümü       | Üç koşunun medyanı, aralığıyla birlikte                                   | §8     |
+| Daktilo efekti          | Kalıcı; `TeamCard` biyografisi harf harf yazılıyor                        | §6     |
+| Bölüm numaraları        | Kaldırıldı; her bölüm kendi başlığını taşır                               | §3     |
+| Component render testi  | V1'de yok                                                                 | §8     |
+| Payload ölçümü          | Sayfa başına first-load; `nomodule` script'leri hariç                     | §8     |
+| Toolchain sürümleri     | TypeScript 6.0.3, ESLint 9.39.5 — üst sürümler lint zincirini kırıyor     | §6     |
+| İçerik dosyaları V1'de  | Boş dizi; gerçek veri gelene kadar şema gevşetilmez                       | §5     |
+| Bölüm sırası            | 03 Who we are (kolektif) → 04 Team (kişiler); genelden tekile             | §2     |
+| Marka rengi             | Logo `#0D9488`; accent `#14B8A6` — logo rengi kontrast kapısını düşürüyor | §4.1   |
+| İçerik genişliği        | 1180px → 1320px; 1440'lık ekranda kenarlar 130'ar pikselden 60'a iniyor   | §4.3   |
+| Görsel yüzeyi           | `next/image` değil düz `<img>` + elle `srcset`; ölçülmüş 5.5 KiB          | §6     |
+| Görsel pipeline         | `sharp` yok; `optimize-images.mjs` Playwright Chromium ile kodluyor       | §6     |
+| Etkileşim dili          | Zaffiro referansı benimsendi; renk ve yazı ailesi değişmiyor              | §4.4   |
+| Hareket sistemi         | Saf CSS `animation-timeline`; 0 KiB JS, motion kütüphanesi yok            | §4.4   |
+| Tip ölçeği              | Bir basamak büyütüldü; bölüm başlıkları da **Display XL**                 | §4.2   |
+| Navbar zemini           | Ayrı bar rengi yok — blur + tint; desteklenmiyorsa **dolu** zemine düşer  | §4.1   |
+| Hero sağ kolonu         | Wordmark değil **marka amblemi**; zemini ayrılmış PNG, rengi token'dan    | §4.1   |
+| Proje açıklaması        | Şemada **zorunlu** alan; tek satırla proje yayınlanmaz                    | §5     |
+| Logo SVG                | Vektör kaynağı yok; PNG'den türetildi, sapması ölçülü (0.098px)           | §6     |
+| OG kartı                | Siteden üretiliyor — renk ve font ikinci kez yazılmıyor                   | §6     |
+| Yayın                   | Pages projesi `mymandev`; `main` → `mymandev.com`, preview `*.pages.dev`  | §7     |
+| `www` yönlendirmesi     | Zone seviyesinde Redirect Rule; Pages `_redirects` hostname'e bakmaz      | §7     |
+| Query korunumu          | Şablon wildcard'ı query'yi taşıyor — `Preserve query string` **kapalı**   | §7     |
+| Prensip otomatik geçişi | 7s; etkileşimde duraklar, bırakınca sürer — kalıcı durdurma yok           | §4.4   |
+| Prensip geçişi          | Giriş animasyonu değil **daktilo**; gizleme kuralı tek yerde              | §4.4   |
