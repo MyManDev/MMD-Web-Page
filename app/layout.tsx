@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { RevealOnView } from "@/components/ui";
 import { site } from "@/content";
 import "./tokens.css";
 import "./globals.css";
@@ -100,6 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
+        <RevealOnView />
       </body>
     </html>
   );

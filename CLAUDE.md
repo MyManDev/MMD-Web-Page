@@ -67,8 +67,11 @@ Bölge A: İbrahim. Bölge B: Tunay. Detay ve paylaşılan yüzey listesi:
    Tailwind token sınıfları kullanılır.
 2. **Büyük neon glow yok.** Yeşil accent: CTA, aktif nav, ikon, ince border, mikro highlight.
    Ekran başına tek yeşil odak.
-3. **Scroll listener yazma.** Yığın ve sticky davranış `position: sticky` + z-index ile;
-   `IntersectionObserver` yalnızca aktif nav linki için, o da tek yerde.
+3. **Scroll listener yazma.** Yığın ve sticky davranış `position: sticky` + z-index ile.
+   `IntersectionObserver` **iki** yerde: aktif nav linki, ve metin bloklarının ekrana girince
+   belirmesi (`components/ui/RevealOnView.tsx`). Her ikisi de tek bir dosyada tanımlı ve hiçbiri
+   scroll listener değil. Üçüncüsü için sor — bu iki kullanımın gerekçesi
+   [`docs/architecture.md`](docs/architecture.md) §4.4'te yazılı.
 4. **Yeni bağımlılık eklemeden önce sor.** Gerekçesi yazılı olmayan paket eklenmez.
 5. **Marka metni, proje açıklaması, ekip biyografisi veya sayı uydurma.** Bunlar paylaşılan karar
    alanı. Eksikse boş bırak ve sor. Uydurulmuş bir metin, hatadan kötüdür; çünkü makul görünür.

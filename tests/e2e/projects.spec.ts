@@ -157,85 +157,96 @@ test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
 });
 
 /**
- * Bolum girisi. design-spec.md §6 ve §6.1
+ * Metin girisi. design-spec.md §6 ve §6.1
  *
- * Hareketin kendisi olculmuyor - hangi karede oldugu scroll'a bagli ve testte
- * kirilgan olurdu. Olculen sey SOZLESME: zaman cizelgesi scroll'a bagli mi, ve
- * hareket calismadigi her durumda icerik GORUNUR mu.
+ * TETIKLEYICI `IntersectionObserver` ve bu bir kural degisikligiydi
+ * (CLAUDE.md kural 3 genisletildi). Once `animation-timeline: view()` ile
+ * yazildi: o hareket scroll KONUMUNA bagli oldugu icin scroll durunca donuyor
+ * ve "yazi geldi" hissi vermiyordu.
+ *
+ * Hareketin kendisi olculmuyor - hangi karede oldugu kirilgan olurdu. Olculen
+ * sey SOZLESME: isaret konuyor mu, bir kez mi oynuyor, ve hareket
+ * calismadigi her durumda icerik GORUNUR mu.
  */
-test.describe("bolum girisi", () => {
+test.describe("metin girisi", () => {
   const REVEAL = `${SECTION} .reveal-on-enter`;
 
-  /**
-   * Giris artik BOLUM SARMALAYICISINDA DEGIL, metin bloklarinin kendisinde.
-   * Once tek bir sarmalayici vardi ve bolumun tamami birlikte soluyordu; istek
-   * her yazinin kendi girisini yapmasi. Bu yuzden sayi 1 degil COKLU olcuuluyor.
-   */
   test("her metin blogu ayri ayri, zeminin kendisi degil", async ({ page }) => {
-    const revealCount = await page.locator(REVEAL).count();
-    expect(revealCount).toBeGreaterThan(1);
+    expect(await page.locator(REVEAL).count()).toBeGreaterThan(1);
 
-    // Zemin animasyonun disinda kalmali: soldurulan sey bolumun kendisi degil.
     const sectionIsTarget = await page
       .locator(SECTION)
       .evaluate((el) => el.classList.contains("reveal-on-enter"));
     expect(sectionIsTarget).toBe(false);
   });
 
-  /**
-   * HEPSI olculuyor, ilki degil: bir tanesini kontrol etmek "sozlesme tutuyor"
-   * demek olmaz - sinifi elle eklerken biri atlanirsa o oge sessizce zamana
-   * bagli calisir veya hic calismaz.
-   */
-  test("zaman cizelgesi scroll'a bagli - sure degil", async ({ page }) => {
-    const timelines = await page
-      .locator(REVEAL)
-      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).animationTimeline));
-    expect(timelines.length).toBeGreaterThan(1);
-    for (const timeline of timelines) expect(timeline).toContain("view");
+  /** JS burada ve hareket isteniyorsa isaret `<html>`de. */
+  test("hareket isteniyorsa isaret konuyor", async ({ page }) => {
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.reveal !== undefined))
+      .toBe(true);
   });
 
   /**
-   * En onemli test: hareket calismadiginda icerik GORUNMEZ kalmamali.
-   * opacity: 0 ile baslayan bir animasyon, calismadigi her yerde bolumu
-   * silmis olur - ve bu sessizce olur.
+   * ASAGI INERKEN oynar. Once gizli, ekrana girince isaretlenir ve tam gorunur
+   * hale gelir.
    */
-  test("reduced-motion altinda icerik tam gorunur", async ({ page }) => {
+  test("ekrana girince beliriyor", async ({ page }) => {
+    const target = page.locator(`${SECTION} .reveal-on-enter`).last();
+    await expect
+      .poll(() => target.evaluate((el) => Number(getComputedStyle(el).opacity)))
+      .toBeLessThan(0.99);
+
+    await target.scrollIntoViewIfNeeded();
+
+    await expect
+      .poll(() => target.evaluate((el) => el.dataset.revealShown !== undefined))
+      .toBe(true);
+    await expect.poll(() => target.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+  });
+
+  /**
+   * YUKARI KAYDIRIRKEN OYNAMAZ - istek buydu, "cift tarafli olmasin". Observer
+   * isaretledigi ogeyi birakiyor (`unobserve`), yani ayni metin ikinci kez
+   * "gelirken" gorunmuyor.
+   */
+  test("yukari donunce tekrar oynamiyor", async ({ page }) => {
+    const target = page.locator(`${SECTION} .reveal-on-enter`).last();
+    await target.scrollIntoViewIfNeeded();
+    await expect.poll(() => target.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    await target.scrollIntoViewIfNeeded();
+
+    /* Bekleme YOK ve bu kasitli: tekrar oynasaydi bu anda opacity 1'in altinda
+       olurdu. Poll etmek hatayi gizlerdi. */
+    expect(await target.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+  });
+
+  /**
+   * EN ONEMLI TEST: hareket calismadiginda icerik GORUNMEZ kalmamali.
+   * reduced-motion altinda JS isareti hic koymuyor, yani gizleyen kural hic
+   * uygulanmiyor - bir animasyonun "sifir sureye inmesi" degil, hic
+   * baslamamasi.
+   */
+  test("reduced-motion altinda hicbir sey gizlenmiyor", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/");
+    await page.reload();
+    await page.waitForTimeout(400);
 
-    const reveal = page.locator(REVEAL);
-    await reveal.first().scrollIntoViewIfNeeded();
+    const state = await page.evaluate(() => {
+      const targets = [...document.querySelectorAll(".reveal-on-enter")];
+      return {
+        armed: document.documentElement.dataset.reveal !== undefined,
+        total: targets.length,
+        hidden: targets.filter((el) => Number(getComputedStyle(el).opacity) < 0.99).length,
+      };
+    });
 
-    const styles = await reveal.evaluateAll((nodes) =>
-      nodes.map((node) => {
-        const computed = getComputedStyle(node);
-        return {
-          name: computed.animationName,
-          opacity: computed.opacity,
-          transform: computed.transform,
-        };
-      }),
-    );
-
-    // Animasyon tamamen kaldirildi. `animation-timeline: none` ise oge'yi
-    // opacity: 0'da dondururdu - zaman cizelgesi yoksa `both` fill `from`
-    // karesini uyguluyor. Bu test o hatayi bir kez yakaladi; ondan duruyor.
-    expect(styles.length).toBeGreaterThan(1);
-    for (const style of styles) {
-      expect(style.name).toBe("none");
-      expect(Number(style.opacity)).toBe(1);
-      expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(style.transform);
-    }
-  });
-
-  test("scroll edildiginde icerik tam gorunur hale geliyor", async ({ page }) => {
-    const first = page.locator(REVEAL).first();
-    await first.scrollIntoViewIfNeeded();
-    // Bolum tamamen gecilene kadar scroll: animasyon araligi bitmis olmali.
-    await page.mouse.wheel(0, 1200);
-
-    await expect.poll(() => first.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+    expect(state.armed).toBe(false);
+    expect(state.total).toBeGreaterThan(1);
+    expect(state.hidden).toBe(0);
   });
 });
 
