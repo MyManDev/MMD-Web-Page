@@ -360,6 +360,14 @@ test.describe("prensip destesi - yazma", () => {
    */
   test("metin yazilirken de DOM'da tam duruyor", async ({ page }) => {
     const slot = activeSlot(page);
+    /*
+      `count()` BEKLEMEZ, assertion bekler. Ilk yazimda dogrudan sayiyordum ve
+      CI'da 0 dondu: yavas makinede hidrasyon bitmemisti, yani `.principle-slot`
+      henuz yoktu ve sunucunun bastigi duz liste duruyordu. Yerelde gecmesi
+      makinenin hizli olmasindandi - yani test yesil oldugu icin dogru degildi.
+    */
+    await expect(slot.locator("span")).not.toHaveCount(0);
+
     const pending = await slot.locator("span[data-pending]").count();
     const total = await slot.locator("span").count();
 
