@@ -33,7 +33,7 @@ export function Footer({ site }: { site: Site }) {
             Ikon 12px: footer'in mono satiri Button'inkinden kucuk.
           */}
           <a
-            href={site.repoUrl}
+            href={site.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
