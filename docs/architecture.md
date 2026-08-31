@@ -184,7 +184,7 @@ değil; aynı palet üstünde hareketin ve ayrıntının sıkılaşması.
 
 **Sayfa yüklenirken giriş animasyonu yasağı KALDIRILDI.** Karar sahibi kaldırdı ("her şeyde
 animasyon olabilir"). Kalkan şey yasak, **ölçü değil**: yükleme anındaki giriş de 150–250ms zarfında
-kalır ve `ease-out` kullanır — bugünkü uygulama 180ms süre, 60ms kademe. "Hareket taşıyıcı değil,
+kalır ve `ease-out` kullanır — bugünkü uygulama 240ms süre, 70ms kademe. "Hareket taşıyıcı değil,
 üstüne binen bir katman" ilkesi aynen geçerli: animasyon çalışmadığı her durumda içerik tam görünür
 olmak zorunda, ve bu bir kapıyla ölçülüyor (`tests/e2e/hero.spec.ts`).
 
@@ -536,3 +536,4 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Yükleme animasyonu      | Yasak **kaldırıldı**; zarf (150–250ms, `ease-out`) korundu                      | §4.4   |
 | Metin girişi            | Bölüm sarmalayıcısı değil **öğe seviyesi**; kademe `view()`'den, elle değil     | §4.4   |
 | Amblem gradyanı         | Conic, açısı **scroll'a bağlı**; sonsuz döngü yok, durakları `color-mix`        | §4.1   |
+| Hero zemini             | Sayfa renginden marka rengine `118deg` tint; glow degil, kapisi var             | §4.1   |

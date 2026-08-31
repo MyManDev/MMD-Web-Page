@@ -64,7 +64,7 @@ export function Hero({
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId}>
+    <section id={section.id} aria-labelledby={headingId} className="hero-field">
       <Container>
         <div className="grid grid-cols-1 items-center lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)]">
           <div className="flex flex-col gap-8 py-section lg:col-span-7 lg:gap-10 lg:py-section-lg">

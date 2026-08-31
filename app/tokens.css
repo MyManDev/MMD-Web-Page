@@ -175,8 +175,17 @@
      Tailwind'de bir utility uretiyor. Bu ikisi yalnizca globals.css'teki tek
      bir gradyanda kullaniliyor, yani uretilen siniflar kullanilmadan payload'a
      binerdi. Renk yine tek kaynakta (CLAUDE.md kural 1). */
-  --mark-sweep-deep: color-mix(in oklab, var(--color-mark) 72%, var(--color-page));
-  --mark-sweep-lift: color-mix(in oklab, var(--color-mark) 86%, var(--color-text));
+  /* ONCE %72 ve %86 IDI ve fark edilmiyordu - "gradyan yok" geri bildirimi
+     dogruydu, olculdu. Duraklar acildi: derin ton sayfa zeminine, acik ton
+     metin rengine dogru daha uzagi aliyor. Palet hala buyumuyor, ikisi de
+     `--color-mark`tan turetiliyor (§4.5). */
+  --mark-sweep-deep: color-mix(in oklab, var(--color-mark) 52%, var(--color-page));
+  --mark-sweep-lift: color-mix(in oklab, var(--color-mark) 74%, var(--color-text));
+
+  /* Hero zemininin uzak kosesi. Sayfa renginden marka rengine dogru KUCUK bir
+     kayma: buyuk bir alanda gorunur, ama bir parlama degil. Metnin durdugu
+     sol tarafta zemin saf `page` kaliyor. */
+  --hero-field-far: color-mix(in oklab, var(--color-page) 82%, var(--color-mark));
 }
 
 @media (width >= 1024px) {
