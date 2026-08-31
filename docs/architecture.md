@@ -518,4 +518,4 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | `www` yönlendirmesi     | Zone seviyesinde Redirect Rule; Pages `_redirects` hostname'e bakmaz      | §7     |
 | Query korunumu          | Şablon wildcard'ı query'yi taşıyor — `Preserve query string` **kapalı**   | §7     |
 | Prensip otomatik geçişi | 7s; etkileşimde duraklar, bırakınca sürer — kalıcı durdurma yok           | §4.4   |
-| Prensip geçişi          | Giriş animasyonu değil **daktilo**; gizleme kuralı tek yerde              | §4.4   |
+| Prensip geçişi          | **Kelime kelime belirme**, saf CSS; daktilo ve blok girişi bırakıldı      | §4.4   |

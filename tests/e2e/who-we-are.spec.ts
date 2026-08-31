@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { AUTO_ADVANCE_MS, TYPE_STEP_MS } from "@/components/sections/about/PrincipleDeck";
+import { AUTO_ADVANCE_MS } from "@/components/sections/about/PrincipleDeck";
 
 /**
  * Who we are bolumu. docs/design-spec.md §3.4 ve §5.1
@@ -327,68 +327,79 @@ test.describe("prensip destesi - otomatik gecis", () => {
 });
 
 /**
- * PRENSIP HARF HARF YAZILIYOR. design-spec.md §6
+ * PRENSIP KELIME KELIME BELIRIYOR. design-spec.md §6
  *
- * Sozlesme `BioTypewriter`in sozlesmesi: metin DOM'da HER ZAMAN tam, gizleme
- * `opacity` ile, ve gizleme kuralini tetikleyen `data-typing` isaretini
- * YALNIZCA JS koyuyor.
+ * Efekt saf CSS: kademeyi `--word` tasiyor, animasyonu
+ * `.principle-slot[data-active] > span` calistiriyor. Testler bu yuzden
+ * zamanlayici degil HESAPLANMIS DEGER olcuyor.
  *
- * Bekleme suresi `TYPE_STEP_MS`ten turetiliyor - testin o gunku sayiyi tekrar
- * yazmasi bir kusurdur.
+ * Beklenen sayilar TURETILIYOR: kelime sayisi metinden, kademe artisi
+ * hesaplanmis gecikmelerden. Hicbir yerde "520ms" veya "70ms" yazili degil -
+ * sure degistiginde test davranis bozulmadigi halde dusmemeli.
  */
-test.describe("prensip destesi - yazma", () => {
+test.describe("prensip destesi - kelime kelime belirme", () => {
   const activeSlot = (page: import("@playwright/test").Page) =>
     page.locator(`${SECTION} .principle-slot[data-active]`);
 
-  test("aktif prensip yazilirken isaret tasiyor ve sonunda tamamlaniyor", async ({ page }) => {
+  test("her kelime ayri bir oge ve kademesi artiyor", async ({ page }) => {
     const slot = activeSlot(page);
-    await expect(slot).toHaveAttribute("data-typing", "");
+    const words = slot.locator("span");
+    await expect(words).not.toHaveCount(0);
 
+    /* Kelime sayisi METINDEN turetiliyor: bosluklarla ayrilmis parca sayisi
+       kadar oge olmali. Sabit bir sayi yazmak metin degistiginde duserdi. */
     const text = (await slot.textContent()) ?? "";
-    expect(text.length).toBeGreaterThan(10);
+    const expected = text.trim().split(/\s+/).length;
+    await expect(words).toHaveCount(expected);
 
-    await expect(slot.locator("span[data-pending]")).toHaveCount(0, {
-      timeout: text.length * TYPE_STEP_MS * 3,
+    const delays = await words.evaluateAll((nodes) =>
+      nodes.map((node) => parseFloat(getComputedStyle(node).animationDelay) || 0),
+    );
+    expect(delays.length).toBeGreaterThan(2);
+    /* Kademe: her kelime oncekinden SONRA basliyor. Adim buyuklugu degil
+       SIRASI olculuyor - sure degisirse test hala dogru kalir. */
+    /* `reduce` ile, indeksle DEGIL: `noUncheckedIndexedAccess` altinda
+       `delays[i]` `number | undefined` ve tip kapisi hakli olarak reddediyor. */
+    delays.reduce((previous, current) => {
+      expect(current).toBeGreaterThan(previous);
+      return current;
     });
   });
 
   /**
-   * ERISILEBILIRLIK KAPISI: yazma sirasinda bile metin eksik degil. Gizleme
-   * `opacity` ile oldugu icin ogeler erisilebilirlik agacinda kaliyor - ekran
-   * okuyucu yarim cumle duymuyor. `display` veya `visibility` kullanilsaydi bu
-   * test duserdi.
+   * ERISILEBILIRLIK KAPISI: metin belirirken de eksik degil. Gizleme `opacity`
+   * ile oldugu icin kelimeler erisilebilirlik agacinda kaliyor - ekran okuyucu
+   * yarim cumle duymuyor. `display` veya `visibility` kullanilsaydi bu test
+   * duserdi.
    */
-  test("metin yazilirken de DOM'da tam duruyor", async ({ page }) => {
+  test("metin belirirken de DOM'da tam duruyor", async ({ page }) => {
     const slot = activeSlot(page);
-    /*
-      `count()` BEKLEMEZ, assertion bekler. Ilk yazimda dogrudan sayiyordum ve
-      CI'da 0 dondu: yavas makinede hidrasyon bitmemisti, yani `.principle-slot`
-      henuz yoktu ve sunucunun bastigi duz liste duruyordu. Yerelde gecmesi
-      makinenin hizli olmasindandi - yani test yesil oldugu icin dogru degildi.
-    */
     await expect(slot.locator("span")).not.toHaveCount(0);
 
-    const pending = await slot.locator("span[data-pending]").count();
-    const total = await slot.locator("span").count();
-
-    /* Bir sey henuz yazilmamis olabilir ya da yazma bitmis olabilir; iki
-       durumda da HARF SAYISI degismiyor - olculen sey bu. */
-    expect(total).toBeGreaterThan(10);
-    expect(pending).toBeLessThanOrEqual(total);
-    expect(((await slot.textContent()) ?? "").length).toBe(total);
+    /* Kelimelerin metni BIRLESTIRILINCE paragrafin tamamini vermeli - yani
+       hicbir kelime span'in disinda kalmamis ve hicbiri kaybolmamis. */
+    const joined = await slot
+      .locator("span")
+      .evaluateAll((nodes) => nodes.map((node) => node.textContent ?? "").join(""));
+    expect(joined).toBe(await slot.textContent());
+    expect(joined.trim().length).toBeGreaterThan(10);
   });
 
-  test("reduced-motion altinda hic yazilmiyor, butun harfler gorunur", async ({ page }) => {
+  test("reduced-motion altinda hicbir kelime animasyonu kalmiyor", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload();
 
     const slot = activeSlot(page);
-    await expect(slot).not.toHaveAttribute("data-typing", "");
-    await expect(slot.locator("span[data-pending]")).toHaveCount(0);
+    await expect(slot.locator("span")).not.toHaveCount(0);
+
+    const names = await slot
+      .locator("span")
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).animationName));
+    expect(new Set(names)).toEqual(new Set(["none"]));
   });
 
-  /** Giris animasyonu kaldirildi - gecis artik yazmanin kendisi. */
-  test("slot'ta giris animasyonu kalmadi", async ({ page }) => {
+  /** Hareket KELIMELERDE, blokta degil: paragrafin kendisi animasyonsuz. */
+  test("paragrafin kendisi animasyonsuz", async ({ page }) => {
     const name = await activeSlot(page).evaluate((el) => getComputedStyle(el).animationName);
     expect(name).toBe("none");
   });

@@ -304,12 +304,18 @@ burada olmayan bir kontrol demekti ve klavye turunu bir durak uzatırdı. Biline
 hover yok; tuşa dokunulduğunda odak orada kaldığı için duraklama yolu var, ama sayfayı yalnızca
 kaydırarak okuyan bir dokunmatik kullanıcısının yolu yok.
 
-**Geçiş, prensibin harf harf yazılmasıdır.** Önce blok birlikte kayıp soluyordu (240ms, sonra
-600ms); yazma gelince iki hareket birbiriyle yarıştı ve giriş animasyonu kaldırıldı. Sözleşme
-daktilo efektinin sözleşmesi (§6) ve **kural tek yerde**: metin DOM'da her zaman tam, gizleme
-`opacity` ile, ve gizleme kuralını tetikleyen işareti yalnızca JS koyar. `prefers-reduced-motion`
-açıkken hem yazma hem otomatik geçiş **hiç çalışmaz** — prensip anında yer değiştirir ve bütün
-harfler görünür başlar.
+**Geçiş, prensibin kelime kelime belirmesidir.** İki biçim denendi ve bırakıldı: bloğun tamamını
+birlikte kaydıran giriş animasyonu (240ms, sonra 600ms) bir geçiş değil sıçrama gibi okunuyordu,
+harf harf daktilo ise fazla sade okundu. Şimdi her kelime sırayla, hafif yükselerek ve netleşerek
+geliyor: 520ms süre, kelime başına 70ms kademe. On kelimelik en uzun prensipte son kelime 630ms'de
+başlıyor ve 1.15s'de bitiyor, yani 7 saniyelik aralığın belirgin şekilde altında.
+
+**Efekt saf CSS, sıfır JS.** Animasyonu tetikleyen şey bir zamanlayıcı değil, **selektörün
+eşleşmesi**: `data-active` bir slot'a geçtiği anda kural o slot'un kelimelerine uymaya başlıyor ve
+animasyon baştan çalışıyor. Daktilo için bir `useEffect`, bir zamanlayıcı ve bir `matchMedia`
+okuması gerekiyordu; hiçbiri kalmadı. `prefers-reduced-motion` da bedelsiz çözülüyor — evrensel blok
+`animation-name: none` uyguluyor ve keyframe yalnızca `from` tanımladığı için kelimeler tam görünür
+hâline dönüyor. Metin DOM'da her zaman tam, gizleme yalnızca `opacity` ile.
 
 **Canlı bölge otomatik geçişte susar.** `aria-live` her değişikliği duyurursa ekran okuyucu
 kullanıcısı yedi saniyede bir, istemediği hâlde sözünün kesildiğini yaşar. Otomatik ilerleme
@@ -562,20 +568,20 @@ nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklen
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
 aynı sınıf hatadır.
 
-| Etkileşim                 | Süre           | Özellik                                    |
-| ------------------------- | -------------- | ------------------------------------------ |
-| Button hover / active     | 150ms          | `background-color`, `border-color`         |
-| NavLink hover / focus     | 150ms          | `translate` — etiket rulosu (`roll`)       |
-| NavLink aktif geçişi      | 150ms          | `color`                                    |
-| Metin linki hover / focus | 150ms          | `scale` — alt çizgi soldan açılır (`rule`) |
-| Kart hover                | 200ms          | `background-color`                         |
-| `TeamCard` hover / focus  | 200ms          | `translate: 0 -10px`                       |
-| `TeamCard` biyografisi    | ~12ms/harf     | daktilo — aşağıdaki nota bakın             |
-| Mobil menü açılış/kapanış | 200ms          | `opacity` + `transform: translateY`        |
-| Anchor scroll             | —              | `scroll-behavior: smooth` (CSS)            |
-| Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`  |
-| Prensip yazımı            | ~28ms/harf     | daktilo — geçiş **yazmanın kendisi**       |
-| Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer      |
+| Etkileşim                 | Süre           | Özellik                                        |
+| ------------------------- | -------------- | ---------------------------------------------- |
+| Button hover / active     | 150ms          | `background-color`, `border-color`             |
+| NavLink hover / focus     | 150ms          | `translate` — etiket rulosu (`roll`)           |
+| NavLink aktif geçişi      | 150ms          | `color`                                        |
+| Metin linki hover / focus | 150ms          | `scale` — alt çizgi soldan açılır (`rule`)     |
+| Kart hover                | 200ms          | `background-color`                             |
+| `TeamCard` hover / focus  | 200ms          | `translate: 0 -10px`                           |
+| `TeamCard` biyografisi    | ~12ms/harf     | daktilo — aşağıdaki nota bakın                 |
+| Mobil menü açılış/kapanış | 200ms          | `opacity` + `transform: translateY`            |
+| Anchor scroll             | —              | `scroll-behavior: smooth` (CSS)                |
+| Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`      |
+| Prensip girişi            | 520ms + 70ms   | kelime kelime `opacity` + `translate` + `blur` |
+| Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer          |
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
 hover'a bağlanan bir detayı klavye kullanıcısı hiç görmez, yani detay olmaktan çıkıp fare
@@ -612,13 +618,9 @@ komşu kartlar kaymıyor.
 > listesi ve testi de onu okur; `transform` bu kartta `none` kalır.
 
 **Daktilo efekti kalıcı** (#57). Gerçek portrelerle bakıldı ve benimsendi; deneme dönemi kapandı.
-Artık **iki yerde** kullanılıyor: ekip biyografisi (`components/sections/team/BioTypewriter.tsx`,
-hover'da) ve prensip destesi (`components/sections/about/PrincipleDeck.tsx` içindeki
-`TypedPrinciple`, prensip aktif olunca). **Gizleme kuralı tek**, `app/globals.css`'te — ikinci bir
-kural yazmak aynı olguyu iki yerde yaşatmak olurdu ve ayrıldıklarında hiçbir şey patlamaz, yalnızca
-biri sessizce yazmayı bırakır. Hız ikisinde farklı ve bilerek: biyografi Body S'te küçük bir metin
-ve hover'da bir kez yazılıyor (~12ms/harf), prensip Display ölçüsünde bir cümle ve yedi saniyede bir
-kendiliğinden yazılıyor (~28ms/harf). Efekt şu koşulları karşıladığı için kalıyor:
+Tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`). Prensip destesi bir süre aynı
+kuralı kullandı; kelime kelime belirmeye geçince bıraktı ve kural tek kullanıcıda kaldı. Efekt şu
+koşulları karşıladığı için kalıyor:
 
 - Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel
   **+0.3 KiB** (132.3 → 132.6 KiB).

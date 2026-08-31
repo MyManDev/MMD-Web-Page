@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { type CSSProperties, useEffect, useState, useSyncExternalStore } from "react";
 
 /*
   Aralik DISA AKTARILIYOR cunku testin "o gunku sayiyi" tekrar yazmasi bir
@@ -8,17 +8,6 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
   edip bekleme suresini ondan hesapliyor.
 */
 export const AUTO_ADVANCE_MS = 7000;
-
-/*
-  Harf basina sure. `BioTypewriter`in 12ms'inden yavas ve bu bilerek: biyografi
-  Body S'te kucuk bir metin ve hover'da bir kez yaziliyor, prensip ise Display
-  olcusunde bir cumle ve yedi saniyede bir kendiliginden yaziliyor. Ayni hiz
-  ikisinde ayni sey demek degil.
-
-  En uzun prensip 61 karakter -> 1.71s. AUTO_ADVANCE_MS'in belirgin sekilde
-  altinda kalmasi sart: yazma bitmeden sonrakine gecerse cumle hic tamamlanmaz.
-*/
-export const TYPE_STEP_MS = 28;
 
 /**
  * Prensip destesi. design-spec.md §3.4
@@ -54,6 +43,9 @@ export const TYPE_STEP_MS = 28;
  * `prefers-reduced-motion` acikken otomatik gecis HIC calismiyor. Bu ayni
  * zamanda tiklayan E2E testlerini deterministik tutuyor: onlar zaten
  * reduced-motion altinda kosuyor, yani zamanlayici oraya hic girmiyor.
+ *
+ * GECIS KELIME KELIME BELIRME ve tamami CSS'te (`RevealedPrinciple`). Daktilo
+ * denendi ve fazla sade okundu; kaldirildi.
  *
  * CANLI BOLGE OTOMATIK GECISTE SUSUYOR. `aria-live="polite"` her degisikligi
  * duyurursa ekran okuyucu kullanicisi yedi saniyede bir, istemedigi halde
@@ -196,7 +188,7 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
       */}
       <div aria-live={announce ? "polite" : "off"} className="principle-stage">
         {principles.map((principle, slot) => (
-          <TypedPrinciple
+          <RevealedPrinciple
             key={principle}
             active={slot === index}
             className="principle-slot max-w-statement font-mono text-display-m font-medium text-balance lg:text-display-l-lg"
@@ -234,31 +226,30 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
 }
 
 /**
- * Aktif olan prensip harf harf yaziliyor.
+ * Prensip KELIME KELIME beliriyor. design-spec.md §6
  *
- * SOZLESME `BioTypewriter`den ODUNC ALINIYOR, KOPYALANMIYOR: gizlemeyi yapan
- * kural globals.css'te zaten var - `[data-typing] > span[data-pending]`. Ikinci
- * bir CSS kurali yazmak ayni olguyu iki yerde yasatmak olurdu.
+ * Once harf harf yaziliyordu (daktilo, ~28ms/harf) ve fazla sade okundu. Simdi
+ * her kelime sirayla, hafif yukselerek ve netleserek geliyor.
  *
- * Isaret sirasi ayni sekilde TERS: `data-typing` yalnizca JS koyuyor, yani JS
- * hic gelmezse veya reduced-motion aciksa gizleme kurali hic uygulanmaz ve
- * butun harfler gorunur kalir. Gizleyen taraf, gelmeyebilecek olan taraf.
+ * EFEKT SAF CSS, SIFIR JS. Kademeyi `--word` ozel ozelligi tasiyor ve
+ * animasyonu `.principle-slot[data-active] > span` kurali calistiriyor. Bu
+ * secim onemli: oge kurala UYMAYA BASLADIGI anda animasyon bastan basliyor,
+ * yani `data-active` her el degistirdiginde giris kendiliginden yeniden
+ * tetikleniyor. Daktiloda bunun icin bir zamanlayici, bir `useEffect` ve bir
+ * `matchMedia` okumasi gerekiyordu; hicbiri kalmadi.
  *
- * `hover: none` KONTROLU YOK - BioTypewriter'dakinin aksine. Orada yazma
- * hover'la basliyor, yani hover'i olmayan cihazda hic baslamazdi. Burada
- * tetikleyici aktif olmak; dokunmatikte de calismasi gerekiyor.
+ * `prefers-reduced-motion` da bedelsiz cozuluyor: evrensel blok
+ * `animation-name: none` uyguluyor ve keyframe yalnizca `from` tanimladigi
+ * icin kelimeler dinlenme haline - yani tam gorunur haline - donuyor.
  *
- * ADIM REACT DURUMU DEGIL, DOM YAZIMI. Sebep somut: `active` bir prop, yani
- * sifirlama effect govdesinde `setState` cagirmak olurdu ve
- * `react-hooks/set-state-in-effect` onu reddediyor. Isaretleri dogrudan yazmak
- * hem o kanca sorununu hem de "sifirlanmadan once tam metin bir kare gorunur"
- * yanip sonmesini birden cozuyor.
+ * ERISILEBILIRLIK: metin DOM'da her zaman TAM ve gizleme yalnizca `opacity`
+ * ile. Kelimeler erisilebilirlik agacinda kaliyor, canli bolge kelime kelime
+ * konusmuyor, ekran okuyucu yarim cumle duymuyor.
  *
- * ERISILEBILIRLIK: metin DOM'da her zaman TAM. Gizleme `opacity` ile - ogeler
- * erisilebilirlik agacinda kaliyor, yani canli bolge harf harf konusmuyor ve
- * ekran okuyucu yarim cumle duymuyor.
+ * Bosluk span'in ICINDE: disarida birakmak JSX'te bosluk kaybina acik ve
+ * satir sonu hesabini bozar. Icinde kalinca satir kirilmasi degismiyor.
  */
-function TypedPrinciple({
+function RevealedPrinciple({
   active,
   className,
   text,
@@ -267,51 +258,17 @@ function TypedPrinciple({
   className?: string;
   text: string;
 }) {
-  const ref = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    const paragraph = ref.current;
-    if (!paragraph) return;
-
-    const letters = Array.from(paragraph.querySelectorAll<HTMLSpanElement>("span"));
-    const revealUpTo = (count: number) => {
-      letters.forEach((letter, position) => {
-        if (position < count) letter.removeAttribute("data-pending");
-        else letter.setAttribute("data-pending", "");
-      });
-    };
-
-    /* Aktif degilse veya hareket istenmiyorsa: isareti kaldir, hepsini goster.
-       Ikinci durumda gizleme kurali zaten uygulanmaz, ama isaretin kalmasi
-       "yazilmis gibi" bir ara durum birakirdi. */
-    if (!active || matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      delete paragraph.dataset.typing;
-      revealUpTo(letters.length);
-      return;
-    }
-
-    paragraph.dataset.typing = "";
-    revealUpTo(0);
-
-    let written = 0;
-    const timer = setInterval(() => {
-      written += 1;
-      revealUpTo(written);
-      if (written >= letters.length) clearInterval(timer);
-    }, TYPE_STEP_MS);
-
-    return () => clearInterval(timer);
-  }, [active, text]);
+  const words = text.split(" ");
 
   return (
-    <p ref={ref} className={className} data-active={active ? "" : undefined}>
-      {Array.from(text).map((character, position) => (
+    <p className={className} data-active={active ? "" : undefined}>
+      {words.map((word, position) => (
         <span
           // Sabit bir dizinin sabit sirasi; index burada kararli bir key.
           key={position}
-          data-pending=""
+          style={{ "--word": position } as CSSProperties}
         >
-          {character}
+          {position < words.length - 1 ? `${word} ` : word}
         </span>
       ))}
     </p>

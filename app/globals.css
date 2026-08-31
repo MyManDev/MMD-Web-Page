@@ -238,15 +238,37 @@ a:focus-visible .roll-track {
   visibility: visible;
 }
 
-/* GIRIS ANIMASYONU KALDIRILDI. Once `principle-enter` vardi (240ms, sonra
-   600ms) ve blogun tamamini birlikte kaydirip soluyordu. Yazma efekti gelince
-   ikisi ayni anda calisir oldu: paragraf kayarken harfler de yaziliyordu, yani
-   iki hareket birbiriyle yarisiyordu. Gecis artik YAZMANIN KENDISI - prensip
-   harf harf kuruluyor (PrincipleDeck.tsx, `TypedPrinciple`).
+/* Prensip KELIME KELIME beliriyor. design-spec.md §6
 
-   Reduced-motion tarafinda kayip yok: evrensel blok `animation-name: none`
-   uyguladigi icin o animasyon zaten hic calismiyordu. Simdi ayni durumda
-   prensip aninda yer degistiriyor ve butun harfler gorunur basliyor. */
+   Iki bicim denendi ve birakildi: blogun tamamini birlikte kaydiran
+   `principle-enter` (240ms, sonra 600ms) bir gecis degil sicrama gibi
+   okunuyordu; harf harf daktilo ise fazla sade okundu. Simdi her kelime
+   sirayla, hafif yukselerek ve netleserek geliyor.
+
+   ANIMASYONU TETIKLEYEN SEY SELEKTORUN ESLESMESI, bir JS zamanlayicisi degil.
+   `data-active` bir slot'a gectigi anda bu kural o slot'un kelimelerine
+   UYMAYA BASLIYOR ve animasyon bastan calisiyor - yani giris her el
+   degisiminde kendiliginden yeniden tetikleniyor. Daktilo icin bir
+   `useEffect`, bir zamanlayici ve bir `matchMedia` okumasi gerekiyordu.
+
+   Yalnizca `from` tanimli ve bu onemli: reduced-motion evrensel blogu
+   `animation-name: none` uyguladiginda kelimeler dinlenme haline - yani tam
+   gorunur haline - donuyor. `to` yazilsaydi ayni blok onlari `from` karesinde
+   dondurur ve prensip HIC gorunmezdi. */
+@keyframes principle-word-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+    filter: blur(3px);
+  }
+}
+
+.principle-slot[data-active] > span {
+  animation: principle-word-in 520ms ease-out both;
+  /* Kademe: 10 kelimelik en uzun prensipte son kelime 630ms'de basliyor,
+     1.15s'de bitiyor. AUTO_ADVANCE_MS'in (7s) belirgin sekilde altinda. */
+  animation-delay: calc(var(--word) * 70ms);
+}
 
 /* Deste tuslari. Yesil YOK - §5.1 bu bolume accent kotasi vermiyor; tuslar
    ince border ve renk degisimiyle calisiyor. */
@@ -270,12 +292,11 @@ a:focus-visible .roll-track {
   border-color: var(--color-text-muted);
 }
 
-/* Daktilo efekti. design-spec.md §6
+/* Daktilo efekti - components/sections/team/BioTypewriter.tsx
+   design-spec.md §6
 
-   IKI YERDEN KULLANILIYOR ve kural bilerek tek: `BioTypewriter` (ekip
-   biyografisi, hover'da) ve `TypedPrinciple` (prensip destesi, aktif olunca).
-   Ikinci bir kural yazmak ayni olguyu iki yerde yasatmak olurdu; ayrildiklarinda
-   hicbir sey patlamaz, yalnizca biri sessizce yazmayi birakir.
+   Prensip destesi bir sure bu kurali da kullaniyordu; kelime kelime belirmeye
+   gecince birakti. Kural tek kullanicida kaldi.
 
    Gizleme burada, JS'te DEGIL. `data-typing` isaretini JS koyuyor; yani JS hic
    calismazsa bu kural hic uygulanmaz ve butun harfler gorunur kalir. Tersi
