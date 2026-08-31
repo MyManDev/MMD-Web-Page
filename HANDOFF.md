@@ -5,7 +5,7 @@
 
 **Tarih:** 2026-08-31
 **Yer:** ev
-**Aşama:** Faz 4. **Site yayında: https://mymandev.com.** #19 ve #54 kapandı; açık tek issue #20.
+**Aşama:** Faz 4. **Site yayında: https://mymandev.com.** #19 ve #54 kapandı; açık issue #20 ve #83.
 
 ## Dal ve çalışma ağacı
 
@@ -13,7 +13,7 @@
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 191 E2E** (23'ü viewport'a göre
   atlanıyor), payload **133.1 KiB / 150.0 KiB**, kalan pay 16.9 KiB
-- Açık PR: yalnızca bu devir PR'ı (merge edilince yok)
+- Açık PR: yok
 - `main`'e doğrudan push artık **kapalı** — #54 uygulandı, iş `feature/*` dallarında ve PR'dan geçer
 
 ## Yayın
@@ -35,18 +35,26 @@ Yayın günü gerçek domain üzerinde ölçülen sayılar:
 - `http://` → `https://` `301`; `robots.txt`, `sitemap.xml`, `logo.svg` → `200`
 - canonical `https://mymandev.com` · `og:image` `…/og.png` · `twitter:card` `summary_large_image`
 
-## Sıradaki tek iş
+## Sıradaki iş
 
-**#20 — yayın öncesi kontrol listesini koştur ve raporlanan eşikleri ölç.**
+**#83 — mobil LCP eşiği dört koşu üst üste düştü.** Sırada bu var, çünkü #20'nin Lighthouse
+maddesi buna bağlı: sayıyı kaydetmek ile eşiği tutmak aynı şey değil.
 
-Artık depodan yapılabilir; engelini #19 kaldırdı. Listenin **iki maddesi bu turda kapandı** ve
-sayıları issue'ya yazıldı: gerçek domainde 404, ve OG/metadata gerçek URL'de. Kalanlar:
+#83 üç adımı **sırayla** istiyor ve sıra önemli: (1) aynı sayfayı **gerçek domain** üzerinde ölç —
+CI `localhost:4173`'ü simüle throttling ile ölçüyor, (2) render-blocking CSS kalemini ölçerek
+uygula, (3) hâlâ tutmuyorsa §8'deki 2000 ms'i kanıtla revize et. §8 bu sayıları **rapor** olarak
+tanımlıyor, kapı olarak değil.
 
-- Lighthouse mobil Performance, LCP, CLS — **sayıyla** kaydedilecek (§8: üç koşunun medyanı,
-  aralığıyla birlikte; tek koşuya bakıp kovalamak yok)
+**#20 — yayın öncesi kontrol listesi.** Engelini #19 kaldırdı. Listenin **üç maddesi bu turda
+kapandı** ve sayıları issue'ya yazıldı: sert kapılar, gerçek domainde 404, OG/metadata gerçek
+URL'de. Kalanlar:
+
+- Lighthouse mobil Performance, LCP, CLS — **#83 kapanmadan işaretlenmez**
 - Klavye ile tüm sayfa gezilebiliyor, focus görünür
 - `prefers-reduced-motion` açıkken sayfa kullanılabilir
 - Live Demo ve GitHub linkleri açılıyor
+- Paylaşım kartının **büyük biçimde** göründüğü hâlâ gözle teyit edilmedi; `summary_large_image`
+  etiketi ve `og.png` gerçek URL'de doğru, ama ilk paylaşımda ekrana bakılması gerekiyor
 
 ## Bitmemiş iş
 
@@ -124,8 +132,22 @@ rule anyway`; `Create a new proxied DNS record` custom domain'in kaydıyla çak�
   farkı sessizce kırpıyor. `tests/portrait-aspect.test.ts` o aralığı tutuyor.
 - **Lighthouse'un Accessibility skoru bizim kapımızdan düşük çıkabilir** (ölçüldü: 96). Kusur değil,
   ölçüm anı. `architecture.md` §8'de yazılı.
-- **LCP'nin genliği eşiğin kendisinden büyük.** Gerçek CI verisi: medyan 2438ms, aralık 1761–3253ms,
-  genlik **1491ms**; eşik 2000ms. Tek koşuya bakarak kovalamak ölçmeden düzeltmek olur.
+- **LCP eşiği tek koşunun şansı değil, kalıcı bir sapma** (#83). `main` üzerindeki dört koşunun
+  medyanları: **2382 / 2839 / 3063 / 3063 ms**, eşik 2000 ms. Eşiği tutan tek bir medyan yok. Genlik
+  bu turda daraldı (329–427 ms, önceki ölçümde 1491 ms) ama medyan yukarı kaydı — yani genliğe
+  bakıp "gürültüdür" demek artık geçerli değil.
+- **Performance skoru için aynı şey geçerli DEĞİL:** 94 / 98 / 95 / 94. İki kez üst üste düşmüyor,
+  aradaki koşular eşiği tutuyor. Salınan bir skoru kovalamak ölçmeden düzeltmek olur; #83 bu yüzden
+  yalnızca LCP için açıldı.
+- **Lighthouse'un LCP sayısı simülasyondur, gözlem değil.** Artifact'ten okundu:
+  `throttlingMethod: "simulate"`, istek gecikmesi **562 ms**, CPU **4×**. Aynı koşuda **gözlenen**
+  alt bölümler TTFB 5 ms + element render delay 103 ms. Yani 3063 ms'in içinde gerçek render 108 ms.
+  Tek somut kalem (render-blocking CSS, 7 691 B, iddia edilen kazanç 550 ms) tamamen alınsa bile
+  ~2500 ms kalıyor — mikro-optimizasyonla 2000 ms'e inilmiyor.
+- **Lighthouse skorları job log'unda, artifact'in içinde değil.** `scripts/lighthouse-summary.mjs`
+  özeti `gh run view <id> --log` ile okunuyor; artifact yalnızca ayrıntı için gerekiyor
+  (`gh run download <id> -n lighthouse-report`). Ve dikkat: Windows'ta Node, kabuğun `/tmp` yolunu
+  aynı yere çözmüyor — indirilen dosyayı `node`'a verirken yol `cygpath -m` ile çevrilmeli.
 - **`.next` önbelleği font ölçümünü yalanlıyor.** Doğru sayılar ancak `rm -rf .next` sonrası çıktı.
 - **`pnpm preview` bir sunucudur, biten bir iş değil.** Arka planda başlatılıp durdurulmazsa
   birikiyor. Ölçüm scriptleri kendi sunucusunu açıp kapatmalı. `pkill -f "serve out"` eşleşmiyor —
