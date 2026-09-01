@@ -1,4 +1,3 @@
-import { Contact } from "@/components/sections/contact";
 import { Footer } from "@/components/sections/footer";
 import { Hero } from "@/components/sections/hero";
 import { Nav } from "@/components/sections/nav";
@@ -9,7 +8,11 @@ import { projects, site, team } from "@/content";
 
 /**
  * Bolumler Faz 3'te tek tek geliyor. Faz 3 bu bolumle kapaniyor: Navigation,
- * Hero, Projects, Who we are, Team, Contact ve Footer.
+ * Hero, Projects, Who we are, Team ve Footer.
+ *
+ * CONTACT BIR BOLUM DEGIL. Bir sure oyleydi ve kaldirildi: tek bir adres icin
+ * kendi basligi olan bir bolum fazla agirdi. Iletisim artik bir OLANAK - nav'da
+ * bir aksiyon ve footer'da adresin kendisi.
  *
  * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
  * yalnizca tek sayfada anlamli, 404'te degil.
@@ -24,7 +27,6 @@ export default function Home() {
   const projectsSection = site.nav.find((item) => item.id === "projects");
   const whoWeAreSection = site.nav.find((item) => item.id === "who-we-are");
   const teamSection = site.nav.find((item) => item.id === "team");
-  const contactSection = site.nav.find((item) => item.id === "contact");
 
   return (
     <>
@@ -46,8 +48,6 @@ export default function Home() {
         {whoWeAreSection ? <WhoWeAre section={whoWeAreSection} whoWeAre={site.whoWeAre} /> : null}
 
         {teamSection && team.length > 0 ? <Team section={teamSection} members={team} /> : null}
-
-        {contactSection ? <Contact section={contactSection} email={site.email} /> : null}
       </main>
       <Footer site={site} />
     </>

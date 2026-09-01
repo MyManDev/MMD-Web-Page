@@ -16,6 +16,7 @@ export function MobileMenu({
   id,
   open,
   items,
+  email,
   githubUrl,
   activeId,
   onClose,
@@ -23,6 +24,7 @@ export function MobileMenu({
   id: string;
   open: boolean;
   items: Site["nav"];
+  email: string;
   githubUrl: string;
   activeId: string | null;
   onClose: () => void;
@@ -111,7 +113,12 @@ export function MobileMenu({
           </li>
         ))}
       </ul>
-      <div className="mt-8">
+      {/* Masaustu nav ile ayni iki aksiyon: menu bir kisayol degil, ayni
+          olanaklarin dar ekrandaki hali. */}
+      <div className="mt-8 flex flex-col items-start gap-3">
+        <Button href={`mailto:${email}`} variant="ghost">
+          Contact
+        </Button>
         <Button href={githubUrl} variant="ghost" external>
           GitHub
         </Button>

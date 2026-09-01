@@ -49,6 +49,5 @@ export const site: Site = {
     { id: "projects", label: "Projects" },
     { id: "who-we-are", label: "Who We Are" },
     { id: "team", label: "Team" },
-    { id: "contact", label: "Contact" },
   ],
 };

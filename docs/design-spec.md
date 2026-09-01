@@ -105,14 +105,28 @@ Hiçbir bölüm component'i `content/` dosyalarını doğrudan okumaz; veriyi pr
 Sticky, sayfanın en üstünde, `position: sticky; top: 0`. **Scroll listener yok**
 (`CLAUDE.md` kural 3).
 
-|           | Mobil               | `≥ lg`                                         |
-| --------- | ------------------- | ---------------------------------------------- |
-| Yükseklik | 72px                | 88px                                           |
-| Sol       | wordmark `MyManDev` | wordmark                                       |
-| Orta      | —                   | dört nav linki, pill radius                    |
-| Sağ       | menü düğmesi        | GitHub aksiyonu (`ghost` Button, ikon + metin) |
-| Zemin     | blur + hafif tint   | blur + hafif tint                              |
-| Alt kenar | **yok**             | **yok**                                        |
+|           | Mobil               | `≥ lg`                                          |
+| --------- | ------------------- | ----------------------------------------------- |
+| Yükseklik | 72px                | 88px                                            |
+| Sol       | wordmark `MyManDev` | wordmark                                        |
+| Orta      | —                   | dört nav linki, pill radius                     |
+| Sağ       | menü düğmesi        | Contact + GitHub aksiyonları (ikisi de `ghost`) |
+| Zemin     | blur + hafif tint   | blur + hafif tint                               |
+| Alt kenar | **yok**             | **yok**                                         |
+
+**Sağda iki aksiyon var ve ikisi de `ghost`.** §5.1 Navigation'a tek yeşil odak veriyor ve o aktif
+nav linki — aksiyonların hiçbiri accent taşımıyor.
+
+`Contact` bir `mailto` ve `external` **değil**: o bayrak yeni sekme açıp dış link ikonu koyuyor, ama
+bir `mailto` yeni sekmede açılacak bir sayfa değil, posta istemcisine devrediyor. İkon orada bilgi
+katmaz, **yanlış söyler**.
+
+Etiket kısa (`Contact`), **tam adres footer'da** (§3.6). Ölçü: `lg` eşiği 1024px ve orada kap 960px,
+içerik 716px — 244px pay kalıyor, yani iki aksiyon sığıyor. Tam adresi buraya yazmak o payı
+tüketirdi.
+
+**Contact bir bölüm değil.** Bir süre öyleydi ve kaldırıldı: tek bir adres için kendi başlığı olan
+bir bölüm fazla ağırdı. Ziyaretçinin iletişim aradığı yer nav, adresi okuduğu yer footer.
 
 **Ayrı bir bar rengi yok** ve bu bir karar değişikliği. Burada bir zamanlar şu yazıyordu: "Zemin
 saydam değil… `backdrop-filter` mobilde bedava değil, düz `surface` zemin seçildi." Sonuç, sayfa
@@ -516,42 +530,6 @@ saklanmaz, çünkü ekran okuyucu onu okuyabilmeli.
   şemaya `photo` alanı **zorunlu** olarak eklenir, yani fotoğrafsız bir kişi build'i düşürür.
   Görseller `scripts/optimize-images.mjs` hattından geçer (`architecture.md` §6).
 
-### 3.7 Contact — Bölge B
-
-**Neden var:** ölçüldü, sitede hiçbir iletişim yolu yoktu. Nav'da ve footer'da yalnızca GitHub
-duruyordu, yani işi beğenen bir ziyaretçinin gidebileceği tek yer bir kod deposuydu. "Her projeyi
-ürettiği sayılarla yayınlıyoruz" diyen bir kolektifin kapısının olmaması en büyük işlevsel boşluktu.
-
-|      | Mobil            | `≥ lg`           |
-| ---- | ---------------- | ---------------- |
-| Yapı | başlık + aksiyon | başlık + aksiyon |
-
-**Bölüm tam ekran değil.** İçinde bir başlık ve bir adres var; bir ekranı tek bir adresle doldurmak
-boşluğu tasarım gibi göstermek olurdu. Üst kenarında diğer bölümlerle aynı `1px` çizgi.
-
-**Form yok.** Site tamamen statik (`architecture.md` §6); bir form backend, bir uç nokta ve spam
-koruması ister. `mailto` aynı işi sıfır altyapıyla yapıyor.
-
-**Adres aksiyonun etiketi:** ziyaretçi tıklamadan da adresi görüyor ve kopyalayabiliyor. "Send us an
-email" gibi bir etiket adresi saklar ve tıklamayı zorunlu kılardı.
-
-**`external` değil.** `Button`ın dış link biçimi yeni sekme açıp ikon koyuyor; bir `mailto` yeni
-sekmede açılacak bir sayfa değil, posta istemcisine devrediyor. İkon orada bilgi katmaz, **yanlış
-söyler**.
-
-**Düz `mailto`, obfuscation yok — ve gizlemek yerine ATILABILIR ADRES.** Herkese açık bir sayfada
-yazılı bir adres taranır. Cloudflare'in Email Address Obfuscation toggle'ı adresi JS ile geri koyuyor
-ve JS gelmezse `[email protected]` gösteriyor — yani iletişim yolunu JS'e bağımlı yapıyor, ve bu
-deponun ilkesine ters (gizleyen taraf, gelmeyebilecek olan taraf olmalı).
-
-Bunun yerine yayınlanan adres bir **takma ad**: `team@mymandev.com`, Cloudflare Email Routing ile
-kişisel gelen kutusuna yönleniyor. Taranıp spam gelirse takma ad saniyeler içinde kapatılıp
-değiştirilir ve gelen kutusu hiç değişmez. Tarama böylece **önlenmesi gereken** bir şey olmaktan
-çıkıp **geri alınabilen** bir şey oluyor.
-
-**Cümle uydurulmadı** (`CLAUDE.md` kural 5). Başlık `content/site.ts`teki nav kaydından geliyor. Bir
-cümle isteniyorsa onu karar sahibi yazar.
-
 ### 3.6 Footer — Bölge B
 
 Navbar'ın aynası: `surface` zemin, üstte 1px `border`.
@@ -560,8 +538,13 @@ Navbar'ın aynası: `surface` zemin, üstte 1px `border`.
 | ---- | ---------------- | ----------------------------- |
 | Yapı | tek kolon, dikey | wordmark solda, linkler sağda |
 
-İçerik: wordmark, **tagline**, telif satırı, GitHub linki, ve ayrı bir satırda **kapanış cümlesi**.
-Tamamı mono rolü. Sosyal ikon duvarı yok.
+İçerik: wordmark, **tagline**, telif satırı, GitHub linki, **iletişim satırı** ve ayrı bir satırda
+**kapanış cümlesi**. Tamamı mono rolü. Sosyal ikon duvarı yok.
+
+**İletişim satırı adresin okunduğu yer:** `CONTACT team@mymandev.com`. Nav'daki aksiyonun etiketi
+kısa; tam adres burada yazılı, yani ziyaretçi tıklamadan da görüyor ve kopyalayabiliyor. Etiket ve
+adres **aynı satırda** — "CONTACT" tek başına bir başlık olsaydı footer'da ikinci bir hiyerarşi
+katmanı açardı.
 
 İki cümle de **marka metni** ve ikisini karar sahibi yazdı (`CLAUDE.md` kural 5).
 `content/site.ts`te `footer.tagline` ("Built by friends.") ve `footer.closing`
@@ -664,7 +647,6 @@ Component'te literal renk yok (`CLAUDE.md` kural 1).
 | Projects   | Live Demo `primary` zemini      | başlık, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu  |
 | Who we are | yok                             | başlık, manifesto, liste madde işaretleri                          |
 | Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                              |
-| Contact    | adres aksiyonunun zemini        | başlık                                                             |
 | Footer     | yok                             | wordmark, linkler, telif                                           |
 
 **Hero amblemi bu okumayı gevşetti ve bu sessizce olmadı.** Amblem artık logonun kendi turkuazını

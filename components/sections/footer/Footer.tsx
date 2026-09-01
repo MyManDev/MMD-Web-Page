@@ -66,6 +66,24 @@ export function Footer({ site }: { site: Site }) {
           `border-t` YOK: footer'in kendi ust kenari zaten bir cizgi, ikincisi
           bandi ikiye bolerdi.
         */}
+        {/*
+          ADRESIN OKUNDUGU YER BURASI. Nav'daki aksiyonun etiketi kisa
+          (`Contact`); tam adres burada yazili, yani ziyaretci tiklamadan da
+          gorebiliyor ve kopyalayabiliyor.
+
+          Etiket ve adres AYNI satirda: "CONTACT" tek basina bir baslik olsaydi
+          footer'da ikinci bir hiyerarsi katmani acardi.
+        */}
+        <p className="reveal-on-enter flex flex-wrap items-center gap-2 font-mono text-mono uppercase">
+          <span className="text-text-muted">Contact</span>
+          <a
+            href={`mailto:${site.email}`}
+            className="text-text transition-colors duration-150 ease-out hover:text-text-muted"
+          >
+            <span className="rule">{site.email}</span>
+          </a>
+        </p>
+
         <p className="reveal-on-enter pb-8 font-mono text-mono text-text-muted uppercase">
           {site.footer.closing}
         </p>

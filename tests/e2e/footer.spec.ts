@@ -55,10 +55,32 @@ test("GitHub linki gorunur dis link ikonu tasiyor", async ({ page }) => {
   expect(iconColor).toBe(linkColor);
 });
 
-test("sosyal ikon duvari yok - tek dis link", async ({ page }) => {
-  // §3.6 bilincli bir daraltma: footer'da yalnizca GitHub var.
+test("sosyal ikon duvari yok", async ({ page }) => {
+  /*
+    SOZLESME "TEK LINK" DEGIL. Burada `toHaveCount(1)` yaziliydi ve iletisim
+    satiri eklenince dustu - davranis bozulmadigi halde. §3.6'nin dedigi sey
+    "sosyal ikon duvari yok": her link METIN tasir ve dis link yalnizca bir
+    tanedir.
+
+    Bir sayi yerine bunu olcmek, footer'a mesru bir link eklendiginde testin
+    dusmemesini ama BIR IKON DUVARI eklendiginde dusmesini sagliyor.
+  */
   const links = page.getByRole("contentinfo").getByRole("link");
-  await expect(links).toHaveCount(1);
+  const count = await links.count();
+  expect(count).toBeGreaterThan(0);
+
+  const shape = await links.evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      text: (node.textContent ?? "").trim(),
+      external: node.getAttribute("target") === "_blank",
+    })),
+  );
+
+  /* Her link metin tasiyor - ciplak ikon yok. */
+  for (const link of shape) expect(link.text.length).toBeGreaterThan(0);
+
+  /* Dis link tek: GitHub. `mailto` dis bir sayfa degil. */
+  expect(shape.filter((link) => link.external)).toHaveLength(1);
 });
 
 /**
@@ -132,7 +154,10 @@ test("GitHub linki hover'da alt cizgi aliyor", async ({ page }) => {
   */
   await page.emulateMedia({ reducedMotion: "reduce" });
 
-  const rule = page.locator("footer .rule");
+  /* GITHUB LINKININ ICINDEKI cizgi. Once `footer .rule` yaziliydi ve iletisim
+     adresi de bir `rule` tasidigi icin secici iki oge buldu. Daraltma seciciye
+     degil LINKE bagli: hangi linkin cizgisi olculdugu belli. */
+  const rule = page.locator('footer a[target="_blank"] .rule');
   await expect(rule).toHaveCount(1);
 
   // Cizgi yalnizca METNI kapsiyor, dis link ikonunu degil.
@@ -165,4 +190,21 @@ test("iki cumle icerikten geliyor", async ({ page }) => {
 
   await expect(footer).toContainText(site.footer.tagline);
   await expect(footer).toContainText(site.footer.closing);
+});
+
+/**
+ * ADRESIN OKUNDUGU YER. design-spec.md §3.6
+ *
+ * Nav'daki aksiyonun etiketi kisa (`Contact`); tam adres burada yazili, yani
+ * ziyaretci tiklamadan da gorebiliyor ve kopyalayabiliyor.
+ *
+ * Beklenen adres ICERIKTEN turetiliyor: iki yerde yasarsa ayrildiklarinda kimse
+ * fark etmez - kapi calisiyor gorunur, baska bir yere acar.
+ */
+test("iletisim adresi footer'da yazili ve mailto veriyor", async ({ page }) => {
+  const link = page.locator(`footer a[href="mailto:${site.email}"]`);
+
+  await expect(link).toHaveCount(1);
+  await expect(link).toHaveText(site.email);
+  await expect(page.locator("footer")).toContainText("Contact");
 });
