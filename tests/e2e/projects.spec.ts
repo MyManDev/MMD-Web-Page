@@ -336,6 +336,36 @@ test("eski imza sayisi sayfada kalmadi", async ({ page }) => {
   expect(text).not.toMatch(/ML models promoted/i);
 });
 
+/**
+ * SAYFA SONUNA KADAR KAYDIRILDIGINDA GIZLI HICBIR SEY KALMAZ.
+ *
+ * Bu testin varlik sebebi olculmus bir hata: gozlemciye `rootMargin:
+ * "0px 0px -12% 0px"` yaziliydi ve o negatif alt marj BELGENIN SON %12'SINDE
+ * bir olu bolge yaratiyordu - orada duran ogeler hic kesismiyor, isaret
+ * almiyor ve gizleyen kural sonsuza kadar uygulaniyordu. Canli sitede
+ * footer'in UC metin blogu da gorunmezdi.
+ *
+ * Test sayfanin TAMAMINI tariyor, tek bir bolumu degil: hata bolume ozel
+ * degildi, "en altta olmak"la ilgiliydi. Ve `poll` ediyor cunku gozlemci
+ * asenkron.
+ */
+test("sayfa sonuna kadar kaydirilinca gizli kalan metin yok", async ({ page }) => {
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            [...document.querySelectorAll(".reveal-on-enter")].filter(
+              (el) => Number(getComputedStyle(el).opacity) < 0.99,
+            ).length,
+        ),
+      { timeout: 5000 },
+    )
+    .toBe(0);
+});
+
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {
   const box = await page.locator(`${SECTION} img`).boundingBox();
   expect(box).not.toBeNull();
