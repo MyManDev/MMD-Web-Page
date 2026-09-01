@@ -38,6 +38,7 @@ export const site: Site = {
       "A claim is not a measurement.",
     ],
   },
+  email: "team@mymandev.com",
   footer: {
     tagline: "Built by friends.",
     closing: "Still building.",
@@ -48,5 +49,6 @@ export const site: Site = {
     { id: "projects", label: "Projects" },
     { id: "who-we-are", label: "Who We Are" },
     { id: "team", label: "Team" },
+    { id: "contact", label: "Contact" },
   ],
 };
