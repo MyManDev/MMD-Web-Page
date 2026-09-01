@@ -350,6 +350,22 @@ test("eski imza sayisi sayfada kalmadi", async ({ page }) => {
  * asenkron.
  */
 test("sayfa sonuna kadar kaydirilinca gizli kalan metin yok", async ({ page }) => {
+  /*
+    KADEMELI iniyor, tek hamlede atlamiyor - ve bu bir duzeltme. Ilk yazimda
+    dogrudan `scrollTo(bottom)` vardi ve test kararsizdi: bir hamlede atlamak
+    ARADA KALAN bolumleri atliyor, o ogeler hic kesismiyor ve gizli kaliyor.
+    Yani test bazen kendi olcum yontemi yuzunden dusuyordu, urun yuzunden degil.
+
+    Gercek kullanici da oyle inmiyor. Kademeli inmek hem daha durust hem de
+    kararli.
+  */
+  const step = await page.evaluate(() => Math.round(window.innerHeight * 0.6));
+  const total = await page.evaluate(() => document.documentElement.scrollHeight);
+
+  for (let y = 0; y <= total; y += step) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await page.waitForTimeout(90);
+  }
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
 
   await expect
