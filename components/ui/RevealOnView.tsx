@@ -86,10 +86,31 @@ export function RevealOnView() {
         });
       },
       {
-        /* Alt kenardan %12 içeride: öğe ekranın en altında değil, GORULEBILIR
-           bir yerde başlasın. */
-        rootMargin: "0px 0px -12% 0px",
-        threshold: 0.01,
+        /*
+          `rootMargin` SIFIR ve bu bir hata düzeltmesi. Önce `0px 0px -12% 0px`
+          yazıyordu: amaç öğenin ekranın en altında değil görülebilir bir yerde
+          başlaması. Sonuç bir ÖLÜ BÖLGE oldu.
+
+          Negatif bir alt marj kökü alttan kısıyor, yani BELGENIN SON %12'SINDEKI
+          hiçbir öğe hiç kesişmiyor - sayfa sonuna kadar kaydırılsa bile. O
+          öğeler `data-reveal-shown` almıyor ve gizleyen kural sonsuza kadar
+          uygulanıyor.
+
+          Ölçüldü, canlı sitede: 1600x900'de footer'ın üç metin bloğu da
+          `opacity: 0.00`, `top >= 800`. Mobilde ilk satır şeridin üstüne
+          düştüğü için görünüyordu, diğer ikisi orada da gizliydi. Yani içerik
+          KAYBOLMUŞTU ve bunu bir test yakalamadı.
+
+          Negatif alt marjın HER degeri bu bölgeyi yaratır - `-60px` de. Tek
+          güvenli değer sıfır. "Görülebilir bir yerde başla" isteği artık
+          `threshold` ile: ögenin %12'si görünür olduğunda başlıyor.
+
+          Bilinen sınır: viewport'tan ~8 kat uzun bir öge %12'ye hiç
+          ulaşamazdi. Bugün en uzun oge kartlar (655px / 900px viewport), yani
+          bu sınıra yakın bir şey yok - ama bir gün olursa sebebi burada yazılı.
+        */
+        rootMargin: "0px",
+        threshold: 0.12,
       },
     );
 
