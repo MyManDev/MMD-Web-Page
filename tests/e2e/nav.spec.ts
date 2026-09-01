@@ -159,8 +159,16 @@ test.describe("mobil menu", () => {
     const firstLink = panel.locator('a[href="#hero"]');
     await expect(firstLink).toBeFocused();
 
-    // Dort link + GitHub = bes odaklanabilir oge; besinciden sonra basa doner.
-    for (let i = 0; i < 5; i += 1) await page.keyboard.press("Tab");
+    /*
+      SAYI MENUDEN SAYILIYOR, elle yazilmiyor. Burada `i < 5` ve "dort link +
+      GitHub = bes oge" yorumu vardi; Contact bolumu eklenince alti oldu ve test
+      davranis bozulmadigi halde dustu. Odaklanabilir oge sayisi sozlesme degil,
+      DONMESI sozlesme.
+    */
+    const focusable = await panel.locator("a, button").count();
+    expect(focusable).toBeGreaterThan(1);
+
+    for (let i = 0; i < focusable; i += 1) await page.keyboard.press("Tab");
     await expect(firstLink).toBeFocused();
   });
 

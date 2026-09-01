@@ -105,6 +105,13 @@ export const siteSchema = z.object({
   /** NOTICE dosyasindaki telif satirinin yili. Footer cumleyi bundan kurar,
       metni ikinci kez yazmaz. */
   /**
+   * Iletisim adresi. `z.string().email()` bicimi zorluyor: yanlis yazilmis bir
+   * adres sessizce calismayan bir kapi olurdu ve kimse fark etmezdi.
+   *
+   * `.optional()` YOK (kural 7). Bir vitrinin kapisi opsiyonel degil.
+   */
+  email: z.string().email(),
+  /**
    * Footer'in iki cumlesi. MARKA METNI ve ikisini de karar sahibi yazdi
    * (CLAUDE.md kural 5 - uydurulmaz, sorulur).
    *

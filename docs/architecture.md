@@ -605,3 +605,4 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Bölüm sınırı               | `1px` çizgi + Hero'da metinsiz scroll göstergesi (iki tur)                                   | §4.4   |
 | LCP ölçüm noktası          | CI `localhost`, mobil emülasyon, üç koşunun medyanı; aday **navbar wordmark**                | §8.1   |
 | LCP eşiği                  | 2.0 s **revize edilmedi**; tutulmadığı kayıtlı — sayı işe uydurulmaz                         | §8.1   |
+| Contact bölümü             | `mailto`, form değil; adres bir **takma ad** — taranırsa kapatılıp değiştirilir              | §3     |

@@ -79,7 +79,34 @@ describe("siteSchema", () => {
 describe("content/index loader", () => {
   it("site kaydi semadan geciyor", () => {
     expect(site.wordmark).toBe("MyManDev");
-    expect(site.nav).toHaveLength(4);
+
+    /*
+      SAYI DEGIL SOZLESME. Burada `toHaveLength(4)` yaziliydi ve Contact bolumu
+      eklenince dustu - davranis bozulmadigi halde. Dort hicbir zaman sozlesme
+      degildi; deponun iki kez kaydettigi tuzagin aynisi (HANDOFF: "testin o
+      gunku sayiyi tutmasi bir kusurdur").
+
+      Olculen sey: liste bos degil, her kaydin id ve etiketi var, id'ler
+      TEKIL ve kebab-case. Bir bolum eklendiginde bunlar hala dogru; bozuk bir
+      kayit eklendiginde dusuyor.
+    */
+    expect(site.nav.length).toBeGreaterThan(0);
+    for (const item of site.nav) {
+      expect(item.id).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+      expect(item.label.trim().length).toBeGreaterThan(0);
+    }
+    expect(new Set(site.nav.map((item) => item.id)).size).toBe(site.nav.length);
+  });
+
+  /**
+   * Iletisim adresi. Bir vitrinin kapisi opsiyonel degil (§3.7) ve yanlis
+   * yazilmis bir adres sessizce calismayan bir kapi olurdu - o yuzden bicimi
+   * semada zorlaniyor, burada da okunuyor.
+   */
+  it("iletisim adresi var ve bicimi gecerli", () => {
+    expect(site.email.length).toBeGreaterThan(0);
+    expect(() => siteSchema.parse({ ...site, email: "bu bir adres degil" })).toThrow();
+    expect(() => siteSchema.parse({ ...site, email: site.email })).not.toThrow();
   });
 
   it("projects tek gercek kaydi tasiyor", () => {
