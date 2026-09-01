@@ -464,6 +464,37 @@ Eşikler **implementasyondan önce** yazıldı. Sonradan seçilen eşik, eşiğe
 | LCP (mobil, kısıtlı bağlantı)                   | < 2.0 s  | Raporlanır          |
 | CLS                                             | < 0.05   | Raporlanır          |
 
+### 8.1 Raporlanan eşiklerin ölçüm noktası (#83)
+
+**Eşiğin sayısı yeterli değildi ve #83 bunu ortaya çıkardı.** Bir eşik nerede ve **ne üzerinde**
+ölçüldüğü yazılmadan kapı değil yorumdur — iki ayrı ölçüm noktası 700–1400 ms farkla ayrışıyordu ve
+ikisi de aynı sayıyla kıyaslanıyordu.
+
+**Nerede:** CI'ın `lighthouse` job'ı. `out/` `serve` ile `localhost:4173`'te sunulur, Lighthouse
+varsayılan **mobil emülasyonla** üç kez koşar (`throttlingMethod: "simulate"`, istek gecikmesi
+562 ms, CPU 4×) ve `scripts/lighthouse-summary.mjs` **üç koşunun medyanını aralığıyla** yazar. Tek
+koşu bir olgu değil, örneklem.
+
+**Gerçek domain ayrı bir nokta ve aynı sayıyla kıyaslanamaz.** Ölçüldü: `mymandev.com` üzerinde LCP
+medyanı 3754–3921 ms bandında, CI'da 2382–3063 ms. İkisi de simülasyon — gerçek gecikme artı aynı
+sentetik throttling, yani gerçek domain çift cezalı. Saha verisi (CrUX/RUM) yeni bir domainde henüz
+yok.
+
+**LCP hangi öğe üzerinde:** bugün **navbar'ın wordmark linki** (`a[href="#main"]`), Hero'nun `h1`'i
+değil. Sebebi bir tasarım kararı: Hero başlığı yükleme animasyonuyla `opacity: 0`'dan geliyor ve
+tarayıcı saydam bir öğeyi LCP adayı saymıyor. Karar sahibi efektin kalmasını seçti.
+
+Bunun sonucu kayda geçmeli: **LCP'nin 2413 → 2962 ms'e çıkması bir yavaşlama değil**, daha küçük
+başka bir öğenin ölçülmeye başlaması. Yani bu satırdaki sayı, ziyaretçinin beklediği şeyi (başlığı)
+değil navbar yazısını tarif ediyor. Başlığı fade'den çıkarmak LCP adayını geri getirir; bu, ölçülmüş
+ve elde duran bir seçenek.
+
+**Eşik tutulmuyor ve sayı REVIZE EDILMEDI.** On bir okumada eşiği tutan tek bir medyan yok
+(CI 2382–3063, gerçek domain 3754–3921, aday değiştikten sonra 2950–3156). §8'in kendi ilk cümlesi
+"sonradan seçilen eşik, eşiğe fit etmektir" diyor ve sitede yayınlanan prensiplerden biri de
+"Thresholds are written before the work, never fitted to it" — bu yüzden **2.0 s hedef olarak
+duruyor** ve tutulmadığı burada yazılı. Kapatılan şey eşik değil, eşiğin **eksik tanımı**.
+
 **Payload kapısının koşucusu:** `scripts/check-bundle-size.mjs`, script adı `size`. `build`'den
 sonra koşar, çünkü ölçtüğü şey build çıktısıdır. Faz 0'da yazılır.
 
@@ -572,3 +603,5 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Team yüksekliği            | `lg`de bir ekran; kutu orandan değil **kalan alandan**                                       | §3     |
 | Navbar scroll davranışı    | Tepede saydam, 120px'te yerleşiyor; `animation-timeline: scroll()`                           | §4.4   |
 | Bölüm sınırı               | `1px` çizgi + Hero'da metinsiz scroll göstergesi (iki tur)                                   | §4.4   |
+| LCP ölçüm noktası          | CI `localhost`, mobil emülasyon, üç koşunun medyanı; aday **navbar wordmark**                | §8.1   |
+| LCP eşiği                  | 2.0 s **revize edilmedi**; tutulmadığı kayıtlı — sayı işe uydurulmaz                         | §8.1   |
