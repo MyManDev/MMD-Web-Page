@@ -48,7 +48,27 @@ export function Nav({ site }: { site: Site }) {
             </ul>
           </nav>
 
-          <div className="hidden lg:block">
+          {/*
+            IKI AKSIYON, IKISI DE `ghost`. §5.1 Navigation'a tek yesil odak
+            veriyor ve o aktif nav linki - buradaki tuslarin hicbiri accent
+            tasimiyor.
+
+            Contact bir BOLUM DEGIL artik: tek bir adres icin kendi basligi olan
+            bir bolum fazla agirdi. Ziyaretcinin iletisim aradigi yer nav, adresi
+            okudugu yer footer.
+
+            Nav.da etiket kisa (`Contact`), adresin kendisi footer'da tam yazili.
+            Sebebi olculdu: `lg` esigi 1024px ve orada wordmark + bes... dort nav
+            linki + iki aksiyon zaten dar; tam adresi buraya yazmak bari
+            tasitiyordu.
+
+            `external` YOK: `mailto` yeni sekmede acilacak bir sayfa degil, posta
+            istemcisine devrediyor - dis link ikonu orada yanlis soyler.
+          */}
+          <div className="hidden items-center gap-2 lg:flex">
+            <Button href={`mailto:${site.email}`} variant="ghost">
+              Contact
+            </Button>
             <Button href={site.githubUrl} variant="ghost" external>
               GitHub
             </Button>
@@ -71,6 +91,7 @@ export function Nav({ site }: { site: Site }) {
         id={menuId}
         open={open}
         items={site.nav}
+        email={site.email}
         githubUrl={site.githubUrl}
         activeId={active}
         onClose={close}

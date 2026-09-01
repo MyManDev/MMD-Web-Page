@@ -47,7 +47,6 @@ components/sections/projects/  Projects + kart + etkileşim      BÖLGE A
 components/sections/nav/       navbar, anchor scroll, mobil menü BÖLGE B
 components/sections/team/      Team                             BÖLGE B
 components/sections/about/     About                            BÖLGE B
-components/sections/contact/   Contact                          BÖLGE B
 components/sections/footer/    Footer                           BÖLGE B
 content/                       içerik + Zod şeması              BÖLGE A
 lib/                           yardımcılar                      dosya bazında

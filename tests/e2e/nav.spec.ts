@@ -126,6 +126,99 @@ test.describe("navbar scroll'da yerlesiyor", () => {
   });
 });
 
+/**
+ * ILETISIM AKSIYONU. design-spec.md §3.1
+ *
+ * Contact bir sure kendi bolumuydu ve kaldirildi: tek bir adres icin kendi
+ * basligi olan bir bolum fazla agirdi. Artik bir OLANAK - ziyaretcinin iletisim
+ * aradigi yer nav, adresi okudugu yer footer (§3.6).
+ */
+test.describe("iletisim aksiyonu", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
+  });
+
+  test("nav'da bir mailto aksiyonu var ve adres icerikten geliyor", async ({ page }, testInfo) => {
+    const width = testInfo.project.use.viewport?.width ?? 0;
+    test.skip(width < 1024, "masaustu aksiyonlari yalnizca lg ustunde");
+
+    /*
+      `filter({ visible: true })` SART ve bunu bir dusus ogretti: kapali mobil
+      menu de `<header>` icinde yasiyor ve ayni `mailto` aksiyonunu tasiyor -
+      `display: none` oldugu icin odaklanamiyor ve gorunmuyor, ama SECICI onu
+      buluyor. Filtresiz `toHaveCount(1)` iki oge gorup dustu.
+
+      Sayiyi 2 yapmak yanlis olurdu: o, mobil menunun DOM'da durdugunu
+      sozlesmeye cevirirdi. Olculen sey gorunur aksiyonun tekligi.
+    */
+    const action = page.locator(`header a[href="mailto:${site.email}"]`).filter({ visible: true });
+    await expect(action).toHaveCount(1);
+  });
+
+  /**
+   * `external` DEGIL: o bayrak yeni sekme aciyor ve dis link ikonu koyuyor. Bir
+   * `mailto` yeni sekmede acilacak bir sayfa degil - ikon orada bilgi katmaz,
+   * YANLIS soyler. O yuzden yoklugu olculuyor.
+   */
+  test("yeni sekmede acilmiyor ve dis link ikonu tasimiyor", async ({ page }, testInfo) => {
+    test.skip((testInfo.project.use.viewport?.width ?? 0) < 1024, "lg ustunde");
+
+    const action = page.locator(`header a[href="mailto:${site.email}"]`).filter({ visible: true });
+    expect(await action.getAttribute("target")).toBeNull();
+    await expect(action.locator("svg")).toHaveCount(0);
+  });
+
+  /**
+   * §5.1: Navigation'in tek yesili AKTIF NAV LINKI. Iki aksiyon da `ghost`,
+   * yani accent tasimiyor - ikinci bir yesil odak acilmiyor.
+   */
+  test("aksiyonlar accent tasimiyor", async ({ page }, testInfo) => {
+    test.skip((testInfo.project.use.viewport?.width ?? 0) < 1024, "lg ustunde");
+
+    const accent = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      probe.style.color = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-accent")
+        .trim();
+      document.body.appendChild(probe);
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    });
+
+    const users = await page.evaluate(
+      ({ accentColor, email }) =>
+        [
+          ...document.querySelectorAll(
+            `header a[href="mailto:${email}"], header a[href^="https://github"]`,
+          ),
+        ]
+          .filter((el) => {
+            const style = getComputedStyle(el);
+            return style.color === accentColor || style.backgroundColor === accentColor;
+          })
+          .map((el) => el.textContent?.trim() ?? ""),
+      { accentColor: accent, email: site.email },
+    );
+
+    expect(users).toEqual([]);
+  });
+
+  /** Mobil menu bir kisayol degil: ayni iki olanagin dar ekrandaki hali. */
+  test("mobil menude de duruyor", async ({ page }, testInfo) => {
+    const width = testInfo.project.use.viewport?.width ?? 0;
+    test.skip(width >= 1024, "mobil menu yalnizca lg altinda");
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.getByRole("button", { name: "Menu" }).click();
+
+    const panel = page.locator(
+      "#" + (await page.getByRole("button", { name: "Menu" }).getAttribute("aria-controls")),
+    );
+    await expect(panel.locator(`a[href="mailto:${site.email}"]`)).toHaveCount(1);
+  });
+});
+
 test.describe("mobil menu", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     const width = testInfo.project.use.viewport?.width ?? 0;
