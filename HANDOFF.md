@@ -12,8 +12,8 @@ Bir tur tasarım geri bildirimi de kapandı (#86–#90).
 
 - Dal: `main`
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` bugün uçtan uca geçti (`EXIT=0`): **47 birim, 216 E2E** (26'sı viewport'a göre
-  atlanıyor), payload **133.4 KiB / 150.0 KiB**, kalan pay 16.6 KiB
+- `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **47 birim, 249 E2E** (27'si viewport'a göre
+  atlanıyor), payload **133.7 KiB / 150.0 KiB**, kalan pay 16.3 KiB
 - `e2e` işi CI'da ~1m40s'den **~2m30s**'ye çıktı: otomatik geçiş testleri aralığın geçmesini
   beklemek zorunda ve süreyi ölçen bir test kısaltılamaz
 - Açık PR: yok
@@ -152,6 +152,30 @@ kural gevşedi ama kalkmadı.
   belirgin artarsa kapsamı daralt" diyordu — ama o 24 ms **gerçek domain** ölçümüydü. CI'ın kendi
   bandı 51–121 ms; yani 47 ms bir gerileme değil, iyileşme. **Ölçüm noktası değişmişse sayılar
   karşılaştırılamaz** (#83 aynı şeyi söylüyor).
+- **Negatif `rootMargin` ICERIGI SONSUZA KADAR GIZLEYEBILIR.** Giriş gözlemcisine
+  `rootMargin: "0px 0px -12% 0px"` yazılıydı — amaç animasyonun ekranın en alt kenarında değil
+  görülebilir bir yerde başlamasıydı. Sonuç bir **ölü bölge**: belgenin son %12'sindeki hiçbir öğe
+  hiç kesişmiyor, sayfa sonuna kadar kaydırılsa bile. Canlıda footer metninin **tamamı** görünmezdi
+  (ölçüldü: 1600×900'de üç blok da `opacity 0.00`). **Negatif alt marjın her değeri** bu bölgeyi
+  yaratır; tek güvenli değer sıfır, "görülebilir yerde başla" isteği `threshold` ile karşılanır.
+- **Bir kapının işe yaradığını yeşil olduğu için bilemezsin.** Bu turda yazdığım koruma testi ilk
+  hâlinde ürünü değil kendi ölçüm yöntemini ölçüyordu. Kanıt yolu: **hatayı geri koyup testin
+  düştüğünü görmek.** Eski `rootMargin` ile iki projede de düşüyor, düzeltmeyle 3 tekrarda 6/6
+  geçiyor.
+- **Tek hamlede en alta atlamak arada kalan bölümleri ATLAR.** `scrollTo(scrollHeight)` ile inen bir
+  test, yolda kalan öğelerin hiç kesişmemesine yol açıyor ve onlar gizli kalıyor — yani test bazen
+  ürün yüzünden değil kendi yöntemi yüzünden düşüyor (süitte kırmızı, tek başına yeşil). Kademeli
+  inmek hem kararlı hem gerçek kullanıcıya yakın.
+- **`pnpm build` almadan E2E koşturmak eski `out/`'u ölçer.** Kaynağı düzeltip testi koşturdum ve
+  hâlâ düşüyordu; düşen şey düzeltme değil, bir önceki build'di.
+- **"Yayında mı" kontrolünü bundle'da yaygın bir dize arayarak yapma.** `"0px"` diye grep ettim ve
+  yanlış pozitif aldı — o dize bundle'ın her yerinde var. Doğru sinyal **semptomun kendisi**: gizli
+  kalan öğe sayısının sıfıra düşmesi.
+- **`position: sticky` menzili ELEMANIN KENDI MARJLARI kadar kısalır.** Yığın için karta
+  `margin-bottom: 100dvh` vermek menzili tam 100dvh kısalttı ve kartlar hiç üst üste gelmedi.
+  Yükseklik kartın **kendi kutusunda** olmalı.
+- **`globals.css`'te bir sınıfa `display` vermek Tailwind'in `hidden`'ını yener** (aynı specificity,
+  sıra karar veriyor). Tek sinyal atlanan test sayısının değişmesiydi.
 - **`count()` BEKLEMEZ, assertion bekler.** Yeni bir test span'leri doğrudan sayıyordu ve CI'da 0
   döndü: yavaş makinede hidrasyon bitmemişti, yani component'in geliştirilmiş biçimi henüz yoktu ve
   sunucunun bastığı düz liste duruyordu. Yerelde geçiyordu — **yani test doğru olduğu için değil,
@@ -236,6 +260,12 @@ rule anyway`; `Create a new proxied DNS record` custom domain'in kaydıyla çak�
   farkı sessizce kırpıyor. `tests/portrait-aspect.test.ts` o aralığı tutuyor.
 - **Lighthouse'un Accessibility skoru bizim kapımızdan düşük çıkabilir** (ölçüldü: 96). Kusur değil,
   ölçüm anı. `architecture.md` §8'de yazılı.
+- **LCP'NIN OLCTUGU OGE DEGISTI ve bu her şeyi yeniden yorumluyor.** Artifact'ten okundu: LCP öğesi
+  artık Hero'nun `h1`'i değil, **navbar'ın wordmark linki** (`a[href="#main"]`). Sebep bir tasarım
+  kararı — Hero başlığı yükleme animasyonuyla `opacity: 0`'dan geliyor ve **tarayıcı saydam bir
+  öğeyi LCP adayı saymıyor.** Sonuç: LCP'nin 2413 → 2962 ms'e çıkması bir yavaşlama **değil**, daha
+  küçük başka bir öğenin ölçülmeye başlaması. Bir metriği kovalamadan önce **neyi ölçtüğünü** oku.
+  Karar sahibi efektin kalmasını seçti; §8.1'de kayıtlı.
 - **LCP eşiği tek koşunun şansı değil, kalıcı bir sapma** (#83). CI `main` medyanları:
   **2382 / 2839 / 3063 / 3063 / 2885 ms**, eşik 2000 ms; gerçek domainde **3754 ms**. Altı okumada
   eşiği tutan **tek bir medyan yok.** Genliğe bakıp "gürültüdür" demek geçmiyor — ve genliğin
