@@ -3,328 +3,118 @@
 > Bu dosya **şu anki durumu** tutar, geçmişi tutmaz — geçmiş git log'unda yaşar.
 > Her devirde üzerine yazılır. Protokol: `docs/working-agreement.md` §7.
 
-**Tarih:** 2026-08-31
-**Yer:** ev
-**Aşama:** Faz 4. **Site yayında: https://mymandev.com.** #19 ve #54 kapandı; açık issue #20 ve #83.
-Bir tur tasarım geri bildirimi de kapandı (#86–#90).
+**Tarih:** 2026-09-28 (akşam)
+**Yer:** iş
+**Aşama:** Faz 4, site yayında. **Ekipten bir kişi ayrıldı**; site ve depo iki kişilik ekibe göre
+güncellendi (#103, #104, #105, #107, #108). Açık issue: #106.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main`
+- Dal: `main` (`7a51f5f`)
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **47 birim, 249 E2E** (27'si viewport'a göre
-  atlanıyor), payload **133.7 KiB / 150.0 KiB**, kalan pay 16.3 KiB
-- `e2e` işi CI'da ~1m40s'den **~2m30s**'ye çıktı: otomatik geçiş testleri aralığın geçmesini
-  beklemek zorunda ve süreyi ölçen bir test kısaltılamaz
+- `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **49 birim, 256 E2E** (32'si viewport'a göre atlanıyor),
+  payload **133.8 KiB / 150.0 KiB**
 - Açık PR: yok
-- `main`'e doğrudan push artık **kapalı** — #54 uygulandı, iş `feature/*` dallarında ve PR'dan geçer
+- Bu makinede yerel `main` bugün 47 commit gerideydi (son eşitleme 2026-08-28); fetch ve
+  fast-forward ile eşitlendi. `feature/team-section` GitHub'da yeniden yazılmıştı, yerel dal yeni uca
+  taşındı; eski uç `wip/team-section-2026-08-29`'da duruyor (#44 zaten merge edilmiş, toplanacak
+  bir şey yok).
 
 ## Yayın
 
-| Ne              | Nerede                                          |
-| --------------- | ----------------------------------------------- |
-| Kanonik adres   | `https://mymandev.com`                          |
-| Host            | Cloudflare Pages, proje adı `mymandev`          |
-| Production dalı | `main` → otomatik deploy                        |
-| Preview         | PR başına, `*.pages.dev`                        |
-| `www`           | Zone seviyesinde Redirect Rule ile köke **301** |
+| Ne              | Nerede                                 |
+| --------------- | -------------------------------------- |
+| Kanonik adres   | `https://mymandev.com`                 |
+| Host            | Cloudflare Pages, proje adı `mymandev` |
+| Production dalı | `main` → otomatik deploy               |
 
-> **AÇIK İŞ — panelde:** `cache html at edge` Cache Rule'u **silinmeli.** Ölçüldü: üç merge'den
-> **61 dakika sonra** `mymandev.com` hâlâ eski HTML'i sunuyordu (`Age: 3665`, `cf-cache-status:
-HIT`) — em dash'ler orada, "Who We Are" yok, GitHub linkleri eski. Aynı build
-> `https://mymandev.pages.dev/` üzerinde **doğru** görünüyor, çünkü zone cache kuralları
-> `pages.dev`'e uygulanmıyor. Yani deploy zinciri sağlam, sorun yalnızca bu kural.
+#107'nin production deploy'u gerçek domain üzerinde ölçüldü:
+
+- `/`, `/index.txt`, `/__next._full.txt`, `/__next.__PAGE__.txt`: dördünde de ayrılan kişinin adı **0** kez geçiyor.
+- Yeni metinler yayında; "Three engineers" ve "backend and security" **0**.
+- HTML `cf-cache-status: DYNAMIC` ve `max-age=0` dönüyor; eski `cache html at edge` kuralı artık
+  uygulanmıyor (ölçüldü).
+
+> **AÇIK İŞ — panelde:** #107'de silinen iki portre varyantı (`/people/…-500.webp` ve `…-1000.webp`;
+> tam adlar #107'nin diff'inde) origin'de
+> **404** (önbelleği atlayan `?nocache=…` sorgusuyla ölçüldü). Ama kenar önbelleği bazı isteklerde
+> hâlâ resmi sunuyor (`max-age=14400`, `REVALIDATED`). `Caching` → `Configuration` → `Custom Purge`
+> ile iki URL purge edilmeli; edilmezse en geç 4 saatte kendiliğinden düşer. Doğrulama:
+> iki adrese `curl -s -o /dev/null -w "%{http_code}"` → `404`.
 >
-> Kuralın **ölçülen kazancı yok**, **ölçülen bedeli deploy başına 2 saate kadar bayatlama**.
-> `cache hashed assets` **kalsın** — hash'li adda bayatlama olamaz ve tekrar ziyarette gerçek
-> kazancı var. Panel: `Caching` → `Configuration` → `Purge Everything`, sonra `Cache Rules`.
+> Cloudflare Pages'in **eski deployment ve preview adresleri** eski build'i (ayrılan kişinin kartı dahil) sunmaya
+> devam ediyor; istenirse `Workers & Pages` → `mymandev` → deployment listesinden silinir.
 >
-> Bir Claude oturumu bunu yapamaz: Cloudflare API token'ı gerekir ve token sohbete girmez.
-
-Yayın günü gerçek domain üzerinde ölçülen sayılar:
-
-- `GET /` → `200`, 73 213 B · `GET /og.png` → `200 image/png` **13 806 B** (yerel dosyayla birebir)
-- `GET /yok-1234` → **`404`**, 10 454 B, gövdede `This page does not exist.` — yani `out/404.html`
-  dönüyor, 73 KB'lik `index.html` kabuğu değil
-- `www/x?y=1` → `301` → `https://mymandev.com/x?y=1` (yol ve query korunuyor)
-- `http://` → `https://` `301`; `robots.txt`, `sitemap.xml`, `logo.svg` → `200`
-- canonical `https://mymandev.com` · `og:image` `…/og.png` · `twitter:card` `summary_large_image`
+> Bir Claude oturumu bunları yapamaz: Cloudflare token'ı gerekir ve token sohbete girmez.
 
 ## Sıradaki iş
 
-**#83 — mobil LCP eşiği dört koşu üst üste düştü.** Sırada bu var, çünkü #20'nin Lighthouse
-maddesi buna bağlı: sayıyı kaydetmek ile eşiği tutmak aynı şey değil.
+**#106 — nav yazısı bazı scroll konumlarında AA kontrastın altına iniyor.** Karar sahibinin seçimi
+bekleniyor: bar tint'i, pasif nav rengi veya accent aktif link. Hepsi paylaşılan yüzey
+(`app/tokens.css`, `app/globals.css`).
 
-**#83'ün 1. adımı bitti.** Gerçek domain ölçüldü ve **CI'dan daha kötü çıktı** — beklentinin tersi:
-
-|             |           Gerçek domain | CI `localhost:4173` |
-| ----------- | ----------------------: | ------------------: |
-| Performance |          **81** (80–92) |               94–95 |
-| LCP         | **3754 ms** (3265–3891) |        2382–3063 ms |
-| FCP         | **2684 ms** (1794–2787) |            ~1234 ms |
-| TBT         |             **29.5 ms** |           51–121 ms |
-| CLS         |                       0 |                   0 |
-
-**FCP iki katına çıktı, TBT düştü** — yani darboğaz CPU değil, kritik yoldaki ağ. `curl` ile
-doğrudan ölçülen iki kalem:
-
-- **HTML edge'de önbelleklenmiyor:** `cf-cache-status: DYNAMIC`, `Cache-Control: max-age=0,
-must-revalidate`, TTFB 255–281 ms. Tamamen statik bir export için gereksiz.
-- **İçerik-hash'li CSS `immutable` değil:** `max-age=14400, must-revalidate` ve durum
-  `REVALIDATED` — adı içeriğine bağlı bir dosya 4 saatte bir origin'e gidiyor. TTFB 243–299 ms.
-- Sıkıştırma **sorun değil**, elendi: Brotli açık, CSS telde 7 339 B (ham 33 012 B).
-
-**#83'ün 2. adımı da bitti ve kazanç çıkmadı.** İki Cache Rule uygulandı; `cf-cache-status` HTML'de
-`DYNAMIC`→`HIT`, CSS'te `REVALIDATED`→`HIT` oldu ama **Lighthouse kıpırdamadı**: Performance 81→81,
-LCP 3754→3921 ms, FCP 2684→2662 ms. Sebep anlaşılır — Pages'in "origin"i zaten Cloudflare ağında,
-yani kısaltılacak uzun bir gidiş-dönüş hiç yoktu.
-
-O ölçümün kusuru da kayıtta: iki ölçüm arasında **iki değişken** değişti (kurallar _ve_ deploy
-edilen build), yani karşılaştırma önbelleğin etkisini yalıtamıyor. Doğru ifade "kazanç yoktur"
-değil, **"bu düzenekle görülemedi."**
-
-**Kalan tek adım (3):** eşik hâlâ tutmuyorsa §8'i kanıtla revize et. Kapsamı bu turda **genişledi**:
-§8 eşiğin sayısını yazıyor ama **nerede ölçüldüğünü yazmıyor**, ve elimizdeki iki nokta 700–1400 ms
-farkla ayrışıyor. Ölçüm yerini söylemeyen bir eşik kapı değil yorumdur. Yedi CI okuması + iki gerçek
-domain ölçümünde eşiği tutan tek bir medyan yok.
-
-**#20 — yayın öncesi kontrol listesi.** Sekiz maddenin **beşi kapandı**, sayıları issue'da. Kalan
-üç madde:
-
-- Lighthouse mobil Performance, LCP, CLS — **#83 kapanmadan işaretlenmez**
-- LinkedIn'in üç linki **gözle** açılıyor — `curl` `999` dönüyor (LinkedIn'in bot engeli); bu ne
-  kırık link kanıtı ne de çalıştığının kanıtı, ve profilin **doğru kişiye** ait olduğunu HTTP kodu
-  hiç söylemez
-- Paylaşım kartı **büyük biçimde** görünüyor — `og.png` ve `summary_large_image` gerçek URL'de
-  doğru, ama ilk paylaşımda ekrana bakılması gerekiyor
-
-Kapanan beşi: sert kapılar · gerçek domainde 404 · OG/metadata gerçek URL'de · klavye ile tüm sayfa
-(20 durak, göstergesi olmayan 0, footer dahil, tur ilk durağa dönüyor) · reduced-motion altında
-dört bölümün dördü de görünür (opacity 1) · placeholder yok. Yani **iki madde göz istiyor, biri
-#83'ü bekliyor** — bu issue artık depodan tek başına kapatılamaz.
+Ölçüm yöntemi ve sayılar issue'da. En kötü noktalar: pasif linkte **4.09:1** (1440×900, Team
+kartlarının üst kenarı — iki kişilik Team'le geldi, üç kişiyken 5.30:1) ve accent aktif linkte
+**3.90:1** (1280×720, Hero — daha önce de vardı). `design-spec.md` §3.1'deki 5.49:1 bu yöntemle
+yeniden üretilemedi ve spec'te böyle yazılı.
 
 ## Bitmemiş iş
 
-**Depoda yok.** Panelde bir tane var ve yukarıda yazılı: `cache html at edge` kuralının silinmesi.
-O silinene kadar `mymandev.com` her deploy'dan sonra 2 saate kadar eski build'i sunar.
+- **Panel:** yukarıdaki fotoğraf purge'ü.
+- **Konu dışı, fark edildi, ayrı PR ister:**
+  - `components/sections/team/TeamCard.tsx:9` ve `lib/images.ts:20` oranı "5/8" diyor; token
+    `--aspect-portrait` 5/9.
+  - `docs/design-spec.md` L14-15 ve L528-531 biyografi ve fotoğrafları hâlâ "bekliyor" diyor; #16
+    kapalı.
+  - `.github/CODEOWNERS`'ın "Paylasilan yuzeyler" bloğu `content/index.ts`'i sayıyor,
+    `working-agreement.md` §1 saymıyor. Karar sahibi birini seçmeli.
+  - Kod yorumları Türkçe (ASCII); `CLAUDE.md` "kod içi yorumlar İngilizce" diyor. Eski bir ayrışma.
+- **Git geçmişi** ayrılan kişinin fotoğrafını ve biyografisini taşıyor (depo herkese açık, #44
+  dahil). Yeniden yazmak `non_fast_forward` kuralına çarpar; yalnızca kendisi talep ederse ayrı bir iş.
 
 ## Alınan kararlar
 
-Kalıcı kararlar `docs/architecture.md` §9'da. Bu turda **altı** satır eklendi: yayın hedefi, `www`
-yönlendirmesinin nerede yaşadığı, query korunumu, prensip otomatik geçişi, prensip geçişinin biçimi,
-ve Hero amblemi rengi. Burada tekrar edilmiyor — ama biri **bir kuralı gevşetti** ve o yüzden burada
-adı geçiyor:
+Kalıcı kararlar `docs/architecture.md` §9'da. Bugün **üç** satır eklendi: bölge sahipliği (Bölge B
+İbrahim'e, paylaşılan yüzey onayı karar sahibinde), Team genişliği (`lg`'de kart üç kolonluk iz
+genişliğinde, eksik satır ortalanır) ve logo (ekip iki kişiye inse de üç kafalı işaret kalıyor).
+Metinler için karar sahibi "en az düzeltme"yi seçti; onaylanan cümleler #107'de birebir.
 
-**§4.4'ün "sayfa yüklenirken giriş animasyonu yok" yasağı KALDIRILDI** (#93). Karar sahibi kaldırdı.
-Kalkan şey yasak, **zarf değil**: yükleme girişi de 150–250ms içinde (uygulama 180ms + 60ms kademe).
-Eski test silinmedi, yeni sözleşmeyi ölçecek biçimde yeniden yazıldı. Metin girişi artık bölüm
-sarmalayıcısında değil **öğe seviyesinde** (16 blok), kademe `view()`'den geliyor — elle
-`animation-delay` yazılmıyor. Amblem plakası conic gradyan taşıyor ve açısı **scroll'a bağlı**
-dönüyor (ölçüldü: 0° → 360°, sayfa boyunca); sonsuz döngü yok.
-
-**Hero'da artık iki yeşil var.** Amblem logonun kendi turkuazını (`#0D9488`) taşıyor, CTA ise
-accent'i (`#14B8A6`). `CLAUDE.md` kural 2'nin "ekran başına tek yeşil odak" cümlesi harfiyen
-okunursa bu bir ihlal. Karar sahibi verdi, azaltıcı ölçüler ölçüldü ve `design-spec.md` §5.1'e
-tablonun altına not olarak yazıldı. Yeni bir yeşil eklemek isteyen biri **önce o notu okumalı** —
-kural gevşedi ama kalkmadı.
+**Onay kuralı değişti.** "İki bölge sahibinin onayı" yerine artık **karar sahibinin açık onayı**
+var; bir Claude oturumu paylaşılan yüzeye veya marka metnine dokunan bir PR'ı kendi başına merge
+etmez (`working-agreement.md` §1, §3.1). Bugünkü dört PR, karar sahibinin "koşullu merge et"
+onayıyla merge edildi; onay ve koşul her PR gövdesinde kelimesi kelimesine yazılı.
 
 ## Tuzaklar ve notlar
 
-Ölçümle bulunan, gözle bulunamayacak olanlar:
+Bugün ölçümle bulunanlar:
 
-- **İki CSS kuralı aynı ögede `animation` yazarsa biri SESSIZCE kaybolur.** Amblem plakası hem
-  `reveal-on-load` hem `mark-sweep` taşıyordu; ikisi de `animation` yazıyor ve aynı specificity'de,
-  yani sıra karar verdi. Sonuç: amblemin yükleme girişi hiç çalışmadı, gecikmesi `0s`'e döndü.
-  **Yakalayan şey testin SABİT bir süre değil SIRA ölçmesiydi** — "gecikme 180ms mi" diye sorsam
-  yakalamazdım, "her öğe öncekinden sonra mı başlıyor" diye sorunca yakaladım. İki animasyon iki
-  ayrı ögeye ayrıldı.
-- **`globals.css`'te bir sınıfa `display` vermek Tailwind'in `hidden` utility'sini yenebilir.** Aynı
-  specificity (0,1,0) ve `globals.css` sonra geldiği için kazanıyor. Amblem plakasına `display: grid`
-  yazıldığında amblem **mobilde de** görünür hâle geldi. **Tek sinyal atlanan test sayısıydı:** üç
-  mobil amblem testi `skip` olmaktan çıkıp koşmaya başladı (23 → 20). Yerleşim utility'leri markup'ta
-  kalmalı, renk ve ölçü CSS'te.
-- **Sayfa hareketlenince hover testleri de düşer, tıklama testleri gibi.** Giriş animasyonu öğe
-  seviyesine taşınınca Footer ve Team hover testleri düştü: `hover()` sayfayı kaydırıyor, hedef
-  Playwright kutuyu hesapladıktan sonra yer değiştiriyor ve işaretçi yanına düşüyor (ölçüldü:
-  beklenen 1 → gelen 0, beklenen 16 → gelen 0). Çözüm tıklama testlerindekiyle aynı: o testler
-  `reducedMotion: "reduce"` altında koşar.
-- **Bir efekti iki kez ölçmeden "aynı" sanma.** TBT bu turda CI'da **47 ms** çıktı ve plan "24 ms'ten
-  belirgin artarsa kapsamı daralt" diyordu — ama o 24 ms **gerçek domain** ölçümüydü. CI'ın kendi
-  bandı 51–121 ms; yani 47 ms bir gerileme değil, iyileşme. **Ölçüm noktası değişmişse sayılar
-  karşılaştırılamaz** (#83 aynı şeyi söylüyor).
-- **Negatif `rootMargin` ICERIGI SONSUZA KADAR GIZLEYEBILIR.** Giriş gözlemcisine
-  `rootMargin: "0px 0px -12% 0px"` yazılıydı — amaç animasyonun ekranın en alt kenarında değil
-  görülebilir bir yerde başlamasıydı. Sonuç bir **ölü bölge**: belgenin son %12'sindeki hiçbir öğe
-  hiç kesişmiyor, sayfa sonuna kadar kaydırılsa bile. Canlıda footer metninin **tamamı** görünmezdi
-  (ölçüldü: 1600×900'de üç blok da `opacity 0.00`). **Negatif alt marjın her değeri** bu bölgeyi
-  yaratır; tek güvenli değer sıfır, "görülebilir yerde başla" isteği `threshold` ile karşılanır.
-- **Bir kapının işe yaradığını yeşil olduğu için bilemezsin.** Bu turda yazdığım koruma testi ilk
-  hâlinde ürünü değil kendi ölçüm yöntemini ölçüyordu. Kanıt yolu: **hatayı geri koyup testin
-  düştüğünü görmek.** Eski `rootMargin` ile iki projede de düşüyor, düzeltmeyle 3 tekrarda 6/6
-  geçiyor.
-- **Tek hamlede en alta atlamak arada kalan bölümleri ATLAR.** `scrollTo(scrollHeight)` ile inen bir
-  test, yolda kalan öğelerin hiç kesişmemesine yol açıyor ve onlar gizli kalıyor — yani test bazen
-  ürün yüzünden değil kendi yöntemi yüzünden düşüyor (süitte kırmızı, tek başına yeşil). Kademeli
-  inmek hem kararlı hem gerçek kullanıcıya yakın.
-- **`pnpm build` almadan E2E koşturmak eski `out/`'u ölçer.** Kaynağı düzeltip testi koşturdum ve
-  hâlâ düşüyordu; düşen şey düzeltme değil, bir önceki build'di.
-- **"Yayında mı" kontrolünü bundle'da yaygın bir dize arayarak yapma.** `"0px"` diye grep ettim ve
-  yanlış pozitif aldı — o dize bundle'ın her yerinde var. Doğru sinyal **semptomun kendisi**: gizli
-  kalan öğe sayısının sıfıra düşmesi.
-- **`position: sticky` menzili ELEMANIN KENDI MARJLARI kadar kısalır.** Yığın için karta
-  `margin-bottom: 100dvh` vermek menzili tam 100dvh kısalttı ve kartlar hiç üst üste gelmedi.
-  Yükseklik kartın **kendi kutusunda** olmalı.
-- **`globals.css`'te bir sınıfa `display` vermek Tailwind'in `hidden`'ını yener** (aynı specificity,
-  sıra karar veriyor). Tek sinyal atlanan test sayısının değişmesiydi.
-- **`count()` BEKLEMEZ, assertion bekler.** Yeni bir test span'leri doğrudan sayıyordu ve CI'da 0
-  döndü: yavaş makinede hidrasyon bitmemişti, yani component'in geliştirilmiş biçimi henüz yoktu ve
-  sunucunun bastığı düz liste duruyordu. Yerelde geçiyordu — **yani test doğru olduğu için değil,
-  makine hızlı olduğu için yeşildi.** Düzeltme sayıyı değil yapıyı değiştirmek: önce bekleyen bir
-  assertion (`expect(locator).not.toHaveCount(0)`), sonra say.
-- **Zone cache kuralları `pages.dev`'e uygulanmıyor.** Canlı domain bayatken önizlemeler ve
-  production `*.pages.dev` adresi **güncel** kalıyor. Bir değişikliğin yayına girip girmediğini
-  anlamak için ikisini yan yana ölçmek en hızlı ayrım: içerik farklıysa suçlu deploy değil önbellek.
-- **Cloudflare Pages deploy'da zone cache'ini purge ETMİYOR.** Bu varsayılmıştı ve ölçümle yanlış
-  çıktı: üç merge'den 61 dakika sonra `Age: 3665` ile aynı HTML dönüyordu.
-- **`curl` bir adresi açabiliyorsa tarayıcının açacağı garanti değil.** Önizleme adresi `200` ve
-  73 KB dönerken kullanıcının tarayıcısında boş kalıyordu; headless Chromium'da da kusursuz açıldı
-  (konsol hatası yok, düşen istek yok). Yani sorun sayfada değil o makinenin ağında/eklentisinde.
-  Bunu ayırmanın yolu **aynı sayfayı bir tarayıcıyla ölçmek**, sadece `curl` ile değil.
-- **Bir efekti JS zamanlayıcısıyla kurmak zorunda değilsin.** Prensip girişi harf harf yazılırken bir
-  `useEffect`, bir `setInterval` ve bir `matchMedia` okuması gerekiyordu. Kelime kelime belirmeye
-  geçince hepsi kalktı: animasyonu **selektörün eşleşmesi** tetikliyor — `data-active` bir öğeye
-  geçtiği an kural uymaya başlıyor ve animasyon baştan çalışıyor. Payload 0.1 KiB geri geldi.
-- **Süreyi ölçen bir test kısaltılamaz.** Otomatik geçiş testleri aralığın (7s) geçmesini beklemek
-  zorunda; `e2e` işi CI'da ~1m40s'den ~2m30s'ye çıktı. `waitForTimeout` burada meşru, çünkü ölçülen
-  şey sürenin kendisi — ama bedeli her PR'a biniyor.
-- **Cloudflare'in `Create` düğmesi Pages değil Workers akışını açıyor.** İşareti şu: "Configure your
-  Worker project", `npx wrangler deploy` gibi bir deploy komutu, ve **`Build output directory`
-  alanının hiç olmaması**. O akış bu depo için yanlış — `wrangler` yapılandırması ister ve 404
-  davranışını elle kurmayı gerektirir. Doğru yol `Compute` → `Workers & Pages` → Pages'in kendi
-  `Get started` ekranı → `Import an existing Git repository`. Doğru ekranın işareti `Framework
-preset` + `Build command` + `Build output directory` üçünün birlikte görünmesi.
-- **Cloudflare'in "DNS may not be proxying traffic for www" uyarısı yanlış olabilir.** Kural deploy
-  edilmeden modalda bekletiyor. `www` Pages custom domain'i üzerinden proxy'liydi — ölçüldü:
-  Cloudflare IP + `Server: cloudflare` — kontrol o kaydı görmüyor. Doğru seçim `Ignore and deploy
-rule anyway`; `Create a new proxied DNS record` custom domain'in kaydıyla çakışır.
-- **Bir kuralın deploy edilmediğini `cf-cache-status` ayırt ettirir.** `www` 301 yerine 200
-  dönüyordu; `DYNAMIC` görmek "bu önbellekten gelmiyor, kural gerçekten eşleşmiyor" demekti ve
-  şüpheyi doğrudan kuralın kendisine getirdi. Sebep basitti: modal açık kalmıştı.
-- **`Preserve query string`'i belgeye göre değil ölçüme göre ayarla.** `Redirect from WWW to root`
-  şablonu wildcard kullanıyor (`https://www.*` → `https://${1}`) ve `${1}` query'yi **zaten**
-  taşıyor: kutu kapalıyken `www/x?y=1` → `…/x?y=1` çıktı. İşaretlemiş olsaydık query iki kez
-  eklenecekti — ve bu, kimsenin bakmadığı bir yerde sessizce bozulan türden bir hata.
-- **`curl -w` format string'ine `\n` yazarken dikkat.** Bir ölçümde `Location` değeri
-  `https://www.mymandev.com//n` gibi göründü; gerçek header değil, format string'in artığıydı.
-  Şüpheli bir çıktıyı düzeltmenin yolu `printf` ile tek satırlık temiz bir format kullanmak.
-- **GitHub, ruleset PUT'unda göndermediğin varsayılanı ekliyor.**
-  `require_extra_approval_for_unattributed_changes: true` kendiliğinden geldi. Atfedilemeyen bir
-  commit için 1 onay ister; `@tunayaslan` onay veremediği için böyle bir commit merge edilemez.
-  Şu an tetiklenmiyor (commit'ler atfedilebiliyor, trailer yazılmıyor) — ölçmeden değiştirilmedi.
-- **Testin "o günkü sayıyı" tutması bir kusurdur.** Bu turda iki test **davranış bozulmadığı hâlde**
-  düştü: biri `scroll-margin`'i `"88px"` diye sabit yazmıştı, diğeri bölümün **tamamında** uzun
-  tire arıyordu ve bir cümlenin noktalamasını yakaladı. İkisi de gerçek sözleşmeyi ölçmüyordu.
-  Beklenen değer türetilebiliyorsa **türet** (token'dan), ve yasağı doğru kapsama uygula.
-- **Bir ölçüyü token'a bağlamak yetmez, DOĞRU token'a bağlamak gerekir.** `roll` kutusunun
-  yüksekliği `--text-mono`dan hesaplanıyordu; nav `--text-nav`e geçince 18.19px'lik kutu 18px'lik
-  satırı kırptı ve hover'da ikinci kopyadan ince bir şerit göründü. `1lh` bu sınıfı tümden
-  kapatıyor — kutu öğenin **kendi** satırına bağlı.
-- **Koyu bir barda "en açık piksel" zemin değil, YAZIDIR.** Navbar kontrastını ölçerken ilk sonucum
-  1.00 çıktı çünkü yazının kendi pikselini örnekliyordum. Doğrusu: yazıyı `visibility: hidden` ile
-  gizleyip aynı koordinatı örneklemek. Gerçek sayı 5.49:1.
-- **`fullPage: true` ekran görüntüsü scroll'a bağlı reveal'ı YALANLIYOR.** Chromium viewport'u
-  büyütmeden kaydırıyor, ekran altındaki bölümler `opacity: 0`'da yakalanıyor. Bölümlere tek tek
-  bakmak lazım.
-- **Playwright'ın ilk tıklaması hareketli sayfada boşa düşüyor.** Ölçüldü: normal yolda 24 koşunun
-  7'sinde, reduced-motion altında 0'ında. Sebep uygulama **değil** — tuşun DOM'a girdiği anda
-  çalıştığı ayrıca ölçüldü (12/12, ölü pencere 0 ms). Tıklayan testler reduced-motion altında
-  koşmalı, axe'in aynı sebeple koşması gibi.
-- **Bir taşıyıcının yüksekliği içerikle değişiyorsa üstündeki tuşlar kayar** ve tıklama kaybolur.
-  Çözüm: bütün durumları aynı ızgara hücresinde üst üste yığıp yüksekliği en uzununa sabitlemek.
-  Görünmeyenler `visibility: hidden` — `display: none` yüksekliği götürür, `opacity: 0` öğeyi odak
-  sırasında bırakır.
-- **axe, `aria-hidden` bir metni kontrast için yine de tartıyor.** Doğru cevap kuralı susturmak veya
-  rengi parlatmak değil: WCAG 1.4.3 saf dekorasyonu muaf tutuyor ve makineye bunu söylemenin yolu
-  **metin düğümü kullanmamak**.
-- **Sabit `px` bir "taşma" garantisi değildir.** 1024'te 339px taşan bir işaret 1920'de 61px
-  **içeride** kalıyordu. Taşması gereken şeyin ölçüsü viewport'a bağlanmalı.
-- **Şemayı sıkılaştırmak fixture'ları düşürür ve bu doğru davranıştır.** `description` zorunlu
-  olunca `tests/fixtures.ts` ve iki şema testi düştü; kapının çalıştığının kanıtı bu.
-- **`test.use({ reducedMotion })` bu Playwright sürümünde `tsc`'den geçmiyor**; deponun kendi örneği
-  `page.emulateMedia({ reducedMotion: "reduce" })`.
-- **`useEffect` içinde `setState` lint'ten geçmiyor** (`react-hooks/set-state-in-effect`). Hidrasyon
-  tespiti için doğru araç `useSyncExternalStore`: sunucu anlık görüntüsü `false`, istemcininki
-  `true`, tek render.
-- **Aynı olgu iki yerde yaşıyorsa test yaz.** Portre oranı hem `app/tokens.css`'te hem
-  `lib/image-widths.json`'da yazılı; ayrıldıklarında hiçbir şey patlamıyor, `object-fit: cover`
-  farkı sessizce kırpıyor. `tests/portrait-aspect.test.ts` o aralığı tutuyor.
-- **Lighthouse'un Accessibility skoru bizim kapımızdan düşük çıkabilir** (ölçüldü: 96). Kusur değil,
-  ölçüm anı. `architecture.md` §8'de yazılı.
-- **LCP'NIN OLCTUGU OGE DEGISTI ve bu her şeyi yeniden yorumluyor.** Artifact'ten okundu: LCP öğesi
-  artık Hero'nun `h1`'i değil, **navbar'ın wordmark linki** (`a[href="#main"]`). Sebep bir tasarım
-  kararı — Hero başlığı yükleme animasyonuyla `opacity: 0`'dan geliyor ve **tarayıcı saydam bir
-  öğeyi LCP adayı saymıyor.** Sonuç: LCP'nin 2413 → 2962 ms'e çıkması bir yavaşlama **değil**, daha
-  küçük başka bir öğenin ölçülmeye başlaması. Bir metriği kovalamadan önce **neyi ölçtüğünü** oku.
-  Karar sahibi efektin kalmasını seçti; §8.1'de kayıtlı.
-- **LCP eşiği tek koşunun şansı değil, kalıcı bir sapma** (#83). CI `main` medyanları:
-  **2382 / 2839 / 3063 / 3063 / 2885 ms**, eşik 2000 ms; gerçek domainde **3754 ms**. Altı okumada
-  eşiği tutan **tek bir medyan yok.** Genliğe bakıp "gürültüdür" demek geçmiyor — ve genliğin
-  kendisi de kararsız: bir turda 329–427 ms'ye indi, sonraki turda 1167 ms'ye çıktı. **Sapmayı
-  gösteren şey genliğin küçüklüğü değil, medyanın hiç tutmaması.**
-- **Ölçüm noktası belirtilmemiş bir eşik, kapı değil yorumdur.** §8 "mobil LCP < 2000 ms" diyor ama
-  nerede ölçüldüğünü söylemiyor. İki nokta 700–1400 ms farkla ayrışıyor ve **ikisi de simülasyon:**
-  CI `localhost`'ta sıfıra yakın gerçek gecikme + sentetik throttling; gerçek domain ölçümü ise
-  gerçek gecikme **artı** aynı sentetik throttling, yani çift cezalı. Saha verisi (CrUX/RUM) yeni
-  bir domainde henüz yok.
-- **`localhost` ölçümü daha iyimser, ama sebebi tek değil.** TBT gerçek domainde **düştü**
-  (59 → 29.5 ms) ve FCP **iki katına çıktı** (1234 → 2684 ms). Bir sayının kötüleşmesi her zaman
-  aynı kalemden gelmez; hangi metriğin hangi yöne gittiğine bakmak, "site yavaşladı" demekten
-  bilgi veriyor.
-- **Performance skoru için aynı şey geçerli DEĞİL:** 94 / 98 / 95 / 94. İki kez üst üste düşmüyor,
-  aradaki koşular eşiği tutuyor. Salınan bir skoru kovalamak ölçmeden düzeltmek olur; #83 bu yüzden
-  yalnızca LCP için açıldı.
-- **Lighthouse'un LCP sayısı simülasyondur, gözlem değil.** Artifact'ten okundu:
-  `throttlingMethod: "simulate"`, istek gecikmesi **562 ms**, CPU **4×**. Aynı koşuda **gözlenen**
-  alt bölümler TTFB 5 ms + element render delay 103 ms. Yani 3063 ms'in içinde gerçek render 108 ms.
-  Tek somut kalem (render-blocking CSS, 7 691 B, iddia edilen kazanç 550 ms) tamamen alınsa bile
-  ~2500 ms kalıyor — mikro-optimizasyonla 2000 ms'e inilmiyor.
-- **Bir yokluğu kanıt saymamak lazım.** CSS'in sıkıştırılmadığını düşündüm: `content-encoding`
-  başlığı yoktu ve dosya 33 012 B iniyordu. Sebep sunucu değildi — `curl` varsayılan olarak
-  `Accept-Encoding` göndermiyor. `--compressed` ile Brotli geldi ve 7 339 B indi. **İstemediğin bir
-  şeyin gelmemesi, sunucunun onu vermediği anlamına gelmez.**
-- **Yanlış kesme koşulu eksik kapsamı tam kapsam gibi gösterir.** Klavye turunu "aynı durak tekrar
-  geldi" diye kesince tur **19** durakta bitti ve footer kapsam dışında kaldı: footer'ın tek linki
-  nav'daki GitHub ile aynı href'i taşıyor, yani anahtar çakışıyordu. Doğru koşul "**ilk** durağa
-  dönene kadar" — o zaman 20. durak (footer) göründü.
-- **`textContent` erişilebilirlik ağacı değildir.** Nav linkleri `"HeroHero"` diye çift okunuyor
-  çünkü durumlar aynı ızgara hücresinde yığılı. Ölçüldü: ikinci kopya `visibility: hidden`, görünür
-  metin düğümü **tek** (`["Hero"]`), yani ekran okuyucu çift söylemiyor. Çifti görüp kusur sanmak
-  kolay; ölçülecek şey ağacın kendisi.
-- **Lighthouse skorları job log'unda, artifact'in içinde değil.** `scripts/lighthouse-summary.mjs`
-  özeti `gh run view <id> --log` ile okunuyor; artifact yalnızca ayrıntı için gerekiyor
-  (`gh run download <id> -n lighthouse-report`). Ve dikkat: Windows'ta Node, kabuğun `/tmp` yolunu
-  aynı yere çözmüyor — indirilen dosyayı `node`'a verirken yol `cygpath -m` ile çevrilmeli.
-- **`.next` önbelleği font ölçümünü yalanlıyor.** Doğru sayılar ancak `rm -rf .next` sonrası çıktı.
-- **`pnpm preview` bir sunucudur, biten bir iş değil.** Arka planda başlatılıp durdurulmazsa
-  birikiyor. Ölçüm scriptleri kendi sunucusunu açıp kapatmalı. `pkill -f "serve out"` eşleşmiyor —
-  süreç `node.exe` olarak görünüyor.
-- **Katkıcı listesi sorunu bu depoda YOK.** Ölçüldü: `main`'de gerçek trailer 0. Kalıntı yalnızca
-  `refs/pull/*`'ta ve listeyi etkilemiyor.
-- **Duyarsız bir metrikle eşik seçilmez.** Logo SVG'sinin sadeleştirme eşiğini seçerken önce
-  çıktıyı render edip kaynakla piksel karşılaştırması yapıyordum; sonuç eşik 0.05'ten 0.8'e
-  çıkarken **değişmiyordu**, çünkü o fark sadeleştirmeden değil kenar yumuşatmasından geliyordu.
-  Bir sayıya bakıp karar vermeden önce o sayının **değişmesi gerektiğinde değiştiğini** görmek
-  lazım.
-- **`mask-image` bulunamayan bir dosyada sessizdir.** Tarayıcı hata vermez, öğe sadece hiç
-  görünmez: kutu yerinde, ölçüler doğru, ekranda hiçbir şey yok. `tests/e2e/hero.spec.ts` maskenin
-  gerçekten yüklendiğini ayrıca ölçüyor.
-- **`page.goto` bağlantı reddedildiğinde anında atıyor**, zaman aşımını beklemeden. Beklemesiz bir
-  yeniden deneme döngüsü 80 denemeyi bir saniyede tüketip sunucu ayağa kalkmadan pes eder.
-  Denemeler arasına bekleme koy.
-- **canonical `href` taşır, `content` değil.** `<link>` ile `<meta>` karıştırıldığında test kendi
-  hatasıyla düşer.
-- **`NOTICE`'in saydığı yollar ile gerçek dosya yolları ayrılabiliyor.** `public/brand/mark.png` o
-  listenin dışında kalıyordu — yani amblem, onu kapsaması gereken bildirimin kapsamı dışındaydı.
-  Yeni marka varlıkları `public/logo*` altında ve kalıp tutuyor.
+- **`*.pages.dev` iş ağında açılmıyor.** DNS `::1` ve `213.14.227.50` dönüyor; aynı anda
+  `mymandev.com` 200 veriyor. Preview kontrolü bu makinede aynı commit'in yerel build'inde yapılır.
+- **Cloudflare dal alias'ını 28 karaktere kısaltıyor.** Preview linkini bot yorumundan al, dal
+  adından türetme (`chore-point-ownership-commen.mymandev.pages.dev`).
+- **Cloudflare Pages build'i bir kez sebepsiz düştü** ("Build failed", log yalnızca panelde). Aynı
+  ağaç boş bir commit'le yeniden koşunca 60 saniyede geçti. GitHub'daki `lighthouse` işi de bir
+  kez `next/font/google` dosyasını çekemeyip düştü
+  (`Can't resolve '@vercel/turbopack-next/internal/font/google/font'`); `gh run rerun <id> --failed`
+  ile geçti. İkisinde de aynı commit'in diğer build'leri yeşildi.
+- **Flex bir öğede `gridTemplateColumns` başka bir breakpoint'in iz listesini döndürüyor**
+  (`repeat(2, minmax(0px, 1fr))`, üç parça). Kolon sayan bir test, liste flex'e geçince hiçbir şey
+  ölçmeden geçerdi; `team.spec.ts` artık kart genişliğini ve ortalamayı ölçüyor.
+- **Team kartı (`article`) giriş animasyonunda `translate` taşıyor.** Yerleşimi ölçerken `li`'yi ölç;
+  400ms'de ölçülen `article` konumu animasyonun ortasını yakaladı (2–8px).
+- **Düz bir JS Playwright config'inde `use.reducedMotion` uygulanmadı** (`matchMedia` false döndü);
+  `page.emulateMedia({ reducedMotion: "reduce" })` çalışıyor. Deponun kendi testleri zaten öyle.
+- **Kaldırılan bir görsel kenar önbelleğinde 4 saate kadar yaşar.** Origin'in cevabını görmek için
+  sorgu dizesi ekle (`?nocache=…` → `cf-cache-status: BYPASS`); aynı adres istekten isteğe farklı
+  kenar sunucusundan farklı cevap verebiliyor.
+- **Ekip verisi yalnızca `index.html`'de değil,** üç RSC dosyasında da (`/index.txt`,
+  `/__next._full.txt`, `/__next.__PAGE__.txt`) yayınlanıyor. Bir şeyin yayından kalktığını dördünü
+  birden ölçerek doğrula.
+- **`scripts/optimize-images.mjs` dosya silmiyor** ve `next build` `public/`'in tamamını kopyalıyor.
+  Artık `tests/images.test.ts` ekipte olmayan bir fotoğrafı yakalıyor (iki yarısı da kanıtlandı).
+- **`gh pr merge --match-head-commit` tam SHA istiyor**; kısa SHA GraphQL hatası verir.
+- **Bir adı ağaçta ararken `git grep -w` kullanma.** Kelime sınırı `@handle`'ları ve URL'lerin
+  içindeki adı kaçırıyor (bugün 27 satırın 19'unu kaçırdı). `-w`'siz `git grep -i -E` ve dosya adları
+  için `git ls-files | grep` birlikte gerekir.
 - **Bu depoda `git add -A` kullanma**, dosyaları tek tek ekle.
 - **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).

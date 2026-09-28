@@ -608,3 +608,4 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | LCP eşiği                  | 2.0 s **revize edilmedi**; tutulmadığı kayıtlı — sayı işe uydurulmaz                         | §8.1   |
 | Contact bölümü             | `mailto`, form değil; adres bir **takma ad** — taranırsa kapatılıp değiştirilir              | §3     |
 | Bölge sahipliği            | **Bölge B İbrahim'e**; paylaşılan yüzey onayı karar sahibinde (working-agreement §1)         | —      |
+| Logo işareti               | Ekip iki kişiye indi; üç kafalı işaret **olduğu gibi kaldı** (karar sahibi)                  | §4.1   |
