@@ -601,6 +601,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | İmza sayısı                | `0 ML models promoted` **kaldırıldı**; yerine üç kısıt — imza kayboldu                       | §4.6   |
 | Hero yüksekliği            | `min-h-dvh`; amblem %18 küçüldü, zemine ince çizgi dokusu                                    | §3     |
 | Team yüksekliği            | `lg`de bir ekran; kutu orandan değil **kalan alandan**                                       | §3     |
+| Team genişliği             | `lg`de kart **üç kolonluk iz** genişliğinde; eksik satır ortalanır, kart büyümez             | §3     |
 | Navbar scroll davranışı    | Tepede saydam, 120px'te yerleşiyor; `animation-timeline: scroll()`                           | §4.4   |
 | Bölüm sınırı               | `1px` çizgi + Hero'da metinsiz scroll göstergesi (iki tur)                                   | §4.4   |
 | LCP ölçüm noktası          | CI `localhost`, mobil emülasyon, üç koşunun medyanı; aday **navbar wordmark**                | §8.1   |

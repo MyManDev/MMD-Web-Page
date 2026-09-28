@@ -161,8 +161,8 @@ test("kart hover'da kalkiyor, komsusu yerinde kaliyor", async ({ page }) => {
    * animasyonu (reveal-on-enter) scroll'a bagli olarak icerigi 16px'e kadar
    * tasiyor. Ikisi de bu testin sordugu sey degil.
    *
-   * Referans BOLUM DEGIL IZGARA: reveal sarmalayicisi bolumun icinde, yani
-   * bolume gore olcum de o 16px'i tasiyordu (olculdu). Izgara ile komsu ayni
+   * Referans BOLUM DEGIL LISTE: reveal sarmalayicisi bolumun icinde, yani
+   * bolume gore olcum de o 16px'i tasiyordu (olculdu). Liste ile komsu ayni
    * sarmalayicinin icinde ve birlikte hareket ediyor, dolayisiyla aradaki
    * fark yalnizca kartin kalkmasina duyarli kaliyor.
    */
@@ -226,7 +226,8 @@ test("her kartta iki link var, ikisi de odaklanabilir ve odaklaninca gorunuyor",
 });
 
 /**
- * Sayfada ayni adi tasiyan alti link var (uc kisi x iki ag). Erisilebilir ad
+ * Sayfada ayni adi tasiyan birden fazla link var (her ag adi kisi sayisi kadar
+ * tekrar ediyor). Erisilebilir ad
  * tek basina hangisinin kime ait oldugunu soylemiyor; aria-describedby kartin
  * adini bagliyor. Renk gibi, tek basina metin de bilgi tasimaz.
  */
@@ -321,17 +322,17 @@ test("ad ve rolun zemini fotograftan bagimsiz okunabilir", async ({ page }) => {
 /**
  * TAM EKRAN - yalnizca `lg`de. design-spec.md §3.5
  *
- * Onceki hali viewport'un %115'iydi (1600x900'de %125), yani ucuncu kart her
- * zaman kesiliyordu. Yukseklik ORANDAN DEGIL KALAN ALANDAN geliyor: tek bir
+ * Onceki hali viewport'un %115'iydi (1600x900'de %125), yani kartlarin alti
+ * her zaman kesiliyordu. Yukseklik ORANDAN DEGIL KALAN ALANDAN geliyor: tek bir
  * sabit oran her viewport'ta sigdiramaz, cunku kart genisligi kapsayiciyla
  * buyurken ekran yuksekligi sabit kaliyor (hesaplandi: 2/3 orani 1440'ta
  * sigiyor, 1600x900'de %109 tasiyor).
  *
- * Olculen sey iki parcali: bolum bir ekran kadar, VE uc kart gercekten gorunur
+ * Olculen sey iki parcali: bolum bir ekran kadar, VE butun kartlar gercekten gorunur
  * alanda. Ikincisi olmadan birincisi bir sey kanitlamiyor - bolum bir ekran
  * olup kartlari tasirabilirdi.
  */
-test("lg'de bolum bir ekrana sigiyor ve uc kart da gorunuyor", async ({ page }, testInfo) => {
+test("lg'de bolum bir ekrana sigiyor ve butun kartlar gorunuyor", async ({ page }, testInfo) => {
   const width = testInfo.project.use.viewport?.width ?? 0;
   const height = testInfo.project.use.viewport?.height ?? 0;
   test.skip(width < 1024, "tam ekran yalnizca lg ustunde");
@@ -352,18 +353,19 @@ test("lg'de bolum bir ekrana sigiyor ve uc kart da gorunuyor", async ({ page }, 
       return box.top >= rect.top - 1 && box.bottom <= rect.bottom + 1;
     });
   });
-  expect(fits, "uc kart da bolumun icinde kalmali").toBe(true);
+  expect(fits, "butun kartlar bolumun icinde kalmali").toBe(true);
 });
 
 /**
- * UC KART AYNI MUAMELEDEN GECIYOR. Istek "ucu ayni sistemin parcasi gibi
- * gorunsun" idi; olculdu, portrelerin ortalama parlakligi 86 / 118 / 114.
+ * BUTUN KARTLAR AYNI MUAMELEDEN GECIYOR. Istek kartlar icin "ayni sistemin
+ * parcasi gibi gorunsun" idi; portrelerin olculen parlaklik farki
+ * TeamCard.tsx'teki karartma yorumunda.
  *
  * Olculen sey PERDENIN ESITLIGI, fotografin parlakligi degil - CSS pozlamayi
- * esitlemez ve bunu iddia etmiyoruz. Perde ayrilirsa kartlar yeniden uc ayri
- * sistem gibi gorunur ve bunu gozle yakalamak zor.
+ * esitlemez ve bunu iddia etmiyoruz. Perde ayrilirsa kartlar yeniden ayri
+ * sistemler gibi gorunur ve bunu gozle yakalamak zor.
  */
-test("uc kartin karartmasi birebir ayni", async ({ page }) => {
+test("butun kartlarin karartmasi birebir ayni", async ({ page }) => {
   const scrims = await page.evaluate(() =>
     [...document.querySelectorAll("#team article")].map((card) => {
       const layer = card.querySelector(":scope > div[aria-hidden='true']");
@@ -376,11 +378,110 @@ test("uc kartin karartmasi birebir ayni", async ({ page }) => {
   expect(scrims[0]).not.toBeNull();
 });
 
-test("mobilde tek kolon, sm'de iki, lg'de uc", async ({ page }, testInfo) => {
-  const width = testInfo.project.use.viewport?.width ?? 0;
-  const columns = await page
-    .locator(`${SECTION} ul[data-cards]`)
-    .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+/**
+ * Desktop projesi yalnizca 1280x720 kosuyor; lg'nin geri kalani test icinde.
+ * 1024 lg esigi ve `sizes`'in 34vw dali; 1600 kapsayicinin kapandigi yer ve
+ * `sizes`'in 491px dalinin basladigi yer; 1920 kapanmis kapsayicinin otesi.
+ */
+const LG_VIEWPORTS = [
+  { width: 1024, height: 768 },
+  { width: 1280, height: 720 },
+  { width: 1440, height: 900 },
+  { width: 1600, height: 900 },
+  { width: 1920, height: 1080 },
+];
 
-  expect(columns).toBe(width >= 1024 ? 3 : width >= 640 ? 2 : 1);
+/**
+ * lg: kart = (liste - 2 x gap) / 3, satir tek ve ortada. design-spec.md §3.5
+ *
+ * Kolon SAYISI olculmuyor: flex bir ogede `gridTemplateColumns` sm'nin computed
+ * degerini ("repeat(2, minmax(0px, 1fr))") donduruyor ve uc parca sayilir - eski
+ * test tam bunu yapiyordu ve hicbir sey olcmeden gecerdi. Gap OKUNUYOR: gap-8
+ * degisip calc guncellenmezse test duser - dolu bir satirda gap buyurse shrink
+ * farki yutar, o durumda yalnizca eksik bir satirda duser. `li` olculuyor, `article`
+ * degil - article giris animasyonunda ve hover'da translate tasiyor.
+ *
+ * Kisi sayisindan bagimsiz: uc kisiyle satir tam dolar (sol ve sag bosluk 0),
+ * daha azla kartlar ayni genislikte ortada durur.
+ */
+test("lg'de kart uc kolonluk izin genisliginde, satir tek ve ortada", async ({
+  page,
+}, testInfo) => {
+  test.skip((testInfo.project.use.viewport?.width ?? 0) < 1024, "yalnizca lg ustunde");
+  const list = page.locator(`${SECTION} ul[data-cards]`);
+  /* `count()` beklemez; once bekleyen bir assertion. */
+  await expect(list.locator(":scope > li")).not.toHaveCount(0);
+
+  for (const viewport of LG_VIEWPORTS) {
+    const at = `${viewport.width}x${viewport.height}`;
+    await page.setViewportSize(viewport);
+    await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(viewport.width);
+
+    const row = await list.evaluate((el) => {
+      const style = getComputedStyle(el);
+      const box = el.getBoundingClientRect();
+      return {
+        wrap: style.flexWrap,
+        gap: Number.parseFloat(style.columnGap),
+        left: box.left + Number.parseFloat(style.paddingLeft),
+        right: box.right - Number.parseFloat(style.paddingRight),
+        top: box.top,
+        height: box.height,
+        items: [...el.children].map((item) => {
+          const rect = item.getBoundingClientRect();
+          const card = item.querySelector("article");
+          return {
+            left: rect.left,
+            right: rect.right,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height,
+            cardHeight: card ? card.getBoundingClientRect().height : Number.NaN,
+          };
+        }),
+      };
+    });
+
+    /* Dolu bir satirda (uc kolonluk iz + iki gap) liste tam doluyor; 1/64px
+       yuvarlama toplami asabilir, nowrap + shrink bunu yutar. */
+    expect(row.wrap, `${at}: satir kirilamaz`).toBe("nowrap");
+
+    const expected = (row.right - row.left - 2 * row.gap) / 3;
+    row.items.forEach((item, index) => {
+      const card = `${at} kart ${index}`;
+      /* toBeCloseTo(x, 0): |fark| < 0.5px */
+      expect(item.width, `${card}: genislik`).toBeCloseTo(expected, 0);
+      expect(item.top, `${card}: ayni satir`).toBeCloseTo(row.top, 0);
+      expect(item.height, `${card}: satiri dolduruyor`).toBeCloseTo(row.height, 0);
+      expect(item.cardHeight, `${card}: lg:h-full cozuluyor`).toBeCloseTo(item.height, 0);
+      const previous = row.items[index - 1];
+      if (previous) expect(item.left - previous.right, `${card}: aralik`).toBeCloseTo(row.gap, 0);
+    });
+
+    const first = row.items.at(0);
+    const last = row.items.at(-1);
+    if (!first || !last) throw new Error(`${at}: listede kart yok`);
+    expect(first.left - row.left, `${at}: sol bosluk = sag bosluk`).toBeCloseTo(
+      row.right - last.right,
+      0,
+    );
+  }
+});
+
+test("lg altinda izgara: mobilde tek kolon, sm'de iki", async ({ page }, testInfo) => {
+  const columns = () =>
+    page.locator(`${SECTION} ul[data-cards]`).evaluate((el) => {
+      const style = getComputedStyle(el);
+      /* Yalnizca izgarada anlamli; baska bir ogede computed deger parca sayisini yalanlar. */
+      return style.display === "grid" ? style.gridTemplateColumns.split(" ").length : Number.NaN;
+    });
+
+  if ((testInfo.project.use.viewport?.width ?? 0) < 640) {
+    expect(await columns()).toBe(1);
+    return;
+  }
+  /* Iki proje de sm'yi kosmuyor (412, 1280); eski testin sm dali hic calismamisti. */
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(768);
+  expect(await columns()).toBe(2);
 });

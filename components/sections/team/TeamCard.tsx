@@ -50,12 +50,12 @@ export function TeamCard({ member }: { member: TeamMember }) {
       />
 
       {/*
-        TEK VE AYNI KARARTMA - uc kartta birebir ayni oran. Istek "ucu ayni
-        sistemin parcasi gibi gorunsun" idi ve olculdu: portrelerin ortalama
-        parlakligi Ibrahim 86, Tunay 118, Ertugrul 114 (0-255). Yani ilk
-        fotograf gercekten ~%28 daha koyu.
+        TEK VE AYNI KARARTMA - butun kartlarda birebir ayni oran. Istek kartlar
+        icin "ayni sistemin parcasi gibi gorunsun" idi ve olculdu: en koyu
+        portrenin ortalama parlakligi digerlerinden ~30 birim (0-255) dusuk,
+        yani o fotograf gercekten belirgin daha koyu.
 
-        DURUST SINIR: bu perde uc karti ayni MUAMELEDEN geciriyor, pozlamayi
+        DURUST SINIR: bu perde kartlari ayni MUAMELEDEN geciriyor, pozlamayi
         esitlemiyor. Fark orani korunuyor; gercek cozum o fotografi daha
         aydinlik yeniden disa aktarmak. Kisi basina `filter: brightness()`
         yazmak paletin disinda, kisiye gomulu bir sayi uretirdi - yapilmadi.
@@ -122,8 +122,8 @@ export function TeamCard({ member }: { member: TeamMember }) {
           goremezdi.
 
           Erisilebilir adlari tek basina "GitHub" olsaydi sayfada ayni adi
-          tasiyan alti link olurdu; aria-describedby her birini kartin adina
-          bagliyor.
+          tasiyan birden fazla link olurdu (her ag adi kisi sayisi kadar
+          tekrar ediyor); aria-describedby her birini kartin adina bagliyor.
         */}
         <ul className="flex flex-wrap gap-x-5 gap-y-2">
           {[
