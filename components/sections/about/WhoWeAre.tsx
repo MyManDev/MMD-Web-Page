@@ -8,7 +8,7 @@ type NavItem = Site["nav"][number];
  * Who we are. design-spec.md §3.4
  *
  * Kolektifi BIRLIKTE anlatir; kisiler bir sonraki bolumde tek tek geliyor
- * (§3.4, "genelden tekile"). Bu yuzden burada uc uzmanlik SAYILMIYOR - o
+ * (§3.4, "genelden tekile"). Bu yuzden burada uzmanliklar SAYILMIYOR - o
  * cumle Team bolumunun.
  *
  * BOLUMDE YESIL YOK (§5.1). Birincil aksiyon olmadigi icin accent kotasi
