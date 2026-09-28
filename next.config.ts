@@ -8,10 +8,10 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   /**
    * `next dev` varsayilan olarak CLAUDE.md'ye kendi blogunu ekliyor.
-   * KAPATILDI: CLAUDE.md paylasilan yuzey ve iki bolge sahibinin onayini
-   * ister (working-agreement.md §1). Bir aracin oraya kendiliginden yazmasi
-   * o onayi atlar; ustelik eklenen metin "bunu isinle birlikte commit et"
-   * diyor, yani calisma agacini kirletip commit'e sizmayi kolaylastiriyor.
+   * KAPATILDI: CLAUDE.md paylasilan yuzey (onay kurali: working-agreement.md
+   * §1). Bir aracin oraya kendiliginden yazmasi o onayi atlar; ustelik
+   * eklenen metin "bunu isinle birlikte commit et" diyor, yani calisma
+   * agacini kirletip commit'e sizmayi kolaylastiriyor.
    *
    * Kural hala gecerli: CLAUDE.md elle yazilir.
    */
