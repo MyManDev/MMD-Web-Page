@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Icerik semasi. PAYLASILAN YUZEY - degisiklik iki bolge sahibinin onayini ister.
+ * Icerik semasi. PAYLASILAN YUZEY - onay kurali:
  * docs/working-agreement.md §1
  *
  * Sema SERTTIR. Alan eksik veya yanlissa `pnpm build` patlar. Alan default'a
