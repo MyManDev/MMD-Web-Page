@@ -16,14 +16,16 @@ Sahiplik = **inceleme yetkisi**, dışlayıcı erişim değil. Herkes her şeyi 
 
 |                       | Bölge A — Vitrin ve içerik                                                                   | Bölge B — Kabuk ve teslim                                                                                                                            |
 | --------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sahip**             | İbrahim                                                                                      | Tunay                                                                                                                                                |
+| **Sahip**             | İbrahim                                                                                      | İbrahim                                                                                                                                              |
 | **Sahip olduğu soru** | Ürünlerimiz sitede doğru ve etkileyici görünüyor mu?                                         | Site kendini doğru sunuyor, kendini doğru taşıyor mu?                                                                                                |
 | **Kapsam**            | Hero, Projects bölümü, proje kartı ve etkileşimi, `content/` ve Zod şeması, proje görselleri | Navigation (sticky navbar, anchor scroll, aktif link, mobil menü), Team, About, Footer, 404, SEO/metadata/OG/sitemap/robots, CI ve deployment bakımı |
 | **Kendi testleri**    | Şema testleri, Projects E2E                                                                  | Navigation E2E, a11y taraması, 404 E2E                                                                                                               |
 
-Ayrım katmana göre değil, **sayfanın hangi işini yaptığına** göre. İkisi de React yazıyor, ikisi de
-içerik ve test yazıyor: A tarafında Zod şeması var, B tarafında Team layout'u var. Kimse "sadece
-görünüm" veya "sadece altyapı" değil.
+Ayrım katmana göre değil, **sayfanın hangi işini yaptığına** göre. İki bölge de React yazıyor, ikisi
+de içerik ve test yazıyor: A tarafında Zod şeması var, B tarafında Team layout'u var. Hiçbir bölge
+"sadece görünüm" veya "sadece altyapı" değil.
+
+İki bölgenin de sahibi şu an İbrahim; ayrım yapı olarak duruyor.
 
 **Ertuğrul** bu projede bölge sahibi değil; optimizer'a odaklı devam ediyor, review'a çağrılabilir.
 Faz 0 (§6) onun tarafından tek seferlik kuruluyor; sonrasında bölgeler yukarıdaki gibi işler.
@@ -33,7 +35,9 @@ düşünürse bölgeler takas edilir.
 
 ### Paylaşılan yüzeyler
 
-Değişiklik **her iki bölge sahibinin** onayını ister. `CODEOWNERS` bunu mekanik hale getirir.
+Değişiklik **karar sahibinin (İbrahim) açık onayını** ister; bir Claude oturumu bu PR'ları kendi
+başına merge etmez. `CODEOWNERS` sahibi gösterir ama onayı zorlamaz: ruleset'te code-owner review
+kapalı.
 
 - `app/tokens.css` ve `app/globals.css`
 - `app/layout.tsx`, `app/page.tsx`
@@ -42,7 +46,7 @@ Değişiklik **her iki bölge sahibinin** onayını ister. `CODEOWNERS` bunu mek
 - Marka metinleri, logo/sembol kullanımı, proje açıklamaları, imza sayısının metni
 - `docs/`, `CLAUDE.md`, `.github/`
 
-Next.js'te iki kişi de `components/` ve token dosyasına dokunur; çakışma riski optimizer'a göre
+Next.js'te iki bölge de `components/` ve token dosyasına dokunur; çakışma riski optimizer'a göre
 **arttı**, azalmadı. §2'nin son maddesi bu yüzden var.
 
 ---
@@ -93,7 +97,7 @@ koruma ile engelli.
 - [x] Require status checks to pass — `gates` ve `e2e` işleri zorunlu
 - [x] Require branches to be up to date before merging
 - [x] Require conversation resolution before merging
-- [x] Do not allow bypassing the above settings ← **üçünüz de yönetici olduğunuz için kritik**
+- [x] Do not allow bypassing the above settings ← **ikiniz de yönetici olduğunuz için kritik**
 - [ ] Allow force pushes — kapalı
 - [ ] Allow deletions — kapalı
 - Required approving reviews: **§3.1**
@@ -118,8 +122,8 @@ gövdesi disiplini (§3.3) aynen uygulanır.
 
 Gerekçe: optimizer'da zorunlu review sıfırdı çünkü _"kapı, kapılardır"_ — davranışın test
 edilebilir olduğu bir sistemde doğru. Burada **kapılar görsel regresyonu göremez.** `next build`
-geçer, Hero mobilde kırılmıştır. Ayrıca metin, isim ve marka kararları paylaşılan yüzey; onları tek
-kişi merge etmez.
+geçer, Hero mobilde kırılmıştır. Ayrıca metin, isim ve marka kararları paylaşılan yüzey; onlar
+karar sahibinin açık onayıyla merge edilir, bir Claude oturumu onları kendi başına merge etmez.
 
 Bedeli küçük tutmanın yolu PR'ları küçük tutmak. `chore/` ve `docs/` PR'larında review gerektiğinde
 atlanır; **kaynağa veya içeriğe dokunan hiçbir PR'da atlanmaz.**
@@ -211,7 +215,7 @@ Bir madde gerçek işe dönüştüğünde listeden silinir ve issue'ya taşını
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
 | **1. Design lock** | Draw.io: design system, component envanteri, Home desktop/mobil, Projects (tek proje + gelecekteki çok proje), Team, About, responsive/navigation. Logo SVG. | ortak            |
 | **2. Faz 0**       | Repo iskeleti, sürüm sabitleme, `tokens.css`, layout, UI primitive'leri, kapılar, Actions, Cloudflare Pages, domain. Boş sayfa canlıda.                      | tek PR, Ertuğrul |
-| **3. Bölge işi**   | A: Hero + Projects + içerik. B: Navigation + Team + About + Footer + SEO. Paralel, çakışmasız.                                                               | İbrahim / Tunay  |
+| **3. Bölge işi**   | A: Hero + Projects + içerik. B: Navigation + Team + About + Footer + SEO. Paralel, çakışmasız.                                                               | İbrahim          |
 | **4. Production**  | Gerçek görseller, metinler, testler, eşik ölçümü, yayın.                                                                                                     | ortak            |
 
 Claude Code 2. aşamada devreye girer. 1. aşamada işi yok.
@@ -257,7 +261,7 @@ zorunlu bir adım.
 - [ ] `git pull` yapıldı, `HANDOFF.md` okundu.
 - [ ] Bu bir issue mı? Gözlem, kanıt ve önerilen şekil yazılı mı?
 - [ ] Hangi bölgeye düşüyor?
-- [ ] Paylaşılan yüzeye dokunuyor mu? Öyleyse diğer taraf haberdar mı?
+- [ ] Paylaşılan yüzeye dokunuyor mu? Öyleyse karar sahibinin açık onayı alındı mı?
 - [ ] Devralınan bir plan varsa (insan veya ajan): öncülleri repoya karşı doğrulandı mı?
 - [ ] Aynı dosyada başkası çalışıyor mu? Öyleyse önce söylendi mi?
 
