@@ -161,8 +161,8 @@ test("kart hover'da kalkiyor, komsusu yerinde kaliyor", async ({ page }) => {
    * animasyonu (reveal-on-enter) scroll'a bagli olarak icerigi 16px'e kadar
    * tasiyor. Ikisi de bu testin sordugu sey degil.
    *
-   * Referans BOLUM DEGIL IZGARA: reveal sarmalayicisi bolumun icinde, yani
-   * bolume gore olcum de o 16px'i tasiyordu (olculdu). Izgara ile komsu ayni
+   * Referans BOLUM DEGIL LISTE: reveal sarmalayicisi bolumun icinde, yani
+   * bolume gore olcum de o 16px'i tasiyordu (olculdu). Liste ile komsu ayni
    * sarmalayicinin icinde ve birlikte hareket ediyor, dolayisiyla aradaki
    * fark yalnizca kartin kalkmasina duyarli kaliyor.
    */
@@ -226,7 +226,8 @@ test("her kartta iki link var, ikisi de odaklanabilir ve odaklaninca gorunuyor",
 });
 
 /**
- * Sayfada ayni adi tasiyan birden fazla link var (kisi basina iki ag). Erisilebilir ad
+ * Sayfada ayni adi tasiyan birden fazla link var (her ag adi kisi sayisi kadar
+ * tekrar ediyor). Erisilebilir ad
  * tek basina hangisinin kime ait oldugunu soylemiyor; aria-describedby kartin
  * adini bagliyor. Renk gibi, tek basina metin de bilgi tasimaz.
  */
@@ -321,8 +322,8 @@ test("ad ve rolun zemini fotograftan bagimsiz okunabilir", async ({ page }) => {
 /**
  * TAM EKRAN - yalnizca `lg`de. design-spec.md §3.5
  *
- * Onceki hali viewport'un %115'iydi (1600x900'de %125), yani ucuncu kart her
- * zaman kesiliyordu. Yukseklik ORANDAN DEGIL KALAN ALANDAN geliyor: tek bir
+ * Onceki hali viewport'un %115'iydi (1600x900'de %125), yani kartlarin alti
+ * her zaman kesiliyordu. Yukseklik ORANDAN DEGIL KALAN ALANDAN geliyor: tek bir
  * sabit oran her viewport'ta sigdiramaz, cunku kart genisligi kapsayiciyla
  * buyurken ekran yuksekligi sabit kaliyor (hesaplandi: 2/3 orani 1440'ta
  * sigiyor, 1600x900'de %109 tasiyor).
@@ -356,8 +357,8 @@ test("lg'de bolum bir ekrana sigiyor ve butun kartlar gorunuyor", async ({ page 
 });
 
 /**
- * BUTUN KARTLAR AYNI MUAMELEDEN GECIYOR. Istek kartlarin "ayni sistemin
- * parcasi gibi gorunmesi" idi; portrelerin olculen parlaklik farki
+ * BUTUN KARTLAR AYNI MUAMELEDEN GECIYOR. Istek kartlar icin "ayni sistemin
+ * parcasi gibi gorunsun" idi; portrelerin olculen parlaklik farki
  * TeamCard.tsx'teki karartma yorumunda.
  *
  * Olculen sey PERDENIN ESITLIGI, fotografin parlakligi degil - CSS pozlamayi
@@ -379,8 +380,8 @@ test("butun kartlarin karartmasi birebir ayni", async ({ page }) => {
 
 /**
  * Desktop projesi yalnizca 1280x720 kosuyor; lg'nin geri kalani test icinde.
- * 1024 lg esigi ve `sizes`'in 34vw dali, 1920 kapsayicinin kapandigi yer ve
- * `sizes`'in 491px dali.
+ * 1024 lg esigi ve `sizes`'in 34vw dali; 1600 kapsayicinin kapandigi yer ve
+ * `sizes`'in 491px dalinin basladigi yer; 1920 kapanmis kapsayicinin otesi.
  */
 const LG_VIEWPORTS = [
   { width: 1024, height: 768 },
@@ -396,7 +397,8 @@ const LG_VIEWPORTS = [
  * Kolon SAYISI olculmuyor: flex bir ogede `gridTemplateColumns` sm'nin computed
  * degerini ("repeat(2, minmax(0px, 1fr))") donduruyor ve uc parca sayilir - eski
  * test tam bunu yapiyordu ve hicbir sey olcmeden gecerdi. Gap OKUNUYOR: gap-8
- * degisip genislik hesabi degismezse test duser. `li` olculuyor, `article`
+ * degisip calc guncellenmezse test duser - dolu bir satirda gap buyurse shrink
+ * farki yutar, o durumda yalnizca eksik bir satirda duser. `li` olculuyor, `article`
  * degil - article giris animasyonunda ve hover'da translate tasiyor.
  *
  * Kisi sayisindan bagimsiz: uc kisiyle satir tam dolar (sol ve sag bosluk 0),
@@ -440,7 +442,8 @@ test("lg'de kart uc kolonluk izin genisliginde, satir tek ve ortada", async ({
       };
     });
 
-    /* Uc kart + iki gap listeyi tam dolduruyor; 1/64px yuvarlama toplami asabilir. */
+    /* Dolu bir satirda (uc kolonluk iz + iki gap) liste tam doluyor; 1/64px
+       yuvarlama toplami asabilir, nowrap + shrink bunu yutar. */
     expect(row.wrap, `${at}: satir kirilamaz`).toBe("nowrap");
 
     const expected = (row.right - row.left - 2 * row.gap) / 3;

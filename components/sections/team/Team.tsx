@@ -29,8 +29,8 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
   return (
     /*
       TAM EKRAN (istek: "team tek basina ekrana sigmiyor, tam bir ekran boyutu
-      olmali"). Onceki hali viewport'un %115'i, 1600x900'de %125 - yani ucuncu
-      kart her zaman kesiliyordu.
+      olmali"). Onceki hali viewport'un %115'i, 1600x900'de %125 - yani
+      kartlarin alti her zaman kesiliyordu.
 
       YUKSEKLIK ORANDAN DEGIL KALAN ALANDAN geliyor ve bu hesaplanarak secildi:
       1440x900'de 2/3 orani sigdiriyor, ama 1600x900'de kart genisligi 490px'e

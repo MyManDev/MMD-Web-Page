@@ -454,26 +454,25 @@ border ve renk değişimiyle çalışır. Tek istisna focus halkası ve o kotaya
 
 Üç kişiyi tek tek tanıtan kartlar.
 
-|                | Mobil | `sm` | `≥ lg`                                  |
-| -------------- | ----- | ---- | --------------------------------------- |
-| Kolon          | 1     | 2    | tek satır, ortada                       |
-| Kart genişliği | tam   | 1/2  | üç kolonluk iz: `(liste − 2 × gap) / 3` |
+|                | Mobil | `sm`                | `≥ lg`                                  |
+| -------------- | ----- | ------------------- | --------------------------------------- |
+| Kolon          | 1     | 2                   | tek satır, ortada                       |
+| Kart genişliği | tam   | `(liste − gap) / 2` | üç kolonluk iz: `(liste − 2 × gap) / 3` |
 
 `lg`'de kart genişliği **üç kolonluk izden** gelir ve satır ortalanır. Üç kişiyle satır tam dolar;
-daha az kişiyle kartlar ne büyür ne küçülür, aynı genişlikte ortada durur. Boş kalan bir kolon
-satırı sola yaslar ve bir kişi eksikmiş gibi okunur. `sm`'de iki kolon kişi sayısı tekse bir hücreyi
-boş bırakır; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tablette bir sütunluk
-uzun bir şerit üretirdi.
+daha az kişiyle kartlar ne büyür ne küçülür, aynı genişlikte ortada durur. `sm`'de iki kolon kişi
+sayısı tekse bir hücreyi boş bırakır; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da
+tablette bir sütunluk uzun bir şerit üretirdi.
 
 Genişlik **içerikten değil breakpoint'ten** gelir; dizinin uzunluğundan hesaplanmaz. `sizes` ve
 görsel genişlikleri (`lib/images.ts`) bu sayıya bağlı, yani kart genişliği kişi sayısıyla
-değişseydi görseller de yanlışlanırdı. Kişi sayısı üçü geçerse bu tablo yeniden düşünülür.
+değişseydi görseller yanlış boyutta kalırdı. Kişi sayısı üçü geçerse bu tablo yeniden düşünülür.
 
-**`lg`'de liste flex, grid değil.** Grid'de boş bir kolon satırı sola yaslar;
-`repeat(auto-fit, …)` kolon sayısını tam yuvarlama sınırında hesaplar ve üçüncü kart alt satıra
-düşebilir. Flex'te varsayılan `nowrap` ve `flex-shrink` 1/64px'lik yuvarlama farkını yutar.
-Genişlik `calc`'i `gap-8` ile aynı `--spacing`'i okur. Ölçüldü: üç kişiyle kart kutuları eski
-ızgarayla 1024–1920 arasında en fazla 0.016px ayrışıyor.
+**`lg`'de liste flex, grid değil.** Izgarada boş kalan bir kolon satırı sola yaslar ve bir kişi
+eksikmiş gibi okunur; `repeat(auto-fit, …)` ise kolon sayısını tam yuvarlama sınırında hesaplar ve
+üçüncü kart alt satıra düşebilir. Flex'te varsayılan `nowrap` ve `flex-shrink` 1/64px'lik yuvarlama
+farkını yutar. Genişlik `calc`'i `gap-8` ile aynı `--spacing`'i okur. Ölçüldü: üç kişiyle kart
+kutuları eski ızgarayla 1024, 1280, 1440, 1600 ve 1920'de en fazla 0.016px ayrışıyor.
 
 **Etiket yok.** "04 TEAM" ile "Team" aynı kelimeyi iki kez söylüyordu;
 numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket duruyor, çünkü orada
@@ -481,7 +480,7 @@ başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerd
 yerde** durur.
 
 **Bölüm `lg`de bir ekran yüksekliğinde.** Önceki hâli viewport'un **%115'i** (1600x900'de %125),
-yani üçüncü kart her zaman kesiliyordu.
+yani kartların altı her zaman kesiliyordu.
 
 **Yükseklik orandan değil kalan alandan gelir** ve bu hesaplanarak seçildi: 1440x900'de 2/3 oranı
 sığdırıyor, ama 1600x900'de kart genişliği 490px'e çıktığı için yine %109 taşıyor. Kart genişliği

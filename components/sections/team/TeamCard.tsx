@@ -50,10 +50,10 @@ export function TeamCard({ member }: { member: TeamMember }) {
       />
 
       {/*
-        TEK VE AYNI KARARTMA - butun kartlarda birebir ayni oran. Istek
-        kartlarin "ayni sistemin parcasi gibi gorunmesi" idi ve olculdu:
-        portrelerin ortalama parlakligi birbirinden ~30 birim (0-255) ayriliyor,
-        yani en koyu fotograf gercekten belirgin daha koyu.
+        TEK VE AYNI KARARTMA - butun kartlarda birebir ayni oran. Istek kartlar
+        icin "ayni sistemin parcasi gibi gorunsun" idi ve olculdu: en koyu
+        portrenin ortalama parlakligi digerlerinden ~30 birim (0-255) dusuk,
+        yani o fotograf gercekten belirgin daha koyu.
 
         DURUST SINIR: bu perde kartlari ayni MUAMELEDEN geciriyor, pozlamayi
         esitlemiyor. Fark orani korunuyor; gercek cozum o fotografi daha
@@ -122,8 +122,8 @@ export function TeamCard({ member }: { member: TeamMember }) {
           goremezdi.
 
           Erisilebilir adlari tek basina "GitHub" olsaydi sayfada ayni adi
-          tasiyan birden fazla link olurdu (kisi basina iki ag);
-          aria-describedby her birini kartin adina bagliyor.
+          tasiyan birden fazla link olurdu (her ag adi kisi sayisi kadar
+          tekrar ediyor); aria-describedby her birini kartin adina bagliyor.
         */}
         <ul className="flex flex-wrap gap-x-5 gap-y-2">
           {[
