@@ -454,14 +454,26 @@ border ve renk değişimiyle çalışır. Tek istisna focus halkası ve o kotaya
 
 Üç kişiyi tek tek tanıtan kartlar.
 
-|       | Mobil | `sm` | `≥ lg` |
-| ----- | ----- | ---- | ------ |
-| Kolon | 1     | 2    | 3      |
+|                | Mobil | `sm` | `≥ lg`                                  |
+| -------------- | ----- | ---- | --------------------------------------- |
+| Kolon          | 1     | 2    | tek satır, ortada                       |
+| Kart genişliği | tam   | 1/2  | üç kolonluk iz: `(liste − 2 × gap) / 3` |
 
-`lg`'de üç kolon çünkü üç kişi var ve üçü tek satıra oturuyor. `sm`'de iki kolon bir hücreyi boş
-bırakıyor; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tablette bir sütunluk
-uzun bir şerit üretirdi. Kolon sayısı **içerikten değil breakpoint'ten** gelir; kişi sayısı
-değişirse bu tablo yeniden düşünülür, `grid-cols` içeriğe göre hesaplanmaz.
+`lg`'de kart genişliği **üç kolonluk izden** gelir ve satır ortalanır. Üç kişiyle satır tam dolar;
+daha az kişiyle kartlar ne büyür ne küçülür, aynı genişlikte ortada durur. Boş kalan bir kolon
+satırı sola yaslar ve bir kişi eksikmiş gibi okunur. `sm`'de iki kolon kişi sayısı tekse bir hücreyi
+boş bırakır; alternatifi mobilden `lg`'ye kadar tek kolon tutmaktı ve o da tablette bir sütunluk
+uzun bir şerit üretirdi.
+
+Genişlik **içerikten değil breakpoint'ten** gelir; dizinin uzunluğundan hesaplanmaz. `sizes` ve
+görsel genişlikleri (`lib/images.ts`) bu sayıya bağlı, yani kart genişliği kişi sayısıyla
+değişseydi görseller de yanlışlanırdı. Kişi sayısı üçü geçerse bu tablo yeniden düşünülür.
+
+**`lg`'de liste flex, grid değil.** Grid'de boş bir kolon satırı sola yaslar;
+`repeat(auto-fit, …)` kolon sayısını tam yuvarlama sınırında hesaplar ve üçüncü kart alt satıra
+düşebilir. Flex'te varsayılan `nowrap` ve `flex-shrink` 1/64px'lik yuvarlama farkını yutar.
+Genişlik `calc`'i `gap-8` ile aynı `--spacing`'i okur. Ölçüldü: üç kişiyle kart kutuları eski
+ızgarayla 1024–1920 arasında en fazla 0.016px ayrışıyor.
 
 **Etiket yok.** "04 TEAM" ile "Team" aynı kelimeyi iki kez söylüyordu;
 numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket duruyor, çünkü orada
@@ -485,7 +497,7 @@ tamamen kaplar; ad, rol ve linkler görüntünün alt kenarında, üzerinde duru
 hayaletleşir ve biyografi üstünde belirir.
 
 Oran **5/8 idi, kartlar büyüsün diye 5/9 oldu.** Kart zaten kapsayıcının tam genişliğini
-kaplıyor — üç kolon, `lg`'de 1440px'te 437px — yani büyüme ancak **yükseklikten** gelebilirdi.
+kaplıyor — üç kolonluk iz, `lg`'de 1440px'te 437px — yani büyüme ancak **yükseklikten** gelebilirdi.
 Ölçüldü: 708px → **787px**. Kolon boşluğuna dokunulmadı; 32px'ten 24px'e indirmek kart genişliğine
 yalnızca 6px katıyordu, yani gürültü.
 

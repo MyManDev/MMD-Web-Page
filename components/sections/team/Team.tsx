@@ -65,16 +65,25 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
           </h2>
 
           {/*
-            lg'de uc kolon cunku uc kisi var ve ucu tek satira oturuyor
-            (§3.5). Kolon sayisi icerikten degil breakpoint'ten geliyor;
-            grid-cols dizinin uzunluguyla hesaplanmiyor.
+            lg'de her kart UC KOLONLUK IZIN genisliginde: (liste - 2 x gap) / 3.
+            Satir tek ve ortada (§3.5). Uc kisiyle satir tam doluyor; daha az
+            kisiyle kartlar ne buyuyor ne kuculuyor, ortada duruyor. Genislik
+            breakpoint'ten geliyor, dizinin uzunlugundan hesaplanmiyor - `sizes`
+            ve gorsel genislikleri bu sayiya bagli (TeamCard.tsx, lib/images.ts).
+
+            flex, grid degil: grid'de bos kalan bir kolon satiri sola yaslar,
+            `repeat(auto-fit, ...)` kolon sayisini tam yuvarlama sinirinda
+            hesapliyor ve ucuncu kart alt satira dusebilir. Varsayilan nowrap ve
+            shrink 1/64px'lik yuvarlama farkini yutuyor. calc, gap-8 ile ayni
+            `--spacing`'i okuyor. Yerlesim markup'ta: globals.css katmansiz ve
+            lg:/sm: utility'lerini ezerdi.
           */}
           <ul
             data-cards
-            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:min-h-0 lg:flex-1 lg:grid-cols-3"
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:flex lg:min-h-0 lg:flex-1 lg:justify-center"
           >
             {members.map((member) => (
-              <li key={member.slug}>
+              <li key={member.slug} className="lg:w-[calc((100%-var(--spacing)*16)/3)]">
                 <TeamCard member={member} />
               </li>
             ))}
