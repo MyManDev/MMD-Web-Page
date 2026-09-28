@@ -126,9 +126,18 @@ describe("content/index loader", () => {
     }
   });
 
-  it("team uc kisiyi tasiyor", () => {
-    expect(team).toHaveLength(3);
-    expect(team.map((member) => member.order)).toEqual([0, 1, 2]);
+  /**
+   * SAYI DEGIL SOZLESME (nav testiyle ayni gerekce). Burada `toHaveLength(3)`
+   * yaziliydi ve ekip degisince davranis bozulmadigi halde duserdi.
+   *
+   * Olculen sey: ekip bos degil; slug'lar TEKIL, cunku React key'i ve
+   * aria-describedby id'si slug'dan turuyor (Team.tsx, TeamCard.tsx); `order`
+   * 0'dan ARDISIK, yani bir kisi ciktiginda sirada bosluk kalmaz.
+   */
+  it("ekip kaydi bos degil, tekil ve ardisik", () => {
+    expect(team.length).toBeGreaterThan(0);
+    expect(new Set(team.map((member) => member.slug)).size).toBe(team.length);
+    expect(team.map((member) => member.order)).toEqual(team.map((_, index) => index));
   });
 
   /**

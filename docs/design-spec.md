@@ -152,6 +152,11 @@ zemin her 100px'te örneklendi; en kötü durum **5.49:1** — AA eşiği 4.5. T
 fotoğrafları dahil. Düz saydam bırakmak orada beyaz mono yazıyı okunmaz yapardı; tint'in görevi
 estetik değil, o tabanı garanti etmek.
 
+**2026-09-28'de yeniden ölçüldü ve 5.49:1 yeniden üretilemedi.** Daha katı yöntemle (her metin
+satırının arkasındaki en parlak tek piksel) en kötü durum pasif linkte **4.09:1** (1440×900, Team
+kartlarının üst kenarı) ve accent aktif linkte **3.90:1** (1280×720, Hero). Kanıt ve seçenekler
+#106'da; karar verilene kadar bu paragrafın ilk sayısı ölçülmüş bir taban değil.
+
 Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 72%, transparent)`), sabit
 bir `rgba()` yazılmıyor (`CLAUDE.md` kural 1).
 
@@ -452,7 +457,7 @@ border ve renk değişimiyle çalışır. Tek istisna focus halkası ve o kotaya
 
 ### 3.5 Team — Bölge B
 
-Üç kişiyi tek tek tanıtan kartlar.
+İki kişiyi tek tek tanıtan kartlar.
 
 |                | Mobil | `sm`                | `≥ lg`                                  |
 | -------------- | ----- | ------------------- | --------------------------------------- |
@@ -486,7 +491,7 @@ yani kartların altı her zaman kesiliyordu.
 sığdırıyor, ama 1600x900'de kart genişliği 490px'e çıktığı için yine %109 taşıyor. Kart genişliği
 kapsayıcıyla büyürken ekran yüksekliği sabit kalıyor — yani **tek bir sabit oran her viewport'ta
 sığdıramaz.** Zincir: bölüm `h-dvh`, `Container` `flex-1`, sarmalayıcı `flex-1`, liste `flex-1` — her
-halkada `min-h-0`. Ölçüldü: 1440x900, 1600x900 ve 1920x1080'de bölüm tam %100 ve üç kart da içinde.
+halkada `min-h-0`. Ölçüldü: 1440x900, 1600x900 ve 1920x1080'de bölüm tam %100 ve iki kart da içinde.
 
 Oran token'ı (`--aspect-portrait`, 5/9) **mobilde** geçerli kalır; `tests/portrait-aspect.test.ts`
 anlamını korur çünkü görsel hattı ile token hâlâ aynı sayıyı söylüyor. Görseller yeniden üretilmedi.

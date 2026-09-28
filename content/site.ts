@@ -21,15 +21,15 @@ export const site: Site = {
   canonicalUrl: "https://mymandev.com",
   githubUrl: "https://github.com/MyManDev",
   description:
-    "Three engineers from Antalya Anadolu Lisesi building things together: applied AI, backend and security, optimisation and modelling.",
+    "Two engineers from Antalya Anadolu Lisesi building things together: applied AI, optimisation and modelling.",
   hero: {
     title: "The goal changed. We didn't.",
     subtitle:
-      "Applied AI, backend and security, optimisation and modelling. Three disciplines, one collective, and every project published with the numbers it actually produced.",
+      "Applied AI, optimisation and modelling. Two disciplines, one collective, and every project published with the numbers it actually produced.",
   },
   whoWeAre: {
     manifesto:
-      "We met at Antalya Anadolu Lisesi, one of Turkey's most prestigious high schools, and grew close studying for the university entrance exam: three friends held together by a shared goal. The goal has changed; the shape has not. We are here to do the work as well as it can be done, to catch each other's mistakes before they ship, to teach each other what we know, and to enjoy it.",
+      "We met at Antalya Anadolu Lisesi, one of Turkey's most prestigious high schools, and grew close studying for the university entrance exam: two friends held together by a shared goal. The goal has changed; the shape has not. We are here to do the work as well as it can be done, to catch each other's mistakes before they ship, to teach each other what we know, and to enjoy it.",
     principles: [
       "An observation becomes an issue, with evidence.",
       "A handed-over plan is checked against the code, not believed.",

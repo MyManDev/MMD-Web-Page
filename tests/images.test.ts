@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { PORTRAIT_WIDTHS, SCREENSHOT_WIDTHS, portraitSrcSet, screenshotSrcSet } from "@/lib/images";
@@ -62,6 +62,38 @@ describe("portraitSrcSet", () => {
         expect(existsSync(join(process.cwd(), "public", path)), path).toBe(true);
       }
     }
+  });
+
+  /**
+   * TERS YON: public/people/ ve assets/people/ altinda YALNIZCA ekibin
+   * fotograflari var. Ustteki test isaret edilen dosyanin VAR oldugunu olcuyor,
+   * fazlasini degil.
+   *
+   * scripts/optimize-images.mjs dosya silmiyor ve `next build` public/'in
+   * tamamini out/'a kopyaliyor: kayittan cikan birinin fotografi unutulursa
+   * sessizce yayinlanir. Kaynak unutulursa bir sonraki `pnpm images` varyantlari
+   * geri uretir. Adlar portraitSrcSet'ten turetiliyor, yeniden yazilmiyor.
+   */
+  it("public/people/ ve assets/people/ altinda yalnizca ekibin fotograflari var", () => {
+    const served = new Set(
+      team.flatMap((member) =>
+        portraitSrcSet(member.photo)
+          .split(", ")
+          .map((candidate) => candidate.slice(0, candidate.lastIndexOf(" "))),
+      ),
+    );
+
+    const published = readdirSync(join(process.cwd(), "public", "people")).map(
+      (file) => `/people/${file}`,
+    );
+    expect(published.filter((path) => !served.has(path))).toEqual([]);
+
+    /* Kaynak -> varyant adi: scripts/optimize-images.mjs, `${name}-${width}.webp` */
+    const orphans = readdirSync(join(process.cwd(), "assets", "people")).filter((file) => {
+      const name = file.replace(/\.[^.]+$/, "");
+      return !PORTRAIT_WIDTHS.every((width) => served.has(`/people/${name}-${width}.webp`));
+    });
+    expect(orphans).toEqual([]);
   });
 
   /**
