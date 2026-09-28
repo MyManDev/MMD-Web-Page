@@ -154,8 +154,10 @@ estetik değil, o tabanı garanti etmek.
 
 **2026-09-28'de yeniden ölçüldü ve 5.49:1 yeniden üretilemedi.** Daha katı yöntemle (her metin
 satırının arkasındaki en parlak tek piksel) en kötü durum pasif linkte **4.09:1** (1440×900, Team
-kartlarının üst kenarı) ve accent aktif linkte **3.90:1** (1280×720, Hero). Kanıt ve seçenekler
-#106'da; karar verilene kadar bu paragrafın ilk sayısı ölçülmüş bir taban değil.
+kartlarının üst kenarı) ve accent aktif linkte **3.90:1** (1280×720, Hero). 4.09 noktası iki
+kişilik Team'le geldi: kartlar ortalanınca soldaki kartın gökyüzü linklerin altına denk geliyor,
+üç kişiyken aynı noktada 5.30:1'di. 3.90 noktası ondan önce de vardı. Kanıt ve seçenekler #106'da;
+karar verilene kadar üstteki 5.49:1 ölçülmüş bir taban değil.
 
 Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 72%, transparent)`), sabit
 bir `rgba()` yazılmıyor (`CLAUDE.md` kural 1).
