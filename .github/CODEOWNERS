@@ -1,10 +1,10 @@
-# Paylasilan yuzeyler iki bolge sahibinin de onayini ister.
+# Paylasilan yuzeyler karar sahibinin acik onayini ister.
 # docs/working-agreement.md §1
 #
 # Sahipler org uyesi ve repoya yazma yetkili olmali; degilse GitHub satiri sessizce yok sayar.
 
-# Varsayilan: degisiklik iki tarafa da bildirilir
-*                                @SpeedyV5 @tunayaslan
+# Varsayilan sahip
+*                                @SpeedyV5
 
 # Bolge A — vitrin ve icerik
 /components/sections/hero/       @SpeedyV5
@@ -13,21 +13,21 @@
 /content/team.ts                 @SpeedyV5
 
 # Bolge B — kabuk ve teslim
-/components/sections/nav/        @tunayaslan
-/components/sections/team/       @tunayaslan
-/components/sections/about/      @tunayaslan
-/components/sections/footer/     @tunayaslan
-/app/not-found.tsx               @tunayaslan
+/components/sections/nav/        @SpeedyV5
+/components/sections/team/       @SpeedyV5
+/components/sections/about/      @SpeedyV5
+/components/sections/footer/     @SpeedyV5
+/app/not-found.tsx               @SpeedyV5
 
-# Paylasilan yuzeyler — her iki onay
-/app/tokens.css                  @SpeedyV5 @tunayaslan
-/app/globals.css                 @SpeedyV5 @tunayaslan
-/app/layout.tsx                  @SpeedyV5 @tunayaslan
-/app/page.tsx                    @SpeedyV5 @tunayaslan
-/components/ui/                  @SpeedyV5 @tunayaslan
-/content/schema.ts               @SpeedyV5 @tunayaslan
-/content/site.ts                 @SpeedyV5 @tunayaslan
-/content/index.ts                @SpeedyV5 @tunayaslan
-/.github/                        @SpeedyV5 @tunayaslan
-/docs/                           @SpeedyV5 @tunayaslan
-/CLAUDE.md                       @SpeedyV5 @tunayaslan
+# Paylasilan yuzeyler — karar sahibinin acik onayi
+/app/tokens.css                  @SpeedyV5
+/app/globals.css                 @SpeedyV5
+/app/layout.tsx                  @SpeedyV5
+/app/page.tsx                    @SpeedyV5
+/components/ui/                  @SpeedyV5
+/content/schema.ts               @SpeedyV5
+/content/site.ts                 @SpeedyV5
+/content/index.ts                @SpeedyV5
+/.github/                        @SpeedyV5
+/docs/                           @SpeedyV5
+/CLAUDE.md                       @SpeedyV5

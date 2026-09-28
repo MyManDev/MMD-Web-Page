@@ -54,7 +54,7 @@ tests/e2e/                     Playwright                       dosya bazında
 docs/                          belgeler                         PAYLAŞILAN
 ```
 
-Bölge A: İbrahim. Bölge B: Tunay. Detay ve paylaşılan yüzey listesi:
+Bölge A ve B: İbrahim. Detay ve paylaşılan yüzey listesi:
 [`docs/working-agreement.md`](docs/working-agreement.md).
 
 **Başka bölgenin klasörüne dokunma.** Gerekiyorsa dur ve söyle; daha büyük bir PR yazma.
