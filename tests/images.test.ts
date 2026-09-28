@@ -1,5 +1,5 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync } from "node:fs";
+import { join, parse } from "node:path";
 import { describe, expect, it } from "vitest";
 import { PORTRAIT_WIDTHS, SCREENSHOT_WIDTHS, portraitSrcSet, screenshotSrcSet } from "@/lib/images";
 import { projects, team } from "@/content";
@@ -62,6 +62,43 @@ describe("portraitSrcSet", () => {
         expect(existsSync(join(process.cwd(), "public", path)), path).toBe(true);
       }
     }
+  });
+
+  /**
+   * TERS YON: public/people/ ve assets/people/ altinda YALNIZCA ekibin
+   * fotograflari var. Ustteki test isaret edilen dosyanin VAR oldugunu olcuyor,
+   * fazlasini degil.
+   *
+   * scripts/optimize-images.mjs dosya silmiyor ve `next build` public/'in
+   * tamamini out/'a kopyaliyor: kayittan cikan birinin fotografi unutulursa
+   * sessizce yayinlanir. Kaynak unutulursa bir sonraki `pnpm images` varyantlari
+   * geri uretir.
+   *
+   * Varyant adlari her iki yarida da portraitSrcSet'ten turetiliyor. Kaynaklar
+   * script'in okudugu gibi okunuyor: yalnizca `.webp`, ad `parse().name`
+   * (scripts/optimize-images.mjs); boylece .DS_Store gibi bir dosya testi
+   * dusurmez, script'in isleyecegi her kaynak olculur.
+   */
+  it("public/people/ ve assets/people/ altinda yalnizca ekibin fotograflari var", () => {
+    const variants = (photo: string) =>
+      portraitSrcSet(photo)
+        .split(", ")
+        .map((candidate) => candidate.slice(0, candidate.lastIndexOf(" ")));
+    const served = new Set(team.flatMap((member) => variants(member.photo)));
+
+    const published = readdirSync(join(process.cwd(), "public", "people")).map(
+      (file) => `/people/${file}`,
+    );
+    expect(published.filter((path) => !served.has(path))).toEqual([]);
+
+    const orphans = readdirSync(join(process.cwd(), "assets", "people"))
+      .filter((file) => file.endsWith(".webp"))
+      .filter((file) => {
+        const { name } = parse(file);
+        const photo = `/people/${name}-${PORTRAIT_WIDTHS.at(-1)}.webp`;
+        return !variants(photo).every((path) => served.has(path));
+      });
+    expect(orphans).toEqual([]);
   });
 
   /**
