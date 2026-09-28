@@ -21,11 +21,12 @@ Sahiplik = **inceleme yetkisi**, dışlayıcı erişim değil. Herkes her şeyi 
 | **Kapsam**            | Hero, Projects bölümü, proje kartı ve etkileşimi, `content/` ve Zod şeması, proje görselleri | Navigation (sticky navbar, anchor scroll, aktif link, mobil menü), Team, About, Footer, 404, SEO/metadata/OG/sitemap/robots, CI ve deployment bakımı |
 | **Kendi testleri**    | Şema testleri, Projects E2E                                                                  | Navigation E2E, a11y taraması, 404 E2E                                                                                                               |
 
-Ayrım katmana göre değil, **sayfanın hangi işini yaptığına** göre. İki bölge de React yazıyor, ikisi
-de içerik ve test yazıyor: A tarafında Zod şeması var, B tarafında Team layout'u var. Hiçbir bölge
+Ayrım katmana göre değil, **sayfanın hangi işini yaptığına** göre. İki bölgede de React yazılıyor,
+ikisinde de içerik ve test var: A tarafında Zod şeması, B tarafında Team layout'u. Hiçbir bölge
 "sadece görünüm" veya "sadece altyapı" değil.
 
-İki bölgenin de sahibi şu an İbrahim; ayrım yapı olarak duruyor.
+Depoda aktif tek kişi İbrahim: iki bölge de onda, ayrım yapı olarak duruyor ve §3.1'in tek kişi
+dönemi geçerli.
 
 **Ertuğrul** bu projede bölge sahibi değil; optimizer'a odaklı devam ediyor, review'a çağrılabilir.
 Faz 0 (§6) onun tarafından tek seferlik kuruluyor; sonrasında bölgeler yukarıdaki gibi işler.
@@ -126,7 +127,8 @@ geçer, Hero mobilde kırılmıştır. Ayrıca metin, isim ve marka kararları p
 karar sahibinin açık onayıyla merge edilir, bir Claude oturumu onları kendi başına merge etmez.
 
 Bedeli küçük tutmanın yolu PR'ları küçük tutmak. `chore/` ve `docs/` PR'larında review gerektiğinde
-atlanır; **kaynağa veya içeriğe dokunan hiçbir PR'da atlanmaz.**
+atlanır; **kaynağa veya içeriğe dokunan hiçbir PR'da atlanmaz.** Review atlansa da paylaşılan yüzeye
+dokunan bir PR'da karar sahibinin açık onayı atlanmaz.
 
 ### 3.2 Commit mesajları
 

@@ -606,4 +606,4 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | LCP ölçüm noktası          | CI `localhost`, mobil emülasyon, üç koşunun medyanı; aday **navbar wordmark**                | §8.1   |
 | LCP eşiği                  | 2.0 s **revize edilmedi**; tutulmadığı kayıtlı — sayı işe uydurulmaz                         | §8.1   |
 | Contact bölümü             | `mailto`, form değil; adres bir **takma ad** — taranırsa kapatılıp değiştirilir              | §3     |
-| Bölge sahipliği            | Ekip iki kişi; **Bölge B İbrahim'e geçti**, onay karar sahibinde (working-agreement §1)      | —      |
+| Bölge sahipliği            | **Bölge B İbrahim'e**; paylaşılan yüzey onayı karar sahibinde (working-agreement §1)         | —      |

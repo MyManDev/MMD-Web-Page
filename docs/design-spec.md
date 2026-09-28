@@ -45,7 +45,7 @@ demektir — fare tıklamasında halka çıkmaz, klavyede çıkar.
 
 ### 2.1 `components/ui/` — paylaşılan primitive'ler
 
-Değişiklikleri karar sahibinin açık onayını ister (`working-agreement.md` §1).
+Onay kuralı: `working-agreement.md` §1.
 
 | Component   | Props                                                                          | Durumlar                                    | Not                                                                                                                                                                                              |
 | ----------- | ------------------------------------------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

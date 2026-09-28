@@ -2,7 +2,6 @@
 # docs/working-agreement.md §1
 #
 # Sahipler org uyesi ve repoya yazma yetkili olmali; degilse GitHub satiri sessizce yok sayar.
-# Ruleset'te code-owner review kapali: bu dosya sahibi gosterir, onayi zorlamaz.
 
 # Varsayilan sahip
 *                                @SpeedyV5
