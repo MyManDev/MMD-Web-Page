@@ -71,8 +71,8 @@ export function usePrefersReducedMotion(): boolean {
  * Kendiliginden ilerleyen, etkilesimde duraklayan deste.
  *
  * OTOMATIK GECIS `AUTO_ADVANCE_MS`te bir. WCAG 2.2.2, kendiliginden baslayan ve
- * baska icerikle birlikte sunulan otomatik guncellemede durdurma, duraklatma
- * veya gizleme yolu istiyor. Buradaki yol ETKILESIM: fare uzerine gelince veya
+ * baska icerikle birlikte sunulan otomatik guncellemede durdurma, duraklatma,
+ * gizleme ya da guncelleme sikligini denetleme yolu istiyor. Buradaki yol ETKILESIM: fare uzerine gelince veya
  * iceriye odak dusunce duruyor, etkilesim bitince kaldigi yerden devam ediyor.
  * Bu yolun kapsamadigi kullanicilar var; sinirlar design-spec.md §3.4'te.
  * `pauseOn` kapsayiciya yayilacak dort olay.

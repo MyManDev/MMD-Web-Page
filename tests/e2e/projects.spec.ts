@@ -722,14 +722,16 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
 test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
   test.skip(MULTI < 0, NO_CAROUSEL);
 
-  /* `pauseAt` saati DURDURUYOR: `install` tek basina sahte saati gercek zamanla
-     birlikte akitiyor ve testler, bir `runFor` ile digeri arasinda gecen gercek
-     sureye baglanirdi. Durmus saatte zamani yalnizca `runFor` ilerletiyor. */
+  /* Saat sayfa YUKLENMEDEN ONCE durduruluyor. `install` tek basina sahte saati
+     gercek zamanla birlikte akitiyor; hidrasyondan sonra durdurmak da yetmiyordu,
+     cunku ilk zamanlayici hidrasyonda, saat hala akarken kuruluyordu. Durmus
+     saatte zamani yalnizca `runFor` ilerletiyor ve sonuc makinenin hizina bagli
+     degil. */
   test.beforeEach(async ({ page }) => {
     await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 1000);
     await page.reload();
     await expect(carouselOf(page).getByRole("button", { name: "Next screenshot" })).toBeVisible();
-    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   });
 
   const counterOf = (page: Page) => carouselOf(page).locator("p");
@@ -815,17 +817,18 @@ test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
   });
 
   /**
-   * Ayar sayfa yuklenmeden ONCE aciliyor. Sayfa acikken acilinca `change` olayi
-   * React'e ulasmadan once sahte saat bekleyen zamanlayiciyi calistirabiliyor
-   * ve bir adim ilerliyor - olculdu. Gercek kullanicida bunun karsiligi en fazla
-   * bir adim; kanca ayari okudugu anda duruyor.
+   * Ayar sayfa yuklenmeden ONCE aciliyor, kanca degeri ilk render'da okusun.
+   * Her aralikta AYRI AYRI "01" bekleniyor: tek bir uzun bekleme, tam bir tur
+   * atip "01"e donen bozuk bir desteyi hic ilerlemeyen desteden ayiramazdi.
    */
   test("reduced-motion altinda hic ilerlemiyor", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload();
     await expect(carouselOf(page).getByRole("button", { name: "Next screenshot" })).toBeVisible();
-    await page.clock.runFor(AUTO_ADVANCE_MS * 3);
-    await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    for (let step = 0; step < SHOTS.length; step++) {
+      await page.clock.runFor(AUTO_ADVANCE_MS);
+      await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    }
   });
 });
 

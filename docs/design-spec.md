@@ -370,7 +370,8 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   Görüntünün altında destenin (§3.4) sayacı (`01 / 03`) ve `deck-button` tuşları var. Yeşil yok:
   bölümün tek yeşili Live Demo (§5.1).
 - **Kendiliğinden geçiş, destenin kuralları ve kodu (§3.4, `lib/deck.ts`).** Aralık, duraklama,
-  reduced-motion ve canlı bölge davranışı destedekiyle aynı; ayrıntısı ve bilinen sınırları §3.4'te.
+  reduced-motion ve canlı bölge davranışı destedekiyle aynı; ayrıntısı ve bilinen sınırları §3.4'te,
+  reduced-motion davranışı §6.1'de.
   Karusel önce elle geçişliydi ve gerekçe "ekran görüntüsü incelenir, bakılırken değişmemeli" idi.
   **Karar sahibi görüntülerin kendiliğinden değişmesini istedi**; o gerekçeyi fare karuselin
   üzerindeyken (görüntü ve tuş satırı) veya odak içerideyken duraklama karşılıyor. Bir tuşa
@@ -382,7 +383,7 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. APG'nin
   kendiliğinden dönen karusel için istediği görünür durdur/başlat tuşu **yok** (§3.4). Görüntü alanının
   canlı bölgesi destedeki gibi: otomatik geçişte `off`, etkileşimde `polite` (tuşa basıldığında
-  odak tuşta kalıyor ve değişen görüntüyü canlı bölge duyuruyor). Ok tuşu yok, destede de yok;
+  odak çoğu tarayıcıda tuşta kalıyor ve değişen görüntüyü canlı bölge duyuruyor). Ok tuşu yok, destede de yok;
   APG karusel deseni onları istemiyor.
 - **JS gelmezse.** Sunucu ilk görüntüyü gösterir ve tuş satırını yer tutan ama görünmeyen hâlde
   basar. Ziyaretçi çalışmayan bir tuşla karşılaşmaz; JS gelince tuşlar sayfayı kaydırmadan görünür
@@ -459,23 +460,28 @@ büyüdüğü için 40px'te sınır işlevini yitirir (§4.3).
 
 **Deste kendiliğinden ilerler: 7 saniyede bir sonraki prensip.** Duraklatma mekanizması
 **etkileşim**: fare desteye girdiğinde veya içeriye odak düştüğünde durur; ikisi de bitince kaldığı
-yerden sürer. Kalıcı durdurma değil. WCAG 2.2.2, kendiliğinden başlayan ve başka içerikle birlikte
-sunulan otomatik güncellemede bir durdurma, duraklatma veya gizleme yolu istiyor; fare ve klavye
-kullanıcısı için yol bu. Ekran görüntüsü karuseli (§3.3.1) aynı kodu ve aynı sınırları taşıyor.
+yerden sürer. Kalıcı durdurma değil. Ekran görüntüsü karuseli (§3.3.1) aynı kodu ve aynı sınırları
+taşıyor.
 
-**Görünür bir durdur/başlat tuşu yok ve bu karar sahibinin kararı (2026-09-29).** APG, kendiliğinden
-dönen bir karusel için böyle bir tuş istiyor; ilk gerekçe "burada olmayan bir kontrol demekti ve
-klavye turunu bir durak uzatırdı" idi. Tuş olmadığı için bazı kullanıcıların duraklatma yolu yok:
+**Görünür bir durdur/başlat tuşu yok ve bu karar sahibinin kararı (2026-09-29).** İlk gerekçe
+"burada olmayan bir kontrol demekti ve klavye turunu bir durak uzatırdı" idi. APG'den iki sapma var:
+APG kendiliğinden dönen bir karusel için böyle bir tuş istiyor; ayrıca odak içeri girince dönmenin
+durmasını ve kullanıcı istemeden **yeniden başlamamasını** istiyor, buradaki deste ise odak çıkınca
+kendiliğinden sürüyor. Sonuç olarak duraklatma yolu herkes için aynı değil:
 
-- **Dokunmatik:** hover yok; görüntüye dokunmak bir an girip çıkmak demek, süre yalnızca baştan
-  başlar. Bir tuşa dokunmak Android'de odağı tuşa verdiği için duraklatır. iOS'ta ve macOS
-  Safari'de WebKit tıklanan veya dokunulan tuşa odak vermiyor, orada duraklatmaz (MDN'de belgeli,
-  burada ölçülmedi).
-- **Yalnızca kaydırarak okuyan dokunmatik kullanıcısı** ve **ekran okuyucunun tarama kipi:** odak
-  taşınmıyor, duraklatma yolu yok.
+- **Dokunmatik:** hover yok; desteye ya da görüntüye dokunmak bir an girip çıkmak demek, süre
+  yalnızca baştan başlar. Bir tuşa dokunmak Android'de odağı tuşa verdiği için duraklatır; iOS'ta
+  WebKit dokunulan tuşa odak vermiyor, orada duraklatmaz (MDN'de belgeli, burada ölçülmedi).
+- **macOS Safari:** fare üzerindeyken duraklar. Tıklanan tuş odak almadığı için fare çekilince
+  sürer; varsayılan ayarda Tab tuşlara uğramıyor (Option+Tab gerekir).
+- **Yalnızca kaydırarak okuyan dokunmatik kullanıcısı:** duraklatma yolu yok.
+- **Ekran okuyucu:** yalnızca sanal imleçle okuyan kullanıcıda duraklama olmuyor. Tuşlara Tab ile
+  gelmek ya da tuşa basmak duraklatır, ama bunu duyuran bir şey yok.
 
-Bu kullanıcılar için WCAG 2.2.2 karşılanmıyor; **kabul edilmiş risk** (`architecture.md` §9). Görünür
-bir tuş eklenirse açık kapanır.
+WCAG 2.2.2, kendiliğinden başlayan ve başka içerikle birlikte sunulan otomatik güncellemede bir
+durdurma, duraklatma, gizleme ya da güncelleme sıklığını denetleme yolu istiyor. Mekanizma yukarıdaki
+durumlarda yok; bir denetim sayfayı 2.2.2'den (A düzeyi) düşmüş sayabilir. **Kabul edilmiş risk**
+(`architecture.md` §9). Görünür bir tuş eklenirse açık kapanır.
 
 **Geçiş, prensibin kelime kelime belirmesidir.** İki biçim denendi ve bırakıldı: bloğun tamamını
 birlikte kaydıran giriş animasyonu (240ms, sonra 600ms) bir geçiş değil sıçrama gibi okunuyordu,
