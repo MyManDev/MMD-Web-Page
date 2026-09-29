@@ -3,22 +3,21 @@
 > Bu dosya **şu anki durumu** tutar, geçmişi tutmaz — geçmiş git log'unda yaşar.
 > Her devirde üzerine yazılır. Protokol: `docs/working-agreement.md` §7.
 
-**Tarih:** 2026-09-28 (akşam)
+**Tarih:** 2026-09-29
 **Yer:** iş
 **Aşama:** Faz 4, site yayında. **Ekipten bir kişi ayrıldı**; site ve depo iki kişilik ekibe göre
-güncellendi (#103, #104, #105, #107, #108). Açık issue: #106.
+güncellendi (#103, #104, #105, #107, #108). Cloudflare tarafındaki temizlik 2026-09-29'da bitti.
+Açık issue: #106.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`7a51f5f`)
+- Dal: `main` (`f64b8fa`)
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **49 birim, 256 E2E** (32'si viewport'a göre atlanıyor),
   payload **133.8 KiB / 150.0 KiB**
 - Açık PR: yok
-- Bu makinede yerel `main` bugün 47 commit gerideydi (son eşitleme 2026-08-28); fetch ve
-  fast-forward ile eşitlendi. `feature/team-section` GitHub'da yeniden yazılmıştı, yerel dal yeni uca
-  taşındı; eski uç `wip/team-section-2026-08-29`'da duruyor (#44 zaten merge edilmiş, toplanacak
-  bir şey yok).
+- `wip/team-section-2026-08-29`: yeniden yazılmadan önceki Team dalının yedeği; #44 merge edilmiş,
+  toplanacak bir şey yok.
 
 ## Yayın
 
@@ -35,17 +34,21 @@ güncellendi (#103, #104, #105, #107, #108). Açık issue: #106.
 - HTML `cf-cache-status: DYNAMIC` ve `max-age=0` dönüyor; eski `cache html at edge` kuralı artık
   uygulanmıyor (ölçüldü).
 
-> **AÇIK İŞ — panelde:** #107'de silinen iki portre varyantı (`/people/…-500.webp` ve `…-1000.webp`;
-> tam adlar #107'nin diff'inde) origin'de
-> **404** (önbelleği atlayan `?nocache=…` sorgusuyla ölçüldü). Ama kenar önbelleği bazı isteklerde
-> hâlâ resmi sunuyor (`max-age=14400`, `REVALIDATED`). `Caching` → `Configuration` → `Custom Purge`
-> ile iki URL purge edilmeli; edilmezse en geç 4 saatte kendiliğinden düşer. Doğrulama:
-> iki adrese `curl -s -o /dev/null -w "%{http_code}"` → `404`.
->
-> Cloudflare Pages'in **eski deployment ve preview adresleri** eski build'i (ayrılan kişinin kartı dahil) sunmaya
-> devam ediyor; istenirse `Workers & Pages` → `mymandev` → deployment listesinden silinir.
->
-> Bir Claude oturumu bunları yapamaz: Cloudflare token'ı gerekir ve token sohbete girmez.
+**Cloudflare temizliği (2026-09-29, karar sahibi panelden):**
+
+- **Eski deployment'lar:** #107'nin merge'ünden önce oluşan **53 deployment silindi**, 53/53, hata
+  yok. Kalan 5 deployment'ın hepsi sonradan oluştu; yayındaki #109 production'ı da onların içinde.
+  Silme, karar sahibinin kendi terminalinde çalıştırdığı bir PowerShell script'iyle yapıldı; token
+  sohbete girmedi. Script depoda değil. Geçici token 2026-09-30'da kendiliğinden düşüyor.
+- **Silinen iki portre:** alan adı purge'ü **yetmedi**. Purge'den sonraki ilk istek `MISS` döndü, ama
+  cevap `Age: 49644`, `s-maxage=604800` ve `x-robots-tag: noindex` taşıyordu. Yani kopya
+  **Cloudflare Pages'in iç önbelleğindeydi**; alan adı purge'ü oraya ulaşmıyor. Çözüm alan adında bir
+  **WAF custom rule** oldu: `block removed portraits`, URI Path `/people/` altındaki silinen portre
+  önekiyle başlıyorsa Block.
+- **Ölçüldü:** iki adres **403** dönüyor, sorgu dizesiyle de. Diğer dört portre, proje görseli, `/`,
+  `/og.png` ve `/index.txt` **200**; canlı HTML'de ad **0**.
+- `mymandev.pages.dev` alan adı kuralının dışında kalıyor. Oradaki iç kopya en geç ~2026-10-05'te
+  kendiliğinden düşer; bu ağdan ölçülemiyor.
 
 ## Sıradaki iş
 
@@ -60,7 +63,8 @@ yeniden üretilemedi ve spec'te böyle yazılı.
 
 ## Bitmemiş iş
 
-- **Panel:** yukarıdaki fotoğraf purge'ü.
+- **WAF kuralı** `block removed portraits`: ~2026-10-05'ten sonra kuralı kapat ve iki adresi ölç.
+  404 dönüyorsa kuralı sil; hâlâ resim dönüyorsa kuralı geri aç.
 - **Konu dışı, fark edildi, ayrı PR ister:**
   - `components/sections/team/TeamCard.tsx:9` ve `lib/images.ts:20` oranı "5/8" diyor; token
     `--aspect-portrait` 5/9.
@@ -81,7 +85,7 @@ Metinler için karar sahibi "en az düzeltme"yi seçti; onaylanan cümleler #107
 
 **Onay kuralı değişti.** "İki bölge sahibinin onayı" yerine artık **karar sahibinin açık onayı**
 var; bir Claude oturumu paylaşılan yüzeye veya marka metnine dokunan bir PR'ı kendi başına merge
-etmez (`working-agreement.md` §1, §3.1). Bugünkü dört PR, karar sahibinin "koşullu merge et"
+etmez (`working-agreement.md` §1, §3.1). 2026-09-28'deki PR'lar karar sahibinin "koşullu merge et"
 onayıyla merge edildi; onay ve koşul her PR gövdesinde kelimesi kelimesine yazılı.
 
 ## Tuzaklar ve notlar
@@ -104,9 +108,15 @@ Bugün ölçümle bulunanlar:
   400ms'de ölçülen `article` konumu animasyonun ortasını yakaladı (2–8px).
 - **Düz bir JS Playwright config'inde `use.reducedMotion` uygulanmadı** (`matchMedia` false döndü);
   `page.emulateMedia({ reducedMotion: "reduce" })` çalışıyor. Deponun kendi testleri zaten öyle.
-- **Kaldırılan bir görsel kenar önbelleğinde 4 saate kadar yaşar.** Origin'in cevabını görmek için
-  sorgu dizesi ekle (`?nocache=…` → `cf-cache-status: BYPASS`); aynı adres istekten isteğe farklı
-  kenar sunucusundan farklı cevap verebiliyor.
+- **Silinen bir Pages dosyası Pages'in iç önbelleğinde 7 güne kadar yaşayabilir** (`s-maxage=604800`).
+  Alan adı purge'ü bu katmana ulaşmıyor. İşareti: purge'den sonraki ilk istek `MISS` ama `Age` büyük.
+  Sorgu dizeli istek (`?x=…`) iç önbelleği ıskaladığı için 404 görürsün; bu "dosya kalktı" demek
+  değil. Kesin çözüm alan adında bir WAF kuralı. Dün yazılan "4 saatte kendiliğinden düşer" yanlıştı;
+  12 saat sonra hâlâ sunuluyordu.
+- **Silinen bir deployment'ın adresi de bir süre sunulmaya devam edebilir** (Cloudflare'in açık bir
+  hatası). Toplu silme API ile yapılır: listele → `created_on`'a göre seç → `DELETE …?force=true`.
+  Liste sayfası en fazla 25.
+- **`WebFetch` de bu makinenin DNS'ini kullanıyor**; `pages.dev`'e o da ulaşamıyor.
 - **Ekip verisi yalnızca `index.html`'de değil,** üç RSC dosyasında da (`/index.txt`,
   `/__next._full.txt`, `/__next.__PAGE__.txt`) yayınlanıyor. Bir şeyin yayından kalktığını dördünü
   birden ölçerek doğrula.
