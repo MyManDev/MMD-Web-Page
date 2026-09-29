@@ -60,7 +60,7 @@ Next.js'te iki bölge de `components/` ve token dosyasına dokunur; çakışma r
    farklıysa, kod yazılmadan önce konuşulur.
 3. **Dal açılır, tek konu.** Başkasının bölgesi gerekiyorsa bu bir konuşmadır, daha büyük bir PR değil.
 4. **PR açılır ve ne değiştirmediğini söyler.**
-5. **Kapılar geçer, review alınır, merge edilir, dal silinmez.**
+5. **Kapılar geçer, review alınır, merge edilir; dal merge'de kendiliğinden silinir.**
 
 **Devralınan planın öncülleri kontrol edilir.** Bir issue size iş devrediyorsa gövdesindeki iddialar
 koda karşı doğrulanır, inanılmaz. Bir öncülü doğrulamak on dakika; yanlış öncül üzerine kurulmuş bir
@@ -87,8 +87,9 @@ otomatik production.
 Önek, PR açılmadan önce "bu ne tür bir değişiklik?" sorusunu cevaplamaya zorlar.
 
 Küçük ve sık dallar; bir dal bir incelenebilir parça. Üst üste yığılmış PR'lar CI almaz.
-`delete_branch_on_merge` **kapalı** — squash merge sonrası dallar korunur. Force-push ve dal silme
-koruma ile engelli.
+`delete_branch_on_merge` **açık** (2026-09-29'dan beri): merge edilen dal kendiliğinden silinir,
+commit'leri PR'da kalır. Ondan önce dallar korunuyordu ve 67'ye çıkmıştı; hepsinin ucu
+`archive/<dal>` etiketinde duruyor, dallar silindi. `main`'de force-push ve silme ruleset ile engelli.
 
 ### Branch protection (uygulanacak ayarlar)
 
@@ -107,8 +108,8 @@ koruma ile engelli.
 işleri `.github/workflows/ci.yml` ile birlikte Faz 0'da doğuyor; var olmayan bir check'i zorunlu
 kılmak Faz 0 PR'ının kendisini merge edilemez hale getirir. Adlar `architecture.md` §7'de sabit.
 
-Optimizer'da iki dal, deponun politikası tersine olmasına rağmen `--delete-branch` ile merge
-edilmişti ve bu kayda geçmişti. Kuralı hatırlamaktan çok uygulatmak ucuz.
+Dal politikası da bir ayarla uygulanıyor, hatırlamaya bırakılmıyor: kuralı hatırlamaktan çok
+uygulatmak ucuz.
 
 Ayarları kim uyguladıysa bu listeyi işaretleyip commit'ler. Yazılı olmayan bir koruma, kontrol
 edilebilir değildir.
