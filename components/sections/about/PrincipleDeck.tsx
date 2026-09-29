@@ -23,9 +23,8 @@ import { useAutoAdvancingDeck } from "@/lib/deck";
  * gelmeyebilecek olan taraf olmali.
  *
  * GEZINME lib/deck.ts'te: basa saran ileri/geri, `AUTO_ADVANCE_MS`te bir
- * otomatik gecis, etkilesimde duraklama, reduced-motion altinda durma ve otomatik geciste
- * susan canli bolge. Ekran goruntusu karuseli ayni kancayi kullaniyor; davranisin
- * gerekcesi orada, bir kez yazili.
+ * otomatik gecis, etkilesimde duraklama, reduced-motion altinda durma ve otomatik
+ * geciste susan canli bolge. Davranisin gerekcesi orada, bir kez yazili.
  *
  * GECIS KELIME KELIME BELIRME ve tamami CSS'te (`RevealedPrinciple`). Daktilo
  * denendi ve fazla sade okundu; kaldirildi.
@@ -66,10 +65,8 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
       {/*
         Canli bolge KOSULLU. `polite` oldugunda: tusa basildiginda odak tusta
         kaliyor, yani degisen metin kendiliginden duyulmaz - canli bolge olmadan
-        ekran okuyucu kullanicisi tusun bir sey yaptigini anlamaz.
-
-        `off` oldugunda: gecis otomatikti ve kimse bir sey istememisti. Yedi
-        saniyede bir sozu kesmek, tusun ne yaptigini soylemekle ayni sey degil.
+        ekran okuyucu kullanicisi tusun bir sey yaptigini anlamaz. Otomatik
+        geciste neden sustugu lib/deck.ts'te.
       */}
       {/*
         BES PRENSIP DE basiliyor ve hepsi ayni izgara hucresinde ust uste

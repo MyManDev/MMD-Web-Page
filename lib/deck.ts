@@ -4,10 +4,15 @@ import { useEffect, useState, useSyncExternalStore } from "react";
  * Deste davranisinin TEK kaydi: hidrasyon, reduced-motion okumasi ve kendiliginden
  * ilerleyen, etkilesimde duraklayan gezinme. design-spec.md §3.4
  *
- * Once hepsi PrincipleDeck'in icindeydi. Ekran goruntusu karuseli (§3.3.1) ayni
- * davranisi isteyince buraya tasindi: iki kopya, bir gun birinde duzeltilip
- * digerinde unutulan bir hata demekti. Kancalar yalnizca client component'lerden
- * cagriliyor; bu dosya kendisi "use client" degil, cunku JSX tasimiyor.
+ * Once hepsi PrincipleDeck'in icindeydi. Ekran goruntusu karuseli (§3.3.1) de
+ * ayni davranisa gecebilsin diye buraya tasindi: iki kopya, bir gun birinde
+ * duzeltilip digerinde unutulan bir hata demekti. Bugun karusel buradan yalnizca
+ * `useHydrated`'i kullaniyor.
+ *
+ * "use client" YOK ve bu bilerek: dosyayi yalnizca client component'ler ve
+ * Node'daki E2E import ediyor. Yonerge konsaydi, bir Server Component'in import
+ * ettigi `AUTO_ADVANCE_MS` sayi olarak degil bir client referansi olarak
+ * giderdi. Kancalar zaten yalnizca client component'lerden cagrilabilir.
  */
 
 /*
@@ -40,18 +45,23 @@ export function useHydrated(): boolean {
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
+/* Modul duzeyinde: `useSyncExternalStore` `subscribe`un kimligi degisince
+   aboneligi bastan kuruyor. Satir icinde yazilsaydi her render'da kurulurdu. */
+const subscribeToReducedMotion = (onChange: () => void) => {
+  const query = window.matchMedia(REDUCED_MOTION);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+};
+
 /**
- * Reduced-motion CSS'te tek yerde ele aliniyor (globals.css), ama bir
- * ZAMANLAYICI CSS ile ifade edilemez - bu yuzden burada ikinci bir okuma var.
- * Ayar degisirse (`change`) deger de degisiyor. Sunucuda false.
+ * Reduced-motion'in JS okumasi. Gecisleri CSS kendisi kapatiyor (globals.css),
+ * ama bir ZAMANLAYICI CSS ile ifade edilemez; otomatik gecisin durmasi icin
+ * degerin burada okunmasi gerekiyor. Ayar degisirse (`change`) deger de
+ * degisiyor. Sunucuda false.
  */
 export function usePrefersReducedMotion(): boolean {
   return useSyncExternalStore(
-    (onChange) => {
-      const query = window.matchMedia(REDUCED_MOTION);
-      query.addEventListener("change", onChange);
-      return () => query.removeEventListener("change", onChange);
-    },
+    subscribeToReducedMotion,
     () => window.matchMedia(REDUCED_MOTION).matches,
     () => false,
   );
@@ -60,11 +70,12 @@ export function usePrefersReducedMotion(): boolean {
 /**
  * Kendiliginden ilerleyen, etkilesimde duraklayan deste.
  *
- * OTOMATIK GECIS `AUTO_ADVANCE_MS`te bir. WCAG 2.2.2 kendiliginden baslayan ve
- * bes saniyeden uzun suren otomatik guncellemede bir duraklatma mekanizmasi
- * istiyor; buradaki mekanizma ETKILESIM: fare uzerine gelince veya iceriye odak
- * dusunce duruyor, etkilesim bitince kaldigi yerden devam ediyor. `pauseOn`
- * kapsayiciya yayilacak dort olay.
+ * OTOMATIK GECIS `AUTO_ADVANCE_MS`te bir. WCAG 2.2.2, kendiliginden baslayan ve
+ * baska icerikle birlikte sunulan otomatik guncellemede durdurma, duraklatma
+ * veya gizleme yolu istiyor. Buradaki yol ETKILESIM: fare uzerine gelince veya
+ * iceriye odak dusunce duruyor, etkilesim bitince kaldigi yerden devam ediyor.
+ * Bu yolun kapsamadigi kullanicilar var; sinirlar design-spec.md §3.4'te.
+ * `pauseOn` kapsayiciya yayilacak dort olay.
  *
  * `prefers-reduced-motion` acikken ve hidrasyondan once otomatik gecis HIC
  * calismiyor. Ilki ayni zamanda tiklayan E2E testlerini deterministik tutuyor:
