@@ -324,8 +324,8 @@ Blok içi sıra: **sıra numarası (mono, `text-muted`)** → proje adı (Displa
 `text-muted`) → **açıklama (Body)** → tech tag'leri (`Tag` listesi, mono) → `MetricRow` → aksiyonlar
 (GitHub `ghost`, Live Demo `primary`).
 
-**Metrik satırı üç kısıt taşır:** `15 PLAYERS OPTIMISED`, `£100M BUDGET CONSTRAINT`,
-`1 OPTIMAL SQUAD`. Önceki tek sayı (`0`, "ML models promoted to production")
+**Metrik satırı iki kısıt ve bir kanıt şartı taşır:** `15 PLAYERS OPTIMISED`,
+`£100M BUDGET CONSTRAINT`, `1 OPTIMAL SQUAD` (ayrımı `architecture.md` §4.6'da). Önceki tek sayı (`0`, "ML models promoted to production")
 `architecture.md` §4.6'nın imza öğesiydi ve karar sahibi tarafından değiştirildi; **ne
 kaybedildiği** §4.6'da yazılı.
 
@@ -350,7 +350,7 @@ okunmuyordu. Bölüm içi ölçü sırası artık 80 → 56 → 28 → 18.
 
 **Açıklama metni doğrulanabilir olgulara dayanır, uydurulmaz** (`CLAUDE.md` kural 5). Football
 Squad Optimizer'ınki için dayanaklar `content/projects.ts`'te tek tek yazılı; her biri SquadOpt
-deposunda bir dosyaya ve satıra işaret ediyor (arayüz metinleri, çözücü ayarı, plan pencereleri).
+deposundaki kaynağına işaret ediyor (arayüz metinleri, çözücü ayarı, plan pencereleri).
 
 `MetricRow` — imza öğesi (`architecture.md` §4.6). Sayı Display M, etiketi mono ve `text-muted`.
 İfade seçildi ve `architecture.md` §4.6'da kayıtlı. `metrics` boşsa satır **render edilmez**;
