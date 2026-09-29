@@ -5,17 +5,20 @@ import type { Project } from "./schema";
  * architecture.md §3'te kararlastirildi; buradaki kayit onlari tekrar etmiyor,
  * uyguluyor.
  *
- * METIN 2026-09-29'DA YENIDEN YAZILDI. Uygulama #798'de yeniden tasarlandi ve
- * artik tek bir sistem kadrosunu degil, bir ligin uyelerini tek tek
- * danisiyor. Karar sahibi metni SquadOpt deposuna dayanarak yazmayi devretti;
- * begenmezse degistirecek. Dayanaklar o depoda (develop 152146bc; canli site
- * site-2026-27-gw06-fix4 ve web/ agaci develop ile ayni).
+ * METIN 2026-09-29'DA YENIDEN YAZILDI. Eski metin tek bir sistem kadrosunu
+ * anlatiyordu; uygulama ise bir ligin uyelerini tek tek danisiyor. Uye
+ * gorunumleri SquadOpt #215'le (2026-08-23) geldi, 2026-09-09'da ziyaretcinin
+ * giris noktasi oldu ve #798 (2026-09-25) arayuzu yeniden tasarladi. Karar
+ * sahibi metni SquadOpt deposuna dayanarak yazmayi devretti ve okuyup onayladi.
+ * Dayanaklar o depoda (develop 152146bc; canli site site-2026-27-gw06-fix4,
+ * web/src agaci develop ile ayni).
  *
  * `summary` uygulamanin KENDI cumlesi: Ingilizce meta aciklamasi
  * (web/src/i18n/messages.ts:123, "SquadOpt: a weekly FPL decision, and what it
- * rests on."), bastaki "SquadOpt: " olmadan. Cumle eskiden uygulamanin
- * basligindaydi; #798 onu basliktan kaldirdi ve yalnizca orada kaldi. Vitrine
- * ozel yeni bir cumle yazilmadi (CLAUDE.md kural 5).
+ * rests on."), bastaki "SquadOpt: " olmadan. Eski ozet ("A decision, and what
+ * it rests on.") uygulamanin basligindaki kisa cumleydi ve #798 o basligi
+ * kaldirdi; bu uzun cumle hep meta aciklamasiydi. Vitrine ozel yeni bir cumle
+ * yazilmadi (CLAUDE.md kural 5).
  *
  * `description` DOGRULANABILIR olgulara dayaniyor; hicbiri uydurulmadi:
  *   - bir lig, uyenin kendi kadrosu -> web/src/features/league/data.ts:237
@@ -23,8 +26,10 @@ import type { Project } from "./schema";
  *       starts from this member's public squad.")
  *   - CP-SAT, 1/3/5 hafta -> pyproject.toml:15 (ortools) ve
  *       src/squadopt/application/advice_capabilities.py:21 (MEMBER_WINDOWS)
- *   - transfer, kaptan, ilk on bir -> MemberAdviceCard.tsx: degisiklik
- *       panolari, kaptan ve yardimci kaptan, sahada ilk on bir
+ *   - transfer, kaptan, ilk on bir -> web/src/features/league/pages/
+ *       MemberAdviceCard.tsx:200 (her hamle icin bir degisiklik panosu), :838
+ *       ve :851 (kaptan, yardimci kaptan); sahadaki ilk on bir MemberSquad.tsx:90
+ *       (MemberPitch)
  *   - oyunun kurallari -> src/squadopt/optimization/config.py:72-73
  *       (squad_size 15, budget_tenths 1000 yani £100.0m); planlayici ayrica
  *       bankayi, transfer cezasini ve chip'leri modelliyor
@@ -44,8 +49,8 @@ import type { Project } from "./schema";
  * "Fantasy Premier League" ibaresi 2026-08-30'da sahibi tarafindan ONAYLANDI;
  * SquadOpt'un README'si de ayni adi kullaniyor.
  *
- * `metrics` UC KISIT tasiyor (§4.6, karar sahibi tarafindan degistirildi) ve
- * yeniden yazimda DEGISMEDI: ucu de hala dogru. Etiketler dogal yazimda
+ * `metrics` iki kisit ve bir kanit sarti tasiyor (§4.6, karar sahibi
+ * tarafindan degistirildi) ve yeniden yazimda DEGISMEDI: ucu de hala dogru. Etiketler dogal yazimda
  * duruyor; buyuk harfe MetricRow'un CSS'i ceviriyor, metin iki farkli bicimde
  * iki kez yazilmiyor.
  *
@@ -98,7 +103,7 @@ export const projects: Project[] = [
       },
     ],
     order: 0,
-    /* UC KISIT, ve bu bir kararı geri aliyor. Once burada tek bir sayi vardi:
+    /* UC SAYI, ve bu bir kararı geri aliyor. Once burada tek bir sayi vardi:
        `0 - ML models promoted to production`. architecture.md §4.6 onu IMZA OGE
        olarak secmisti ve gerekcesi yaziliydi: 215 commit ve 2.600 test her
        vitrinde bulunur, terfi etmemis model ise olculmus bir basarisizlik ve
@@ -110,8 +115,9 @@ export const projects: Project[] = [
        sistemin kendi kadrosu icin CP-SAT'in dondurdugu kanit - canli bir karar
        OPTIMAL olmak zorunda) - yani kaybedilen sey dogruluk degil, IMZA.
 
-       Sayilar uydurulmadi ve ovunme de degil: ucu de projenin KISITLARI, yani
-       "ne kadar iyiyiz" degil "hangi kutuya sigmak zorundaydi" diyor. */
+       Sayilar uydurulmadi ve ovunme de degil: ikisi projenin KISITI, ucuncusu
+       bir KANIT SARTI, yani "ne kadar iyiyiz" degil "hangi kutuya sigmak ve
+       neyi kanitlamak zorundaydi" diyor. */
     metrics: [
       { value: "15", label: "Players optimised" },
       { value: "£100m", label: "Budget constraint" },

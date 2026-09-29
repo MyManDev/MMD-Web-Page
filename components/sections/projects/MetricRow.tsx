@@ -1,12 +1,12 @@
 import type { Project } from "@/content";
 
 /**
- * Imza ogesi (architecture.md §4.6): durust sayi satiri.
+ * Metrik satiri (architecture.md §4.6). Eskiden imza ogesiydi - tek bir durust
+ * sayi; karar sahibi onu kaldirdi ve satir bugun projenin kisitlarini tasiyor.
  * Sayi Display M, etiketi mono ve text-muted. design-spec.md §3.3.1
  *
  * `metrics` yoksa satir HIC render edilmez - bos cerceve, tire veya
- * placeholder gosterilmez (CLAUDE.md kural 6). V1'de imza sayisinin ifadesi
- * henuz yazilmadi (#17), yani bu component bugun her zaman null donuyor.
+ * placeholder gosterilmez (CLAUDE.md kural 6).
  *
  * DOM sirasi dt -> dd (gecerli tanim listesi), gorsel sira flex-col-reverse
  * ile sayi ustte. Siralamayi CSS cozuyor, isaretlemeyi bozarak degil.

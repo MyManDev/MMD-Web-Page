@@ -56,7 +56,7 @@ export const projectSchema = z.object({
   order: z.number().int().nonnegative(),
 
   liveUrl: httpsUrl.optional(),
-  /** Imza ogesi - durust sayi. architecture.md §4.6 */
+  /** Metrik satiri. architecture.md §4.6 */
   metrics: z
     .array(
       z.object({
