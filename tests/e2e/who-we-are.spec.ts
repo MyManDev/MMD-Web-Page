@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { AUTO_ADVANCE_MS } from "@/components/sections/about/PrincipleDeck";
+import { AUTO_ADVANCE_MS } from "@/lib/deck";
 
 /**
  * Who we are bolumu. docs/design-spec.md §3.4 ve §5.1

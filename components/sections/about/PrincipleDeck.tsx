@@ -1,15 +1,9 @@
 "use client";
 
-import { type CSSProperties, useEffect, useState, useSyncExternalStore } from "react";
+import type { CSSProperties } from "react";
 
 import { ArrowIcon } from "@/components/ui";
-
-/*
-  Aralik DISA AKTARILIYOR cunku testin "o gunku sayiyi" tekrar yazmasi bir
-  kusurdur - beklenen deger turetilebiliyorsa turetilir. E2E bu sabiti import
-  edip bekleme suresini ondan hesapliyor.
-*/
-export const AUTO_ADVANCE_MS = 7000;
+import { useAutoAdvancingDeck } from "@/lib/deck";
 
 /**
  * Prensip destesi. design-spec.md §3.4
@@ -28,105 +22,18 @@ export const AUTO_ADVANCE_MS = 7000;
  * JS'e rehin verirdi. Ayni gerekce BioTypewriter'da da yazili: gizleyen taraf
  * gelmeyebilecek olan taraf olmali.
  *
- * `useState(false)` + `useEffect` hidrasyon uyusmazligini de onluyor: ilk
- * render sunucununkiyle birebir ayni, degisiklik ikinci render'da geliyor.
- *
- * Basa saran gezinme (5'ten sonra 1): sonu olan bir gezinmede son tus devre
- * disi kalir ve odak bosa duser. Bes ogede sarma yonunu kaybettirmiyor, sayac
- * konumu zaten soyluyor.
- *
- * OTOMATIK GECIS. Deste 7 saniyede bir kendiliginden ilerliyor. WCAG 2.2.2
- * kendiliginden baslayan ve bes saniyeden uzun suren otomatik guncellemede bir
- * duraklatma mekanizmasi istiyor; buradaki mekanizma ETKILESIM: fare uzerine
- * gelince veya iceriye odak dusunce duruyor, etkilesim bitince kaldigi yerden
- * devam ediyor. Gorunur yeni bir tus eklenmedi - design-spec.md §3.4'te olmayan
- * bir kontrol tasarim karari olurdu.
- *
- * `prefers-reduced-motion` acikken otomatik gecis HIC calismiyor. Bu ayni
- * zamanda tiklayan E2E testlerini deterministik tutuyor: onlar zaten
- * reduced-motion altinda kosuyor, yani zamanlayici oraya hic girmiyor.
+ * GEZINME lib/deck.ts'te: basa saran ileri/geri, `AUTO_ADVANCE_MS`te bir
+ * otomatik gecis, etkilesimde duraklama, reduced-motion altinda durma ve otomatik geciste
+ * susan canli bolge. Ekran goruntusu karuseli ayni kancayi kullaniyor; davranisin
+ * gerekcesi orada, bir kez yazili.
  *
  * GECIS KELIME KELIME BELIRME ve tamami CSS'te (`RevealedPrinciple`). Daktilo
  * denendi ve fazla sade okundu; kaldirildi.
- *
- * CANLI BOLGE OTOMATIK GECISTE SUSUYOR. `aria-live="polite"` her degisikligi
- * duyurursa ekran okuyucu kullanicisi yedi saniyede bir, istemedigi halde
- * sozunun kesildigini yasar. Bu yuzden otomatik ilerleme `aria-live="off"`
- * yaziyor; kullanici etkilesimi (odak veya fare) bolgeyi yeniden `polite`
- * yapiyor. Sira onemli ve tesadufi degil: odak olayi tiklamadan ONCE geliyor
- * (mousedown -> focus -> click), yani tusa basildigi commit'te bolge zaten
- * canli. Ikisini ayni commit'te degistirmek gerekmiyor.
  */
 export function PrincipleDeck({ principles }: { principles: readonly string[] }) {
-  /*
-    Hidrasyon olup olmadigini `useSyncExternalStore` soyluyor: sunucu anlik
-    goruntusu false, istemcininki true. Once `useEffect` icinde setState
-    yaziliyordu; `react-hooks/set-state-in-effect` onu hakli olarak reddetti -
-    o bicim fazladan bir render turu tetikliyor. Bu kanca React'in bu is icin
-    verdigi arac ve tek render'da cozuluyor.
-
-    `subscribe` bos: abone olunacak bir sey yok, deger mount'tan sonra bir daha
-    degismiyor.
-  */
-  const enhanced = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
-  /*
-    Reduced-motion CSS'te tek yerde ele aliniyor (globals.css), ama bir
-    ZAMANLAYICI CSS ile ifade edilemez - bu yuzden burada ikinci bir okuma var.
-    Ayni kanca, ayni gerekce: tek render, hidrasyon uyusmazligi yok.
-  */
-  const reducedMotion = useSyncExternalStore(
-    (onChange) => {
-      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-      query.addEventListener("change", onChange);
-      return () => query.removeEventListener("change", onChange);
-    },
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => false,
-  );
-
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  /* Baslangicta `true`: ilk render'da bolge canli, kullanici bir sey yapmadan
-     once de oyle. Yalnizca otomatik ilerleme onu susturuyor. */
-  const [announce, setAnnounce] = useState(true);
-
   const total = principles.length;
+  const { hydrated: enhanced, index, step, announce, pauseOn } = useAutoAdvancingDeck(total);
   const pad = (value: number) => String(value).padStart(2, "0");
-  const step = (delta: number) => setIndex((current) => (current + delta + total) % total);
-
-  /*
-    `index` bagimlilikta: her degisiklikten sonra zamanlayici bastan kuruluyor.
-    Yani kullanici ileri tusuna bastiginda yedi saniye sifirdan sayiliyor -
-    tusa basip yarim saniye sonra kendiliginden atlamasi olmuyor.
-
-    `setInterval` DEGIL `setTimeout`: aralik degil tek adim kuruluyor ve her
-    adimdan sonra yeniden. Interval, duraklatma sirasinda gecen sureyi
-    biriktirip birden fazla atlama uretebilir.
-  */
-  useEffect(() => {
-    if (!enhanced || reducedMotion || paused) return;
-
-    const timer = setTimeout(() => {
-      setAnnounce(false);
-      /* Fonksiyonel guncelleyici DEGIL: `index` boylece gercekten bir
-         bagimlilik oluyor ve `exhaustive-deps` onu gereksiz gormuyor. */
-      setIndex((index + 1) % total);
-    }, AUTO_ADVANCE_MS);
-
-    return () => clearTimeout(timer);
-  }, [enhanced, reducedMotion, paused, index, total]);
-
-  /* Etkilesim BASLAYINCA: durakla ve bolgeyi yeniden canli yap. Ikincisi
-     onemli - kullanici birazdan tusa basacak ve degisikligi duymali. */
-  const hold = () => {
-    setPaused(true);
-    setAnnounce(true);
-  };
-  const release = () => setPaused(false);
 
   /*
     Etiket UYDURULMUS MARKA METNI DEGIL: alanin `content/site.ts`'teki adi
@@ -153,14 +60,8 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
       aria-label={label}
       aria-roledescription="carousel"
       className="flex flex-col gap-6"
-      /* `onFocus`/`onBlur` React'te baloncuklaniyor, yani bunlar kapsayici
-         icin `focusin`/`focusout` gibi davraniyor - `:focus-within`in JS
-         karsiligi. Klavye kullanicisi deste icine girdiginde duraklatiyor. */
-      onBlur={release}
-      onFocus={hold}
-      onPointerEnter={hold}
-      onPointerLeave={release}
       role="group"
+      {...pauseOn}
     >
       {/*
         Canli bolge KOSULLU. `polite` oldugunda: tusa basildiginda odak tusta
