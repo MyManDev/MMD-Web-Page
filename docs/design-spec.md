@@ -144,22 +144,44 @@ Keyframe'de **yalnızca `from`** tanımlı: dinlenme hâli tanımlı (okunur) ba
 `prefers-reduced-motion` açıksa veya animasyon kalkarsa bar okunur tarafa düşer. Ters yazılsaydı bar
 saydam kalırdı ve Team'in açık gökyüzlü fotoğrafları üzerinde nav yazısı okunmaz olurdu.
 
-Ölçüldü: bar saydamken bile wordmark **12.49:1**, nav linkleri **6.65:1** — ikisi de AA'nın
-üstünde.
+Ölçüldü: bar saydamken bile wordmark **12.49:1**, pasif nav linkleri **6.65:1** — ikisi de AA'nın
+üstünde. Aktif (accent) link sayfa renginde **5.51:1** (hesaplandı).
 
-**Okunurluk ölçüldü, göz kararı değil.** Sayfa baştan sona kaydırılıp nav yazısının arkasındaki
-zemin her 100px'te örneklendi; en kötü durum **5.49:1** — AA eşiği 4.5. Team'in açık gökyüzlü
-fotoğrafları dahil. Düz saydam bırakmak orada beyaz mono yazıyı okunmaz yapardı; tint'in görevi
-estetik değil, o tabanı garanti etmek.
+**Okunurluk ölçüldü, göz kararı değil (#106).**
 
-**2026-09-28'de yeniden ölçüldü ve 5.49:1 yeniden üretilemedi.** Daha katı yöntemle (her metin
-satırının arkasındaki en parlak tek piksel) en kötü durum pasif linkte **4.09:1** (1440×900, Team
-kartlarının üst kenarı) ve accent aktif linkte **3.90:1** (1280×720, Hero). 4.09 noktası iki
-kişilik Team'le geldi: kartlar ortalanınca soldaki kartın gökyüzü linklerin altına denk geliyor,
-üç kişiyken aynı noktada 5.30:1'di. 3.90 noktası ondan önce de vardı. Kanıt ve seçenekler #106'da;
-karar verilene kadar üstteki 5.49:1 ölçülmüş bir taban değil.
+- **Yöntem:** sayfa baştan sona kaydırılıyor; her adımda nav yazısı gizleniyor (`color: transparent`,
+  geçişler kapalı) ve her metin satırının arkasındaki **en parlak tek piksel** okunuyor.
+- **Ortam:** Chromium (Playwright), DPR 1, hareket açık.
+- **Viewport'lar:** 1024×768, 1280×720, 1440×900, 1920×1080.
+- **Adım:** 100px; Hero'da (y=300–500) ve sayfanın son 300px'inde 25px.
+- **Nokta:** herhangi bir nav yazısının 4.5:1'in altına indiği bir (viewport, scroll) örneği.
 
-Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 72%, transparent)`), sabit
+| Tint | Accent aktif link | Pasif link | Wordmark ve düğmeler | Eşik altı nokta |
+| ---- | ----------------: | ---------: | -------------------: | --------------: |
+| %72  |              3.72 |       4.04 |                 5.63 |              29 |
+| %85  |              4.49 |       5.11 |                 8.19 |               3 |
+| %86  |              4.55 |       5.19 |                 8.44 |               0 |
+| %87  |          **4.62** |   **5.28** |             **8.59** |           **0** |
+
+%72'de Hero başlığı ve Team fotoğraflarının açık gökyüzü blur'dan sızıyordu:
+
+- **En kötü accent:** 1920×1080'de y=450, Hero.
+- **En kötü pasif link:** 1024×768'de y=2800, Team kartlarının üst kenarı. İki kişilik Team'le kartlar
+  ortalanınca soldaki kartın gökyüzü linklerin altına denk geldi.
+- **%85:** üç noktada 4.49, üçü de Hero'da accent link.
+
+**%87** ölçülen her noktada AA'yı geçiyor. Düz zeminde bar değişmiyor, yalnızca açık içeriğin
+üzerinde koyulaşıyor.
+
+**Sınırı:** bu, bugünkü içerik için ölçülmüş bir taban; içerikten bağımsız bir garanti değil.
+Bembeyaz bir zemin üzerinde %87'de accent ~3.65, pasif link ~4.41 olurdu (hesaplandı).
+`tests/e2e/nav.spec.ts` yalnızca opaklığı tutuyor. Bir bölümün üst kenarına açık bir görsel ekleyen
+PR bu ölçümü yinelemeli.
+
+Eski "en kötü durum 5.49:1" başka bir örneklemeyle ölçülmüştü (%72, zemin örneklemesi). En parlak
+piksel yöntemi aynı tint'te 3.72 veriyor.
+
+Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 87%, transparent)`), sabit
 bir `rgba()` yazılmıyor (`CLAUDE.md` kural 1).
 
 **`@supports` kapısı:** `backdrop-filter` desteklenmiyorsa bar **saydam değil dolu zemine** düşer.
