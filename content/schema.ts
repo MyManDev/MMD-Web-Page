@@ -32,7 +32,7 @@ export const projectSchema = z.object({
     .min(1)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug kebab-case olmali"),
   name: z.string().min(1),
-  /** Uygulamanin kendi basligindaki cumle - tek satirlik cengel. */
+  /** Uygulamanin kendi cumlesi - tek satirlik cengel. Kaynagi content/projects.ts'te. */
   summary: z.string().min(1),
   /**
    * Projenin ne yaptigini anlatan paragraf. ZORUNLU: bir proje kartinin tek
