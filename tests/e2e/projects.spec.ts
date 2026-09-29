@@ -228,9 +228,15 @@ test("hayalet arka plan sayfaya yatay tasma eklemiyor", async ({ page }) => {
  *
  * Reduced-motion altinda olculuyor: metin girisi basligi 14px asagidan
  * getiriyor ve `getBoundingClientRect` o kaymayi da sayardi.
+ *
+ * Emulasyon stile BIR SONRAKI KAREDE yansiyor, yani hemen okunan stil eski
+ * olabiliyor. Olculdu: baslik gecilip ekrana hic girmemisken `emulateMedia`
+ * ardindan okunan `translate` hala `0px 14px`, 100ms sonra `none`. Bu yuzden
+ * olcmeden once basligin kendi stili yeniden denenerek bekleniyor.
  */
 test("hayalet arka plan basliga ve bolumun disina dikeyde tasmiyor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator(`${SECTION} h2`)).toHaveCSS("translate", "none");
   await expect(page.locator(`${SECTION} [data-ghost]`).first()).toBeAttached();
   const gap = await page.locator(SECTION).evaluate((section) => {
     const ghosts = [...section.querySelectorAll("article > [data-ghost]")].map((el) =>
@@ -795,8 +801,9 @@ test.describe("ekran goruntusu karuseli", () => {
     expect(expected).toBeGreaterThan(0);
     expect(await duration(ghost)).toBe(expected);
 
+    // Emulasyon bir sonraki karede yansiyor: yeniden denenerek okunuyor.
     await page.emulateMedia({ reducedMotion: "reduce" });
-    expect(await duration(ghost)).toBeLessThan(0.001);
+    await expect.poll(() => duration(ghost)).toBeLessThan(0.001);
   });
 
   /**
@@ -832,11 +839,12 @@ test.describe("ekran goruntusu karuseli", () => {
     expect(Number(incoming.zIndex)).toBeGreaterThan(0);
     expect(outgoing.zIndex).toBe("auto");
 
+    // Emulasyon bir sonraki karede yansiyor: once sure yeniden denenerek
+    // bekleniyor, gecikme ayni stil hesabinda geliyor.
     await page.emulateMedia({ reducedMotion: "reduce" });
     for (let i = 0; i < SHOTS.length; i++) {
-      const { duration, delay } = await timing(i);
-      expect(duration).toBeLessThan(0.001);
-      expect(delay).toBe(0);
+      await expect.poll(async () => (await timing(i)).duration).toBeLessThan(0.001);
+      expect((await timing(i)).delay).toBe(0);
     }
   });
 });
@@ -1160,6 +1168,12 @@ test.describe("ekran goruntusu karuseli - daktilo", () => {
   /**
    * #125'in hata sinifi (team.spec.ts'te biyografi icin ayni test): yazi
    * surerken reduced-motion acilirsa yazi yarida DONMUYOR, hemen tamamlaniyor.
+   *
+   * Harfin opakligi YENIDEN DENENEREK okunuyor, team.spec.ts'teki gibi.
+   * Reduced-motion altinda global blok her gecisi 0.01ms yapiyor ve
+   * `transition-property` `all`da kaliyor. Yani isaret kalkinca harfin 0 -> 1
+   * degisimi de bir gecis; hemen okunan deger bir kare boyunca 0. CI'da mobilde
+   * boyle dustu (#130).
    */
   test("yazarken reduced-motion acilinca yazi hemen tamamlaniyor", async ({ page }) => {
     await load(page);
@@ -1169,7 +1183,7 @@ test.describe("ekran goruntusu karuseli - daktilo", () => {
 
     await page.emulateMedia({ reducedMotion: "reduce" });
     await expect(caption).not.toHaveAttribute("data-typing");
-    expect(await opacityOf(caption.locator("span").last())).toBe(1);
+    await expect.poll(() => opacityOf(caption.locator("span").last())).toBe(1);
   });
 
   /**
