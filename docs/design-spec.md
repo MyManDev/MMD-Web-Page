@@ -170,18 +170,37 @@ saydam kalırdı ve Team'in açık gökyüzlü fotoğrafları üzerinde nav yaz�
   ortalanınca soldaki kartın gökyüzü linklerin altına denk geldi.
 - **%85:** üç noktada 4.49, üçü de Hero'da accent link.
 
-**%87** ölçülen her noktada AA'yı geçiyor. Düz zeminde bar değişmiyor, yalnızca açık içeriğin
-üzerinde koyulaşıyor.
+**%87** o günkü içerikte ölçülen her noktada AA'yı geçiyordu. Düz zeminde bar değişmiyor, yalnızca
+açık içeriğin üzerinde koyulaşıyor.
+
+**%87 → %92: SquadOpt'un açık renkli ekran görüntüleri.** Uygulama açık temaya geçti ve kartın yeni
+görüntüleri neredeyse beyaz zeminli; aşağıdaki "Sınırı" paragrafının öngördüğü durum buydu. Yeni
+içerikte nav'ın karusel görüntüsünün üstünden geçtiği her konum **25px adımla** ve **üç slaytın her
+biri için ayrı** ölçüldü (aynı yöntem, dört viewport, 282 nokta):
+
+| Tint | Accent aktif link | Pasif link | Wordmark ve düğmeler | Eşik altı nokta |
+| ---- | ----------------: | ---------: | -------------------: | --------------: |
+| %87  |              3.97 |       4.48 |                 8.45 |              72 |
+| %90  |              4.34 |       4.93 |                 9.40 |              64 |
+| %92  |          **4.56** |   **5.24** |             **9.88** |           **0** |
+| %94  |              4.77 |       5.57 |                10.49 |               0 |
+
+- **En kötü nokta:** 1920×1080'de aktif "Projects" linki, ilk slaytın üstünde. O genişlikte nav
+  linkleri görüntünün tam üstüne düşüyor; %87'de oradaki 81 noktanın 68'i eşiğin altındaydı.
+- **Karar sahibinin seçimi %92:** ölçülen değerler içinde sıfır hatalı en düşüğü. Pay ince (accent
+  4.56). %94 daha geniş pay veriyordu ama bar neredeyse opak oluyordu.
+- **Sayfanın tamamı** da %92'de, yeni içerikle, yukarıdaki yöntemle yeniden tarandı: eşik altı nokta
+  yok. En kötü değerler accent 4.56 (aynı nokta), pasif 5.26, wordmark ve düğmeler 9.88.
 
 **Sınırı:** bu, bugünkü içerik için ölçülmüş bir taban; içerikten bağımsız bir garanti değil.
-Bembeyaz bir zemin üzerinde %87'de accent ~3.65, pasif link ~4.41 olurdu (hesaplandı).
-`tests/e2e/nav.spec.ts` yalnızca opaklığı tutuyor. Bir bölümün üst kenarına açık bir görsel ekleyen
-PR bu ölçümü yinelemeli.
+Bembeyaz bir zemin üzerinde %92'de accent ~4.30, pasif link ~5.19 olurdu (hesaplandı).
+`tests/e2e/nav.spec.ts` yalnızca opaklığı tutuyor. Nav'ın altından geçecek açık bir görsel ekleyen
+her PR bu ölçümü yinelemeli; SquadOpt'unki bir bölümün üst kenarında değil, kartın ortasındaydı.
 
 Eski "en kötü durum 5.49:1" başka bir örneklemeyle ölçülmüştü (%72, zemin örneklemesi). En parlak
 piksel yöntemi aynı tint'te 3.72 veriyor.
 
-Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 87%, transparent)`), sabit
+Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 92%, transparent)`), sabit
 bir `rgba()` yazılmıyor (`CLAUDE.md` kural 1).
 
 **`@supports` kapısı:** `backdrop-filter` desteklenmiyorsa bar **saydam değil dolu zemine** düşer.
