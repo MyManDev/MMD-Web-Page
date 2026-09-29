@@ -11,8 +11,8 @@ uyguladığımızı** yazar. Kararların kendisi orada; burada tekrar edilmez.
 
 **Bu belge metin içermez.** Metinler `content/site.ts`'te yaşar ve şema onları **zorunlu**
 tutar; bu belge yalnızca nereye girdiklerini söyler. Hero cümlesi, Who we are manifestosu ve
-çalışma prensipleri #15'te yazıldı; imza sayısı #17'de kapandı. Bekleyen tek metin ekip
-biyografileri ve rolleri (#16).
+çalışma prensipleri #15'te yazıldı; imza sayısı #17'de kapandı; ekip biyografileri ve rolleri
+#16'da yazıldı.
 
 ---
 
@@ -83,7 +83,7 @@ V1'de `disabled` kullanan bir yüzey **yok**; durum tanımlı ki sonradan uyduru
 | `MobileMenu`  | Navigation | **B** | `items`, `open`, `onOpenChange` | kapalı · açık · focus                |
 | `Hero`        | Hero       | **A** | `site.hero`                     | —                                    |
 | `Projects`    | Projects   | **A** | `projects: Project[]`           | —                                    |
-| `ProjectCard` | Projects   | **A** | `project`, `index`, `total`     | default · hover · focus-within       |
+| `ProjectCard` | Projects   | **A** | `project`, `index`, `total`     | —                                    |
 | `MetricRow`   | Projects   | **A** | `metrics: Metric[]`             | —                                    |
 | `WhoWeAre`    | Who We Are | **B** | `site.whoWeAre`                 | —                                    |
 | `Team`        | Team       | **B** | `members: TeamMember[]`         | —                                    |
@@ -644,10 +644,10 @@ bölümün tanımının parçası (`CLAUDE.md` kural 10 ile aynı mantık).
 Açıklama **DOM'da her zaman vardır**; açılıp kapanan şey görünürlüğü. `display: none` ile
 saklanmaz, çünkü ekran okuyucu onu okuyabilmeli.
 
-- Rol ve biyografi: **metin bekliyor** (#16)
-- Fotoğraflar: **gerçek fotoğraf bekliyor.** Avatar placeholder konmaz (`CLAUDE.md` kural 6);
-  şemaya `photo` alanı **zorunlu** olarak eklenir, yani fotoğrafsız bir kişi build'i düşürür.
-  Görseller `scripts/optimize-images.mjs` hattından geçer (`architecture.md` §6).
+- Rol ve biyografi: `content/team.ts`'te (#16).
+- Fotoğraflar: gerçek fotoğraflar. Avatar placeholder konmaz (`CLAUDE.md` kural 6); şemada `photo`
+  alanı **zorunlu**, yani fotoğrafsız bir kişi build'i düşürür. Görseller
+  `scripts/optimize-images.mjs` hattından geçer (`architecture.md` §6).
 
 ### 3.6 Footer — Bölge B
 
@@ -806,32 +806,46 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 
 ## 6 · Etkileşim ve motion
 
-§4.4 sınırları: CSS öncelikli, 150–250ms, `ease-out`, motion kütüphanesi yok. **Yükleme anında
-giriş animasyonu yasağı kaldırıldı** (§4.4); zarf aynen duruyor. Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
+§4.4 sınırları: CSS öncelikli, etkileşim geçişleri 150–250ms ve `ease-out`, motion kütüphanesi
+yok. **Yükleme anında giriş animasyonu yasağı kaldırıldı** (§4.4); Hero'nun yükleme girişi zarfın
+içinde (240ms, `ease-out`). **Zarfın dışında üç animasyon var:** metin girişi 520ms
+(`cubic-bezier(0.22, 0.61, 0.36, 1)`), prensip kelimeleri 520ms ve scroll göstergesi 2 × 2200ms
+`ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
 değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
-`animation-timeline: view()` / `scroll()` ile yazılır ve sıfır JS'e mal olur (§4.4); hangi öğenin
+`animation-timeline: scroll()` ile yazılır ve sıfır JS'e mal olur (§4.4); bugün iki tane var:
+navbar zemini ve amblem gradyanı. Metin girişi zamana bağlı ve `IntersectionObserver` ile
+tetikleniyor (aşağıda). Hangi öğenin
 nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklenir. Önceden bir satır
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
 aynı sınıf hatadır.
 
-| Etkileşim                 | Süre           | Özellik                                        |
-| ------------------------- | -------------- | ---------------------------------------------- |
-| Button hover / active     | 150ms          | `background-color`, `border-color`             |
-| NavLink hover / focus     | 150ms          | `translate` — etiket rulosu (`roll`)           |
-| NavLink aktif geçişi      | 150ms          | `color`                                        |
-| Metin linki hover / focus | 150ms          | `scale` — alt çizgi soldan açılır (`rule`)     |
-| Kart hover                | 200ms          | `background-color`                             |
-| `TeamCard` hover / focus  | 200ms          | `translate: 0 -10px`                           |
-| `TeamCard` biyografisi    | ~12ms/harf     | daktilo — aşağıdaki nota bakın                 |
-| Mobil menü açılış/kapanış | 200ms          | `opacity` + `transform: translateY`            |
-| Anchor scroll             | —              | `scroll-behavior: smooth` (CSS)                |
-| Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`      |
-| Prensip girişi            | 520ms + 70ms   | kelime kelime `opacity` + `translate` + `blur` |
-| Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer          |
-| Ekran görüntüsü karuseli  | §3.4 aralığı   | desteyle aynı kanca (`lib/deck.ts`)            |
-| Ekran görüntüsü geçişi    | 200ms          | çapraz sönümleme: `opacity`, `visibility`      |
+| Etkileşim                        | Süre                 | Özellik                                                       |
+| -------------------------------- | -------------------- | ------------------------------------------------------------- |
+| Button hover                     | 150ms                | `background-color`, `border-color`                            |
+| Menu düğmesi hover               | 150ms                | `background-color`                                            |
+| NavLink hover / focus            | 150ms                | `translate` — etiket rulosu (`roll`); hover'da `color`        |
+| NavLink aktif geçişi             | 150ms                | `color`                                                       |
+| Metin linki hover / focus        | 150ms                | `scale` — alt çizgi soldan açılır (`rule`)                    |
+| Düz link hover                   | 150ms                | `color` — footer ve `TeamCard` linkleri                       |
+| Deste tuşu hover / focus         | 150ms                | `color`, `border-color` (`deck-button`)                       |
+| `TeamCard` hover / focus         | 200ms                | `translate: 0 -10px`                                          |
+| `TeamCard` perdesi               | 200ms                | `opacity` — `surface/92` perde, hover / focus-within          |
+| `TeamCard` biyografi alanı       | 200ms, 100ms gecikme | `grid-template-rows: 0fr → 1fr`                               |
+| `TeamCard` biyografisi           | ~12ms/harf           | daktilo — aşağıdaki nota bakın                                |
+| Anchor scroll                    | —                    | `scroll-behavior: smooth` (CSS)                               |
+| Hero yükleme girişi              | 240ms + 70ms         | `opacity` + `translate: 0 10px`, öğe öğe                      |
+| Metin girişi (`reveal-on-enter`) | 520ms + 90ms         | `opacity` + `translate: 0 14px`, ekrana girince bir kez       |
+| Navbar zemini                    | scroll'a bağlı       | `background-color` + `backdrop-filter`, ilk 120px             |
+| Amblem gradyanı                  | scroll'a bağlı       | `--mark-angle` 0 → 360deg, sayfa boyunca bir tur              |
+| Scroll göstergesi                | 2200ms × 2           | `translate` — işaret çizgide aşağı iner, iki turda durur      |
+| Prensip girişi                   | 520ms + 70ms         | kelime kelime `opacity` + `translate` + `blur`                |
+| Prensip otomatik geçişi          | 7s aralık            | etkileşimde duraklar, bırakınca sürer                         |
+| Ekran görüntüsü karuseli         | §3.4 aralığı         | desteyle aynı kanca (`lib/deck.ts`)                           |
+| Ekran görüntüsü geçişi           | 200ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
+
+Süre sütununda "X + Y", Y'nin öğeler arası kademe olduğunu söyler; gecikme ayrıca yazılır.
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
 hover'a bağlanan bir detayı klavye kullanıcısı hiç görmez, yani detay olmaktan çıkıp fare
@@ -849,15 +863,18 @@ okur.
 `NavLink`'in markup'ı client component olan `Nav`'ın içinde yaşıyor, yani ikinci etiket birkaç bayt
 JavaScript'e mal oluyor. Aynı `rule` Footer'da — sunucu component'i — hiçbir şeye mal olmuyor.
 
-**Bölüm girişi** `animation-timeline: view()`, `animation-range: entry 0% cover 20%`. Süre yok:
-ilerlemeyi scroll konumu belirliyor. Erken bitmesi kasıtlı — okumaya başlanan bir metin hâlâ
-hareket ediyorsa hareket okunurluğun önüne geçiyor. Kural `@supports` içinde: desteği olmayan
-tarayıcıda hiç uygulanmıyor ve öğe son halinde duruyor.
+**Metin girişi zamana bağlı.** Tetikleyici `IntersectionObserver` (`components/ui/RevealOnView.tsx`,
+eşik `0.12`, `rootMargin: 0px`): öğe görünür olunca `data-reveal-shown` alır ve `reveal-in` 520ms'de
+`cubic-bezier(0.22, 0.61, 0.36, 1)` ile oynar. Aynı karede açılan öğeler 90ms kademeyle gelir;
+kademe beşte sabitlenir. Bir kez oynar, yukarı dönerken metin zaten oradadır. `@supports` yok: JS
+gelmezse ya da reduced-motion açıksa işaret konmaz ve öğe son hâlinde durur. Gerekçe
+`architecture.md` §4.4.
 
 Hareket **bölümün zeminine değil içeriğine** uygulanır. Zemin viewport genişliğinde (§1) ve onu
 soldurmak bölümün kendisini yanıp sönüyormuş gibi gösterir.
 
-`transform` mobil menüde ve bölüm girişinde; `TeamCard` `translate` kullanır.
+Hiçbir hareket `transform` kullanmıyor: metin girişi, Hero girişi, prensip kelimeleri, scroll
+göstergesi, `roll` ve `TeamCard` `translate`, `rule` `scale` kullanır.
 
 **Kalkma kuralı bölüm bazına ayrıldı.** `ProjectCard`'da hover'da büyüme/kalkma **yok** — sticky
 yığınla birlikte katman sırasını okunmaz hale getiriyor (§3.3.2). `TeamCard` yığında değil, yani o
@@ -895,20 +912,23 @@ koşulları karşıladığı için kalıyor:
 - Projects yığını `position: static` — düz liste.
 - Prensip destesi ve ekran görüntüsü karuseli kendiliğinden **ilerlemez** (`lib/deck.ts`).
 - Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1).
-- Mobil menü anında açılır/kapanır; `opacity` ve `transform` geçişi uygulanmaz.
-- Scroll'a bağlı animasyonlar **tamamen kaldırılır**: `animation-name: none`. Süreyi kısaltmak
-  yetmez, çünkü zaman çizelgesi süreye değil scroll konumuna bağlı — öğe yine scroll'la birlikte
-  hareket ederdi. Öğe animasyonsuz doğal haliyle, yani hareketin bittiği halde render edilir.
+- Bütün animasyonlar **tamamen kaldırılır**: `animation-name: none`. Bu, scroll'a bağlı olanları
+  (`nav-settle`, `mark-sweep`) da zamana bağlı olanları (`reveal-in`, `reveal-on-load`,
+  `principle-word-in`, `scroll-hint-travel`) da kapsar. Keyframe uygulanmaz, öğe kendi taban
+  stiliyle, yani hareketin bittiği hâlde çizilir. Scroll'a bağlı olanlarda süreyi kısaltmak yetmezdi,
+  çünkü zaman çizelgesi süreye değil scroll konumuna bağlı — öğe yine scroll'la birlikte hareket
+  ederdi.
 
   **`animation-timeline: none` değil**, ve bu ölçüldü: zaman çizelgesi olmayan bir animasyonun
   geçerli zamanı çözümlenemiyor ve `fill-mode: both` o durumda `from` karesini uyguluyor. Öğe
   `opacity: 0`'da donar — yani reduced-motion açık bir kullanıcı bölümü hiç görmez. Sessizce.
   E2E bu hatayı bir kez yakaladı ve o yüzden duruyor.
 
-Kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`), her component'te
-tekrar edilmez. Ekran görüntüsü karuseli geçişini ayrıca `motion-safe:` altında yazıyor: global blok
-gecikmeyi sıfırlamadan önce bu gerekliydi, çünkü giden slayt gecikme süresince görünür kalırdı.
-Bugün ikinci kat.
+Evrensel kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`). Ayrı yazılan
+üç yer var: metin girişinin gizleme kuralı `no-preference` sorgusunda, Projects yığını
+`motion-reduce:` ile (`ProjectCard.tsx`), ekran görüntüsü karuselinin geçişi `motion-safe:` ile —
+sonuncusu global blok gecikmeyi sıfırlamadan önce gerekliydi, çünkü giden slayt gecikme süresince
+görünür kalırdı; bugün ikinci kat.
 
 ---
 
