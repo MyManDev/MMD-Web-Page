@@ -44,7 +44,7 @@ export const projectSchema = z.object({
   repoUrl: httpsUrl,
   /**
    * Ekran goruntuleri, gosterilecek sirayla. Hic yoksa kart yayinlanmaz
-   * (CLAUDE.md kural 6); birden fazlaysa kart onlari elle gecisli bir karuselde
+   * (CLAUDE.md kural 6); birden fazlaysa kart onlari kendiliginden gecen bir karuselde
    * gosteriyor (design-spec.md §3.3.1).
    *
    * `.array().min(1)` DEGIL tuple: kural ayni, ama tuple onu TIPE de yaziyor

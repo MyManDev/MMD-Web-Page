@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { projects } from "@/content";
+import { AUTO_ADVANCE_MS } from "@/lib/deck";
 
 /**
  * Projects bolumu. docs/design-spec.md §3.3.1 ve §5.1
@@ -586,24 +587,6 @@ test.describe("ekran goruntusu karuseli", () => {
   });
 
   /**
-   * OTOMATIK GECIS YOK (§3.3.1): ekran goruntusu inceleniyor. Saat Playwright'in
-   * sahte saati; bir dakikayi gercekten beklemeden ilerletiyor. Bu test
-   * reduced-motion ALTINDA DEGIL - otomatik gecis tipik olarak orada kapali
-   * olurdu ve test hicbir sey olcmezdi.
-   */
-  test("kendiliginden ilerlemiyor", async ({ page }) => {
-    await page.clock.install();
-    await page.reload();
-
-    const carousel = carouselOf(page);
-    await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
-    await page.clock.runFor(60_000);
-
-    await expect(carousel.locator("p")).toHaveText(`01 / ${pad(SHOTS.length)}`);
-    await expect(carousel.locator(SLIDE).first()).toBeVisible();
-  });
-
-  /**
    * Capraz sonumleme: gelen slayt USTTE beliriyor, giden onun suresi kadar
    * ALTTA kalip tek adimda kayboluyor. Olculen sey SAYI DEGIL ILISKI - sure
    * degisirse test takip etmeli, ama giden slaytin bekledigi sure gelenin
@@ -716,6 +699,135 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
       await next.click();
       expect(await next.boundingBox()).toEqual(before.next);
       expect(await frame.boundingBox()).toEqual(before.frame);
+    }
+  });
+});
+
+/**
+ * OTOMATIK GECIS (§3.3.1): destenin kancasi (lib/deck.ts), destenin kurallari.
+ * who-we-are.spec.ts ayni sozlesmeyi desteye karsi GERCEK saatle olcuyor; burada
+ * Playwright'in sahte saati kullaniliyor, yani aralik beklenmeden ilerletiliyor
+ * ve testler `AUTO_ADVANCE_MS` ne olursa olsun ayni hizda kosuyor. Aralik
+ * turetiliyor, elle yazilmiyor.
+ *
+ * Bu blok reduced-motion ALTINDA DEGIL, cunku olculen sey hareketin kendisi;
+ * reduced-motion'daki davranis ayri bir testte olculuyor.
+ *
+ * Gecisten sonra GORUNUR SLAYT SAYISI SAYILMIYOR ve bu olculerek secildi: gecisin
+ * ilk karesinde gelen slayt henuz gizli, giden gorunur - yani "tek gorunur
+ * slayt" iddiasi bir an ESKI durum icin dogru cikiyor ve test yanlis sebeple
+ * geciyordu. Sonraki 200ms iki slayt birlikte gorunur (capraz sonumleme). Bu
+ * yuzden slaytlar adiyla soruluyor: gelen gorunur, giden gizli.
+ */
+test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
+  test.skip(MULTI < 0, NO_CAROUSEL);
+
+  /* Saat sayfa YUKLENMEDEN ONCE durduruluyor. `install` tek basina sahte saati
+     gercek zamanla birlikte akitiyor; hidrasyondan sonra durdurmak da yetmiyordu,
+     cunku ilk zamanlayici hidrasyonda, saat hala akarken kuruluyordu. Durmus
+     saatte zamani yalnizca `runFor` ilerletiyor ve sonuc makinenin hizina bagli
+     degil. */
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 1000);
+    await page.reload();
+    await expect(carouselOf(page).getByRole("button", { name: "Next screenshot" })).toBeVisible();
+  });
+
+  const counterOf = (page: Page) => carouselOf(page).locator("p");
+
+  /** Sayac ile gorunen goruntu BIRLIKTE ilerliyor. */
+  test("kendiliginden ilerliyor", async ({ page }) => {
+    const slides = carouselOf(page).locator(SLIDE);
+    await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+
+    await expect(counterOf(page)).toHaveText(`02 / ${pad(SHOTS.length)}`);
+    await expect(slides.nth(1)).toBeVisible();
+    await expect(slides.nth(0)).toBeHidden();
+    await expect(slides.nth(1).locator("img")).toHaveAttribute("alt", SHOTS[1]?.alt ?? "");
+  });
+
+  /** Her ara adim dogrulaniyor: yalnizca sondaki "01" bakilsaydi, hic
+      ilerlemeyen bir deste de testi gecerdi. */
+  test("sondan sonra basa sariyor", async ({ page }) => {
+    for (let step = 1; step <= SHOTS.length; step++) {
+      await page.clock.runFor(AUTO_ADVANCE_MS);
+      await expect(counterOf(page)).toHaveText(
+        `${pad((step % SHOTS.length) + 1)} / ${pad(SHOTS.length)}`,
+      );
+    }
+  });
+
+  /** Goruntuyu inceleyen biri icin: fare uzerindeyken kare degismiyor. */
+  test("fare uzerindeyken duruyor, cekilince suruyor", async ({ page }) => {
+    await carouselOf(page).locator(SLIDE).first().hover();
+    await page.clock.runFor(AUTO_ADVANCE_MS * 2);
+    await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
+
+    await page.mouse.move(0, 0);
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+    await expect(counterOf(page)).toHaveText(`02 / ${pad(SHOTS.length)}`);
+  });
+
+  test("iceriye odak dusunce duruyor, cikinca kaldigi yerden suruyor", async ({ page }) => {
+    const next = carouselOf(page).getByRole("button", { name: "Next screenshot" });
+    await next.focus();
+    await page.clock.runFor(AUTO_ADVANCE_MS * 2);
+    await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
+
+    await next.blur();
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+    await expect(counterOf(page)).toHaveText(`02 / ${pad(SHOTS.length)}`);
+  });
+
+  /**
+   * Elle yapilan adimdan sonra sure SIFIRDAN sayiliyor: tusa basip bir an sonra
+   * kendiliginden atlamasi, basilan tusu bosa cikarirdi.
+   *
+   * Tiklama `dispatchEvent` ile - pointer ve odak olayi URETMEDEN. Gercek bir
+   * tiklama desteyi duraklatir ve sureyi baslatan sey duraklamanin bitmesi olur;
+   * olculen sey ise adimin kendisi (`index` degisince zamanlayici bastan).
+   */
+  test("elle adimdan sonra sure bastan sayiliyor", async ({ page }) => {
+    const next = carouselOf(page).getByRole("button", { name: "Next screenshot" });
+    await page.clock.runFor(AUTO_ADVANCE_MS - 1000);
+    await next.dispatchEvent("click");
+    await expect(counterOf(page)).toHaveText(`02 / ${pad(SHOTS.length)}`);
+
+    await page.clock.runFor(AUTO_ADVANCE_MS - 1000);
+    await expect(counterOf(page)).toHaveText(`02 / ${pad(SHOTS.length)}`);
+    await page.clock.runFor(1000);
+    await expect(counterOf(page)).toHaveText(`03 / ${pad(SHOTS.length)}`);
+  });
+
+  /**
+   * CANLI BOLGE otomatik geciste SUSUYOR, etkilesimde geri aciliyor
+   * (lib/deck.ts). Aksi halde ekran okuyucu her aralikta sozu keserdi.
+   */
+  test("otomatik geciste canli bolge susuyor, etkilesimde geri aciliyor", async ({ page }) => {
+    const stage = carouselOf(page).locator("[aria-live]");
+    await expect(stage).toHaveAttribute("aria-live", "polite");
+
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+    await expect(stage).toHaveAttribute("aria-live", "off");
+
+    await carouselOf(page).getByRole("button", { name: "Next screenshot" }).focus();
+    await expect(stage).toHaveAttribute("aria-live", "polite");
+  });
+
+  /**
+   * Ayar sayfa yuklenmeden ONCE aciliyor, kanca degeri ilk render'da okusun.
+   * Her aralikta AYRI AYRI "01" bekleniyor: tek bir uzun bekleme, tam bir tur
+   * atip "01"e donen bozuk bir desteyi hic ilerlemeyen desteden ayiramazdi.
+   */
+  test("reduced-motion altinda hic ilerlemiyor", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+    await expect(carouselOf(page).getByRole("button", { name: "Next screenshot" })).toBeVisible();
+    for (let step = 0; step < SHOTS.length; step++) {
+      await page.clock.runFor(AUTO_ADVANCE_MS);
+      await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
     }
   });
 });

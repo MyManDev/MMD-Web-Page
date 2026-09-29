@@ -134,7 +134,7 @@ export function ProjectCard({
       </div>
 
       {/*
-        Birden fazla goruntu -> elle gecisli karusel (design-spec.md §3.3.1).
+        Birden fazla goruntu -> kendiliginden gecen karusel (design-spec.md §3.3.1).
         Tek goruntu -> duz <img> ve tus satiri yok: gidilecek ikinci goruntu
         yokken tus cizmek, hicbir yere gitmeyen bir dugme cizmek olurdu.
         <img>'in kendisi ve olculmus gerekceleri Screenshot.tsx'te.

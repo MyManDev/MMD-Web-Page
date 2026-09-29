@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
-
 import { ArrowIcon } from "@/components/ui";
 import type { Project } from "@/content";
-import { useHydrated } from "@/lib/deck";
+import { useAutoAdvancingDeck } from "@/lib/deck";
 import { Screenshot } from "./Screenshot";
 
 /*
@@ -39,13 +37,16 @@ const SLOT =
  * Yalnizca birden fazla goruntu oldugunda cizilir; tek goruntude ProjectCard
  * duz <img>'i basiyor.
  *
- * Prensip destesinin (§3.4) kaliplarini kullaniyor - ayni tuslar, ayni sayac,
- * basa saran gezinme - ama iki yerde bilerek AYRILIYOR:
+ * GEZINME PRENSIP DESTESININ KENDISI (§3.4, lib/deck.ts): ayni tuslar, ayni
+ * sayac, basa saran gezinme ve KENDILIGINDEN GECIS. Karusel once elle
+ * gecisliydi; gerekcesi "ekran goruntusu inceleniyor, bakilirken degismemeli"
+ * idi. Karar sahibi goruntulerin kendiliginden degismesini istedi (2026-09-29)
+ * ve o gerekceyi karsilayan sey zaten kancada: fare karuselin uzerindeyken
+ * veya odak icerideyken duruyor, ikisi de bitince kaldigi yerden suruyor.
+ * Reduced-motion altinda hic ilerlemiyor. Otomatik geciste canli bolge susuyor,
+ * etkilesimde yeniden aciliyor.
  *
- *   OTOMATIK GECIS YOK. Destenin cumlesi okunup geciliyor; ekran goruntusu ise
- *   inceleniyor, ve bakilirken degismesi incelenen satiri elden almak olurdu.
- *   Otomatik gecis olmayinca duraklatma yolu da, susan canli bolge de
- *   gerekmiyor: WCAG 2.2.2 yalnizca kendiliginden baslayan hareketi kapsiyor.
+ * Desteden bilerek AYRILDIGI tek yer:
  *
  *   SUNUCUDA DA KARUSEL. Deste sunucuda duz liste basiyor, cunku bes cumlenin
  *   dordunu JS'e rehin vermek istemiyor. Burada ayni hamle SAYFAYI KAYDIRIRDI:
@@ -55,10 +56,6 @@ const SLOT =
  *   gelmezse ziyaretci tek bir goruntu gorur ve calismayan bir tusla
  *   karsilasmaz - destenin testindeki kural ("calismayan bir tus cizmek").
  *   Gelince tuslar yerinden oynamadan gorunur oluyor.
- *
- * Canli bolge `polite` ve hep oyle: tusa basildiginda odak tusta kaliyor, yani
- * degisen goruntu kendiliginden duyulmaz. Canli bolge olmadan ekran okuyucu
- * kullanicisi tusun bir sey yaptigini anlamazdi.
  *
  * Ok tuslari (klavye) YOK, destede de yok. APG'nin karusel deseni onlari
  * istemiyor; tuslar Tab ile ulasilan iki dugme ve Enter/Space ile calisiyor.
@@ -72,13 +69,10 @@ export function ScreenshotCarousel({
   screenshots: Project["screenshots"];
   className: string;
 }) {
-  /* Tus satiri hidrasyona kadar gorunmez; kancanin gerekcesi lib/deck.ts'te. */
-  const enhanced = useHydrated();
-  const [index, setIndex] = useState(0);
-
   const total = screenshots.length;
+  /* `enhanced`: tus satiri hidrasyona kadar gorunmez (yukarida). */
+  const { hydrated: enhanced, index, step, announce, pauseOn } = useAutoAdvancingDeck(total);
   const pad = (value: number) => String(value).padStart(2, "0");
-  const step = (delta: number) => setIndex((current) => (current + delta + total) % total);
 
   return (
     <div
@@ -86,8 +80,12 @@ export function ScreenshotCarousel({
       aria-roledescription="carousel"
       className={`flex flex-col gap-4 ${className}`}
       role="group"
+      {...pauseOn}
     >
-      <div aria-live="polite" className="grid overflow-hidden rounded-card border border-border">
+      <div
+        aria-live={announce ? "polite" : "off"}
+        className="grid overflow-hidden rounded-card border border-border"
+      >
         {screenshots.map((screenshot, slot) => (
           <div
             key={screenshot.src}
