@@ -1,13 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join, parse } from "node:path";
 import { describe, expect, it } from "vitest";
-import {
-  PORTRAIT_WIDTHS,
-  SCREENSHOT_WIDTHS,
-  portraitSrcSet,
-  screenshotSrcSet,
-  smallestScreenshot,
-} from "@/lib/images";
+import { PORTRAIT_WIDTHS, SCREENSHOT_WIDTHS, portraitSrcSet, screenshotSrcSet } from "@/lib/images";
 import { projects, team } from "@/content";
 
 describe("screenshotSrcSet", () => {
@@ -26,20 +20,6 @@ describe("screenshotSrcSet", () => {
     ["bos", ""],
   ])("%s ise patlar", (_label, src) => {
     expect(() => screenshotSrcSet(src)).toThrow();
-  });
-});
-
-describe("smallestScreenshot", () => {
-  /* Hayalet arka plan (ScreenshotGhost.tsx) bulanik oldugu icin en kucuk
-     varyanti kullaniyor; ad srcset'le ayni tabandan turetiliyor. */
-  it("ayni tabanin en kucuk varyantini verir", () => {
-    expect(smallestScreenshot("/projects/ornek-1792.webp")).toBe(
-      `/projects/ornek-${Math.min(...SCREENSHOT_WIDTHS)}.webp`,
-    );
-  });
-
-  it("yol sozlesmeye uymuyorsa patlar", () => {
-    expect(() => smallestScreenshot("/projects/ornek.webp")).toThrow();
   });
 });
 

@@ -21,7 +21,8 @@ import { ScreenshotGhost } from "./ScreenshotGhost";
  * HIC devreye girmez; kap normal akisa doner. Ikinci proje icerik dosyasina
  * eklendigi anda sticky + z-index yigini kendiliginden calisir:
  *   - yalnizca lg ustunde (mobilde viewport yuksekligi yigini tasimiyor)
- *   - prefers-reduced-motion altinda position: static, duz liste
+ *   - prefers-reduced-motion altinda duz liste: sticky yok, position: relative
+ *     (hayalet arka plan kartin kutusuna gore konumlaniyor)
  *   - z-index 10 + index, sonraki kart oncekinin ustune biner
  *
  * Proje adi HER ZAMAN h3 (#58): bolum basligini artik Projects'in kendisi

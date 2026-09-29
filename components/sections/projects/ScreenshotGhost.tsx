@@ -1,5 +1,6 @@
 import type { Project } from "@/content";
-import { smallestScreenshot } from "@/lib/images";
+import { screenshotSrcSet } from "@/lib/images";
+import { SCREENSHOT_SIZES } from "./Screenshot";
 
 /*
   Olculer karar sahibinin sectigi "2 · Orta" varyanti (design-spec.md §3.3.1):
@@ -7,11 +8,20 @@ import { smallestScreenshot } from "@/lib/images";
   maske. Maske renksiz bir alfa - `var(--color-page)` yalnizca opak bir deger
   oldugu icin orada, rengi hicbir yerde gorunmuyor (CLAUDE.md kural 1).
 
-  Kartin 48px disina tasiyor (`-inset-12`), maske kenari yumusattigi icin bir
-  cerceve gibi okunmuyor.
+  Kartin yanlara 48px disina tasiyor, maske kenari yumusattigi icin bir cerceve
+  gibi okunmuyor. Dikeyde lg altinda 40px: orada baslikla kart arasi da bolumun
+  alt boslugu da 40px, ve 48px hayaleti basligin ve sonraki bolumun cizgisinin
+  8px ustune bindiriyordu (incelemede olculdu). Maske goruntuyu kutuya kirptigi
+  icin (`mask-clip: border-box`) bulanikligin yayilmasi da kutunun disina
+  cikmiyor. Yatay tasmayi bolum kirpiyor (Projects.tsx).
+
+  Yiginda (ikinci proje gelince, design-spec.md §3.3.2) sonraki kartin hayaleti
+  onceki kartin alt kenarina biniyor; yigin zaten sonraki karti oncekinin ustune
+  bindiriyor, yani bu yiginin kendi hareketi. Duz listede (reduced-motion)
+  kartlar arasinda bosluk var (Projects.tsx).
 */
 const LAYER =
-  "pointer-events-none absolute -inset-12 -z-10 opacity-[.12] blur-[6px] saturate-[.6]" +
+  "pointer-events-none absolute -inset-x-12 -inset-y-10 -z-10 opacity-[.12] blur-[6px] saturate-[.6] lg:-inset-y-12" +
   " [mask-image:radial-gradient(ellipse_85%_80%_at_50%_50%,var(--color-page)_50%,transparent_100%)]";
 
 /* Karuselle ayni sure (ScreenshotCarousel.tsx, SLOT). Soluk ve bulanik oldugu
@@ -32,8 +42,13 @@ const IMAGE =
  * yerine karuseli kaplardi. Kart `relative isolate`; hayalet `-z-10` ile icerigin
  * arkasinda, bolumun zemininin onunde.
  *
- * Susleme, bilgi degil: `aria-hidden`, goruntuler `alt=""`. En kucuk varyant
- * (896px) yetiyor, cunku 6px bulanik ve %12 opak; buyugunu indirmek bosa bant.
+ * Susleme, bilgi degil: `aria-hidden`, goruntuler `alt=""`.
+ *
+ * KARUSELLE AYNI `srcset` VE `sizes` (Screenshot.tsx): tarayici ayni adayi
+ * seciyor ve dosyayi onbellekten aliyor, hayalet ek indirme getirmiyor. Once
+ * sabit en kucuk varyant (896px) isteniyordu; yuksek DPR'de karusel 1792'yi
+ * sectigi icin hayalet her goruntuyu ikinci kez indiriyordu (Pixel 7'de uc
+ * dosya, 123 KB; incelemede olculdu).
  *
  * `use client` YOK: tek goruntulu kart onu sunucuda basiyor, karusel etkin
  * indeksi vererek istemcide.
@@ -51,7 +66,9 @@ export function ScreenshotGhost({
         /* eslint-disable-next-line @next/next/no-img-element -- Screenshot.tsx'teki gerekce: olculmus 5.5 KiB */
         <img
           key={screenshot.src}
-          src={smallestScreenshot(screenshot.src)}
+          src={screenshot.src}
+          srcSet={screenshotSrcSet(screenshot.src)}
+          sizes={SCREENSHOT_SIZES}
           alt=""
           loading="lazy"
           decoding="async"

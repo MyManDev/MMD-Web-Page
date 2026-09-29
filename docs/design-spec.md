@@ -393,12 +393,14 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   kopyası; görüntü değişince o da aynı sürede değişir. Karar sahibinin isteği: "her proje için resim
   koyacağız, o resimler hayalet ekran olsun arkaya, resim geçtiğinde hayalet arka plan da
   değişsin". Beş varyant denendi, karar sahibi "Orta"yı seçti: %12 opaklık, 6px bulanıklık, %60
-  doygunluk, kenarlara doğru sönen radyal maske, kartın 48px dışına taşar. Bulanık olduğu için en
-  küçük varyant (896px) yeter. Tek görüntülü kartta da durur. Süsleme, bilgi değil: `aria-hidden`,
-  `alt=""`. Kartın doğrudan çocuğudur, karuselin değil: karusel giriş animasyonunda `translate`
-  taşıyor ve öyle bir öğe mutlak konumlu torunlarının referansı olur. Bölüm yatay taşmayı kırpar
-  (`overflow-x: clip`), yoksa dar ekranda sayfa 28px yana kayıyordu. Kartın yazılarının kontrastı
-  hayaletin üstünde ölçüldü: en kötüsü masaüstünde 5.92, 390px'te 6.03 (AA 4.5).
+  doygunluk, kenarlara doğru sönen radyal maske, kartın 48px dışına taşar (dikeyde `lg` altında
+  40px: orada başlıkla kart arası ve bölümün alt boşluğu 40px). Karuselle aynı `srcset` ve `sizes`'ı
+  kullanır: tarayıcı aynı dosyayı seçer, hayalet ek indirme getirmez. Tek görüntülü kartta da
+  durur. Süsleme, bilgi değil: `aria-hidden`, `alt=""`. Kartın doğrudan çocuğudur, karuselin
+  değil: karusel giriş animasyonunda `translate` taşıyor ve öyle bir öğe mutlak konumlu
+  torunlarının referansı olur. Bölüm yatay taşmayı kırpar (`overflow-x: clip`), yoksa dar ekranda
+  sayfa 28px yana kayıyordu. Kartın yazılarının kontrastı hayaletin üstünde ölçüldü: en kötüsü
+  masaüstünde 5.92, 390px'te 6.03 (AA 4.5).
 - **Daktilo.** Görüntü değişince altındaki yazı harf harf gelir (harf başına 25ms,
   `TypedCaption.tsx`); karar sahibinin isteği: "resmin altındaki yazı resim değişince daktilo
   olarak değişsin". Takım kartının biyografisiyle aynı ilke: gizleme CSS'te ve yalnızca
@@ -460,7 +462,7 @@ bağlanacak.
 | Soru                     | Cevap                                                                                                                                                                                                                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Mobilde davranış         | Yığın **yok**. `< lg` altında kartlar düz liste; viewport yüksekliği yığını taşımıyor ve sticky kart mobilde ekranın çoğunu yiyor.                                                                                                                                       |
-| `prefers-reduced-motion` | Yığın düz listeye döner, `position: static` (§4.4).                                                                                                                                                                                                                      |
+| `prefers-reduced-motion` | Yığın düz listeye döner: sticky yok, kart `position: relative` (hayalet arka plan kartın kutusuna göre konumlanıyor), kartlar arasında mobildeki 64px boşluk (§4.4).                                                                                                     |
 | Alttaki kartın focus'u   | Kart içeriği `inert` **değildir**; sticky yalnızca konumu değiştirir, kartlar DOM'da normal sırada ve klavyeyle erişilebilir. Üste binen kart alttakinin focus'unu görsel olarak kapatırsa, focus'lanan kart `z-index` sırasını geçici olarak kazanır (`:focus-within`). |
 | Yığın yüksekliği         | Kap yüksekliği = kart sayısı × viewport yüksekliği. Tek kartta kap normal akışa döner ve sticky hiç uygulanmaz.                                                                                                                                                          |
 
@@ -829,7 +831,8 @@ yok. **Yükleme anında giriş animasyonu yasağı kaldırıldı** (§4.4); Hero
 içinde (240ms, `ease-out`). **Zarfın dışında üç animasyon var:** metin girişi 520ms
 (`cubic-bezier(0.22, 0.61, 0.36, 1)`), prensip kelimeleri 520ms ve scroll göstergesi 2 × 2200ms
 `ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29).
-Ekran görüntüsü geçişi (900ms) de zarfın dışında; onu karar sahibi kendisi seçti (§3.3.1). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
+Ekran görüntüsü geçişi ve onunla değişen hayalet arka plan (900ms) de zarfın dışında; süreyi
+karar sahibi kendisi seçti (§3.3.1). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
 değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
@@ -931,10 +934,10 @@ koşulları karşıladığı için kalıyor:
 - `transition-delay` `0`'a iner. Önce yalnızca süre kısalıyordu ve gecikme kalıyordu: `TeamCard`'ın
   açıklaması 100ms geç açılıyordu. `tests/e2e/a11y.spec.ts` sayfanın tamamında hiçbir öğede gecikme
   kalmadığını ölçüyor.
-- Projects yığını `position: static` — düz liste.
+- Projects yığını düz liste: sticky yok, kart `position: relative`, kartlar arasında 64px.
 - Prensip destesi ve ekran görüntüsü karuseli kendiliğinden **ilerlemez** (`lib/deck.ts`).
 - Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1); resim altı
-  yazısı daktilosuz, tam gelir.
+  yazısı daktilosuz, tam gelir; hayalet arka plan da anında değişir.
 - Bütün animasyonlar **tamamen kaldırılır**: `animation-name: none`. Bu, scroll'a bağlı olanları
   (`nav-settle`, `mark-sweep`) da zamana bağlı olanları (`reveal-in`, `reveal-on-load`,
   `principle-word-in`, `scroll-hint-travel`) da kapsar. Keyframe uygulanmaz, öğe kendi taban
@@ -949,9 +952,9 @@ koşulları karşıladığı için kalıyor:
 
 Evrensel kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`). Ayrı yazılan
 üç yer var: metin girişinin gizleme kuralı `no-preference` sorgusunda, Projects yığını
-`motion-reduce:` ile (`ProjectCard.tsx`), ekran görüntüsü karuselinin geçişi `motion-safe:` ile —
-sonuncusu global blok gecikmeyi sıfırlamadan önce gerekliydi, çünkü giden slayt gecikme süresince
-görünür kalırdı; bugün ikinci kat.
+`motion-reduce:` ile (`ProjectCard.tsx`), ekran görüntüsü karuselinin ve hayaletinin geçişi
+`motion-safe:` ile — sonuncusu global blok gecikmeyi sıfırlamadan önce gerekliydi, çünkü giden
+slayt gecikme süresince görünür kalırdı; bugün ikinci kat.
 
 ---
 

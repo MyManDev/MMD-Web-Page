@@ -169,8 +169,8 @@ test("her goruntunun altinda icerikteki kendi basligi var", async ({ page }) => 
 /**
  * HAYALET ARKA PLAN (design-spec.md §3.3.1): her kartin arkasinda kendi ekran
  * goruntulerinin soluk kopyasi; etkin olan gorunur. Susleme, bilgi degil:
- * `aria-hidden`, `alt=""`, en kucuk varyant. Icerigin ARKASINDA ve karti
- * kapliyor - kartin dogrudan cocugu, karuselin icinde degil.
+ * `aria-hidden`, `alt=""`, figurle ayni aday listesi. Icerigin ARKASINDA ve
+ * karti kapliyor - kartin dogrudan cocugu, karuselin icinde degil.
  */
 test("her kartin arkasinda kendi goruntulerinin hayaleti var", async ({ page }) => {
   const cards = page.locator(`${SECTION} article`);
@@ -181,13 +181,16 @@ test("her kartin arkasinda kendi goruntulerinin hayaleti var", async ({ page }) 
     await expect(ghost).toHaveAttribute("aria-hidden", "true");
 
     const images = ghost.locator("img");
+    const figures = card.locator("figure img");
     await expect(images).toHaveCount(project.screenshots.length);
-    for (const [slot, screenshot] of project.screenshots.entries()) {
+    for (let slot = 0; slot < project.screenshots.length; slot++) {
       await expect(images.nth(slot)).toHaveAttribute("alt", "");
-      await expect(images.nth(slot)).toHaveAttribute(
-        "src",
-        screenshot.src.replace(/-\d+\.webp$/, "-896.webp"),
-      );
+      // Figurle AYNI aday listesi ve AYNI `sizes`: tarayici ayni dosyayi secer.
+      for (const name of ["src", "srcset", "sizes"]) {
+        const expected = await figures.nth(slot).getAttribute(name);
+        expect(expected).toBeTruthy();
+        await expect(images.nth(slot)).toHaveAttribute(name, expected ?? "");
+      }
     }
     await expect(ghost.locator("img[data-active]")).toHaveCount(1);
     await expect(images.first()).toHaveAttribute("data-active", "");
@@ -216,6 +219,81 @@ test("hayalet arka plan sayfaya yatay tasma eklemiyor", async ({ page }) => {
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBe(0);
+});
+
+/**
+ * Dikeyde de yerinde: hayalet ilk kartin ustunde bolum basligina, son kartin
+ * altinda sonraki bolumun cizgisine binmiyor. Olculdu: 48px'lik tasmada dar
+ * ekranda ikisine de 8px biniyordu (oradaki bosluklar 40px).
+ *
+ * Reduced-motion altinda olculuyor: metin girisi basligi 14px asagidan
+ * getiriyor ve `getBoundingClientRect` o kaymayi da sayardi.
+ */
+test("hayalet arka plan basliga ve bolumun disina dikeyde tasmiyor", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator(`${SECTION} [data-ghost]`).first()).toBeAttached();
+  const gap = await page.locator(SECTION).evaluate((section) => {
+    const ghosts = [...section.querySelectorAll("article > [data-ghost]")].map((el) =>
+      el.getBoundingClientRect(),
+    );
+    const heading = section.querySelector("h2")!.getBoundingClientRect();
+    const box = section.getBoundingClientRect();
+    return {
+      belowHeading: Math.min(...ghosts.map((g) => g.top)) - heading.bottom,
+      insideSection: box.bottom - Math.max(...ghosts.map((g) => g.bottom)),
+    };
+  });
+  expect(gap.belowHeading).toBeGreaterThanOrEqual(-0.5);
+  expect(gap.insideSection).toBeGreaterThanOrEqual(-0.5);
+});
+
+/**
+ * Hayalet ek indirme getirmiyor. Once sabit en kucuk varyanti istiyordu ve
+ * yuksek DPR'de - karusel orada 1792'yi seciyor - her goruntu IKI KEZ iniyordu
+ * (Pixel 7'de 123 KB fazla). Olculen iki sey: hayaletin sectigi dosya figurunku
+ * ile ayni, ve sayfa her goruntuyu TEK bir genislikte istedi.
+ *
+ * Istekler Resource Timing'den okunuyor, istek dinleyicisinden degil: dinleyici
+ * `goto`dan sonra baglanirdi ve o ana kadar inenleri kacirirdi.
+ */
+test("hayalet ek indirme getirmiyor, her goruntu tek genislikte iniyor", async ({ page }) => {
+  const cards = page.locator(`${SECTION} article`);
+  for (let i = 0; i < projects.length; i++) {
+    const card = cards.nth(i);
+    await card.locator("figure").first().scrollIntoViewIfNeeded();
+    await expect
+      .poll(() =>
+        card
+          .locator("img")
+          .evaluateAll((els) =>
+            els.every(
+              (el) =>
+                (el as HTMLImageElement).complete && (el as HTMLImageElement).naturalWidth > 0,
+            ),
+          ),
+      )
+      .toBe(true);
+
+    const ghosts = card.locator(":scope > [data-ghost] img");
+    const figures = card.locator("figure img");
+    const count = await figures.count();
+    for (let slot = 0; slot < count; slot++) {
+      const chosen = await figures.nth(slot).evaluate((el: HTMLImageElement) => el.currentSrc);
+      expect(await ghosts.nth(slot).evaluate((el: HTMLImageElement) => el.currentSrc)).toBe(chosen);
+    }
+  }
+
+  const files = await page.evaluate(() => [
+    ...new Set(
+      performance
+        .getEntriesByType("resource")
+        .map((entry) => new URL(entry.name).pathname)
+        .filter((path) => /^\/projects\/.+-\d+\.webp$/.test(path)),
+    ),
+  ]);
+  const bases = files.map((path) => path.replace(/-\d+\.webp$/, ""));
+  expect(bases.length).toBeGreaterThan(0);
+  expect(bases.length, files.join(", ")).toBe(new Set(bases).size);
 });
 
 test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
@@ -692,6 +770,33 @@ test.describe("ekran goruntusu karuseli", () => {
     expect(hidden.opacity).toBe("0");
     expect(hidden.delay).toBe(0);
     expect(hidden.duration).toBeGreaterThan(0);
+  });
+
+  /**
+   * Hayaletin gecisi karuselinkiyle AYNI surede (ScreenshotGhost.tsx). Sure iki
+   * sinif dizisinde ayri yaziliyor; esitligi bu test tutuyor. Reduced-motion
+   * altinda hic yok.
+   */
+  test("hayaletin gecisi karuselle ayni surede, reduced-motion altinda hic yok", async ({
+    page,
+  }) => {
+    const duration = (locator: Locator) =>
+      locator.evaluate((el) =>
+        Math.max(...getComputedStyle(el).transitionDuration.split(",").map(parseFloat)),
+      );
+    const slide = carouselOf(page).locator(SLIDE).first();
+    const ghost = page
+      .locator(`${SECTION} article`)
+      .nth(MULTI)
+      .locator(":scope > [data-ghost] img")
+      .first();
+
+    const expected = await duration(slide);
+    expect(expected).toBeGreaterThan(0);
+    expect(await duration(ghost)).toBe(expected);
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await duration(ghost)).toBeLessThan(0.001);
   });
 
   /**

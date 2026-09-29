@@ -27,9 +27,10 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
 
   return (
     /* `overflow-x-clip`: kartlarin hayalet arka plani (ScreenshotGhost.tsx)
-       kartin 48px disina tasiyor ve dar ekranda sayfaya yatay kaydirma
+       kartin 48px yanina tasiyor ve dar ekranda sayfaya yatay kaydirma
        ekliyordu (olculdu: 390px'te 28px). `clip` kaydirma kabi OLUSTURMUYOR,
-       yani sticky yigin ve nav etkilenmiyor. */
+       yani sticky yigin ve nav etkilenmiyor. Dikey tasma hayaletin kendisinde
+       bolumun bosluklarina gore ayarli. */
     <section
       id={section.id}
       aria-labelledby={headingId}
@@ -64,13 +65,22 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
             birakiyordu; ikisi hic ust uste gelmiyordu. §3.3.2 "sonraki kart
             oncekinin ustune biner" diyor ve bu olmuyordu.
 
-            Simdi araligi kartin kendi `margin-bottom`u veriyor (ProjectCard),
-            yani her kartin sticky menzili KABIN TAMAMINI kapsiyor.
+            Simdi araligi kartin kendi yuksekligi veriyor (ProjectCard,
+            `lg:min-h-*`), yani her kartin sticky menzili KABIN TAMAMINI kapsiyor.
 
-            Mobil bosluk `gap` ile ve `lg`de sifirlaniyor: orada araligi margin
-            tasiyor, ikisi birlikte cift bosluk yapardi.
+            Mobil bosluk `gap` ile ve `lg`de sifirlaniyor: orada araligi kartin
+            yuksekligi tasiyor, ikisi birlikte cift bosluk yapardi.
+
+            Reduced-motion'da yigin duz listeye donuyor ve kartin yuksekligi
+            kalkiyor (ProjectCard), yani orada bosluk GERI GELIYOR: yoksa kartlar
+            birbirine yapisir ve sonraki kartin hayaleti oncekinin en alttaki
+            aksiyonlarinin ustune binerdi (incelemede bulundu).
           */}
-          <div className={stacked ? "flex flex-col gap-16 lg:gap-0" : "flex flex-col"}>
+          <div
+            className={
+              stacked ? "flex flex-col gap-16 lg:gap-0 motion-reduce:lg:gap-16" : "flex flex-col"
+            }
+          >
             {projects.map((project, index) => (
               <ProjectCard
                 key={project.slug}

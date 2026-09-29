@@ -182,8 +182,8 @@ değil; aynı palet üstünde hareketin ve ayrıntının sıkılaşması.
 
 Öncelik CSS: hover, sticky, smooth scroll. Etkileşim geçişleri 150–250ms, `ease-out`. Giriş
 animasyonlarından üçü bu zarfın dışında ve karar sahibi şimdilik kodu doğru sayıyor
-(`design-spec.md` §6). Ekran görüntüsü geçişi de dışında: 900ms, karar sahibinin seçimi
-(`design-spec.md` §3.3.1).
+(`design-spec.md` §6). Ekran görüntüsü geçişi ve hayalet arka plan da dışında: 900ms, karar
+sahibinin seçimi (`design-spec.md` §3.3.1).
 
 **Sayfa yüklenirken giriş animasyonu yasağı KALDIRILDI.** Karar sahibi kaldırdı ("her şeyde
 animasyon olabilir"). Kalkan şey yasak, **ölçü değil**: yükleme anındaki giriş de 150–250ms zarfında

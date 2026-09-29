@@ -31,12 +31,20 @@ import { TypedCaption } from "./TypedCaption";
  * 58vw bunu her zaman bir parca ASIYOR ve asmasi kasitli - eksik tahmin
  * bulanik goruntu demek, fazla tahmin birkac KB.
  *
+ * `sizes` DISA AKTARILIYOR: hayalet arka plan (ScreenshotGhost.tsx) ayni srcset'i
+ * ayni `sizes` ile istiyor, tarayici her cihazda ayni adayi seciyor ve dosya
+ * onbellekten geliyor. Iki yerde ayri yazilsaydi biri degisince hayalet her
+ * goruntuyu ikinci kez indirirdi.
+ *
  * width/height en buyuk varyantin GERCEK olcusu (1792x1120) ve ayni zamanda
  * tasarimin 16/10 orani. Yeri fiilen ayiran sey CSS aspect kutusu; bu iki sayi
  * orani tarayiciya HTML'den de bildiriyor, boylece CLS esigi (< 0.05) goruntu
  * inmeden once de korunuyor. Semada boyut alani yok cunku oran her proje icin
  * ayni.
  */
+export const SCREENSHOT_SIZES =
+  "(min-width: 1600px) 883px, (min-width: 1024px) 58vw, calc(100vw - 40px)";
+
 export function Screenshot({
   src,
   alt,
@@ -58,7 +66,7 @@ export function Screenshot({
         <img
           src={src}
           srcSet={screenshotSrcSet(src)}
-          sizes="(min-width: 1600px) 883px, (min-width: 1024px) 58vw, calc(100vw - 40px)"
+          sizes={SCREENSHOT_SIZES}
           alt={alt}
           width={1792}
           height={1120}
