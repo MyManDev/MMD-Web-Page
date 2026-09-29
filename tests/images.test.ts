@@ -24,27 +24,50 @@ describe("screenshotSrcSet", () => {
 });
 
 describe("uretilmis varyantlar", () => {
+  const screenshots = projects.flatMap((project) =>
+    project.screenshots.map(({ src }) => ({ slug: project.slug, src })),
+  );
+
   /**
-   * Sema `screenshot`'in var oldugunu dogruluyor, srcset'in bahsettigi DIGER
+   * Sema her `src`'nin var oldugunu dogruluyor, srcset'in bahsettigi DIGER
    * genisliklerin var oldugunu degil. Script kosturulmadan bir genislik
    * eklenirse build temiz gecer ve tarayici 404 alir - bu test o araligi
    * kapatiyor.
    */
   it("srcset'in gosterdigi her dosya public/ altinda duruyor", () => {
-    for (const project of projects) {
+    for (const { slug, src } of screenshots) {
       for (const width of SCREENSHOT_WIDTHS) {
-        const path = project.screenshot.replace(/-\d+\.webp$/, `-${width}.webp`);
+        const path = src.replace(/-d+.webp$/, `-${width}.webp`);
         const file = join(process.cwd(), "public", path);
-        expect(existsSync(file), `${project.slug}: ${path} bulunamadi`).toBe(true);
+        expect(existsSync(file), `${slug}: ${path} bulunamadi`).toBe(true);
       }
     }
   });
 
   it("icerikteki yol en buyuk varyanti gosteriyor", () => {
     const largest = Math.max(...SCREENSHOT_WIDTHS);
-    for (const project of projects) {
-      expect(project.screenshot).toContain(`-${largest}.webp`);
+    for (const { src } of screenshots) {
+      expect(src).toContain(`-${largest}.webp`);
     }
+  });
+
+  /**
+   * TERS YON, portre testinin ekran goruntusu karsiligi (genel gerekce orada).
+   * Bir proje birden fazla goruntu tasiyabildiginden beri
+   * goruntu DEGISTIRMEK siradan bir icerik isi: eski goruntunun varyantlari
+   * unutulursa sessizce yayinlanir, kaynagi unutulursa bir sonraki
+   * `pnpm images` onlari geri uretir.
+   */
+  it("public/projects/ ve assets/screenshots/ altinda yalnizca icerikteki goruntuler var", () => {
+    expect(
+      orphans(
+        "screenshot",
+        screenshots.map(({ src }) => src),
+      ),
+    ).toEqual({
+      published: [],
+      sources: [],
+    });
   });
 });
 
@@ -74,31 +97,18 @@ describe("portraitSrcSet", () => {
    * sessizce yayinlanir. Kaynak unutulursa bir sonraki `pnpm images` varyantlari
    * geri uretir.
    *
-   * Varyant adlari her iki yarida da portraitSrcSet'ten turetiliyor. Kaynaklar
-   * script'in okudugu gibi okunuyor: yalnizca `.webp`, ad `parse().name`
-   * (scripts/optimize-images.mjs); boylece .DS_Store gibi bir dosya testi
-   * dusurmez, script'in isleyecegi her kaynak olculur.
+   * Nasil olculdugu `orphans`ta, dosyanin sonunda.
    */
   it("public/people/ ve assets/people/ altinda yalnizca ekibin fotograflari var", () => {
-    const variants = (photo: string) =>
-      portraitSrcSet(photo)
-        .split(", ")
-        .map((candidate) => candidate.slice(0, candidate.lastIndexOf(" ")));
-    const served = new Set(team.flatMap((member) => variants(member.photo)));
-
-    const published = readdirSync(join(process.cwd(), "public", "people")).map(
-      (file) => `/people/${file}`,
-    );
-    expect(published.filter((path) => !served.has(path))).toEqual([]);
-
-    const orphans = readdirSync(join(process.cwd(), "assets", "people"))
-      .filter((file) => file.endsWith(".webp"))
-      .filter((file) => {
-        const { name } = parse(file);
-        const photo = `/people/${name}-${PORTRAIT_WIDTHS.at(-1)}.webp`;
-        return !variants(photo).every((path) => served.has(path));
-      });
-    expect(orphans).toEqual([]);
+    expect(
+      orphans(
+        "portrait",
+        team.map((member) => member.photo),
+      ),
+    ).toEqual({
+      published: [],
+      sources: [],
+    });
   });
 
   /**
@@ -110,3 +120,44 @@ describe("portraitSrcSet", () => {
     expect(PORTRAIT_WIDTHS).not.toEqual(SCREENSHOT_WIDTHS);
   });
 });
+
+/**
+ * Yayindaki ve kaynaktaki fazla dosyalar. Iki ters yon testi de bunu kullaniyor;
+ * klasorler scripts/optimize-images.mjs'in JOBS listesiyle ayni eslesme.
+ *
+ * Varyant adlari her iki yarida da srcset yardimcisindan turetiliyor, regex ile
+ * yeniden yazilmiyor. Kaynaklar script'in okudugu gibi okunuyor: yalnizca
+ * `.webp`, ad `parse().name`; boylece .DS_Store gibi bir dosya testi dusurmez,
+ * script'in isleyecegi her kaynak olculur.
+ */
+function orphans(kind: "screenshot" | "portrait", used: string[]) {
+  const { srcSetOf, widths, from, to } =
+    kind === "screenshot"
+      ? {
+          srcSetOf: screenshotSrcSet,
+          widths: SCREENSHOT_WIDTHS,
+          from: "assets/screenshots",
+          to: "projects",
+        }
+      : { srcSetOf: portraitSrcSet, widths: PORTRAIT_WIDTHS, from: "assets/people", to: "people" };
+
+  const variants = (src: string) =>
+    srcSetOf(src)
+      .split(", ")
+      .map((candidate) => candidate.slice(0, candidate.lastIndexOf(" ")));
+  const served = new Set(used.flatMap(variants));
+
+  const published = readdirSync(join(process.cwd(), "public", to))
+    .map((file) => `/${to}/${file}`)
+    .filter((path) => !served.has(path));
+
+  const sources = readdirSync(join(process.cwd(), from))
+    .filter((file) => file.endsWith(".webp"))
+    .filter((file) => {
+      const { name } = parse(file);
+      const src = `/${to}/${name}-${widths.at(-1)}.webp`;
+      return !variants(src).every((path) => served.has(path));
+    });
+
+  return { published, sources };
+}

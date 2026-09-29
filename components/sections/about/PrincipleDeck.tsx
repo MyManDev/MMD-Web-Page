@@ -2,6 +2,8 @@
 
 import { type CSSProperties, useEffect, useState, useSyncExternalStore } from "react";
 
+import { ArrowIcon } from "@/components/ui";
+
 /*
   Aralik DISA AKTARILIYOR cunku testin "o gunku sayiyi" tekrar yazmasi bir
   kusurdur - beklenen deger turetilebiliyorsa turetilir. E2E bu sabiti import
@@ -209,7 +211,7 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
             onClick={() => step(-1)}
             type="button"
           >
-            <Arrow direction="left" />
+            <ArrowIcon direction="left" />
           </button>
           <button
             aria-label="Next principle"
@@ -217,7 +219,7 @@ export function PrincipleDeck({ principles }: { principles: readonly string[] })
             onClick={() => step(1)}
             type="button"
           >
-            <Arrow direction="right" />
+            <ArrowIcon direction="right" />
           </button>
         </div>
       </div>
@@ -272,27 +274,5 @@ function RevealedPrinciple({
         </span>
       ))}
     </p>
-  );
-}
-
-/*
-  Ikon inline SVG: tek bir ok icin bir ikon paketi eklemek CLAUDE.md kural 4'e
-  gore gerekcesi yazilamayacak bir bagimlilik olurdu. `aria-hidden` cunku
-  erisilebilir ad zaten tusun uzerinde.
-*/
-function Arrow({ direction }: { direction: "left" | "right" }) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={direction === "left" ? "rotate-180" : undefined}
-      fill="none"
-      height="16"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      viewBox="0 0 16 16"
-      width="16"
-    >
-      <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }

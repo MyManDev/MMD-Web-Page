@@ -341,6 +341,33 @@ Ekran görüntüsü: gerçek uygulamadan. Yoksa blok yayınlanmaz — placeholde
 (`CLAUDE.md` kural 6). Düz `<img>`, elle üretilmiş webp, `width`/`height` verilir ki CLS
 oluşmasın.
 
+**Birden fazla ekran görüntüsü elle geçişli bir karuselde gösterilir.** Şemada `screenshots` en az
+bir öğeli bir dizi ve her öğe kendi `alt` metnini taşır: görüntüler birbirinin yerine geçtiği için
+ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek görüntüde karusel
+çizilmez; düz `<img>`, bugünkü çerçeve, tuş yok.
+
+- **Yerleşim.** Slaytlar aynı ızgara hücresinde üst üste durur, yalnızca etkin olanı görünür
+  (`visibility`). Çerçeve bir görüntü boyunda kalır; gezinirken ne çerçeve ne tuşlar oynar.
+  Görüntünün altında destenin (§3.4) sayacı (`01 / 03`) ve `deck-button` tuşları var. Yeşil yok:
+  bölümün tek yeşili Live Demo (§5.1).
+- **Otomatik geçiş yok.** Destenin cümlesi okunup geçilir; ekran görüntüsü ise incelenir ve
+  bakılırken değişmesi incelenen satırı elden alır. Otomatik geçiş olmayınca duraklatma yolu da
+  gerekmiyor (WCAG 2.2.2 yalnızca kendiliğinden başlayan hareketi kapsıyor).
+- **Geçiş.** 200ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
+  giden 200ms altta kalıp tek adımda kaybolur. Reduced-motion altında geçiş hiç yok, değişim
+  anında (§6.1).
+- **Erişilebilirlik.** APG karusel deseni: kap `role="group"` ve
+  `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. Görüntü alanı
+  `aria-live="polite"`, çünkü tuşa basıldığında odak tuşta kalıyor. Ok tuşu yok, destede de yok;
+  APG karusel deseni onları istemiyor.
+- **JS gelmezse.** Sunucu ilk görüntüyü gösterir ve tuş satırını yer tutan ama görünmeyen hâlde
+  basar. Ziyaretçi çalışmayan bir tuşla karşılaşmaz; JS gelince tuşlar sayfayı kaydırmadan görünür
+  olur. Deste sunucuda düz liste basıyor, burada aynısı yapılmadı: görüntüler alt alta basılıp
+  hidrasyonda teke inse bölüm kısalır ve sayfa kayardı.
+- **İndirme.** Gizli slaytların kutusu durduğu için `loading="lazy"` onları da bölüm yaklaşırken
+  indirir; ileri tuşu boş bir kareye açılmaz. Bedeli, ilk görüntüden sonraki her görüntü için bir
+  varyant daha.
+
 **`next/image` kullanılmıyor** ve bu ölçülerek seçildi. Statik export + `images.unoptimized`
 altında ne optimizasyon ne srcset üretiyor, ama sayfaya **5.5 KiB client JS** ekliyor:
 132.1 → 137.6 KiB. Payload kapısının kalan payı o anda 17.9 KiB'dı, yani bedeli payın üçte biri

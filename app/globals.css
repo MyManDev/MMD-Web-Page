@@ -523,7 +523,9 @@ a:focus-visible .roll-track {
 }
 
 /* Deste tuslari. Yesil YOK - §5.1 bu bolume accent kotasi vermiyor; tuslar
-   ince border ve renk degisimiyle calisiyor. */
+   ince border ve renk degisimiyle calisiyor. Projects'in ekran goruntusu
+   karuseli de ayni tuslari kullaniyor ve orada da yesil yok: o bolumun tek
+   yesili Live Demo. */
 .deck-button {
   display: inline-flex;
   align-items: center;

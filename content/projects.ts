@@ -30,10 +30,11 @@ import type { Project } from "./schema";
  * Etiketler dogal yazimda duruyor; buyuk harfe MetricRow'un CSS'i ceviriyor,
  * metin iki farkli bicimde iki kez yazilmiyor.
  *
- * `screenshot` en buyuk uretilmis varyanti gosterir - srcset destegi olmayan
- * tarayicinin dusecegi yer burasi. Diger genislikler ayni tabandan turetiliyor
- * (lib/images.ts) ve dosyalari scripts/optimize-images.mjs uretiyor. Kaynak
- * goruntu servis edilmiyor: assets/screenshots/ altinda duruyor.
+ * `screenshots` icindeki her `src` en buyuk uretilmis varyanti gosterir -
+ * srcset destegi olmayan tarayicinin dusecegi yer burasi. Diger genislikler
+ * ayni tabandan turetiliyor (lib/images.ts) ve dosyalari
+ * scripts/optimize-images.mjs uretiyor. Kaynak goruntu servis edilmiyor:
+ * assets/screenshots/ altinda duruyor.
  */
 export const projects: Project[] = [
   {
@@ -49,7 +50,12 @@ export const projects: Project[] = [
     tags: ["Python", "OR-Tools CP-SAT", "ML", "React"],
     repoUrl: "https://github.com/MyManDev/football-squad-optimizer",
     liveUrl: "https://squadopt.mymandev.com/",
-    screenshot: "/projects/football-squad-optimizer-1792.webp",
+    screenshots: [
+      {
+        src: "/projects/football-squad-optimizer-1792.webp",
+        alt: "Football Squad Optimizer screenshot",
+      },
+    ],
     order: 0,
     /* UC KISIT, ve bu bir kararı geri aliyor. Once burada tek bir sayi vardi:
        `0 - ML models promoted to production`. architecture.md §4.6 onu IMZA OGE
