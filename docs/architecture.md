@@ -3,8 +3,7 @@
 Bu belge **ne inşa ettiğimizi** ve hangi kararla inşa ettiğimizi yazar. Nasıl çalıştığımız
 [`working-agreement.md`](working-agreement.md)'de.
 
-Kaynak: _MyMan.dev Final Tasarım ve Teknik Plan V1_ (görsel yön ve kapsam) ve
-_Nasıl Çalıştık — Football Squad Optimizer_ (mühendislik ilkeleri).
+Kaynak: _MyMan.dev Final Tasarım ve Teknik Plan V1_ (görsel yön ve kapsam).
 
 ---
 
@@ -244,7 +243,7 @@ Bu kolektifin ayırt edici tarafı, çalışma disiplininin negatifi olduğu gib
 karşılık gelen bir öğe olacak: Football bloğunda gerçek ve dürüst bir sayı satırı.
 
 Kullanılabilir gerçek malzeme, **bu bölüm yazıldığı gün (2026-08-27):** 15 günde 215 commit,
-~2.600 test, 17 sprint, ve **terfi eden model sayısı sıfır** — sistem o gün deterministik temelle
+~2.600 test ve **terfi eden model sayısı sıfır** — sistem o gün deterministik temelle
 karar veriyordu. İlk canlı hafta 56.08 projekte edildi, 26 gerçekleşti.
 
 **2026-09-29'da bu malzemenin çoğu eskidi.** Kaynak SquadOpt deposu; sayılar her gün değişiyor,

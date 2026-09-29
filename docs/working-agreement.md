@@ -2,10 +2,8 @@
 
 Bu belge **nasıl çalıştığımızı** yazar. Ne inşa ettiğimiz [`architecture.md`](architecture.md)'de.
 
-Düzen, _Nasıl Çalıştık — Football Squad Optimizer_ belgesinden süzülerek taşındı, kopyalanarak
-değil. O belgenin kendi uyarısı geçerli: _"Küçük işlerde fazla ağırdır."_ Burada ön-kayıt
-dokümanları, parmak izi dondurma ve ölçüm artifact indeksi yok — bu projede ölçülecek bir tahmin
-iddiası yok. Kalanların hepsi bedava taşındı.
+SquadOpt'taki ön-kayıt dokümanları, parmak izi dondurma ve ölçüm artifact indeksi burada yok — bu
+projede ölçülecek bir tahmin iddiası yok.
 
 ---
 
