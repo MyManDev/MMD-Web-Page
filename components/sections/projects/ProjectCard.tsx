@@ -135,9 +135,9 @@ export function ProjectCard({
 
       {/*
         Birden fazla goruntu -> kendiliginden gecen karusel (design-spec.md §3.3.1).
-        Tek goruntu -> duz <img> ve tus satiri yok: gidilecek ikinci goruntu
-        yokken tus cizmek, hicbir yere gitmeyen bir dugme cizmek olurdu.
-        <img>'in kendisi ve olculmus gerekceleri Screenshot.tsx'te.
+        Tek goruntu -> ayni figur (goruntu ve basligi), tus satiri yok: gidilecek
+        ikinci goruntu yokken tus cizmek, hicbir yere gitmeyen bir dugme cizmek
+        olurdu. Figurun kendisi ve olculmus gerekceleri Screenshot.tsx'te.
       */}
       {project.screenshots.length > 1 ? (
         <ScreenshotCarousel
@@ -146,9 +146,7 @@ export function ProjectCard({
           screenshots={project.screenshots}
         />
       ) : (
-        <div className="reveal-on-enter overflow-hidden rounded-card border border-border lg:col-span-7">
-          <Screenshot {...project.screenshots[0]} />
-        </div>
+        <Screenshot {...project.screenshots[0]} className="reveal-on-enter lg:col-span-7" />
       )}
     </article>
   );

@@ -18,10 +18,16 @@ const httpsUrl = z.url({ protocol: /^https$/ });
  * `alt` ZORUNLU ve her goruntunun kendisi: karuselde goruntuler birbirinin
  * yerine geciyor, "X screenshot" diye tek bir ortak metin hangisinin ekranda
  * oldugunu soylemezdi.
+ *
+ * `caption` ZORUNLU: goruntunun altindaki gorunur kisa baslik, karuselde
+ * goruntuyle birlikte degisiyor (design-spec.md §3.3.1). `alt`tan ayri: alt
+ * goruntuyu gormeyen icin tarif ediyor, caption herkese karenin ne oldugunu
+ * soyluyor. Proje metni - uydurulmaz, kaynagi icerik dosyasinda (kural 5).
  */
 const screenshotSchema = z.object({
   src: z.string().min(1).startsWith("/"),
   alt: z.string().min(1),
+  caption: z.string().min(1),
 });
 
 /** Proje kaydi. Zorunlu alanlar architecture.md §5'te sayili. */

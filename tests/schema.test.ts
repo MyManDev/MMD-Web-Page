@@ -18,8 +18,8 @@ describe("projectSchema", () => {
 
   it("birden fazla goruntuyu verildigi sirayla kabul eder", () => {
     const screenshots = [
-      { src: "/projects/a-1792.webp", alt: "A" },
-      { src: "/projects/b-1792.webp", alt: "B" },
+      { src: "/projects/a-1792.webp", alt: "A", caption: "A." },
+      { src: "/projects/b-1792.webp", alt: "B", caption: "B." },
     ];
     expect(projectSchema.parse({ ...validProject, screenshots }).screenshots).toEqual(screenshots);
   });
@@ -29,8 +29,20 @@ describe("projectSchema", () => {
     ["screenshots bos", { screenshots: [] }],
     // Her goruntunun kendi alt metni var; karuselde ortak bir metin hangisinin
     // ekranda oldugunu soylemezdi.
-    ["bir goruntunun alt'i bos", { screenshots: [{ src: "/projects/x-1792.webp", alt: "" }] }],
-    ["bir goruntunun src'si goreli", { screenshots: [{ src: "projects/x-1792.webp", alt: "X" }] }],
+    [
+      "bir goruntunun alt'i bos",
+      { screenshots: [{ src: "/projects/x-1792.webp", alt: "", caption: "X." }] },
+    ],
+    [
+      "bir goruntunun src'si goreli",
+      { screenshots: [{ src: "projects/x-1792.webp", alt: "X", caption: "X." }] },
+    ],
+    // Baslik gorunur ve zorunlu: eksikse kart basliksiz yayinlanmaz.
+    ["bir goruntunun basligi eksik", { screenshots: [{ src: "/projects/x-1792.webp", alt: "X" }] }],
+    [
+      "bir goruntunun basligi bos",
+      { screenshots: [{ src: "/projects/x-1792.webp", alt: "X", caption: "" }] },
+    ],
     ["tags bos", { tags: [] }],
     ["repoUrl http", { repoUrl: "http://github.com/MyManDev/x" }],
     ["slug kebab-case degil", { slug: "Football Squad" }],

@@ -2,11 +2,15 @@ import type { Project } from "@/content";
 import { screenshotSrcSet } from "@/lib/images";
 
 /**
- * Tek ekran goruntusu. design-spec.md §3.3.1
+ * Tek ekran goruntusu ve basligi. design-spec.md §3.3.1
  *
  * Kendi dosyasinda cunku iki yerden cagriliyor: tek goruntulu kart onu sunucu
  * component'inde basiyor, karusel her slaytta. `use client` YOK ve kanca da
- * yok; iki taraf da ayni <img>'i basiyor ve `sizes` tek yerde yasiyor.
+ * yok; iki taraf da ayni figuru basiyor ve `sizes` tek yerde yasiyor.
+ *
+ * <figure> + <figcaption>: baslik goruntunun kendi basligi, yani figur onunla
+ * adlaniyor. Cerceve (border, kose) yalnizca goruntunun etrafinda; baslik
+ * cercevenin disinda, altinda.
  *
  * next/image DEGIL, duz <img> - ve bu olculerek secildi. design-spec.md
  * §3.3.1 once next/image yaziyordu; statik export + images.unoptimized
@@ -32,19 +36,33 @@ import { screenshotSrcSet } from "@/lib/images";
  * inmeden once de korunuyor. Semada boyut alani yok cunku oran her proje icin
  * ayni.
  */
-export function Screenshot({ src, alt }: Project["screenshots"][number]) {
+export function Screenshot({
+  src,
+  alt,
+  caption,
+  className = "",
+}: Project["screenshots"][number] & { className?: string }) {
   return (
-    /* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */
-    <img
-      src={src}
-      srcSet={screenshotSrcSet(src)}
-      sizes="(min-width: 1600px) 883px, (min-width: 1024px) 58vw, calc(100vw - 40px)"
-      alt={alt}
-      width={1792}
-      height={1120}
-      loading="lazy"
-      decoding="async"
-      className="aspect-screenshot h-full w-full object-cover"
-    />
+    <figure className={`flex flex-col gap-3 ${className}`}>
+      <div className="overflow-hidden rounded-card border border-border">
+        {/* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */}
+        <img
+          src={src}
+          srcSet={screenshotSrcSet(src)}
+          sizes="(min-width: 1600px) 883px, (min-width: 1024px) 58vw, calc(100vw - 40px)"
+          alt={alt}
+          width={1792}
+          height={1120}
+          loading="lazy"
+          decoding="async"
+          className="aspect-screenshot h-full w-full object-cover"
+        />
+      </div>
+      {/* Kendi gecisi karusel icin: giden slaytin basligi beklemeden sonuyor
+          (ScreenshotCarousel.tsx, SLOT). Tek goruntude hicbir sey tetiklemiyor. */}
+      <figcaption className="font-sans text-body-s text-text-muted motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out">
+        {caption}
+      </figcaption>
+    </figure>
   );
 }

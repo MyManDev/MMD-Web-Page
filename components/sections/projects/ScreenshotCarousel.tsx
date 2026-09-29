@@ -7,9 +7,9 @@ import { Screenshot } from "./Screenshot";
 
 /*
   Slaytlarin hepsi AYNI izgara hucresinde ust uste; yalnizca `data-active`
-  gorunur. Kap boylece tek bir goruntu kadar ve gezinirken tuslar yerinden
-  oynamiyor - prensip destesinin olcerek buldugu duzen (globals.css
-  `.principle-slot`).
+  gorunur. Kap boylece tek bir slayt kadar - goruntu ve EN UZUN baslik - ve
+  gezinirken tuslar yerinden oynamiyor; prensip destesinin olcerek buldugu duzen
+  (globals.css `.principle-slot`).
 
   Gorunmeyenler `visibility: hidden` ve bunun iki sonucu var. Erisilebilirlik
   agacindan ve odak sirasindan cikiyorlar, yani ekran okuyucu yalnizca ekrandaki
@@ -22,12 +22,19 @@ import { Screenshot } from "./Screenshot";
   200ms daha gorunur kaliyor, sonra tek adimda kayboluyor. Iki slayt ayni anda
   sonseydi arada kartin zemini parlardi.
 
+  Hile yalnizca OPAK katmanda dogru: goruntu opak, altta kalan eski goruntuyu
+  tamamen ortuyor. Baslik ise zeminsiz; altta kalsaydi 200ms boyunca eski ve
+  yeni baslik ust uste okunurdu (incelemede bulundu). Bu yuzden giden slaytin
+  basligi BEKLEMEDEN soner (figcaption'in kendi gecisi, Screenshot.tsx);
+  goruntu altta kalmaya devam eder.
+
   Gecis `motion-safe:` altinda yaziliyor: reduced-motion altinda gecis hic
   yok, degisim aninda (CLAUDE.md kural 10). Global blogun da ayni seyi yaptigi
   ve bu satirlarin neden ikinci kat oldugu design-spec.md §6.1'de.
 */
 const SLOT =
   "invisible col-start-1 row-start-1 opacity-0 data-active:visible data-active:z-1 data-active:opacity-100" +
+  " [&:not([data-active])_figcaption]:opacity-0" +
   " motion-safe:transition-[opacity,visibility] motion-safe:delay-200 motion-safe:duration-0 motion-safe:ease-out" +
   " motion-safe:data-active:delay-0 motion-safe:data-active:duration-200";
 
@@ -35,7 +42,7 @@ const SLOT =
  * Ekran goruntusu karuseli. design-spec.md §3.3.1
  *
  * Yalnizca birden fazla goruntu oldugunda cizilir; tek goruntude ProjectCard
- * duz <img>'i basiyor.
+ * ayni figuru (goruntu ve basligi) tus satiri olmadan basiyor.
  *
  * GEZINME PRENSIP DESTESININ KENDISI (§3.4, lib/deck.ts): ayni tuslar, ayni
  * sayac, basa saran gezinme ve KENDILIGINDEN GECIS. Karusel once elle
@@ -82,10 +89,10 @@ export function ScreenshotCarousel({
       role="group"
       {...pauseOn}
     >
-      <div
-        aria-live={announce ? "polite" : "off"}
-        className="grid overflow-hidden rounded-card border border-border"
-      >
+      {/* Cerceve her slaytin icinde, goruntunun etrafinda (Screenshot.tsx); kap
+          yalnizca izgara. Baslik slaytin parcasi, yani gecis ikisini birlikte
+          goturuyor ve kap en uzun basliga gore sabit kaliyor. */}
+      <div aria-live={announce ? "polite" : "off"} className="grid">
         {screenshots.map((screenshot, slot) => (
           <div
             key={screenshot.src}
