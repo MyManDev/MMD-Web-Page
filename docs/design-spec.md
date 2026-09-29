@@ -855,6 +855,9 @@ koşulları karşıladığı için kalıyor:
 - `scroll-behavior: auto` — smooth scroll kapanır.
 - Tüm `transition-duration` ve `animation-duration` `0.01ms`'e iner. (`0ms` yerine `0.01ms`,
   çünkü bazı tarayıcılar `transitionend` beklerken 0'da olayı hiç üretmiyor.)
+- `transition-delay` `0`'a iner. Önce yalnızca süre kısalıyordu ve gecikme kalıyordu: `TeamCard`'ın
+  açıklaması 100ms geç açılıyordu. `tests/e2e/a11y.spec.ts` sayfanın tamamında hiçbir öğede gecikme
+  kalmadığını ölçüyor.
 - Projects yığını `position: static` — düz liste.
 - Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1).
 - Mobil menü anında açılır/kapanır; `opacity` ve `transform` geçişi uygulanmaz.
@@ -868,9 +871,9 @@ koşulları karşıladığı için kalıyor:
   E2E bu hatayı bir kez yakaladı ve o yüzden duruyor.
 
 Kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`), her component'te
-tekrar edilmez. **Ekran görüntüsü karuseli bunun dışında kalıyor:** global blok süreyi kısaltıyor
-ama `transition-delay`'e dokunmuyor. Karuselin geçişi gecikmeye dayandığı için giden slayt o süre
-boyunca görünür kalırdı; bu yüzden geçiş component'te `motion-safe:` altında yazılı.
+tekrar edilmez. Ekran görüntüsü karuseli geçişini ayrıca `motion-safe:` altında yazıyor: global blok
+gecikmeyi sıfırlamadan önce bu gerekliydi, çünkü giden slayt gecikme süresince görünür kalırdı.
+Bugün ikinci kat.
 
 ---
 
