@@ -97,7 +97,7 @@ export function ProjectCard({
 
         {/*
           Ozet CENGEL, aciklama GOVDE. Ikisi ayri tipografik rolde: ozet
-          uygulamanin kendi basligi ve tek satir, aciklama projenin ne yaptigini
+          uygulamanin kendi cumlesi ve tek satir, aciklama projenin ne yaptigini
           anlatiyor. Ayni boyutta bassaydik iki paragraf birbirine karisirdi.
         */}
         <p className="reveal-on-enter max-w-prose font-mono text-display-m text-text-muted lg:text-display-m-lg">
