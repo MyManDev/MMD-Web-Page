@@ -340,17 +340,17 @@ açıklıyoruz". `.optional()` yazmak o kusuru sessizce geri getirirdi (`CLAUDE.
 yüzden açıklaması olmayan bir proje **build'i düşürür.**
 
 Özet ile açıklama **ayrı tipografik roldedir** ve bu ayrım kasıtlı: özet uygulamanın kendi
-başlığındaki cümle — bir çengel, tek satır; açıklama projenin ne yaptığını anlatan gövde. İkisi
-aynı ölçüde basıldığında yan yana iki paragraf gibi okunuyordu, o yüzden özet Display M'e çıktı ve
-`text-muted` oldu.
+cümlesi — bir çengel, tek satır; açıklama projenin ne yaptığını anlatan gövde. İkisi aynı ölçüde
+basıldığında yan yana iki paragraf gibi okunuyordu, o yüzden özet Display M'e çıktı ve
+`text-muted` oldu. Özet eskiden uygulamanın başlığındaydı; başlık değişince kaynağı
+`content/projects.ts`'te yeniden yazıldı.
 
 Proje adı da Display M'den **Display L**'e çıktı: özetle aynı ölçüdeyken hangisinin ad olduğu
 okunmuyordu. Bölüm içi ölçü sırası artık 80 → 56 → 28 → 18.
 
 **Açıklama metni doğrulanabilir olgulara dayanır, uydurulmaz** (`CLAUDE.md` kural 5). Football
-Squad Optimizer'ınki için dayanaklar `content/projects.ts`'te tek tek yazılı: bütçe rakamı, çözücü
-çıktısı (`OPTIMAL — Proved Optimal`), oyuncu başına projeksiyon ve "Projection Versus Outcome"
-satırı — hepsi uygulamanın kendi ekranında görünüyor.
+Squad Optimizer'ınki için dayanaklar `content/projects.ts`'te tek tek yazılı; her biri SquadOpt
+deposunda bir dosyaya ve satıra işaret ediyor (arayüz metinleri, çözücü ayarı, plan pencereleri).
 
 `MetricRow` — imza öğesi (`architecture.md` §4.6). Sayı Display M, etiketi mono ve `text-muted`.
 İfade seçildi ve `architecture.md` §4.6'da kayıtlı. `metrics` boşsa satır **render edilmez**;
