@@ -107,18 +107,39 @@ test("bolum numarasi kalmadi - kart ve karusel sayilari ayri", async ({ page }) 
 });
 
 /**
- * REDUCED-MOTION GECIKMEYI DE SIFIRLIYOR (design-spec.md §6.1). Global blok
- * once yalnizca SUREYI kisaltiyordu ve `transition-delay` kaliyordu:
- * TeamCard'in aciklamasi reduced-motion altinda da 100ms gec aciliyordu,
- * ekran goruntusu karuseli de bu yuzden kendi gecisini `motion-safe:` altina
- * almak zorunda kalmisti.
+ * REDUCED-MOTION GECIKMEYI DE SIFIRLIYOR (design-spec.md §6.1).
  *
- * Olculen sey SAYFANIN TAMAMI, tek tek component'ler degil: bir sonraki
- * `delay-*` sinifi hangi dosyada yazilirsa yazilsin bu test onu yakalar.
+ * Iki yarisi var ve ikisi ayri seyler olcuyor:
+ *
+ *   KURALIN KENDISI - sayfaya bir sonda konuyor: satir ici `transition-delay`
+ *   tasiyan bir oge ve `::after`ina gecikme veren bir <style>. Ikisinin de 0s
+ *   hesaplanmasi, kuralin sayfanin icerigine bakmadan calistigini gosteriyor;
+ *   sayfada bugun gecikme tasiyan bir oge hic olmasa da bu yari bir sey olcer.
+ *
+ *   SAYFANIN ILK DOM'U, DURGUN HALDE - yuklenen her oge. Sinirlari: pseudo
+ *   ogeleri ve `hover:`/`group-hover:` gibi duruma bagli gecikmeleri gormuyor;
+ *   onlari birinci yari kapsiyor.
  */
 test("reduced-motion altinda hicbir ogede gecis gecikmesi kalmiyor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+
+  const probe = await page.evaluate(() => {
+    const style = document.createElement("style");
+    style.textContent =
+      "#delay-probe::after { content: ''; transition: opacity 1s 1s; } #delay-probe { transition: opacity 1s 1s; }";
+    document.head.append(style);
+    const el = document.createElement("div");
+    el.id = "delay-probe";
+    el.style.transitionDelay = "2s";
+    document.body.append(el);
+    const own = getComputedStyle(el).transitionDelay;
+    const after = getComputedStyle(el, "::after").transitionDelay;
+    el.remove();
+    style.remove();
+    return { own, after };
+  });
+  expect(probe).toEqual({ own: "0s", after: "0s" });
 
   const delayed = await page.evaluate(() =>
     [...document.querySelectorAll("*")].flatMap((el) => {

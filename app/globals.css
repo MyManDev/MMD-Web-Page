@@ -574,9 +574,8 @@ a:focus-visible .roll-track {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    /* Sure kisalinca gecikme kalmiyordu: TeamCard'in aciklamasi 100ms gec
-       aciliyordu. Gecikme de sifir; tests/e2e/a11y.spec.ts sayfanin tamamini
-       olcuyor. */
+    /* Gecikme de sifir: sure kisaliyor ama gecikme kaliyordu. design-spec.md
+       §6.1; tests/e2e/a11y.spec.ts olcuyor. */
     transition-delay: 0s !important;
     scroll-behavior: auto !important;
 

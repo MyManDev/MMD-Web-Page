@@ -24,11 +24,9 @@ import { Screenshot } from "./Screenshot";
   200ms daha gorunur kaliyor, sonra tek adimda kayboluyor. Iki slayt ayni anda
   sonseydi arada kartin zemini parlardi.
 
-  Gecis `motion-safe:` altinda yaziliyor. globals.css'in reduced-motion blogu
-  once yalnizca SUREYI kisaltiyordu, GECIKMEYI degil - giden slayt 200ms boyunca
-  gorunur ve agacta kalirdi. Blok artik gecikmeyi de sifirliyor; bu satirlar
-  ikinci kat. Reduced-motion altinda gecis hic yok, degisim aninda (CLAUDE.md
-  kural 10).
+  Gecis `motion-safe:` altinda yaziliyor: reduced-motion altinda gecis hic
+  yok, degisim aninda (CLAUDE.md kural 10). Global blogun da ayni seyi yaptigi
+  ve bu satirlarin neden ikinci kat oldugu design-spec.md §6.1'de.
 */
 const SLOT =
   "invisible col-start-1 row-start-1 opacity-0 data-active:visible data-active:z-1 data-active:opacity-100" +
