@@ -363,13 +363,16 @@ oluşmasın.
 **Birden fazla ekran görüntüsü, kendiliğinden geçen bir karuselde gösterilir.** Şemada `screenshots` en az
 bir öğeli bir dizi ve her öğe kendi `alt` metnini taşır: görüntüler birbirinin yerine geçtiği için
 ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek görüntüde karusel
-çizilmez; düz `<img>`, bugünkü çerçeve, tuş yok.
+çizilmez; aynı figür (görüntü ve başlığı) basılır, tuş yok.
 
-- **Başlık.** Her görüntünün altında kendi tek satırlık başlığı var (`caption`, şemada zorunlu):
-  `<figure>` + `<figcaption>`, Body S, `text-muted`. Başlık slaytın parçası, yani görüntüyle
-  birlikte değişir ve JS yokken de ilk başlık görünür. `alt`tan ayrı: alt görüntüyü görmeyen için
-  tarif eder, başlık herkese karenin ne olduğunu söyler. Proje metni; uydurulmaz, kaynağı
-  `content/projects.ts`'te. Karar sahibinin isteği: "ekrana çıkan resme göre metin".
+- **Başlık.** Her görüntünün altında kendi kısa başlığı var (`caption`, şemada zorunlu):
+  `<figure>` + `<figcaption>`, Body S, `text-muted`; dar ekranda iki satıra kırılabilir. Başlık
+  slaytın parçası, yani görüntüyle birlikte değişir ve JS yokken de ilk başlık görünür. Geçişte
+  giden başlık beklemeden söner: zemini olmadığı için altta kalsaydı yeni başlıkla üst üste
+  okunurdu. Figür adını başlıktan alır; `alt` başlığı **tekrarlamaz**, başlığın söylemediğini
+  taşır, çünkü ekran okuyucu ikisini art arda okur. Proje metni; uydurulmaz, kaynağı
+  `content/projects.ts`'te. Karar sahibinin isteği: "ekrana çıkan resme göre metni de
+  değiştirebiliriz".
 - **Yerleşim.** Slaytlar aynı ızgara hücresinde üst üste durur, yalnızca etkin olanı görünür
   (`visibility`). Kap bir slayt boyunda kalır (görüntü ve en uzun başlık); gezinirken ne kap ne
   tuşlar oynar. Çerçeve (border, köşe) yalnızca görüntünün etrafında.
@@ -389,7 +392,8 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. APG'nin
   kendiliğinden dönen karusel için istediği görünür durdur/başlat tuşu **yok** (§3.4). Görüntü alanının
   canlı bölgesi destedeki gibi: otomatik geçişte `off`, etkileşimde `polite` (tuşa basıldığında
-  odak çoğu tarayıcıda tuşta kalıyor ve değişen görüntüyü canlı bölge duyuruyor). Ok tuşu yok, destede de yok;
+  odak çoğu tarayıcıda tuşta kalıyor ve değişen slaytı, yani görüntüyü ve başlığını canlı bölge
+  duyuruyor). Ok tuşu yok, destede de yok;
   APG karusel deseni onları istemiyor.
 - **JS gelmezse.** Sunucu ilk görüntüyü gösterir ve tuş satırını yer tutan ama görünmeyen hâlde
   basar. Ziyaretçi çalışmayan bir tuşla karşılaşmaz; JS gelince tuşlar sayfayı kaydırmadan görünür

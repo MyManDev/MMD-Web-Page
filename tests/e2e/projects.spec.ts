@@ -143,8 +143,12 @@ test("ekran goruntuleri gercekten yukleniyor ve yerini onceden ayiriyor", async 
 
 /**
  * BASLIK (design-spec.md §3.3.1): her goruntunun altinda icerikteki kendi
- * basligi, <figcaption> olarak - figur onunla adlaniyor. Sayi ve metin
- * icerikten; tek goruntulu kartta da ayni figur basiliyor.
+ * basligi, <figcaption> olarak. Sayi ve metin icerikten; tek goruntulu kartta
+ * da ayni figur basiliyor.
+ *
+ * Olculen uc sey: metin icerikteki metin; figur adini basliktan aliyor (gorunen
+ * ilk figurde - gizli slaytlar erisilebilirlik agacinda degil); ve baslik
+ * goruntunun ALTINDA, cercevenin DISINDA.
  */
 test("her goruntunun altinda icerikteki kendi basligi var", async ({ page }) => {
   const figures = page.locator(`${SECTION} figure`);
@@ -153,6 +157,12 @@ test("her goruntunun altinda icerikteki kendi basligi var", async ({ page }) => 
     await expect(figures.nth(i).locator("img")).toHaveAttribute("alt", screenshot.alt);
     await expect(figures.nth(i).locator("figcaption")).toHaveText(screenshot.caption);
   }
+
+  await expect(figures.first()).toHaveAccessibleName(SCREENSHOTS[0]?.caption ?? "");
+  await figures.first().scrollIntoViewIfNeeded();
+  const frame = await figures.first().locator("img").locator("..").boundingBox();
+  const caption = await figures.first().locator("figcaption").boundingBox();
+  expect(caption!.y).toBeGreaterThanOrEqual(frame!.y + frame!.height);
 });
 
 test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
@@ -609,6 +619,35 @@ test.describe("ekran goruntusu karuseli", () => {
    * Reduced-motion altinda gecis HIC yok (CLAUDE.md kural 10): ne sure ne
    * gecikme. Gecikme kalsaydi giden slayt gorunur kalirdi (design-spec.md §6.1).
    */
+  /**
+   * Giden slaytin BASLIGI beklemeden soner (design-spec.md §3.3.1): zemini yok,
+   * altta kalsaydi yeni baslikla ust uste okunurdu. Olculen sey sozlesme: durgun
+   * halde gizli slaytin basligi opaklik 0, basligin gecisi gecikmesiz. Slaytin
+   * kendisi 200ms bekliyor (asagidaki test), baslik beklemiyor.
+   */
+  test("giden basligin gecisi beklemiyor", async ({ page }) => {
+    const slides = carouselOf(page).locator(SLIDE);
+    const captionStyle = (i: number) =>
+      slides
+        .nth(i)
+        .locator("figcaption")
+        .evaluate((el) => {
+          const cs = getComputedStyle(el);
+          return {
+            opacity: cs.opacity,
+            delay: Math.max(...cs.transitionDelay.split(",").map(parseFloat)),
+            duration: Math.max(...cs.transitionDuration.split(",").map(parseFloat)),
+          };
+        });
+
+    const shown = await captionStyle(0);
+    const hidden = await captionStyle(1);
+    expect(shown.opacity).toBe("1");
+    expect(hidden.opacity).toBe("0");
+    expect(hidden.delay).toBe(0);
+    expect(hidden.duration).toBeGreaterThan(0);
+  });
+
   test("gecis capraz sonumleme, reduced-motion altinda hic yok", async ({ page }) => {
     const slides = carouselOf(page).locator(SLIDE);
     const timing = (i: number) =>
@@ -700,12 +739,12 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
   });
 
   /**
-   * Slaytlar ayni hucrede ust uste: cerceve TEK bir goruntu boyunda ve
-   * gezinirken ne cerceve ne tus oynuyor. Ilk yarisi sart - ikinci yari tek
-   * basina bos gecerdi, cunku slaytlar alt alta dizilse de hepsi DOM'da duruyor
-   * ve kutular yine sabit kaliyor.
+   * Slaytlar ayni hucrede ust uste: kap TEK bir slayt boyunda (goruntu ve en
+   * uzun baslik) ve gezinirken ne kap ne tus oynuyor. Ilk yarisi sart - ikinci
+   * yari tek basina bos gecerdi, cunku slaytlar alt alta dizilse de hepsi DOM'da
+   * duruyor ve kutular yine sabit kaliyor.
    */
-  test("cerceve tek goruntu boyunda, gezinirken cerceve ve tuslar oynamiyor", async ({ page }) => {
+  test("kap tek slayt boyunda, gezinirken kap ve tuslar oynamiyor", async ({ page }) => {
     const carousel = carouselOf(page);
     const next = carousel.getByRole("button", { name: "Next screenshot" });
     const slides = carousel.locator(SLIDE);
@@ -716,7 +755,7 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
     for (let i = 1; i < SHOTS.length; i++) {
       expect(await slides.nth(i).boundingBox()).toEqual(first);
     }
-    // Cercevenin kendi 1px border'i disinda yukseklik tek slayt kadar.
+    // Yuvarlama payi disinda yukseklik tek slayt kadar.
     const frameBox = await frame.boundingBox();
     expect(Math.abs((frameBox?.height ?? 0) - (first?.height ?? 0))).toBeLessThanOrEqual(2);
 
@@ -872,6 +911,7 @@ test.describe("ekran goruntusu karuseli - JS yok", () => {
     const carousel = carouselOf(page);
     const slides = carousel.locator(SLIDE);
     await expect(slides.first()).toBeVisible();
+    await expect(slides.first().locator("figcaption")).toBeVisible();
     await expect(slides.first().locator("figcaption")).toHaveText(SHOTS[0]?.caption ?? "");
     await expect(slides.filter({ visible: true })).toHaveCount(1);
 

@@ -37,7 +37,7 @@ describe("projectSchema", () => {
       "bir goruntunun src'si goreli",
       { screenshots: [{ src: "projects/x-1792.webp", alt: "X", caption: "X." }] },
     ],
-    // Baslik gorunur tek satir ve zorunlu: eksikse kart basliksiz yayinlanmaz.
+    // Baslik gorunur ve zorunlu: eksikse kart basliksiz yayinlanmaz.
     ["bir goruntunun basligi eksik", { screenshots: [{ src: "/projects/x-1792.webp", alt: "X" }] }],
     [
       "bir goruntunun basligi bos",

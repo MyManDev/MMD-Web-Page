@@ -58,7 +58,11 @@ export function Screenshot({
           className="aspect-screenshot h-full w-full object-cover"
         />
       </div>
-      <figcaption className="font-sans text-body-s text-text-muted">{caption}</figcaption>
+      {/* Kendi gecisi karusel icin: giden slaytin basligi beklemeden sonuyor
+          (ScreenshotCarousel.tsx, SLOT). Tek goruntude hicbir sey tetiklemiyor. */}
+      <figcaption className="font-sans text-body-s text-text-muted motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out">
+        {caption}
+      </figcaption>
     </figure>
   );
 }

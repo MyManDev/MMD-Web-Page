@@ -19,7 +19,7 @@ const httpsUrl = z.url({ protocol: /^https$/ });
  * yerine geciyor, "X screenshot" diye tek bir ortak metin hangisinin ekranda
  * oldugunu soylemezdi.
  *
- * `caption` ZORUNLU: goruntunun altindaki gorunur tek satir, karuselde
+ * `caption` ZORUNLU: goruntunun altindaki gorunur kisa baslik, karuselde
  * goruntuyle birlikte degisiyor (design-spec.md §3.3.1). `alt`tan ayri: alt
  * goruntuyu gormeyen icin tarif ediyor, caption herkese karenin ne oldugunu
  * soyluyor. Proje metni - uydurulmaz, kaynagi icerik dosyasinda (kural 5).

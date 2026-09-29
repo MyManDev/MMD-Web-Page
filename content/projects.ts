@@ -58,13 +58,19 @@ import type { Project } from "./schema";
  * sahibinin kendi uye satirindan alindi: ekrandaki takim adi ve FPL numarasi
  * onun ve yayinlanmalarini onayladi. Lig tablosu KULLANILMADI, cunku on dort
  * baska kisinin adini tasiyor. Sira bir okuma sirasi: bu haftanin hamlesi,
- * hamleden sonraki kadro, sonra onerilerin gecmisi. Her `alt` yalnizca kendi
- * karesinde gorunen seyi soyluyor.
+ * hamleden sonraki kadro, sonra onerilerin gecmisi.
  *
- * `caption`lar da karenin kendi basliklarindan: "This week's move" ve
- * "PROVEN · OPTIMAL" (messages.ts:936), "Squad after the transfers" ve sahadaki
- * her oyuncunun xP'si, "Weekly suggestion history" ve "recorded before the
- * deadline" ile uyenin gercek net puani (gecmis sayfasinin kendi aciklamasi).
+ * `caption`lar karenin kendi ekran metinlerinden (SquadOpt web/src/i18n/
+ * messages.ts): "This week's move" (:887), "PROVEN · OPTIMAL" (:936), "Squad
+ * after the transfers" (:957), "Weekly suggestion history" (:12), "the site
+ * published, recorded before the deadline" (:30), uyenin gercek sonucu (:24).
+ *
+ * `alt` basligi TEKRARLAMIYOR, basligin soylemedigini tasiyor: figur adini
+ * basliktan aliyor ve ekran okuyucu ikisini art arda okuyor (WAI'nin gorsel
+ * rehberi bitisik basligin alt'ta yinelenmemesini istiyor). Alt'taki her sey
+ * kendi karesinde gorunuyor: iki degisiklik panosu, +2.63 ve kaptan Haaland;
+ * "3-5-2 · captain doubled: 56.15 xP" ve dort yedek; GW4 ve GW5'te 83.0 / 82.0
+ * ve 67.0 / 59.0.
  *
  * Her `src` en buyuk uretilmis varyanti gosterir - srcset destegi olmayan
  * tarayicinin dusecegi yer burasi. Diger genislikler ayni tabandan turetiliyor
@@ -91,24 +97,25 @@ export const projects: Project[] = [
       {
         src: "/projects/football-squad-optimizer-move-1792.webp",
         alt:
-          "This week's move for one member in gameweek 6: two transfers drawn as substitution " +
-          "boards, +2.63 expected points against keeping the squad, stamped proven optimal.",
+          "Gameweek 6 for one member: two substitution boards, +2.63 expected points against " +
+          "keeping the squad, and Haaland as captain.",
         caption: "This week's move: two transfers and the captain, proven optimal.",
       },
       {
         src: "/projects/football-squad-optimizer-pitch-1792.webp",
         alt:
-          "The squad after those transfers on a pitch, in a 3-5-2 with each player's expected " +
-          "points, and the bench below it.",
+          "A 3-5-2 with the captain counted twice for 56.15 expected points, and four " +
+          "substitutes below the pitch.",
         caption: "The squad after the move, on the pitch, with each player's expected points.",
       },
       {
         src: "/projects/football-squad-optimizer-history-1792.webp",
         alt:
-          "Weekly suggestion history for the same member: the suggestion published before each " +
-          "deadline beside the squad's actual score, for gameweeks 4 and 5.",
+          "A table for gameweeks 4 and 5: the suggestion scored 83 and 67 net, the member's " +
+          "squad 82 and 59.",
         caption:
-          "Each week's suggestion as published before the deadline, beside the actual score.",
+          "The suggestion the site published, recorded before the deadline, beside the member's " +
+          "actual score.",
       },
     ],
     order: 0,
