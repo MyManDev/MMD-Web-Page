@@ -722,10 +722,14 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
 test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
   test.skip(MULTI < 0, NO_CAROUSEL);
 
+  /* `pauseAt` saati DURDURUYOR: `install` tek basina sahte saati gercek zamanla
+     birlikte akitiyor ve testler, bir `runFor` ile digeri arasinda gecen gercek
+     sureye baglanirdi. Durmus saatte zamani yalnizca `runFor` ilerletiyor. */
   test.beforeEach(async ({ page }) => {
     await page.clock.install();
     await page.reload();
     await expect(carouselOf(page).getByRole("button", { name: "Next screenshot" })).toBeVisible();
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   });
 
   const counterOf = (page: Page) => carouselOf(page).locator("p");
@@ -742,9 +746,15 @@ test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
     await expect(slides.nth(1).locator("img")).toHaveAttribute("alt", SHOTS[1]?.alt ?? "");
   });
 
+  /** Her ara adim dogrulaniyor: yalnizca sondaki "01" bakilsaydi, hic
+      ilerlemeyen bir deste de testi gecerdi. */
   test("sondan sonra basa sariyor", async ({ page }) => {
-    for (let i = 0; i < SHOTS.length; i++) await page.clock.runFor(AUTO_ADVANCE_MS);
-    await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    for (let step = 1; step <= SHOTS.length; step++) {
+      await page.clock.runFor(AUTO_ADVANCE_MS);
+      await expect(counterOf(page)).toHaveText(
+        `${pad((step % SHOTS.length) + 1)} / ${pad(SHOTS.length)}`,
+      );
+    }
   });
 
   /** Goruntuyu inceleyen biri icin: fare uzerindeyken kare degismiyor. */
@@ -770,15 +780,17 @@ test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
   });
 
   /**
-   * Tusa basildiktan sonra sure SIFIRDAN sayiliyor: tusa basip bir an sonra
+   * Elle yapilan adimdan sonra sure SIFIRDAN sayiliyor: tusa basip bir an sonra
    * kendiliginden atlamasi, basilan tusu bosa cikarirdi.
+   *
+   * Tiklama `dispatchEvent` ile - pointer ve odak olayi URETMEDEN. Gercek bir
+   * tiklama desteyi duraklatir ve sureyi baslatan sey duraklamanin bitmesi olur;
+   * olculen sey ise adimin kendisi (`index` degisince zamanlayici bastan).
    */
-  test("tusa basinca sure bastan sayiliyor", async ({ page }) => {
+  test("elle adimdan sonra sure bastan sayiliyor", async ({ page }) => {
     const next = carouselOf(page).getByRole("button", { name: "Next screenshot" });
     await page.clock.runFor(AUTO_ADVANCE_MS - 1000);
-    await next.click();
-    await page.mouse.move(0, 0);
-    await next.blur();
+    await next.dispatchEvent("click");
     await expect(counterOf(page)).toHaveText(`02 / ${pad(SHOTS.length)}`);
 
     await page.clock.runFor(AUTO_ADVANCE_MS - 1000);

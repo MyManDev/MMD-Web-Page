@@ -569,7 +569,8 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | -------------------------- | -------------------------------------------------------------------------------------------- | ------ |
 | Yığın vs tek proje         | V1'de tek proje bloğu, mimari çok-projeli                                                    | §3     |
 | Placeholder proje          | Yayınlanmaz                                                                                  | §3     |
-| Proje ekran görüntüleri    | Birden fazlaysa karusel: elle geçişli → **kendiliğinden, desteyle aynı** (karar sahibi)      | §3     |
+| Proje ekran görüntüleri    | Birden fazlaysa karusel: elle geçişli → **kendiliğinden**; tekse düz görüntü                 | §3     |
+| Otomatik geçişte durdurma  | Görünür tuş **yok**; dokunmatik ve tarama kipinde duraklatma yolu yok, kabul edilen risk     | §4.4   |
 | Font                       | IBM Plex Sans + Mono; **display rolü de mono** (bayt farkı yok)                              | §4.2   |
 | Sayfa genişliği            | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                                       | §4.3   |
 | Bölüm dikey boşluğu        | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı                      | §4.3   |

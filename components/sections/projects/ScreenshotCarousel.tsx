@@ -41,8 +41,8 @@ const SLOT =
  * sayac, basa saran gezinme ve KENDILIGINDEN GECIS. Karusel once elle
  * gecisliydi; gerekcesi "ekran goruntusu inceleniyor, bakilirken degismemeli"
  * idi. Karar sahibi goruntulerin kendiliginden degismesini istedi (2026-09-29)
- * ve o gerekceyi karsilayan sey zaten kancada: fare goruntunun uzerindeyken
- * veya odak icerideyken deste duruyor, birakinca kaldigi yerden suruyor.
+ * ve o gerekceyi karsilayan sey zaten kancada: fare karuselin uzerindeyken
+ * veya odak icerideyken duruyor, ikisi de bitince kaldigi yerden suruyor.
  * Reduced-motion altinda hic ilerlemiyor. Otomatik geciste canli bolge susuyor,
  * etkilesimde yeniden aciliyor.
  *

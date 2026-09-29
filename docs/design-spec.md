@@ -369,18 +369,18 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   (`visibility`). Çerçeve bir görüntü boyunda kalır; gezinirken ne çerçeve ne tuşlar oynar.
   Görüntünün altında destenin (§3.4) sayacı (`01 / 03`) ve `deck-button` tuşları var. Yeşil yok:
   bölümün tek yeşili Live Demo (§5.1).
-- **Kendiliğinden geçiş, destenin kurallarıyla (§3.4).** Aralık ve davranış aynı, kod da aynı
-  (`lib/deck.ts`): fare görüntünün üzerindeyken veya odak içerideyken durur, bırakınca kaldığı
-  yerden sürer; reduced-motion altında hiç ilerlemez; bir tuşa basılınca süre baştan sayılır.
+- **Kendiliğinden geçiş, destenin kuralları ve kodu (§3.4, `lib/deck.ts`).** Aralık, duraklama,
+  reduced-motion ve canlı bölge davranışı destedekiyle aynı; ayrıntısı ve bilinen sınırları §3.4'te.
   Karusel önce elle geçişliydi ve gerekçe "ekran görüntüsü incelenir, bakılırken değişmemeli" idi.
-  **Karar sahibi görüntülerin kendiliğinden değişmesini istedi**; o gerekçeyi karşılayan şey
-  fareyle ve odakla duraklama. Destenin bilinen sınırı burada da geçerli: dokunmatikte hover yok ve
-  sayfayı yalnızca kaydırarak okuyan birinin duraklatma yolu yok.
+  **Karar sahibi görüntülerin kendiliğinden değişmesini istedi**; o gerekçeyi fare karuselin
+  üzerindeyken (görüntü ve tuş satırı) veya odak içerideyken duraklama karşılıyor. Bir tuşa
+  basılınca süre baştan sayılır.
 - **Geçiş.** 200ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
   giden 200ms altta kalıp tek adımda kaybolur. Reduced-motion altında geçiş hiç yok, değişim
   anında (§6.1).
-- **Erişilebilirlik.** APG karusel deseni: kap `role="group"` ve
-  `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. Görüntü alanının
+- **Erişilebilirlik.** APG karusel deseninin rolleri ve etiketleri: kap `role="group"` ve
+  `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. APG'nin
+  kendiliğinden dönen karusel için istediği görünür durdur/başlat tuşu **yok** (§3.4). Görüntü alanının
   canlı bölgesi destedeki gibi: otomatik geçişte `off`, etkileşimde `polite` (tuşa basıldığında
   odak tuşta kalıyor ve değişen görüntüyü canlı bölge duyuruyor). Ok tuşu yok, destede de yok;
   APG karusel deseni onları istemiyor.
@@ -458,12 +458,24 @@ genişliği `--max-width-statement` (22ch): `65ch` gövde metni için doğru ama
 büyüdüğü için 40px'te sınır işlevini yitirir (§4.3).
 
 **Deste kendiliğinden ilerler: 7 saniyede bir sonraki prensip.** Duraklatma mekanizması
-**etkileşim** — fare desteye girdiğinde veya içeriye odak düştüğünde durur, çıkınca kaldığı yerden
-sürer. Kalıcı durdurma değil. WCAG 2.2.2 kendiliğinden başlayan ve beş saniyeden uzun süren
-otomatik güncellemede bir duraklatma yolu istiyor; bu o yol. **Görünür bir Pause tuşu eklenmedi:**
-burada olmayan bir kontrol demekti ve klavye turunu bir durak uzatırdı. Bilinen sınır — dokunmatikte
-hover yok; tuşa dokunulduğunda odak orada kaldığı için duraklama yolu var, ama sayfayı yalnızca
-kaydırarak okuyan bir dokunmatik kullanıcısının yolu yok.
+**etkileşim**: fare desteye girdiğinde veya içeriye odak düştüğünde durur; ikisi de bitince kaldığı
+yerden sürer. Kalıcı durdurma değil. WCAG 2.2.2, kendiliğinden başlayan ve başka içerikle birlikte
+sunulan otomatik güncellemede bir durdurma, duraklatma veya gizleme yolu istiyor; fare ve klavye
+kullanıcısı için yol bu. Ekran görüntüsü karuseli (§3.3.1) aynı kodu ve aynı sınırları taşıyor.
+
+**Görünür bir durdur/başlat tuşu yok ve bu karar sahibinin kararı (2026-09-29).** APG, kendiliğinden
+dönen bir karusel için böyle bir tuş istiyor; ilk gerekçe "burada olmayan bir kontrol demekti ve
+klavye turunu bir durak uzatırdı" idi. Tuş olmadığı için bazı kullanıcıların duraklatma yolu yok:
+
+- **Dokunmatik:** hover yok; görüntüye dokunmak bir an girip çıkmak demek, süre yalnızca baştan
+  başlar. Bir tuşa dokunmak Android'de odağı tuşa verdiği için duraklatır. iOS'ta ve macOS
+  Safari'de WebKit tıklanan veya dokunulan tuşa odak vermiyor, orada duraklatmaz (MDN'de belgeli,
+  burada ölçülmedi).
+- **Yalnızca kaydırarak okuyan dokunmatik kullanıcısı** ve **ekran okuyucunun tarama kipi:** odak
+  taşınmıyor, duraklatma yolu yok.
+
+Bu kullanıcılar için WCAG 2.2.2 karşılanmıyor; **kabul edilmiş risk** (`architecture.md` §9). Görünür
+bir tuş eklenirse açık kapanır.
 
 **Geçiş, prensibin kelime kelime belirmesidir.** İki biçim denendi ve bırakıldı: bloğun tamamını
 birlikte kaydıran giriş animasyonu (240ms, sonra 600ms) bir geçiş değil sıçrama gibi okunuyordu,
@@ -802,7 +814,7 @@ aynı sınıf hatadır.
 | Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`      |
 | Prensip girişi            | 520ms + 70ms   | kelime kelime `opacity` + `translate` + `blur` |
 | Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer          |
-| Ekran görüntüsü karuseli  | 7s aralık      | desteyle aynı kanca (`lib/deck.ts`)            |
+| Ekran görüntüsü karuseli  | §3.4 aralığı   | desteyle aynı kanca (`lib/deck.ts`)            |
 | Ekran görüntüsü geçişi    | 200ms          | çapraz sönümleme: `opacity`, `visibility`      |
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
@@ -865,6 +877,7 @@ koşulları karşıladığı için kalıyor:
   açıklaması 100ms geç açılıyordu. `tests/e2e/a11y.spec.ts` sayfanın tamamında hiçbir öğede gecikme
   kalmadığını ölçüyor.
 - Projects yığını `position: static` — düz liste.
+- Prensip destesi ve ekran görüntüsü karuseli kendiliğinden **ilerlemez** (`lib/deck.ts`).
 - Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1).
 - Mobil menü anında açılır/kapanır; `opacity` ve `transform` geçişi uygulanmaz.
 - Scroll'a bağlı animasyonlar **tamamen kaldırılır**: `animation-name: none`. Süreyi kısaltmak
