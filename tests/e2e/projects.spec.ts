@@ -523,9 +523,10 @@ test("mobilde tek kolon, lg ustunde 12 kolonluk izgara", async ({ page }, testIn
  *
  * Testler SAYIDAN BAGIMSIZ, #105'teki takim testleriyle ayni yol: karusel
  * yalnizca birden fazla goruntusu olan bir projede cizilir. Ilk test HER ZAMAN
- * kosuyor ve iki yonu birden olcuyor - tek goruntulu kartta karusel YOK, cok
- * goruntulude VAR. Digerleri cok goruntulu bir proje yoksa atlaniyor; icerige
- * ilk ikinci goruntu girdigi gun kendiliginden kosmaya basliyorlar.
+ * kosuyor ve her kart icin kendi yonunu olcuyor: tek goruntulu kartta karusel
+ * YOK, cok goruntulude VAR. Icerikte yalnizca tek goruntulu kart varken
+ * yalnizca ilk yon kosar. Digerleri cok goruntulu bir proje yoksa atlaniyor;
+ * icerige ilk ikinci goruntu girdigi gun kendiliginden kosmaya basliyorlar.
  *
  * Sorgular YAPIYA bagli: rol (`carousel`, `slide`) ve tusun erisilebilir adi.
  * Sinif adiyla sorgulamak yeniden adlandirmada testi sessizce kor birakirdi
@@ -603,10 +604,14 @@ test.describe("ekran goruntusu karuseli", () => {
   });
 
   /**
-   * Capraz sonumleme: gelen slayt 200ms'de beliriyor, giden 200ms ALTTA kalip
-   * tek adimda kayboluyor. Reduced-motion altinda gecis HIC yok - globals.css'in
-   * blogu yalnizca sureyi kisaltiyor, gecikmeyi degil; gecikme kalsaydi giden
-   * slayt 200ms gorunur kalirdi (CLAUDE.md kural 10).
+   * Capraz sonumleme: gelen slayt USTTE beliriyor, giden onun suresi kadar
+   * ALTTA kalip tek adimda kayboluyor. Olculen sey SAYI DEGIL ILISKI - sure
+   * degisirse test takip etmeli, ama giden slaytin bekledigi sure gelenin
+   * suresinden farkli olursa arada zemin parlar ve test dusmeli.
+   *
+   * Reduced-motion altinda gecis HIC yok - globals.css'in blogu yalnizca
+   * sureyi kisaltiyor, gecikmeyi degil; gecikme kalsaydi giden slayt gorunur
+   * kalirdi (CLAUDE.md kural 10).
    */
   test("gecis capraz sonumleme, reduced-motion altinda hic yok", async ({ page }) => {
     const slides = carouselOf(page).locator(SLIDE);
@@ -614,11 +619,23 @@ test.describe("ekran goruntusu karuseli", () => {
       slides.nth(i).evaluate((el) => {
         const cs = getComputedStyle(el);
         const longest = (value: string) => Math.max(...value.split(",").map(parseFloat));
-        return { duration: longest(cs.transitionDuration), delay: longest(cs.transitionDelay) };
+        return {
+          duration: longest(cs.transitionDuration),
+          delay: longest(cs.transitionDelay),
+          zIndex: cs.zIndex,
+        };
       });
 
-    expect(await timing(0)).toEqual({ duration: 0.2, delay: 0 });
-    expect(await timing(1)).toEqual({ duration: 0, delay: 0.2 });
+    const incoming = await timing(0);
+    const outgoing = await timing(1);
+    expect(incoming.duration).toBeGreaterThan(0);
+    expect(incoming.delay).toBe(0);
+    expect(outgoing.duration).toBe(0);
+    expect(outgoing.delay).toBe(incoming.duration);
+    // Etkin slayt ustte: geri gezinmede ve basa sarmada gelen slayt DOM'da
+    // gidenden ONCE duruyor ve z-index olmadan onun altinda kalirdi.
+    expect(Number(incoming.zIndex)).toBeGreaterThan(0);
+    expect(outgoing.zIndex).toBe("auto");
 
     await page.emulateMedia({ reducedMotion: "reduce" });
     for (let i = 0; i < SHOTS.length; i++) {
@@ -674,14 +691,28 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
     await expect(carousel.locator(SLIDE).first()).toBeVisible();
   });
 
-  /** Slaytlar ayni hucrede ust uste: gezinirken ne cerceve ne tus oynuyor. */
-  test("gezinirken cerceve ve tuslar yerinden oynamiyor", async ({ page }) => {
+  /**
+   * Slaytlar ayni hucrede ust uste: cerceve TEK bir goruntu boyunda ve
+   * gezinirken ne cerceve ne tus oynuyor. Ilk yarisi sart - ikinci yari tek
+   * basina bos gecerdi, cunku slaytlar alt alta dizilse de hepsi DOM'da duruyor
+   * ve kutular yine sabit kaliyor.
+   */
+  test("cerceve tek goruntu boyunda, gezinirken cerceve ve tuslar oynamiyor", async ({ page }) => {
     const carousel = carouselOf(page);
     const next = carousel.getByRole("button", { name: "Next screenshot" });
-    const frame = carousel.locator(SLIDE).first().locator("..");
+    const slides = carousel.locator(SLIDE);
+    const frame = slides.first().locator("..");
 
     await next.scrollIntoViewIfNeeded();
-    const before = { next: await next.boundingBox(), frame: await frame.boundingBox() };
+    const first = await slides.first().boundingBox();
+    for (let i = 1; i < SHOTS.length; i++) {
+      expect(await slides.nth(i).boundingBox()).toEqual(first);
+    }
+    // Cercevenin kendi 1px border'i disinda yukseklik tek slayt kadar.
+    const frameBox = await frame.boundingBox();
+    expect(Math.abs((frameBox?.height ?? 0) - (first?.height ?? 0))).toBeLessThanOrEqual(2);
+
+    const before = { next: await next.boundingBox(), frame: frameBox };
     for (let i = 0; i < SHOTS.length; i++) {
       await next.click();
       expect(await next.boundingBox()).toEqual(before.next);

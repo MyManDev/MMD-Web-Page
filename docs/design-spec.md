@@ -778,6 +778,7 @@ aynı sınıf hatadır.
 | Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`      |
 | Prensip girişi            | 520ms + 70ms   | kelime kelime `opacity` + `translate` + `blur` |
 | Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer          |
+| Ekran görüntüsü geçişi    | 200ms          | çapraz sönümleme: `opacity`, `visibility`      |
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
 hover'a bağlanan bir detayı klavye kullanıcısı hiç görmez, yani detay olmaktan çıkıp fare
@@ -836,6 +837,7 @@ koşulları karşıladığı için kalıyor:
 - Tüm `transition-duration` ve `animation-duration` `0.01ms`'e iner. (`0ms` yerine `0.01ms`,
   çünkü bazı tarayıcılar `transitionend` beklerken 0'da olayı hiç üretmiyor.)
 - Projects yığını `position: static` — düz liste.
+- Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1).
 - Mobil menü anında açılır/kapanır; `opacity` ve `transform` geçişi uygulanmaz.
 - Scroll'a bağlı animasyonlar **tamamen kaldırılır**: `animation-name: none`. Süreyi kısaltmak
   yetmez, çünkü zaman çizelgesi süreye değil scroll konumuna bağlı — öğe yine scroll'la birlikte
@@ -847,7 +849,9 @@ koşulları karşıladığı için kalıyor:
   E2E bu hatayı bir kez yakaladı ve o yüzden duruyor.
 
 Kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`), her component'te
-tekrar edilmez.
+tekrar edilmez. **Ekran görüntüsü karuseli bunun dışında kalıyor:** global blok süreyi kısaltıyor
+ama `transition-delay`'e dokunmuyor. Karuselin geçişi gecikmeye dayandığı için giden slayt o süre
+boyunca görünür kalırdı; bu yüzden geçiş component'te `motion-safe:` altında yazılı.
 
 ---
 

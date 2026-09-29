@@ -142,6 +142,18 @@ describe("content/index loader", () => {
   });
 
   /**
+   * Karusel slaytlarinin React `key`'i `src` (ScreenshotCarousel.tsx). Ayni
+   * goruntu bir kartta iki kez gecerse key'ler cakisir ve React slaytlari
+   * karistirir. Sema bunu zorlamiyor; ekibin slug'lari gibi burada olculuyor.
+   */
+  it("bir projenin ekran goruntuleri tekil", () => {
+    for (const project of projects) {
+      const sources = project.screenshots.map(({ src }) => src);
+      expect(new Set(sources).size, project.slug).toBe(sources.length);
+    }
+  });
+
+  /**
    * SAYI DEGIL SOZLESME (nav testiyle ayni gerekce). Burada `toHaveLength(3)`
    * yaziliydi ve ekip degisince davranis bozulmadigi halde duserdi.
    *

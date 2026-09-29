@@ -23,7 +23,7 @@ import { screenshotSrcSet } from "@/lib/images";
  *
  * sizes olculdu: lg ustunde gorsel 12 kolonun 7'si, yani kapsayici tam
  * genisligindeyken 883px (kapsayici 1600'e cikinca 717'den yukseldi).
- * 56vw bunu her zaman bir parca ASIYOR ve asmasi kasitli - eksik tahmin
+ * 58vw bunu her zaman bir parca ASIYOR ve asmasi kasitli - eksik tahmin
  * bulanik goruntu demek, fazla tahmin birkac KB.
  *
  * width/height en buyuk varyantin GERCEK olcusu (1792x1120) ve ayni zamanda

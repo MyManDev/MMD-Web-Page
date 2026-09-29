@@ -37,7 +37,7 @@ describe("uretilmis varyantlar", () => {
   it("srcset'in gosterdigi her dosya public/ altinda duruyor", () => {
     for (const { slug, src } of screenshots) {
       for (const width of SCREENSHOT_WIDTHS) {
-        const path = src.replace(/-d+.webp$/, `-${width}.webp`);
+        const path = src.replace(/-\d+\.webp$/, `-${width}.webp`);
         const file = join(process.cwd(), "public", path);
         expect(existsSync(file), `${slug}: ${path} bulunamadi`).toBe(true);
       }

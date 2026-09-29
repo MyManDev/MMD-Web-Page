@@ -30,7 +30,7 @@ import { Screenshot } from "./Screenshot";
 */
 const SLOT =
   "invisible col-start-1 row-start-1 opacity-0 data-active:visible data-active:z-1 data-active:opacity-100" +
-  " motion-safe:transition-[opacity,visibility] motion-safe:delay-200 motion-safe:duration-0" +
+  " motion-safe:transition-[opacity,visibility] motion-safe:delay-200 motion-safe:duration-0 motion-safe:ease-out" +
   " motion-safe:data-active:delay-0 motion-safe:data-active:duration-200";
 
 /**
@@ -72,8 +72,10 @@ export function ScreenshotCarousel({
   screenshots: Project["screenshots"];
   className: string;
 }) {
-  /* Hidrasyon olup olmadigini soyleyen kanca; gerekcesi PrincipleDeck'te
-     yazili: sunucu anlik goruntusu false, istemcininki true, tek render. */
+  /* Hidrasyon olup olmadigini soyleyen kanca, PrincipleDeck'teki ile ayni.
+     Hidrasyon sunucunun degeriyle (false) yapiliyor, yani uyusmazlik yok; React
+     hemen ardindan istemcinin degeriyle (true) bir kez daha render ediyor ve
+     tuslar o render'da gorunur oluyor. */
   const enhanced = useSyncExternalStore(
     () => () => {},
     () => true,
