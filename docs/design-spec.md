@@ -393,7 +393,9 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   `TypedCaption.tsx`); karar sahibinin isteği: "resmin altındaki yazı resim değişince daktilo
   olarak değişsin". Takım kartının biyografisiyle aynı ilke: gizleme CSS'te ve yalnızca
   `[data-typing]` altında, metin DOM'da her zaman tam. Sayfa açılınca ilk yazı zaten tam durur;
-  JS yoksa ve reduced-motion'da daktilo hiç çalışmaz.
+  JS yoksa ve reduced-motion'da daktilo hiç çalışmaz. Yazı bitmeden görüntü yeniden değişirse
+  giden yazının kalanı gizli kalır ve başlıkla birlikte söner; yazarken reduced-motion açılırsa
+  yazı hemen tamamlanır.
 - **Erişilebilirlik.** APG karusel deseninin rolleri ve etiketleri: kap `role="group"` ve
   `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. APG'nin
   kendiliğinden dönen karusel için istediği görünür durdur/başlat tuşu **yok** (§3.4). Görüntü alanının
@@ -816,7 +818,8 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 yok. **Yükleme anında giriş animasyonu yasağı kaldırıldı** (§4.4); Hero'nun yükleme girişi zarfın
 içinde (240ms, `ease-out`). **Zarfın dışında üç animasyon var:** metin girişi 520ms
 (`cubic-bezier(0.22, 0.61, 0.36, 1)`), prensip kelimeleri 520ms ve scroll göstergesi 2 × 2200ms
-`ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
+`ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29).
+Ekran görüntüsü geçişi (900ms) de zarfın dışında; onu karar sahibi kendisi seçti (§3.3.1). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
 değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
@@ -893,7 +896,8 @@ komşu kartlar kaymıyor.
 
 **Daktilo efekti kalıcı** (#57). Gerçek portrelerle bakıldı ve benimsendi; deneme dönemi kapandı.
 Tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`). Prensip destesi bir süre aynı
-kuralı kullandı; kelime kelime belirmeye geçince bıraktı ve kural tek kullanıcıda kaldı. Efekt şu
+kuralı kullandı; kelime kelime belirmeye geçince bıraktı. Kuralın bugünkü ikinci kullanıcısı
+karuselin resim altı yazısı (`TypedCaption.tsx`, §3.3.1). Efekt şu
 koşulları karşıladığı için kalıyor:
 
 - Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel

@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { projects } from "@/content";
 import { CAPTION_STEP_MS } from "@/components/sections/projects/TypedCaption";
@@ -604,16 +604,6 @@ test.describe("ekran goruntusu karuseli", () => {
     await expect(carousel.locator('[aria-live="polite"]')).toHaveCount(1);
   });
 
-  /** Yazi yalnizca DEGISIMDE yaziliyor; sayfa acilinca ilki zaten tam. */
-  test("sayfa acilinca ilk yazi daktiloyla yazilmiyor", async ({ page }) => {
-    const carousel = carouselOf(page);
-    await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
-    const caption = carousel.locator(SLIDE).first().locator("figcaption");
-    await expect(caption).not.toHaveAttribute("data-typing");
-    const last = caption.locator("span").last();
-    expect(await last.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
-  });
-
   test("hidrasyondan sonra tuslar gorunur ve sayac ilk goruntude", async ({ page }) => {
     const carousel = carouselOf(page);
     await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
@@ -622,19 +612,10 @@ test.describe("ekran goruntusu karuseli", () => {
   });
 
   /**
-   * Capraz sonumleme: gelen slayt USTTE beliriyor, giden onun suresi kadar
-   * ALTTA kalip tek adimda kayboluyor. Olculen sey SAYI DEGIL ILISKI - sure
-   * degisirse test takip etmeli, ama giden slaytin bekledigi sure gelenin
-   * suresinden farkli olursa arada zemin parlar ve test dusmeli.
-   *
-   * Reduced-motion altinda gecis HIC yok (CLAUDE.md kural 10): ne sure ne
-   * gecikme. Gecikme kalsaydi giden slayt gorunur kalirdi (design-spec.md §6.1).
-   */
-  /**
    * Giden slaytin BASLIGI beklemeden soner (design-spec.md §3.3.1): zemini yok,
    * altta kalsaydi yeni baslikla ust uste okunurdu. Olculen sey sozlesme: durgun
    * halde gizli slaytin basligi opaklik 0, basligin gecisi gecikmesiz. Slaytin
-   * kendisi 200ms bekliyor (asagidaki test), baslik beklemiyor.
+   * kendisi gelenin suresi kadar bekliyor (asagidaki test), baslik beklemiyor.
    */
   test("giden basligin gecisi beklemiyor", async ({ page }) => {
     const slides = carouselOf(page).locator(SLIDE);
@@ -659,6 +640,15 @@ test.describe("ekran goruntusu karuseli", () => {
     expect(hidden.duration).toBeGreaterThan(0);
   });
 
+  /**
+   * Capraz sonumleme: gelen slayt USTTE beliriyor, giden onun suresi kadar
+   * ALTTA kalip tek adimda kayboluyor. Olculen sey SAYI DEGIL ILISKI - sure
+   * degisirse test takip etmeli, ama giden slaytin bekledigi sure gelenin
+   * suresinden farkli olursa arada zemin parlar ve test dusmeli.
+   *
+   * Reduced-motion altinda gecis HIC yok (CLAUDE.md kural 10): ne sure ne
+   * gecikme. Gecikme kalsaydi giden slayt gorunur kalirdi (design-spec.md §6.1).
+   */
   test("gecis capraz sonumleme, reduced-motion altinda hic yok", async ({ page }) => {
     const slides = carouselOf(page).locator(SLIDE);
     const timing = (i: number) =>
@@ -736,16 +726,6 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
     await expect(slides.nth(0).locator("figcaption")).toBeHidden();
   });
 
-  test("reduced-motion altinda yazi daktilosuz, tam geliyor", async ({ page }) => {
-    const carousel = carouselOf(page);
-    await carousel.getByRole("button", { name: "Next screenshot" }).click();
-    const caption = carousel.locator(SLIDE).nth(1).locator("figcaption");
-    await expect(caption).toBeVisible();
-    await expect(caption).not.toHaveAttribute("data-typing");
-    const last = caption.locator("span").last();
-    expect(await last.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
-  });
-
   test("iki uctan basa sariyor", async ({ page }) => {
     const carousel = carouselOf(page);
     const counter = carousel.locator("p");
@@ -802,7 +782,7 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
  * Gecisten sonra GORUNUR SLAYT SAYISI SAYILMIYOR ve bu olculerek secildi: gecisin
  * ilk karesinde gelen slayt henuz gizli, giden gorunur - yani "tek gorunur
  * slayt" iddiasi bir an ESKI durum icin dogru cikiyor ve test yanlis sebeple
- * geciyordu. Sonraki 200ms iki slayt birlikte gorunur (capraz sonumleme). Bu
+ * geciyordu. Gecis boyunca iki slayt birlikte gorunur (capraz sonumleme). Bu
  * yuzden slaytlar adiyla soruluyor: gelen gorunur, giden gizli.
  */
 test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
@@ -836,27 +816,6 @@ test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
 
   /** Her ara adim dogrulaniyor: yalnizca sondaki "01" bakilsaydi, hic
       ilerlemeyen bir deste de testi gecerdi. */
-  /**
-   * DAKTILO (design-spec.md §3.3.1): goruntu degisince altindaki yazi harf harf
-   * geliyor. Metin DOM'da BASTAN TAM (ekran okuyucu ve figur adi icin), gizleme
-   * yalnizca `[data-typing]` altinda `opacity` ile. Bekleme suresi
-   * `CAPTION_STEP_MS`ten turetiliyor.
-   */
-  test("goruntu degisince yazisi daktiloyla geliyor", async ({ page }) => {
-    const text = SHOTS[1]?.caption ?? "";
-    const caption = carouselOf(page).locator(SLIDE).nth(1).locator("figcaption");
-    const last = caption.locator("span").last();
-    await page.clock.runFor(AUTO_ADVANCE_MS);
-
-    await expect(caption).toHaveAttribute("data-typing", "");
-    await expect(caption).toHaveText(text);
-    expect(await last.evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
-
-    await page.clock.runFor(CAPTION_STEP_MS * (Array.from(text).length + 2));
-    await expect(caption).not.toHaveAttribute("data-typing");
-    await expect.poll(() => last.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
-  });
-
   test("sondan sonra basa sariyor", async ({ page }) => {
     for (let step = 1; step <= SHOTS.length; step++) {
       await page.clock.runFor(AUTO_ADVANCE_MS);
@@ -936,6 +895,118 @@ test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
       await page.clock.runFor(AUTO_ADVANCE_MS);
       await expect(counterOf(page)).toHaveText(`01 / ${pad(SHOTS.length)}`);
     }
+  });
+});
+
+/**
+ * DAKTILO (design-spec.md §3.3.1): goruntu degisince altindaki yazi harf harf
+ * geliyor. Metin DOM'da BASTAN TAM (ekran okuyucu ve figur adi icin), gizleme
+ * yalnizca `[data-typing]` altinda `opacity` ile. Bekleme sureleri
+ * `CAPTION_STEP_MS`ten turetiliyor.
+ *
+ * Saat burada da DURMUS (yukaridaki blokla ayni sebep) ve olumsuz testler icin
+ * bu sart. Gercek saatte yazi iki saniyede kendiliginden bitip isaretini
+ * kaldiriyordu; "isaret yok" bekleyen, kendini tekrarlayan bir assertion yaziyi
+ * hic engellemeyen bir koda karsi da geciyordu (incelemede bulundu). Durmus
+ * saatte baslamis bir yazi, `runFor` onu ilerletmedikce isaretini tasiyor.
+ *
+ * Elle adimlar `dispatchEvent` ile: gercek bir tiklama desteyi duraklatirdi,
+ * olculen sey ise yazinin kendisi.
+ */
+test.describe("ekran goruntusu karuseli - daktilo", () => {
+  test.skip(MULTI < 0, NO_CAROUSEL);
+
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 1000);
+  });
+
+  /* Sayfa ayarlar (reduced-motion) konduktan SONRA yukleniyor, kanca degeri ilk
+     render'da okusun. */
+  const load = async (page: Page) => {
+    await page.reload();
+    await expect(carouselOf(page).getByRole("button", { name: "Next screenshot" })).toBeVisible();
+  };
+  const captionOf = (page: Page, slot: number) =>
+    carouselOf(page).locator(SLIDE).nth(slot).locator("figcaption");
+  const opacityOf = (letter: Locator) =>
+    letter.evaluate((el) => Number(getComputedStyle(el).opacity));
+  /* `count` harf yazdiriyor. Yarim adimlik pay: `runFor`un tam sinirdaki
+     zamanlayiciyi atesleyip atesletmedigine test baglanmasin. */
+  const typeLetters = (page: Page, count: number) =>
+    page.clock.runFor(CAPTION_STEP_MS * count + Math.floor(CAPTION_STEP_MS / 2));
+
+  test("goruntu degisince yazi harf harf, sirayla geliyor", async ({ page }) => {
+    await load(page);
+    const text = SHOTS[1]?.caption ?? "";
+    const caption = captionOf(page, 1);
+    const letters = caption.locator("span");
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+
+    await expect(caption).toHaveAttribute("data-typing", "");
+    await expect(caption).toHaveText(text);
+    expect(await opacityOf(letters.first())).toBe(0);
+
+    // Ara durum: ilk bes harf acik, sonrasi gizli. Hepsini sonda birden acan ya
+    // da sondan baslayan bir yazi burada duser.
+    await typeLetters(page, 5);
+    for (let i = 0; i < 5; i++) expect(await opacityOf(letters.nth(i))).toBe(1);
+    expect(await opacityOf(letters.nth(5))).toBe(0);
+    expect(await opacityOf(letters.last())).toBe(0);
+
+    await typeLetters(page, Array.from(text).length);
+    await expect(caption).not.toHaveAttribute("data-typing");
+    expect(await opacityOf(letters.last())).toBe(1);
+  });
+
+  /** Yazi yalnizca DEGISIMDE yaziliyor; sayfa acilinca ilki zaten tam. */
+  test("sayfa acilinca ilk yazi daktiloyla yazilmiyor", async ({ page }) => {
+    await load(page);
+    const caption = captionOf(page, 0);
+    await expect(caption).not.toHaveAttribute("data-typing");
+    expect(await opacityOf(caption.locator("span").last())).toBe(1);
+  });
+
+  test("reduced-motion altinda yazi daktilosuz, tam geliyor", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await load(page);
+    await carouselOf(page).getByRole("button", { name: "Next screenshot" }).dispatchEvent("click");
+    const caption = captionOf(page, 1);
+    await expect(caption).toBeVisible();
+    await expect(caption).not.toHaveAttribute("data-typing");
+    expect(await opacityOf(caption.locator("span").last())).toBe(1);
+  });
+
+  /**
+   * #125'in hata sinifi (team.spec.ts'te biyografi icin ayni test): yazi
+   * surerken reduced-motion acilirsa yazi yarida DONMUYOR, hemen tamamlaniyor.
+   */
+  test("yazarken reduced-motion acilinca yazi hemen tamamlaniyor", async ({ page }) => {
+    await load(page);
+    const caption = captionOf(page, 1);
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+    await expect(caption).toHaveAttribute("data-typing", "");
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(caption).not.toHaveAttribute("data-typing");
+    expect(await opacityOf(caption.locator("span").last())).toBe(1);
+  });
+
+  /**
+   * Yazi bitmeden goruntu yeniden degisirse giden yazinin KALANI gizli kaliyor
+   * ve basligiyla birlikte soner (TypedCaption.tsx). Isaret orada kalksaydi
+   * kalan harfler tek karede belirir, gelen yaziyla ust uste okunurdu.
+   */
+  test("yazi bitmeden goruntu degisirse giden yazinin kalani belirmiyor", async ({ page }) => {
+    await load(page);
+    const outgoing = captionOf(page, 1);
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+    await expect(outgoing).toHaveAttribute("data-typing", "");
+    await typeLetters(page, 5);
+
+    await carouselOf(page).getByRole("button", { name: "Next screenshot" }).dispatchEvent("click");
+    await expect(captionOf(page, 2 % SHOTS.length)).toHaveAttribute("data-typing", "");
+    expect(await opacityOf(outgoing.locator("span").last())).toBe(0);
   });
 });
 

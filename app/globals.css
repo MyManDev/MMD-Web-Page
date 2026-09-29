@@ -545,15 +545,16 @@ a:focus-visible .roll-track {
   border-color: var(--color-text-muted);
 }
 
-/* Daktilo efekti - components/sections/team/BioTypewriter.tsx
+/* Daktilo efekti - components/sections/team/BioTypewriter.tsx ve
+   components/sections/projects/TypedCaption.tsx (karuselin resim alti yazisi)
    design-spec.md §6
 
    Prensip destesi bir sure bu kurali da kullaniyordu; kelime kelime belirmeye
-   gecince birakti. Kural tek kullanicida kaldi.
+   gecince birakti.
 
    Gizleme burada, JS'te DEGIL. `data-typing` isaretini JS koyuyor; yani JS hic
    calismazsa bu kural hic uygulanmaz ve butun harfler gorunur kalir. Tersi
-   yazilsaydi (JS gosterir, CSS gizler) JS'in gelmedigi bir sayfada biyografi
+   yazilsaydi (JS gosterir, CSS gizler) JS'in gelmedigi bir sayfada metin
    gorunmez olurdu. */
 [data-typing] > span[data-pending] {
   opacity: 0;

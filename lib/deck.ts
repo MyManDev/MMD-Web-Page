@@ -6,8 +6,9 @@ import { type FocusEvent, useEffect, useState, useSyncExternalStore } from "reac
  *
  * Once hepsi PrincipleDeck'in icindeydi. Ekran goruntusu karuseli (§3.3.1) de
  * ayni davranisa gecebilsin diye buraya tasindi: iki kopya, bir gun birinde
- * duzeltilip digerinde unutulan bir hata demekti. Bugun karusel buradan yalnizca
- * `useHydrated`'i kullaniyor.
+ * duzeltilip digerinde unutulan bir hata demekti. Bugun karusel
+ * `useAutoAdvancingDeck`'i, resim alti yazisi (TypedCaption.tsx)
+ * `usePrefersReducedMotion`'i kullaniyor.
  *
  * "use client" YOK ve bu bilerek: dosyayi yalnizca client component'ler ve
  * Node'daki E2E import ediyor. Yonerge konsaydi, bir Server Component'in import

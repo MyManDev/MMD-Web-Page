@@ -22,15 +22,23 @@ export const CAPTION_STEP_MS = 25;
  * dosya koyuyor. Yani:
  *
  *   JS yoksa / ilk render     isaret yok -> yazinin tamami gorunur
- *   reduced-motion            effect erken doner -> isaret yok -> gorunur
+ *   reduced-motion            isaret kalkar -> tamami gorunur (yazarken
+ *                             acilirsa da: yazi hemen tamamlanir)
  *   goruntu degisti           isaret konur, harfler sirayla acilir
- *   yazi bitti ya da slayt    isaret kalkar -> tamami gorunur
- *   degisti
+ *   yazi bitti                isaret kalkar -> tamami gorunur
+ *   yazarken slayt degisti    isaret KALIR: giden yazinin kalan harfleri
+ *                             gizli kalip basligiyla birlikte soner
  *
- * Yalnizca DEGISIMDE yaziliyor: `steps` 0 iken (sayfa acildi, kimse bir sey
- * yapmadi) ilk yazi zaten tam duruyor. Sayac yerine "ilk render mi" diye bir
- * ref tutulsaydi React'in gelistirme kipindeki cift effect'i yaziyi sayfa
- * acilirken de yazdirirdi.
+ * Son satir bilerek: isaret orada kalkarsa yazilmamis harfler tek karede belirir
+ * ve giden baslik 200ms boyunca gelenin ustunde okunurdu (incelemede bulundu).
+ * Slayt yeniden etkinlesince effect her seyi bastan kuruyor.
+ *
+ * Yalnizca DEGISIMDE yaziliyor: `written` son ele alinan adim ve effect yalnizca
+ * `steps` ondan farkliysa yaziyor. Sayfa acilinca (0 = 0) ilk yazi zaten tam
+ * duruyor; reduced-motion kapaninca da goruntu degismeden yeniden yazilmiyor.
+ * Bu bir DEGER karsilastirmasi: "ilk render mi" diye bir bayrak tutulsaydi
+ * React'in gelistirme kipindeki cift effect'i yaziyi sayfa acilirken de
+ * yazdirirdi.
  *
  * Harfler React state'iyle degil DOM'da aciliyor: harf basina bir render olmasin
  * diye. React bu ozniteliklere hic dokunmuyor (sanal DOM'da yoklar), yani bir
@@ -52,11 +60,19 @@ export function TypedCaption({
   className?: string;
 }) {
   const ref = useRef<HTMLElement>(null);
+  const written = useRef(0);
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const caption = ref.current;
-    if (!caption || !active || steps === 0 || reducedMotion) return;
+    if (!caption || !active) return;
+    if (reducedMotion) {
+      delete caption.dataset.typing;
+      written.current = steps;
+      return;
+    }
+    if (steps === written.current) return;
+    written.current = steps;
 
     const letters = Array.from(caption.children);
     for (const letter of letters) letter.setAttribute("data-pending", "");
@@ -72,10 +88,8 @@ export function TypedCaption({
       }
     }, CAPTION_STEP_MS);
 
-    return () => {
-      clearInterval(timer);
-      delete caption.dataset.typing;
-    };
+    // Yalnizca zamanlayici: isaret burada kalkmiyor (yukaridaki tablo).
+    return () => clearInterval(timer);
   }, [active, steps, reducedMotion]);
 
   return (
