@@ -631,3 +631,5 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Contact bölümü             | `mailto`, form değil; adres bir **takma ad** — taranırsa kapatılıp değiştirilir              | §3     |
 | Bölge sahipliği            | **Bölge B İbrahim'e**; paylaşılan yüzey onayı karar sahibinde (working-agreement §1)         | —      |
 | Logo işareti               | Ekip iki kişiye indi; üç kafalı işaret **olduğu gibi kaldı** (karar sahibi)                  | §4.1   |
+| Kod yorumlarının dili      | **Türkçe, ASCII**; CLAUDE.md'deki "İngilizce" kuralı depoya uyduruldu (karar sahibi)         | —      |
+| `content/index.ts`         | **Paylaşılan yüzey**; CODEOWNERS zaten öyle sayıyordu (working-agreement §1)                 | —      |

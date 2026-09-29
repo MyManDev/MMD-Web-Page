@@ -41,7 +41,8 @@ kapalı.
 - `app/tokens.css` ve `app/globals.css`
 - `app/layout.tsx`, `app/page.tsx`
 - `components/ui/`
-- `content/schema.ts` (şemanın şekli; içeriğin kendisi Bölge A)
+- `content/schema.ts` (şemanın şekli; içeriğin kendisi Bölge A) ve `content/index.ts` (içeriği şemadan
+  geçirip component'lere veren yükleyici)
 - Marka metinleri, logo/sembol kullanımı, proje açıklamaları, imza sayısının metni
 - `docs/`, `CLAUDE.md`, `.github/`
 

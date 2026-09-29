@@ -32,7 +32,8 @@ pnpm gates        # lint, format, typecheck, test, build, size, e2e — PR önce
 
 ## Dil
 
-- Kod, dosya adları, commit mesajları, PR başlıkları, kod içi yorumlar: **İngilizce**
+- Kod, dosya adları, commit mesajları, PR başlıkları: **İngilizce**
+- Kod içi yorumlar: **Türkçe, ASCII** (ş, ğ, ı gibi harfler olmadan; depodaki yorumlar böyle)
 - Site içeriği: **İngilizce**
 - Dokümanlar (`docs/`), issue ve PR gövdeleri, sohbet: **Türkçe**
 
