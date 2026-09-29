@@ -26,7 +26,15 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
   const headingId = `${section.id}-title`;
 
   return (
-    <section id={section.id} aria-labelledby={headingId} className="section-edge bg-surface">
+    /* `overflow-x-clip`: kartlarin hayalet arka plani (ScreenshotGhost.tsx)
+       kartin 48px disina tasiyor ve dar ekranda sayfaya yatay kaydirma
+       ekliyordu (olculdu: 390px'te 28px). `clip` kaydirma kabi OLUSTURMUYOR,
+       yani sticky yigin ve nav etkilenmiyor. */
+    <section
+      id={section.id}
+      aria-labelledby={headingId}
+      className="section-edge overflow-x-clip bg-surface"
+    >
       <Container>
         {/*
           Bolum girisi ICERIGE bagli, section'a degil: zemin viewport genisliginde

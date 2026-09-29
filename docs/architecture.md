@@ -576,6 +576,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Otomatik geçişte durdurma  | Görünür tuş **yok**; bazı girdilerde yol yok, kabul edilen risk (design-spec §3.4)           | —      |
 | Görüntü başlığı            | Her görüntünün altında kısa başlık, görüntüyle değişir; `alt` onu tekrarlamaz                | §3     |
 | Karusel geçişi             | 200ms → **900ms** çapraz sönümleme, zarf dışı; resim altı yazısı daktiloyla (karar sahibi)   | §4.4   |
+| Hayalet arka plan          | Etkin görüntünün %12, 6px bulanık kopyası kartın arkasında; görüntüyle değişir               | §3     |
 | Font                       | IBM Plex Sans + Mono; **display rolü de mono** (bayt farkı yok)                              | §4.2   |
 | Sayfa genişliği            | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                                       | §4.3   |
 | Bölüm dikey boşluğu        | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı                      | §4.3   |

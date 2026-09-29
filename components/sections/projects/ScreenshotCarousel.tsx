@@ -4,6 +4,7 @@ import { ArrowIcon } from "@/components/ui";
 import type { Project } from "@/content";
 import { useAutoAdvancingDeck } from "@/lib/deck";
 import { Screenshot } from "./Screenshot";
+import { ScreenshotGhost } from "./ScreenshotGhost";
 
 /*
   Slaytlarin hepsi AYNI izgara hucresinde ust uste; yalnizca `data-active`
@@ -84,56 +85,61 @@ export function ScreenshotCarousel({
   const { hydrated: enhanced, index, steps, step, announce, pauseOn } = useAutoAdvancingDeck(total);
   const pad = (value: number) => String(value).padStart(2, "0");
 
+  /* Hayalet arka plan karuselin KARDESI: kartin dogrudan cocugu olmali, cunku
+     karuselin koku giris animasyonunda `translate` tasiyor (ScreenshotGhost.tsx). */
   return (
-    <div
-      aria-label={`${name} screenshots`}
-      aria-roledescription="carousel"
-      className={`flex flex-col gap-4 ${className}`}
-      role="group"
-      {...pauseOn}
-    >
-      {/* Cerceve her slaytin icinde, goruntunun etrafinda (Screenshot.tsx); kap
+    <>
+      <ScreenshotGhost screenshots={screenshots} index={index} />
+      <div
+        aria-label={`${name} screenshots`}
+        aria-roledescription="carousel"
+        className={`flex flex-col gap-4 ${className}`}
+        role="group"
+        {...pauseOn}
+      >
+        {/* Cerceve her slaytin icinde, goruntunun etrafinda (Screenshot.tsx); kap
           yalnizca izgara. Baslik slaytin parcasi, yani gecis ikisini birlikte
           goturuyor ve kap en uzun basliga gore sabit kaliyor. */}
-      <div aria-live={announce ? "polite" : "off"} className="grid">
-        {screenshots.map((screenshot, slot) => (
-          <div
-            key={screenshot.src}
-            aria-label={`${slot + 1} of ${total}`}
-            aria-roledescription="slide"
-            className={SLOT}
-            data-active={slot === index ? "" : undefined}
-            role="group"
-          >
-            <Screenshot {...screenshot} typing={{ active: slot === index, steps }} />
+        <div aria-live={announce ? "polite" : "off"} className="grid">
+          {screenshots.map((screenshot, slot) => (
+            <div
+              key={screenshot.src}
+              aria-label={`${slot + 1} of ${total}`}
+              aria-roledescription="slide"
+              className={SLOT}
+              data-active={slot === index ? "" : undefined}
+              role="group"
+            >
+              <Screenshot {...screenshot} typing={{ active: slot === index, steps }} />
+            </div>
+          ))}
+        </div>
+
+        <div className={`flex items-center gap-4 ${enhanced ? "" : "invisible"}`}>
+          <p className="font-mono text-mono text-text-muted tabular-nums">
+            <span className="text-text">{pad(index + 1)}</span> / {pad(total)}
+          </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="Previous screenshot"
+              className="deck-button"
+              onClick={() => step(-1)}
+              type="button"
+            >
+              <ArrowIcon direction="left" />
+            </button>
+            <button
+              aria-label="Next screenshot"
+              className="deck-button"
+              onClick={() => step(1)}
+              type="button"
+            >
+              <ArrowIcon direction="right" />
+            </button>
           </div>
-        ))}
-      </div>
-
-      <div className={`flex items-center gap-4 ${enhanced ? "" : "invisible"}`}>
-        <p className="font-mono text-mono text-text-muted tabular-nums">
-          <span className="text-text">{pad(index + 1)}</span> / {pad(total)}
-        </p>
-
-        <div className="flex items-center gap-2">
-          <button
-            aria-label="Previous screenshot"
-            className="deck-button"
-            onClick={() => step(-1)}
-            type="button"
-          >
-            <ArrowIcon direction="left" />
-          </button>
-          <button
-            aria-label="Next screenshot"
-            className="deck-button"
-            onClick={() => step(1)}
-            type="button"
-          >
-            <ArrowIcon direction="right" />
-          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -3,6 +3,7 @@ import { Button, Tag } from "@/components/ui";
 import { MetricRow } from "./MetricRow";
 import { Screenshot } from "./Screenshot";
 import { ScreenshotCarousel } from "./ScreenshotCarousel";
+import { ScreenshotGhost } from "./ScreenshotGhost";
 
 /**
  * Tek proje blogu. design-spec.md §3.3.1
@@ -44,7 +45,9 @@ export function ProjectCard({
     <article
       style={stacked ? { zIndex: 10 + index } : undefined}
       className={
-        "grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)]" +
+        /* `relative isolate`: hayalet arka plan (ScreenshotGhost.tsx) kartin
+           kutusuna gore konumlaniyor ve `-z-10` ile icerigin arkasinda kaliyor. */
+        "relative isolate grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-[var(--spacing-gutter-lg)]" +
         /* YUKSEKLIK KARTIN KENDISINDE ve bu iki denemeden sonra OLCULEREK
            bulundu:
 
@@ -65,7 +68,9 @@ export function ProjectCard({
         (stacked
           ? " lg:sticky lg:top-[calc(var(--nav-height)+24px)]" +
             " lg:min-h-[calc(100dvh-var(--nav-height)-24px)]" +
-            " motion-reduce:lg:static motion-reduce:lg:min-h-0"
+            /* `static` DEGIL `relative`: yigin kapansa da hayalet kartin
+               kutusuna gore konumlanmali. */
+            " motion-reduce:lg:relative motion-reduce:lg:min-h-0"
           : "")
       }
     >
@@ -146,7 +151,10 @@ export function ProjectCard({
           screenshots={project.screenshots}
         />
       ) : (
-        <Screenshot {...project.screenshots[0]} className="reveal-on-enter lg:col-span-7" />
+        <>
+          <ScreenshotGhost screenshots={project.screenshots} index={0} />
+          <Screenshot {...project.screenshots[0]} className="reveal-on-enter lg:col-span-7" />
+        </>
       )}
     </article>
   );

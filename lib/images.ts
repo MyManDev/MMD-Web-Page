@@ -37,7 +37,7 @@ const BASE = /^(.*)-\d+\.webp$/;
  * boyutlu dosyayi indirir. Sunucu component'inde atilan hata `pnpm build`'i
  * dusurur; istenen de bu (docs/architecture.md §5).
  */
-function srcSet(src: string, widths: readonly number[]): string {
+function baseOf(src: string): string {
   const match = BASE.exec(src);
   if (!match?.[1]) {
     throw new Error(
@@ -45,10 +45,18 @@ function srcSet(src: string, widths: readonly number[]): string {
         `Dosyalari scripts/optimize-images.mjs uretir.`,
     );
   }
+  return match[1];
+}
 
-  const base = match[1];
+function srcSet(src: string, widths: readonly number[]): string {
+  const base = baseOf(src);
   return widths.map((width) => `${base}-${width}.webp ${width}w`).join(", ");
 }
 
 export const screenshotSrcSet = (src: string) => srcSet(src, SCREENSHOT_WIDTHS);
 export const portraitSrcSet = (src: string) => srcSet(src, PORTRAIT_WIDTHS);
+
+/** Ayni tabanin EN KUCUK ekran goruntusu varyanti: bulanik bir hayalet zemin
+    icin yeterli cozunurluk (ScreenshotGhost.tsx). */
+export const smallestScreenshot = (src: string) =>
+  `${baseOf(src)}-${Math.min(...SCREENSHOT_WIDTHS)}.webp`;

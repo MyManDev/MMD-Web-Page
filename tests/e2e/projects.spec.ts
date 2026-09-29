@@ -117,7 +117,7 @@ test("sayi etiketin USTUNDE gorunuyor ama DOM'da altinda", async ({ page }) => {
  * sayisina esit. Tek goruntude bugun oldugu gibi bir.
  */
 test("ekran goruntuleri gercekten yukleniyor ve yerini onceden ayiriyor", async ({ page }) => {
-  const images = page.locator(`${SECTION} img`);
+  const images = page.locator(`${SECTION} figure img`);
   await expect(images).toHaveCount(SCREENSHOTS.length);
 
   for (const [i, screenshot] of SCREENSHOTS.entries()) {
@@ -166,8 +166,60 @@ test("her goruntunun altinda icerikteki kendi basligi var", async ({ page }) => 
   expect(caption!.y).toBeGreaterThanOrEqual(frame!.y + frame!.height);
 });
 
+/**
+ * HAYALET ARKA PLAN (design-spec.md §3.3.1): her kartin arkasinda kendi ekran
+ * goruntulerinin soluk kopyasi; etkin olan gorunur. Susleme, bilgi degil:
+ * `aria-hidden`, `alt=""`, en kucuk varyant. Icerigin ARKASINDA ve karti
+ * kapliyor - kartin dogrudan cocugu, karuselin icinde degil.
+ */
+test("her kartin arkasinda kendi goruntulerinin hayaleti var", async ({ page }) => {
+  const cards = page.locator(`${SECTION} article`);
+  for (const [i, project] of projects.entries()) {
+    const card = cards.nth(i);
+    const ghost = card.locator(":scope > [data-ghost]");
+    await expect(ghost).toHaveCount(1);
+    await expect(ghost).toHaveAttribute("aria-hidden", "true");
+
+    const images = ghost.locator("img");
+    await expect(images).toHaveCount(project.screenshots.length);
+    for (const [slot, screenshot] of project.screenshots.entries()) {
+      await expect(images.nth(slot)).toHaveAttribute("alt", "");
+      await expect(images.nth(slot)).toHaveAttribute(
+        "src",
+        screenshot.src.replace(/-\d+\.webp$/, "-896.webp"),
+      );
+    }
+    await expect(ghost.locator("img[data-active]")).toHaveCount(1);
+    await expect(images.first()).toHaveAttribute("data-active", "");
+
+    const layout = await card.evaluate((el) => {
+      const layer = el.querySelector(":scope > [data-ghost]") as HTMLElement;
+      const a = el.getBoundingClientRect();
+      const g = layer.getBoundingClientRect();
+      return {
+        isolation: getComputedStyle(el).isolation,
+        zIndex: getComputedStyle(layer).zIndex,
+        covers: g.left <= a.left && g.top <= a.top && g.right >= a.right && g.bottom >= a.bottom,
+      };
+    });
+    expect(layout).toEqual({ isolation: "isolate", zIndex: "-10", covers: true });
+  }
+});
+
+/**
+ * Hayalet kartin disina tasiyor; bolum onu yatayda kirpiyor. Olculdu: kirpma
+ * yokken sayfa 390px'te 28px, 1440px'te 16px yatay kayiyordu.
+ */
+test("hayalet arka plan sayfaya yatay tasma eklemiyor", async ({ page }) => {
+  await expect(page.locator(`${SECTION} [data-ghost]`).first()).toBeAttached();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+});
+
 test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
-  const images = page.locator(`${SECTION} img`);
+  const images = page.locator(`${SECTION} figure img`);
   for (let i = 0; i < SCREENSHOTS.length; i++) {
     await expect(images.nth(i)).toHaveAttribute("srcset", /-896\.webp 896w/);
     await expect(images.nth(i)).toHaveAttribute("srcset", /-1792\.webp 1792w/);
@@ -187,7 +239,7 @@ test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
  * Yani dar viewport DAHA BUYUK dosyayi aliyor, ve dogrusu bu.
  */
 test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
-  const image = page.locator(`${SECTION} img`).first();
+  const image = page.locator(`${SECTION} figure img`).first();
   await image.scrollIntoViewIfNeeded();
 
   const dpr = await page.evaluate(() => window.devicePixelRatio);
@@ -352,7 +404,9 @@ test("tek projede sticky yigin uygulanmiyor", async ({ page }) => {
     return { position: cs.position, minHeight: cs.minHeight, zIndex: cs.zIndex };
   });
 
-  expect(style.position).toBe("static");
+  // `relative`, `static` degil: hayalet arka plan kartin kutusuna gore
+  // konumlaniyor (ScreenshotGhost.tsx). Olculen sey yiginin YOKLUGU: sticky yok.
+  expect(style.position).toBe("relative");
   expect(style.zIndex).toBe("auto");
   expect(["0px", "auto"]).toContain(style.minHeight);
 });
@@ -431,7 +485,7 @@ test("sayfa sonuna kadar kaydirilinca gizli kalan metin yok", async ({ page }) =
 });
 
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {
-  const box = await page.locator(`${SECTION} img`).first().boundingBox();
+  const box = await page.locator(`${SECTION} figure img`).first().boundingBox();
   expect(box).not.toBeNull();
   expect(box!.width / box!.height).toBeCloseTo(1.6, 1);
 });
@@ -513,7 +567,7 @@ test("tek projede yigin devreye girmiyor", async ({ page }) => {
   const position = await page
     .locator(`${SECTION} article`)
     .evaluate((el) => getComputedStyle(el).position);
-  expect(position).toBe("static");
+  expect(position).not.toBe("sticky");
 });
 
 /**
@@ -724,6 +778,27 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
     await expect(slides.nth(1).locator("figcaption")).toBeVisible();
     await expect(slides.nth(1).locator("figcaption")).toHaveText(SHOTS[1]?.caption ?? "");
     await expect(slides.nth(0).locator("figcaption")).toBeHidden();
+  });
+
+  /**
+   * Hayalet gorunen goruntuyle birlikte degisiyor. Opaklik YENIDEN DENENEREK
+   * okunuyor: reduced-motion altinda da 0.01ms'lik bir gecis olusuyor (global
+   * blok `transition-duration`i kisaltiyor, `transition-property` `all`da
+   * kaliyor) ve tek seferlik bir okuma degisimin hemen ardindan eski degeri
+   * gorebiliyordu - CI'da boyle dustu.
+   */
+  test("hayalet arka plan goruntuyle birlikte degisiyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    const ghost = page
+      .locator(`${SECTION} article`)
+      .nth(MULTI)
+      .locator(":scope > [data-ghost] img");
+    await carousel.getByRole("button", { name: "Next screenshot" }).click();
+
+    await expect(ghost.nth(1)).toHaveAttribute("data-active", "");
+    await expect(ghost.nth(0)).not.toHaveAttribute("data-active");
+    await expect(ghost.nth(1)).toHaveCSS("opacity", "1");
+    await expect(ghost.nth(0)).toHaveCSS("opacity", "0");
   });
 
   test("iki uctan basa sariyor", async ({ page }) => {

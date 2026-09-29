@@ -389,6 +389,16 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   giden aynı süre altta kalıp tek adımda kaybolur. Önce 200ms'ydi ve görüntü bir anda değişiyor
   gibi okunuyordu; **karar sahibi 900ms'yi seçti** (§6'daki zarfın dışında). Reduced-motion altında
   geçiş hiç yok, değişim anında (§6.1).
+- **Hayalet arka plan.** Kartın arkasında, o an etkin olan ekran görüntüsünün soluk ve bulanık bir
+  kopyası; görüntü değişince o da aynı sürede değişir. Karar sahibinin isteği: "her proje için resim
+  koyacağız, o resimler hayalet ekran olsun arkaya, resim geçtiğinde hayalet arka plan da
+  değişsin". Beş varyant denendi, karar sahibi "Orta"yı seçti: %12 opaklık, 6px bulanıklık, %60
+  doygunluk, kenarlara doğru sönen radyal maske, kartın 48px dışına taşar. Bulanık olduğu için en
+  küçük varyant (896px) yeter. Tek görüntülü kartta da durur. Süsleme, bilgi değil: `aria-hidden`,
+  `alt=""`. Kartın doğrudan çocuğudur, karuselin değil: karusel giriş animasyonunda `translate`
+  taşıyor ve öyle bir öğe mutlak konumlu torunlarının referansı olur. Bölüm yatay taşmayı kırpar
+  (`overflow-x: clip`), yoksa dar ekranda sayfa 28px yana kayıyordu. Kartın yazılarının kontrastı
+  hayaletin üstünde ölçüldü: en kötüsü masaüstünde 5.92, 390px'te 6.03 (AA 4.5).
 - **Daktilo.** Görüntü değişince altındaki yazı harf harf gelir (harf başına 25ms,
   `TypedCaption.tsx`); karar sahibinin isteği: "resmin altındaki yazı resim değişince daktilo
   olarak değişsin". Takım kartının biyografisiyle aynı ilke: gizleme CSS'te ve yalnızca
@@ -854,6 +864,7 @@ aynı sınıf hatadır.
 | Ekran görüntüsü karuseli         | §3.4 aralığı         | desteyle aynı kanca (`lib/deck.ts`)                           |
 | Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
 | Resim altı yazısı                | 25ms/harf            | daktilo, görüntü değişince (`TypedCaption`)                   |
+| Hayalet arka plan                | 900ms                | `opacity`, görüntüyle birlikte (`ScreenshotGhost`)            |
 
 Süre sütununda "X + Y", Y'nin öğeler arası kademe olduğunu söyler; gecikme ayrıca yazılır.
 
@@ -1017,6 +1028,7 @@ altında kalır. Çözüm: her `<section>`a `scroll-margin-top: calc(var(--nav-h
 | Katman | `z-index` | Kim                                         |
 | ------ | --------- | ------------------------------------------- |
 | 0      | `auto`    | normal içerik                               |
+| −10    | `-10`     | kartın hayalet arka planı (kartın içinde)   |
 | 10     | `10`      | Projects yığınındaki kartlar (`10 + index`) |
 | 40     | `40`      | sticky navbar                               |
 | 50     | `50`      | mobil menü örtüsü                           |
