@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { projects } from "@/content";
 
@@ -13,6 +13,10 @@ import { projects } from "@/content";
  */
 
 const SECTION = "section#projects";
+
+/* Icerikteki butun goruntuler, sayfadaki siralariyla: `projects` zaten
+   `order`a gore sirali ve kartlar o sirayla basiliyor. */
+const SCREENSHOTS = projects.flatMap((project) => project.screenshots);
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -105,30 +109,44 @@ test("sayi etiketin USTUNDE gorunuyor ama DOM'da altinda", async ({ page }) => {
   expect(order.valueIsAbove).toBe(true);
 });
 
-test("ekran goruntusu gercekten yukleniyor ve yerini onceden ayiriyor", async ({ page }) => {
-  const image = page.locator(`${SECTION} img`);
-  await expect(image).toHaveCount(1);
+/**
+ * SAYI ICERIKTEN: karuselde goruntulerin hepsi DOM'da (gorunmeyenler
+ * `visibility: hidden`), yani sayfadaki <img> sayisi icerikteki goruntu
+ * sayisina esit. Tek goruntude bugun oldugu gibi bir.
+ */
+test("ekran goruntuleri gercekten yukleniyor ve yerini onceden ayiriyor", async ({ page }) => {
+  const images = page.locator(`${SECTION} img`);
+  await expect(images).toHaveCount(SCREENSHOTS.length);
 
-  // Bos olmayan alt: dekoratif degil, gercek icerik (design-spec.md §7.5).
-  const alt = await image.getAttribute("alt");
-  expect(alt?.trim()).toBeTruthy();
+  for (const [i, screenshot] of SCREENSHOTS.entries()) {
+    // Alt her goruntunun KENDI metni, ortak bir "X screenshot" degil - ve bos
+    // degil (sema): dekoratif degil, gercek icerik (design-spec.md §7.5).
+    await expect(images.nth(i)).toHaveAttribute("alt", screenshot.alt);
 
-  // width/height HTML'de: goruntu inmeden once de oran biliniyor, CLS olusmuyor.
-  await expect(image).toHaveAttribute("width", /^\d+$/);
-  await expect(image).toHaveAttribute("height", /^\d+$/);
+    // width/height HTML'de: goruntu inmeden once de oran biliniyor, CLS olusmuyor.
+    await expect(images.nth(i)).toHaveAttribute("width", /^\d+$/);
+    await expect(images.nth(i)).toHaveAttribute("height", /^\d+$/);
+  }
 
-  // Kayit var olmayan bir dosyaya isaret ediyorsa burada dusiyor.
-  await image.scrollIntoViewIfNeeded();
-  await expect
-    .poll(() => image.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0))
-    .toBe(true);
+  // Kayit var olmayan bir dosyaya isaret ediyorsa burada dusiyor. Gorunmeyen
+  // slaytlar da iniyor: kutulari duruyor, `loading="lazy"` onlari da goruyor.
+  await images.first().scrollIntoViewIfNeeded();
+  for (let i = 0; i < SCREENSHOTS.length; i++) {
+    await expect
+      .poll(() =>
+        images.nth(i).evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0),
+      )
+      .toBe(true);
+  }
 });
 
 test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
-  const image = page.locator(`${SECTION} img`);
-  await expect(image).toHaveAttribute("srcset", /-896\.webp 896w/);
-  await expect(image).toHaveAttribute("srcset", /-1792\.webp 1792w/);
-  await expect(image).toHaveAttribute("sizes", /.+/);
+  const images = page.locator(`${SECTION} img`);
+  for (let i = 0; i < SCREENSHOTS.length; i++) {
+    await expect(images.nth(i)).toHaveAttribute("srcset", /-896\.webp 896w/);
+    await expect(images.nth(i)).toHaveAttribute("srcset", /-1792\.webp 1792w/);
+    await expect(images.nth(i)).toHaveAttribute("sizes", /.+/);
+  }
 });
 
 /**
@@ -143,7 +161,7 @@ test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
  * Yani dar viewport DAHA BUYUK dosyayi aliyor, ve dogrusu bu.
  */
 test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
-  const image = page.locator(`${SECTION} img`);
+  const image = page.locator(`${SECTION} img`).first();
   await image.scrollIntoViewIfNeeded();
 
   const dpr = await page.evaluate(() => window.devicePixelRatio);
@@ -153,9 +171,13 @@ test("tarayici cihaza uyan varyanti indiriyor", async ({ page }, testInfo) => {
     .poll(() => image.evaluate((el: HTMLImageElement) => el.currentSrc))
     .toContain(expected);
 
-  // Kaynak goruntu (2360px) servis edilmiyor - assets/ altinda, public/ degil.
-  const response = await page.request.get("/projects/football-squad-optimizer.webp");
-  expect(response.status(), `${testInfo.project.name}: kaynak gorsel yayinlanmis`).toBe(404);
+  // Kaynak goruntuler servis edilmiyor - assets/ altinda, public/ degil. Adlari
+  // icerikten turetiliyor: `<taban>-1792.webp`in kaynagi `<taban>.webp`.
+  for (const { src } of SCREENSHOTS) {
+    const source = src.replace(/-\d+\.webp$/, ".webp");
+    const response = await page.request.get(source);
+    expect(response.status(), `${testInfo.project.name}: ${source} yayinlanmis`).toBe(404);
+  }
 });
 
 /**
@@ -383,7 +405,7 @@ test("sayfa sonuna kadar kaydirilinca gizli kalan metin yok", async ({ page }) =
 });
 
 test("16/10 oraninda ve tasmiyor", async ({ page }) => {
-  const box = await page.locator(`${SECTION} img`).boundingBox();
+  const box = await page.locator(`${SECTION} img`).first().boundingBox();
   expect(box).not.toBeNull();
   expect(box!.width / box!.height).toBeCloseTo(1.6, 1);
 });
@@ -494,4 +516,233 @@ test("mobilde tek kolon, lg ustunde 12 kolonluk izgara", async ({ page }, testIn
     .locator(`${SECTION} article`)
     .evaluate((el) => getComputedStyle(el).gridTemplateColumns);
   expect(columns.split(" ")).toHaveLength(width >= 1024 ? 12 : 1);
+});
+
+/**
+ * EKRAN GORUNTUSU KARUSELI. design-spec.md §3.3.1
+ *
+ * Testler SAYIDAN BAGIMSIZ, #105'teki takim testleriyle ayni yol: karusel
+ * yalnizca birden fazla goruntusu olan bir projede cizilir. Ilk test HER ZAMAN
+ * kosuyor ve her kart icin kendi yonunu olcuyor: tek goruntulu kartta karusel
+ * YOK, cok goruntulude VAR. Icerikte yalnizca tek goruntulu kart varken
+ * yalnizca ilk yon kosar. Digerleri cok goruntulu bir proje yoksa atlaniyor;
+ * icerige ilk ikinci goruntu girdigi gun kendiliginden kosmaya basliyorlar.
+ *
+ * Sorgular YAPIYA bagli: rol (`carousel`, `slide`) ve tusun erisilebilir adi.
+ * Sinif adiyla sorgulamak yeniden adlandirmada testi sessizce kor birakirdi
+ * (a11y.spec.ts'teki ders).
+ */
+const CAROUSEL = '[aria-roledescription="carousel"]';
+const SLIDE = '[aria-roledescription="slide"]';
+const MULTI = projects.findIndex((project) => project.screenshots.length > 1);
+const SHOTS = projects[MULTI]?.screenshots ?? [];
+const NO_CAROUSEL = "icerikte birden fazla goruntulu proje yok";
+
+const pad = (value: number) => String(value).padStart(2, "0");
+const carouselOf = (page: Page) => page.locator(`${SECTION} article`).nth(MULTI).locator(CAROUSEL);
+
+test("karusel yalnizca birden fazla goruntulu projede ciziliyor", async ({ page }) => {
+  const cards = page.locator(`${SECTION} article`);
+  await expect(cards).toHaveCount(projects.length);
+
+  for (const [i, project] of projects.entries()) {
+    const expected = project.screenshots.length > 1 ? 1 : 0;
+    await expect(cards.nth(i).locator(CAROUSEL)).toHaveCount(expected);
+    // DOM'da sayiliyor, gorunurlukte degil: tek goruntude tuslar gorunmez halde
+    // de basilmamali - gidilecek ikinci goruntu yok.
+    await expect(cards.nth(i).locator('button[aria-label$=" screenshot"]')).toHaveCount(
+      expected * 2,
+    );
+  }
+});
+
+test.describe("ekran goruntusu karuseli", () => {
+  test.skip(MULTI < 0, NO_CAROUSEL);
+
+  test("karusel, her goruntu icin bir slayt ve tek gorunur slayt", async ({ page }) => {
+    const carousel = carouselOf(page);
+    await expect(carousel).toHaveAttribute("role", "group");
+    await expect(carousel).toHaveAttribute("aria-label", `${projects[MULTI]?.name} screenshots`);
+
+    const slides = carousel.locator(SLIDE);
+    await expect(slides).toHaveCount(SHOTS.length);
+    for (let i = 0; i < SHOTS.length; i++) {
+      await expect(slides.nth(i)).toHaveAttribute("role", "group");
+      await expect(slides.nth(i)).toHaveAttribute("aria-label", `${i + 1} of ${SHOTS.length}`);
+    }
+
+    await expect(slides.filter({ visible: true })).toHaveCount(1);
+    await expect(slides.first()).toBeVisible();
+
+    // Tusa basildiginda odak tusta kaliyor; degisen goruntuyu canli bolge duyuruyor.
+    await expect(carousel.locator('[aria-live="polite"]')).toHaveCount(1);
+  });
+
+  test("hidrasyondan sonra tuslar gorunur ve sayac ilk goruntude", async ({ page }) => {
+    const carousel = carouselOf(page);
+    await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
+    await expect(carousel.getByRole("button", { name: "Previous screenshot" })).toBeVisible();
+    await expect(carousel.locator("p")).toHaveText(`01 / ${pad(SHOTS.length)}`);
+  });
+
+  /**
+   * OTOMATIK GECIS YOK (§3.3.1): ekran goruntusu inceleniyor. Saat Playwright'in
+   * sahte saati; bir dakikayi gercekten beklemeden ilerletiyor. Bu test
+   * reduced-motion ALTINDA DEGIL - otomatik gecis tipik olarak orada kapali
+   * olurdu ve test hicbir sey olcmezdi.
+   */
+  test("kendiliginden ilerlemiyor", async ({ page }) => {
+    await page.clock.install();
+    await page.reload();
+
+    const carousel = carouselOf(page);
+    await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
+    await page.clock.runFor(60_000);
+
+    await expect(carousel.locator("p")).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    await expect(carousel.locator(SLIDE).first()).toBeVisible();
+  });
+
+  /**
+   * Capraz sonumleme: gelen slayt USTTE beliriyor, giden onun suresi kadar
+   * ALTTA kalip tek adimda kayboluyor. Olculen sey SAYI DEGIL ILISKI - sure
+   * degisirse test takip etmeli, ama giden slaytin bekledigi sure gelenin
+   * suresinden farkli olursa arada zemin parlar ve test dusmeli.
+   *
+   * Reduced-motion altinda gecis HIC yok - globals.css'in blogu yalnizca
+   * sureyi kisaltiyor, gecikmeyi degil; gecikme kalsaydi giden slayt gorunur
+   * kalirdi (CLAUDE.md kural 10).
+   */
+  test("gecis capraz sonumleme, reduced-motion altinda hic yok", async ({ page }) => {
+    const slides = carouselOf(page).locator(SLIDE);
+    const timing = (i: number) =>
+      slides.nth(i).evaluate((el) => {
+        const cs = getComputedStyle(el);
+        const longest = (value: string) => Math.max(...value.split(",").map(parseFloat));
+        return {
+          duration: longest(cs.transitionDuration),
+          delay: longest(cs.transitionDelay),
+          zIndex: cs.zIndex,
+        };
+      });
+
+    const incoming = await timing(0);
+    const outgoing = await timing(1);
+    expect(incoming.duration).toBeGreaterThan(0);
+    expect(incoming.delay).toBe(0);
+    expect(outgoing.duration).toBe(0);
+    expect(outgoing.delay).toBe(incoming.duration);
+    // Etkin slayt ustte: geri gezinmede ve basa sarmada gelen slayt DOM'da
+    // gidenden ONCE duruyor ve z-index olmadan onun altinda kalirdi.
+    expect(Number(incoming.zIndex)).toBeGreaterThan(0);
+    expect(outgoing.zIndex).toBe("auto");
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (let i = 0; i < SHOTS.length; i++) {
+      const { duration, delay } = await timing(i);
+      expect(duration).toBeLessThan(0.001);
+      expect(delay).toBe(0);
+    }
+  });
+});
+
+/**
+ * Tuslara BASAN testler reduced-motion altinda, destenin testleriyle ayni
+ * gerekceyle (who-we-are.spec.ts): smooth scroll ve reveal animasyonu altinda
+ * Playwright'in ilk tiklamasi bosa dusebiliyor. Gecisin kendisi yukarida,
+ * normal yolda olculuyor.
+ */
+test.describe("ekran goruntusu karuseli - gezinme", () => {
+  test.skip(MULTI < 0, NO_CAROUSEL);
+
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+  });
+
+  /**
+   * Sayac ile gorunen goruntu BIRLIKTE degisiyor. Yalnizca sayaci olcmek
+   * yetmez: sayac artip goruntu sabit kalsaydi test yine gecerdi.
+   */
+  test("ileri ve geri tusu goruntuyu ve sayaci birlikte degistiriyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    const shown = carousel.locator(SLIDE).filter({ visible: true });
+    const counter = carousel.locator("p");
+
+    await carousel.getByRole("button", { name: "Next screenshot" }).click();
+    await expect(counter).toHaveText(`02 / ${pad(SHOTS.length)}`);
+    await expect(shown).toHaveCount(1);
+    await expect(shown.locator("img")).toHaveAttribute("alt", SHOTS[1]?.alt ?? "");
+
+    await carousel.getByRole("button", { name: "Previous screenshot" }).click();
+    await expect(counter).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    await expect(shown.locator("img")).toHaveAttribute("alt", SHOTS[0]?.alt ?? "");
+  });
+
+  test("iki uctan basa sariyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    const counter = carousel.locator("p");
+
+    await carousel.getByRole("button", { name: "Previous screenshot" }).click();
+    await expect(counter).toHaveText(`${pad(SHOTS.length)} / ${pad(SHOTS.length)}`);
+    await expect(carousel.locator(SLIDE).last()).toBeVisible();
+
+    await carousel.getByRole("button", { name: "Next screenshot" }).click();
+    await expect(counter).toHaveText(`01 / ${pad(SHOTS.length)}`);
+    await expect(carousel.locator(SLIDE).first()).toBeVisible();
+  });
+
+  /**
+   * Slaytlar ayni hucrede ust uste: cerceve TEK bir goruntu boyunda ve
+   * gezinirken ne cerceve ne tus oynuyor. Ilk yarisi sart - ikinci yari tek
+   * basina bos gecerdi, cunku slaytlar alt alta dizilse de hepsi DOM'da duruyor
+   * ve kutular yine sabit kaliyor.
+   */
+  test("cerceve tek goruntu boyunda, gezinirken cerceve ve tuslar oynamiyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    const next = carousel.getByRole("button", { name: "Next screenshot" });
+    const slides = carousel.locator(SLIDE);
+    const frame = slides.first().locator("..");
+
+    await next.scrollIntoViewIfNeeded();
+    const first = await slides.first().boundingBox();
+    for (let i = 1; i < SHOTS.length; i++) {
+      expect(await slides.nth(i).boundingBox()).toEqual(first);
+    }
+    // Cercevenin kendi 1px border'i disinda yukseklik tek slayt kadar.
+    const frameBox = await frame.boundingBox();
+    expect(Math.abs((frameBox?.height ?? 0) - (first?.height ?? 0))).toBeLessThanOrEqual(2);
+
+    const before = { next: await next.boundingBox(), frame: frameBox };
+    for (let i = 0; i < SHOTS.length; i++) {
+      await next.click();
+      expect(await next.boundingBox()).toEqual(before.next);
+      expect(await frame.boundingBox()).toEqual(before.frame);
+    }
+  });
+});
+
+/**
+ * JS GELMEZSE: sunucunun bastigi ilk goruntu gorunur ve tus satiri YER TUTUYOR
+ * ama gorunmuyor. Calismayan bir tus cizmek, hicbir yere gitmeyen bir dugme
+ * cizmekle ayni hata (who-we-are.spec.ts'teki destenin kurali); yer tutmasi ise
+ * hidrasyonda sayfanin kaymamasi icin.
+ */
+test.describe("ekran goruntusu karuseli - JS yok", () => {
+  test.use({ javaScriptEnabled: false });
+  test.skip(MULTI < 0, NO_CAROUSEL);
+
+  test("ilk goruntu gorunur, tuslar yer tutuyor ama gorunmuyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    const slides = carousel.locator(SLIDE);
+    await expect(slides.first()).toBeVisible();
+    await expect(slides.filter({ visible: true })).toHaveCount(1);
+
+    const buttons = carousel.locator("button");
+    await expect(buttons).toHaveCount(2);
+    for (let i = 0; i < 2; i++) {
+      await expect(buttons.nth(i)).toBeHidden();
+      const height = await buttons.nth(i).evaluate((el) => el.getBoundingClientRect().height);
+      expect(height).toBeGreaterThan(0);
+    }
+  });
 });

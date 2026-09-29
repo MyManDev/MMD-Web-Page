@@ -16,8 +16,21 @@ describe("projectSchema", () => {
     expect(() => projectSchema.parse(withoutLive)).not.toThrow();
   });
 
+  it("birden fazla goruntuyu verildigi sirayla kabul eder", () => {
+    const screenshots = [
+      { src: "/projects/a-1792.webp", alt: "A" },
+      { src: "/projects/b-1792.webp", alt: "B" },
+    ];
+    expect(projectSchema.parse({ ...validProject, screenshots }).screenshots).toEqual(screenshots);
+  });
+
   it.each([
-    ["screenshot eksik", { screenshot: undefined }],
+    ["screenshots eksik", { screenshots: undefined }],
+    ["screenshots bos", { screenshots: [] }],
+    // Her goruntunun kendi alt metni var; karuselde ortak bir metin hangisinin
+    // ekranda oldugunu soylemezdi.
+    ["bir goruntunun alt'i bos", { screenshots: [{ src: "/projects/x-1792.webp", alt: "" }] }],
+    ["bir goruntunun src'si goreli", { screenshots: [{ src: "projects/x-1792.webp", alt: "X" }] }],
     ["tags bos", { tags: [] }],
     ["repoUrl http", { repoUrl: "http://github.com/MyManDev/x" }],
     ["slug kebab-case degil", { slug: "Football Squad" }],
@@ -115,14 +128,28 @@ describe("content/index loader", () => {
   });
 
   /**
-   * Sema `screenshot`'in "/" ile basladigini dogruluyor, dosyanin VAR OLDUGUNU
+   * Sema her `src`'nin "/" ile basladigini dogruluyor, dosyanin VAR OLDUGUNU
    * degil. Var olmayan bir yola isaret eden kayit build'i gecer ve sitede kirik
    * gorsel cikar - bu test o araligi kapatiyor.
    */
-  it("her projenin ekran goruntusu public/ altinda gercekten duruyor", () => {
+  it("her projenin ekran goruntuleri public/ altinda gercekten duruyor", () => {
     for (const project of projects) {
-      const file = join(process.cwd(), "public", project.screenshot);
-      expect(existsSync(file), `${project.slug}: ${project.screenshot} bulunamadi`).toBe(true);
+      for (const { src } of project.screenshots) {
+        const file = join(process.cwd(), "public", src);
+        expect(existsSync(file), `${project.slug}: ${src} bulunamadi`).toBe(true);
+      }
+    }
+  });
+
+  /**
+   * Karusel slaytlarinin React `key`'i `src` (ScreenshotCarousel.tsx). Ayni
+   * goruntu bir kartta iki kez gecerse key'ler cakisir ve React slaytlari
+   * karistirir. Sema bunu zorlamiyor; ekibin slug'lari gibi burada olculuyor.
+   */
+  it("bir projenin ekran goruntuleri tekil", () => {
+    for (const project of projects) {
+      const sources = project.screenshots.map(({ src }) => src);
+      expect(new Set(sources).size, project.slug).toBe(sources.length);
     }
   });
 

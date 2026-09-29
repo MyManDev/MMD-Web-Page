@@ -1,7 +1,8 @@
 import type { Project } from "@/content";
 import { Button, Tag } from "@/components/ui";
-import { screenshotSrcSet } from "@/lib/images";
 import { MetricRow } from "./MetricRow";
+import { Screenshot } from "./Screenshot";
+import { ScreenshotCarousel } from "./ScreenshotCarousel";
 
 /**
  * Tek proje blogu. design-spec.md §3.3.1
@@ -133,44 +134,22 @@ export function ProjectCard({
       </div>
 
       {/*
-        next/image DEGIL, duz <img> - ve bu olculerek secildi. design-spec.md
-        §3.3.1 once next/image yaziyordu; statik export + images.unoptimized
-        altinda ne optimizasyon ne srcset uretiyor, ama sayfaya 5.5 KiB client
-        JS ekliyor (132.1 -> 137.6 KiB). Payload kapisinin kalan payi o anda
-        17.9 KiB'di: bedeli payin ucte biri, karsiligi sifir. architecture.md
-        §8 "esik yukseltilmez, asarsa geri donup azaltilir" diyor; burada esige
-        dayanmadan once azaltildi.
-
-        srcset ELLE yaziliyor: next/image dusunce beraberinde srcset'i de
-        goturmustu ve o bosluk doldurulmadan kaldi (#33). Dosyalari
-        scripts/optimize-images.mjs uretiyor, genislikler lib/images.ts ile
-        ortak tek kayittan geliyor.
-
-        sizes olculdu: lg ustunde gorsel 12 kolonun 7'si, yani kapsayici tam
-        genisligindeyken 883px (kapsayici 1600'e cikinca 717'den yukseldi).
-        56vw bunu her zaman bir parca ASIYOR ve asmasi kasitli - eksik tahmin
-        bulanik goruntu demek, fazla tahmin birkac KB.
-
-        width/height artik en buyuk varyantin GERCEK olcusu (1792x1120) ve ayni
-        zamanda tasarimin 16/10 orani. Yeri fiilen ayiran sey CSS aspect kutusu;
-        bu iki sayi orani tarayiciya HTML'den de bildiriyor, boylece CLS esigi
-        (< 0.05) goruntu inmeden once de korunuyor. Semada boyut alani yok cunku
-        oran her proje icin ayni.
+        Birden fazla goruntu -> elle gecisli karusel (design-spec.md §3.3.1).
+        Tek goruntu -> duz <img> ve tus satiri yok: gidilecek ikinci goruntu
+        yokken tus cizmek, hicbir yere gitmeyen bir dugme cizmek olurdu.
+        <img>'in kendisi ve olculmus gerekceleri Screenshot.tsx'te.
       */}
-      <div className="reveal-on-enter overflow-hidden rounded-card border border-border lg:col-span-7">
-        {/* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */}
-        <img
-          src={project.screenshot}
-          srcSet={screenshotSrcSet(project.screenshot)}
-          sizes="(min-width: 1600px) 883px, (min-width: 1024px) 58vw, calc(100vw - 40px)"
-          alt={`${project.name} screenshot`}
-          width={1792}
-          height={1120}
-          loading="lazy"
-          decoding="async"
-          className="aspect-screenshot h-full w-full object-cover"
+      {project.screenshots.length > 1 ? (
+        <ScreenshotCarousel
+          className="reveal-on-enter lg:col-span-7"
+          name={project.name}
+          screenshots={project.screenshots}
         />
-      </div>
+      ) : (
+        <div className="reveal-on-enter overflow-hidden rounded-card border border-border lg:col-span-7">
+          <Screenshot {...project.screenshots[0]} />
+        </div>
+      )}
     </article>
   );
 }

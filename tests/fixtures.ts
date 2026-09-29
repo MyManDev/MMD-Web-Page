@@ -13,7 +13,12 @@ export const validProject: Project = {
   tags: ["Python", "OR-Tools CP-SAT", "ML", "React"],
   repoUrl: "https://github.com/MyManDev/football-squad-optimizer",
   liveUrl: "https://squadopt.mymandev.com/",
-  screenshot: "/projects/football-squad-optimizer-1792.webp",
+  screenshots: [
+    {
+      src: "/projects/football-squad-optimizer-1792.webp",
+      alt: "Football Squad Optimizer screenshot",
+    },
+  ],
   order: 0,
 };
 

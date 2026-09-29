@@ -11,6 +11,19 @@ import { z } from "zod";
 
 const httpsUrl = z.url({ protocol: /^https$/ });
 
+/**
+ * Tek ekran goruntusu. public/ altinda, scripts/optimize-images.mjs'in urettigi
+ * webp; en buyuk varyanti gosterir (lib/images.ts digerlerini turetiyor).
+ *
+ * `alt` ZORUNLU ve her goruntunun kendisi: karuselde goruntuler birbirinin
+ * yerine geciyor, "X screenshot" diye tek bir ortak metin hangisinin ekranda
+ * oldugunu soylemezdi.
+ */
+const screenshotSchema = z.object({
+  src: z.string().min(1).startsWith("/"),
+  alt: z.string().min(1),
+});
+
 /** Proje kaydi. Zorunlu alanlar architecture.md §5'te sayili. */
 export const projectSchema = z.object({
   /** /projects/[slug] route'lari sonradan semayi degistirmeden eklenebilsin diye. */
@@ -29,8 +42,17 @@ export const projectSchema = z.object({
   description: z.string().min(1),
   tags: z.array(z.string().min(1)).min(1),
   repoUrl: httpsUrl,
-  /** public/ altinda, elle uretilmis webp. Yoksa kart yayinlanmaz. */
-  screenshot: z.string().min(1).startsWith("/"),
+  /**
+   * Ekran goruntuleri, gosterilecek sirayla. Hic yoksa kart yayinlanmaz
+   * (CLAUDE.md kural 6); birden fazlaysa kart onlari elle gecisli bir karuselde
+   * gosteriyor (design-spec.md §3.3.1).
+   *
+   * `.array().min(1)` DEGIL tuple: kural ayni, ama tuple onu TIPE de yaziyor
+   * (`[ilk, ...kalan]`). `min(1)` yalnizca calisma zamaninda soyluyordu;
+   * `noUncheckedIndexedAccess` altinda `screenshots[0]` yine `undefined`
+   * olabilir gorunuyordu ve kart hic yasanmayacak bir dal icin kod yaziyordu.
+   */
+  screenshots: z.tuple([screenshotSchema], screenshotSchema),
   order: z.number().int().nonnegative(),
 
   liveUrl: httpsUrl.optional(),
