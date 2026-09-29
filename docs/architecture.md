@@ -583,7 +583,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Hareket sistemi            | Saf CSS `animation-timeline`; 0 KiB JS, motion kütüphanesi yok                               | §4.4   |
 | Tip ölçeği                 | Bir basamak büyütüldü; bölüm başlıkları da **Display XL**                                    | §4.2   |
 | Navbar zemini              | Ayrı bar rengi yok — blur + tint; desteklenmiyorsa **dolu** zemine düşer                     | §4.1   |
-| Navbar tint'i              | %72 → **%87**; ölçülen her noktada nav yazısı AA (#106, design-spec §3.1)                    | —      |
+| Navbar tint'i              | %72 → %87 → **%92**; açık proje görüntülerinin üstünde de nav yazısı AA (design-spec §3.1)   | —      |
 | Dal politikası             | Merge'de dal **silinir**; eski 67 dal `archive/<dal>` etiketlerinde (working-agreement §3)   | —      |
 | Hero sağ kolonu            | Wordmark değil **marka amblemi**; zemini ayrılmış PNG, rengi token'dan                       | §4.1   |
 | Proje açıklaması           | Şemada **zorunlu** alan; tek satırla proje yayınlanmaz                                       | §5     |

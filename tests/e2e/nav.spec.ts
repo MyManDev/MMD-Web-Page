@@ -130,10 +130,11 @@ test.describe("navbar scroll'da yerlesiyor", () => {
 
   /**
    * TINT TABANI (#106). Bar rengi page'in kendisi, yani nav yazisinin
-   * kontrastini belirleyen tek sayi opaklik. %87, bugunku icerik uzerinde
+   * kontrastini belirleyen tek sayi opaklik. %92, bugunku icerik uzerinde
    * olculen her noktada AA'yi tutan deger; olcum ve sayilar design-spec.md §3.1.
+   * Once %87'ydi; SquadOpt'un acik renkli ekran goruntuleri onu yetersiz birakti.
    *
-   * SINIRI: bu test yalnizca opakligi tutuyor, kontrasti degil. %87 bembeyaz
+   * SINIRI: bu test yalnizca opakligi tutuyor, kontrasti degil. %92 bembeyaz
    * bir zeminde AA'yi tutmaz; bir bolumun ust kenarina acik bir gorsel eklenirse
    * olcum yinelenir. axe da bunu goremez: arkadaki gorseli ve backdrop-filter'i
    * hesaba katmiyor. Olculen sey dinlenme halindeki alfa - reduced-motion'da
@@ -145,7 +146,7 @@ test.describe("navbar scroll'da yerlesiyor", () => {
 
     const alpha = await page.locator(bar).evaluate((el) => {
       const value = getComputedStyle(el).backgroundColor;
-      // Chromium bunu `oklab(... / 0.87)` diye donduruyor; alfa egik cizgiden sonra.
+      // Chromium bunu `oklab(... / 0.92)` diye donduruyor; alfa egik cizgiden sonra.
       // Eski rgba() bicimi icin dorduncu bilesene dusuyoruz (team.spec.ts ile ayni).
       const slash = value.split("/")[1];
       if (slash) return Number.parseFloat(slash);
@@ -153,7 +154,7 @@ test.describe("navbar scroll'da yerlesiyor", () => {
       return parts.length === 4 ? Number(parts[3]) : 1;
     });
 
-    expect(alpha).toBeGreaterThanOrEqual(0.87);
+    expect(alpha).toBeGreaterThanOrEqual(0.92);
   });
 });
 
