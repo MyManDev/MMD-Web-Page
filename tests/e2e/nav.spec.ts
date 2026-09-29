@@ -124,6 +124,32 @@ test.describe("navbar scroll'da yerlesiyor", () => {
     expect(state.background).not.toBe("rgba(0, 0, 0, 0)");
     expect(state.background).not.toMatch(/\/\s*0\s*\)$/);
   });
+
+  /**
+   * TINT ESIGI (#106). Bar rengi page'in kendisi, yani nav yazisinin
+   * kontrastini belirleyen tek sayi opaklik. Olculdu (yazinin arkasindaki en
+   * parlak piksel): %72'de accent aktif link 3.72:1, pasif link 4.04:1;
+   * %87'de en kotu durum 4.62:1, %85'te 4.49 (design-spec.md §3.1).
+   *
+   * axe bunu goremez: arkadaki fotografi ve backdrop-filter'i hesaba katmiyor.
+   * Olculen sey dinlenme halindeki alfa - reduced-motion'da animasyon yok.
+   */
+  test("dinlenme halindeki tint nav yazisini AA'da tutacak kadar opak", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+
+    const alpha = await page.locator(bar).evaluate((el) => {
+      const value = getComputedStyle(el).backgroundColor;
+      // color-mix `color(srgb ... / 0.87)` diye donuyor; alfa egik cizgiden sonra.
+      // Eski rgba() bicimi icin dorduncu bilesene dusuyoruz (team.spec.ts ile ayni).
+      const slash = value.split("/")[1];
+      if (slash) return Number.parseFloat(slash);
+      const parts = value.replace(/[^0-9.,]/g, "").split(",");
+      return parts.length === 4 ? Number(parts[3]) : 1;
+    });
+
+    expect(alpha).toBeGreaterThanOrEqual(0.87);
+  });
 });
 
 /**

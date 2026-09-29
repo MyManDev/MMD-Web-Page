@@ -140,11 +140,19 @@ section[id] {
    `background-color` token'in kendisinden turetiliyor (`color-mix`), sabit bir
    rgba() yazilmiyor (CLAUDE.md kural 1).
 
+   OPAKLIK %87, OLCULDU (#106). Nav yazisinin arkasindaki en parlak tek piksel
+   (yazi gizli; 1024/1280/1440/1920, kritik bolgelerde 25px adim): %72'de
+   accent aktif link 3.72:1'e, pasif link 4.04:1'e iniyordu - Hero basligi ve
+   acik fotograflar blur'dan siziyordu. %87'de en kotu durum 4.62:1; %85 iki
+   noktada 4.49 verdi. Renk yine page'in kendisi: duz zeminde fark yok, bar
+   yalnizca acik icerigin uzerinde koyulasiyor. Esigi tests/e2e/nav.spec.ts
+   tutuyor.
+
    `@supports` kapisi: backdrop-filter'i olmayan tarayicida bar SAYDAM DEGIL
    dolu zemine dusuyor. Okunurluk bir tercih degil; destegin yoklugunda
    gerileme yonu her zaman okunur olan taraf olmali. */
 .nav-bar {
-  background-color: color-mix(in srgb, var(--color-page) 72%, transparent);
+  background-color: color-mix(in srgb, var(--color-page) 87%, transparent);
   backdrop-filter: blur(12px) saturate(140%);
 }
 

@@ -147,19 +147,23 @@ saydam kalırdı ve Team'in açık gökyüzlü fotoğrafları üzerinde nav yaz�
 Ölçüldü: bar saydamken bile wordmark **12.49:1**, nav linkleri **6.65:1** — ikisi de AA'nın
 üstünde.
 
-**Okunurluk ölçüldü, göz kararı değil.** Sayfa baştan sona kaydırılıp nav yazısının arkasındaki
-zemin her 100px'te örneklendi; en kötü durum **5.49:1** — AA eşiği 4.5. Team'in açık gökyüzlü
-fotoğrafları dahil. Düz saydam bırakmak orada beyaz mono yazıyı okunmaz yapardı; tint'in görevi
-estetik değil, o tabanı garanti etmek.
+**Okunurluk ölçüldü, göz kararı değil (#106).** Yöntem: sayfa baştan sona kaydırılıyor ve her adımda
+nav yazısı gizlenip her metin satırının arkasındaki **en parlak tek piksel** okunuyor. Genişlikler
+1024, 1280, 1440, 1920. Adım 100px, Hero'da ve sayfanın son 300px'inde 25px.
 
-**2026-09-28'de yeniden ölçüldü ve 5.49:1 yeniden üretilemedi.** Daha katı yöntemle (her metin
-satırının arkasındaki en parlak tek piksel) en kötü durum pasif linkte **4.09:1** (1440×900, Team
-kartlarının üst kenarı) ve accent aktif linkte **3.90:1** (1280×720, Hero). 4.09 noktası iki
-kişilik Team'le geldi: kartlar ortalanınca soldaki kartın gökyüzü linklerin altına denk geliyor,
-üç kişiyken aynı noktada 5.30:1'di. 3.90 noktası ondan önce de vardı. Kanıt ve seçenekler #106'da;
-karar verilene kadar üstteki 5.49:1 ölçülmüş bir taban değil.
+| Tint | Accent aktif link | Pasif link | Wordmark ve düğmeler | Eşik altı nokta |
+| ---- | ----------------: | ---------: | -------------------: | --------------: |
+| %72  |              3.72 |       4.04 |                 5.24 |              29 |
+| %85  |              4.49 |       5.11 |                 7.02 |               3 |
+| %87  |          **4.62** |   **5.28** |             **7.48** |           **0** |
 
-Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 72%, transparent)`), sabit
+%72'de Hero başlığı ve Team fotoğraflarının açık gökyüzü blur'dan sızıyordu. En kötü noktalar: accent
+1920'de Hero'da ve 1024'te y=325'te; pasif link Team kartlarının üst kenarında. İki kişilik Team'le
+kartlar ortalanınca soldaki kartın gökyüzü linklerin altına denk geldi. **%87** her yerde AA'yı
+geçiyor; düz zeminde bar değişmiyor, yalnızca açık içeriğin üzerinde koyulaşıyor. Eşiği
+`tests/e2e/nav.spec.ts` tutuyor. Eski "en kötü durum 5.49:1" bu yöntemle yeniden üretilemedi.
+
+Zemin rengi token'dan türetiliyor (`color-mix(in srgb, var(--color-page) 87%, transparent)`), sabit
 bir `rgba()` yazılmıyor (`CLAUDE.md` kural 1).
 
 **`@supports` kapısı:** `backdrop-filter` desteklenmiyorsa bar **saydam değil dolu zemine** düşer.
