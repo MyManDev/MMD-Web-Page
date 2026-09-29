@@ -404,3 +404,53 @@ test.describe("prensip destesi - kelime kelime belirme", () => {
     expect(name).toBe("none");
   });
 });
+
+/**
+ * KARISIK ETKILESIM (lib/deck.ts). Fare ve odak AYRI iki sebep: biri bitince
+ * digeri suruyorsa deste durmaya devam etmeli. Once ikisi tek bir bayragi
+ * paylasiyordu ve en son gelen olay kazaniyordu: fare ustteyken bir tusa
+ * tiklayip fareyi cekmek, odak iceride kaldigi halde desteyi yeniden
+ * baslatiyordu.
+ *
+ * Sahte saat, ve `pauseAt` ile DURDURULMUS: gercek zaman akmiyor, yani zamani
+ * yalnizca `runFor` ilerletiyor ve testler makinenin hizina bagli degil.
+ */
+test.describe("prensip destesi - karisik etkilesim", () => {
+  const counterOf = (page: import("@playwright/test").Page) =>
+    page.locator(`${SECTION} [aria-roledescription="carousel"] p`).last();
+
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+    await page.reload();
+    await expect(page.getByLabel("Next principle")).toBeVisible();
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
+  });
+
+  test("fare cekilince odak icerideyse duruyor", async ({ page }) => {
+    await page.locator(`${SECTION} [data-active]`).hover();
+    await page.getByLabel("Next principle").focus();
+    await page.mouse.move(0, 0);
+
+    await page.clock.runFor(AUTO_ADVANCE_MS * 2);
+    await expect(counterOf(page)).toContainText("01");
+  });
+
+  test("odak cikinca fare ustteyse duruyor", async ({ page }) => {
+    await page.getByLabel("Next principle").focus();
+    await page.locator(`${SECTION} [data-active]`).hover();
+    await page.getByLabel("Next principle").blur();
+
+    await page.clock.runFor(AUTO_ADVANCE_MS * 2);
+    await expect(counterOf(page)).toContainText("01");
+  });
+
+  test("ikisi de bitince suruyor", async ({ page }) => {
+    await page.locator(`${SECTION} [data-active]`).hover();
+    await page.getByLabel("Next principle").focus();
+    await page.mouse.move(0, 0);
+    await page.getByLabel("Next principle").blur();
+
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+    await expect(counterOf(page)).toContainText("02");
+  });
+});

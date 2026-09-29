@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { type FocusEvent, useEffect, useState, useSyncExternalStore } from "react";
 
 /**
  * Deste davranisinin TEK kaydi: hidrasyon, reduced-motion okumasi ve kendiliginden
@@ -97,7 +97,12 @@ export function useAutoAdvancingDeck(total: number) {
   const reducedMotion = usePrefersReducedMotion();
 
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  /* Fare ve odak AYRI iki sebep. Tek bir bayrakta en son gelen olay kazaniyordu:
+     fare ustteyken bir tusa tiklayip fareyi cekmek, odak iceride kaldigi halde
+     desteyi yeniden baslatiyordu. Deste ikisinden biri surdukce duruyor. */
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const paused = hovered || focused;
   /* Baslangicta `true`: ilk render'da bolge canli, kullanici bir sey yapmadan
      once de oyle. Yalnizca otomatik ilerleme onu susturuyor. */
   const [announce, setAnnounce] = useState(true);
@@ -128,11 +133,20 @@ export function useAutoAdvancingDeck(total: number) {
 
   /* Etkilesim BASLAYINCA: durakla ve bolgeyi yeniden canli yap. Ikincisi
      onemli - kullanici birazdan tusa basacak ve degisikligi duymali. */
-  const hold = () => {
-    setPaused(true);
+  const onPointerEnter = () => {
+    setHovered(true);
     setAnnounce(true);
   };
-  const release = () => setPaused(false);
+  const onFocus = () => {
+    setFocused(true);
+    setAnnounce(true);
+  };
+  /* Odak kapsayicinin ICINDE yer degistiriyorsa (bir tustan digerine) odak
+     cikmis sayilmiyor: `relatedTarget` odagin gittigi oge. */
+  const onBlur = (event: FocusEvent<HTMLElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+    setFocused(false);
+  };
 
   return {
     hydrated,
@@ -143,10 +157,10 @@ export function useAutoAdvancingDeck(total: number) {
        `focusin`/`focusout` gibi davraniyor - `:focus-within`in JS karsiligi.
        Klavye kullanicisi deste icine girdiginde duraklatiyor. */
     pauseOn: {
-      onBlur: release,
-      onFocus: hold,
-      onPointerEnter: hold,
-      onPointerLeave: release,
+      onBlur,
+      onFocus,
+      onPointerEnter,
+      onPointerLeave: () => setHovered(false),
     },
   };
 }
