@@ -17,6 +17,7 @@ export const validProject: Project = {
     {
       src: "/projects/football-squad-optimizer-1792.webp",
       alt: "Football Squad Optimizer screenshot",
+      caption: "A fixture caption.",
     },
   ],
   order: 0,

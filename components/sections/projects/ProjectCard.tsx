@@ -146,9 +146,7 @@ export function ProjectCard({
           screenshots={project.screenshots}
         />
       ) : (
-        <div className="reveal-on-enter overflow-hidden rounded-card border border-border lg:col-span-7">
-          <Screenshot {...project.screenshots[0]} />
-        </div>
+        <Screenshot {...project.screenshots[0]} className="reveal-on-enter lg:col-span-7" />
       )}
     </article>
   );

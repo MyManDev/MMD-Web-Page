@@ -7,9 +7,9 @@ import { Screenshot } from "./Screenshot";
 
 /*
   Slaytlarin hepsi AYNI izgara hucresinde ust uste; yalnizca `data-active`
-  gorunur. Kap boylece tek bir goruntu kadar ve gezinirken tuslar yerinden
-  oynamiyor - prensip destesinin olcerek buldugu duzen (globals.css
-  `.principle-slot`).
+  gorunur. Kap boylece tek bir slayt kadar - goruntu ve EN UZUN baslik - ve
+  gezinirken tuslar yerinden oynamiyor; prensip destesinin olcerek buldugu duzen
+  (globals.css `.principle-slot`).
 
   Gorunmeyenler `visibility: hidden` ve bunun iki sonucu var. Erisilebilirlik
   agacindan ve odak sirasindan cikiyorlar, yani ekran okuyucu yalnizca ekrandaki
@@ -82,10 +82,10 @@ export function ScreenshotCarousel({
       role="group"
       {...pauseOn}
     >
-      <div
-        aria-live={announce ? "polite" : "off"}
-        className="grid overflow-hidden rounded-card border border-border"
-      >
+      {/* Cerceve her slaytin icinde, goruntunun etrafinda (Screenshot.tsx); kap
+          yalnizca izgara. Baslik slaytin parcasi, yani gecis ikisini birlikte
+          goturuyor ve kap en uzun basliga gore sabit kaliyor. */}
+      <div aria-live={announce ? "polite" : "off"} className="grid">
         {screenshots.map((screenshot, slot) => (
           <div
             key={screenshot.src}

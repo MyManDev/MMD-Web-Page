@@ -141,6 +141,20 @@ test("ekran goruntuleri gercekten yukleniyor ve yerini onceden ayiriyor", async 
   }
 });
 
+/**
+ * BASLIK (design-spec.md §3.3.1): her goruntunun altinda icerikteki kendi
+ * basligi, <figcaption> olarak - figur onunla adlaniyor. Sayi ve metin
+ * icerikten; tek goruntulu kartta da ayni figur basiliyor.
+ */
+test("her goruntunun altinda icerikteki kendi basligi var", async ({ page }) => {
+  const figures = page.locator(`${SECTION} figure`);
+  await expect(figures).toHaveCount(SCREENSHOTS.length);
+  for (const [i, screenshot] of SCREENSHOTS.entries()) {
+    await expect(figures.nth(i).locator("img")).toHaveAttribute("alt", screenshot.alt);
+    await expect(figures.nth(i).locator("figcaption")).toHaveText(screenshot.caption);
+  }
+});
+
 test("srcset iki genisligi de sayiyor ve sizes yazili", async ({ page }) => {
   const images = page.locator(`${SECTION} img`);
   for (let i = 0; i < SCREENSHOTS.length; i++) {
@@ -660,6 +674,18 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
     await expect(shown.locator("img")).toHaveAttribute("alt", SHOTS[0]?.alt ?? "");
   });
 
+  test("baslik goruntuyle birlikte degisiyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    const slides = carousel.locator(SLIDE);
+    await expect(slides.nth(0).locator("figcaption")).toBeVisible();
+    await expect(slides.nth(1).locator("figcaption")).toBeHidden();
+
+    await carousel.getByRole("button", { name: "Next screenshot" }).click();
+    await expect(slides.nth(1).locator("figcaption")).toBeVisible();
+    await expect(slides.nth(1).locator("figcaption")).toHaveText(SHOTS[1]?.caption ?? "");
+    await expect(slides.nth(0).locator("figcaption")).toBeHidden();
+  });
+
   test("iki uctan basa sariyor", async ({ page }) => {
     const carousel = carouselOf(page);
     const counter = carousel.locator("p");
@@ -846,6 +872,7 @@ test.describe("ekran goruntusu karuseli - JS yok", () => {
     const carousel = carouselOf(page);
     const slides = carousel.locator(SLIDE);
     await expect(slides.first()).toBeVisible();
+    await expect(slides.first().locator("figcaption")).toHaveText(SHOTS[0]?.caption ?? "");
     await expect(slides.filter({ visible: true })).toHaveCount(1);
 
     const buttons = carousel.locator("button");

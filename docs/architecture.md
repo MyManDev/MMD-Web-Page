@@ -311,7 +311,7 @@ kötüdür.
 erişir. `lint-imports`'un bu projedeki tek karşılığı bu sınır.
 
 Proje kaydının zorunlu alanları: `slug`, `name`, `summary`, `description`, `tags[]`, `repoUrl`,
-`screenshots[]` (en az bir; her biri `src` ve kendi `alt`'ı), `order`. Opsiyonel: `liveUrl`,
+`screenshots[]` (en az bir; her biri `src`, kendi `alt`'ı ve `caption`'ı), `order`. Opsiyonel: `liveUrl`,
 `metrics[]` (imza sayısı için).
 
 ---

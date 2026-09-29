@@ -365,8 +365,14 @@ bir öğeli bir dizi ve her öğe kendi `alt` metnini taşır: görüntüler bir
 ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek görüntüde karusel
 çizilmez; düz `<img>`, bugünkü çerçeve, tuş yok.
 
+- **Başlık.** Her görüntünün altında kendi tek satırlık başlığı var (`caption`, şemada zorunlu):
+  `<figure>` + `<figcaption>`, Body S, `text-muted`. Başlık slaytın parçası, yani görüntüyle
+  birlikte değişir ve JS yokken de ilk başlık görünür. `alt`tan ayrı: alt görüntüyü görmeyen için
+  tarif eder, başlık herkese karenin ne olduğunu söyler. Proje metni; uydurulmaz, kaynağı
+  `content/projects.ts`'te. Karar sahibinin isteği: "ekrana çıkan resme göre metin".
 - **Yerleşim.** Slaytlar aynı ızgara hücresinde üst üste durur, yalnızca etkin olanı görünür
-  (`visibility`). Çerçeve bir görüntü boyunda kalır; gezinirken ne çerçeve ne tuşlar oynar.
+  (`visibility`). Kap bir slayt boyunda kalır (görüntü ve en uzun başlık); gezinirken ne kap ne
+  tuşlar oynar. Çerçeve (border, köşe) yalnızca görüntünün etrafında.
   Görüntünün altında destenin (§3.4) sayacı (`01 / 03`) ve `deck-button` tuşları var. Yeşil yok:
   bölümün tek yeşili Live Demo (§5.1).
 - **Kendiliğinden geçiş, destenin kuralları ve kodu (§3.4, `lib/deck.ts`).** Aralık, duraklama,

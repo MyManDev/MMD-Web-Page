@@ -61,6 +61,11 @@ import type { Project } from "./schema";
  * hamleden sonraki kadro, sonra onerilerin gecmisi. Her `alt` yalnizca kendi
  * karesinde gorunen seyi soyluyor.
  *
+ * `caption`lar da karenin kendi basliklarindan: "This week's move" ve
+ * "PROVEN · OPTIMAL" (messages.ts:936), "Squad after the transfers" ve sahadaki
+ * her oyuncunun xP'si, "Weekly suggestion history" ve "recorded before the
+ * deadline" ile uyenin gercek net puani (gecmis sayfasinin kendi aciklamasi).
+ *
  * Her `src` en buyuk uretilmis varyanti gosterir - srcset destegi olmayan
  * tarayicinin dusecegi yer burasi. Diger genislikler ayni tabandan turetiliyor
  * (lib/images.ts) ve dosyalari scripts/optimize-images.mjs uretiyor. Kaynak
@@ -88,18 +93,22 @@ export const projects: Project[] = [
         alt:
           "This week's move for one member in gameweek 6: two transfers drawn as substitution " +
           "boards, +2.63 expected points against keeping the squad, stamped proven optimal.",
+        caption: "This week's move: two transfers and the captain, proven optimal.",
       },
       {
         src: "/projects/football-squad-optimizer-pitch-1792.webp",
         alt:
           "The squad after those transfers on a pitch, in a 3-5-2 with each player's expected " +
           "points, and the bench below it.",
+        caption: "The squad after the move, on the pitch, with each player's expected points.",
       },
       {
         src: "/projects/football-squad-optimizer-history-1792.webp",
         alt:
           "Weekly suggestion history for the same member: the suggestion published before each " +
           "deadline beside the squad's actual score, for gameweeks 4 and 5.",
+        caption:
+          "Each week's suggestion as published before the deadline, beside the actual score.",
       },
     ],
     order: 0,
