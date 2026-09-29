@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { projects } from "@/content";
+import { CAPTION_STEP_MS } from "@/components/sections/projects/TypedCaption";
 import { AUTO_ADVANCE_MS } from "@/lib/deck";
 
 /**
@@ -603,6 +604,16 @@ test.describe("ekran goruntusu karuseli", () => {
     await expect(carousel.locator('[aria-live="polite"]')).toHaveCount(1);
   });
 
+  /** Yazi yalnizca DEGISIMDE yaziliyor; sayfa acilinca ilki zaten tam. */
+  test("sayfa acilinca ilk yazi daktiloyla yazilmiyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
+    const caption = carousel.locator(SLIDE).first().locator("figcaption");
+    await expect(caption).not.toHaveAttribute("data-typing");
+    const last = caption.locator("span").last();
+    expect(await last.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
+  });
+
   test("hidrasyondan sonra tuslar gorunur ve sayac ilk goruntude", async ({ page }) => {
     const carousel = carouselOf(page);
     await expect(carousel.getByRole("button", { name: "Next screenshot" })).toBeVisible();
@@ -725,6 +736,16 @@ test.describe("ekran goruntusu karuseli - gezinme", () => {
     await expect(slides.nth(0).locator("figcaption")).toBeHidden();
   });
 
+  test("reduced-motion altinda yazi daktilosuz, tam geliyor", async ({ page }) => {
+    const carousel = carouselOf(page);
+    await carousel.getByRole("button", { name: "Next screenshot" }).click();
+    const caption = carousel.locator(SLIDE).nth(1).locator("figcaption");
+    await expect(caption).toBeVisible();
+    await expect(caption).not.toHaveAttribute("data-typing");
+    const last = caption.locator("span").last();
+    expect(await last.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
+  });
+
   test("iki uctan basa sariyor", async ({ page }) => {
     const carousel = carouselOf(page);
     const counter = carousel.locator("p");
@@ -815,6 +836,27 @@ test.describe("ekran goruntusu karuseli - otomatik gecis", () => {
 
   /** Her ara adim dogrulaniyor: yalnizca sondaki "01" bakilsaydi, hic
       ilerlemeyen bir deste de testi gecerdi. */
+  /**
+   * DAKTILO (design-spec.md §3.3.1): goruntu degisince altindaki yazi harf harf
+   * geliyor. Metin DOM'da BASTAN TAM (ekran okuyucu ve figur adi icin), gizleme
+   * yalnizca `[data-typing]` altinda `opacity` ile. Bekleme suresi
+   * `CAPTION_STEP_MS`ten turetiliyor.
+   */
+  test("goruntu degisince yazisi daktiloyla geliyor", async ({ page }) => {
+    const text = SHOTS[1]?.caption ?? "";
+    const caption = carouselOf(page).locator(SLIDE).nth(1).locator("figcaption");
+    const last = caption.locator("span").last();
+    await page.clock.runFor(AUTO_ADVANCE_MS);
+
+    await expect(caption).toHaveAttribute("data-typing", "");
+    await expect(caption).toHaveText(text);
+    expect(await last.evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
+
+    await page.clock.runFor(CAPTION_STEP_MS * (Array.from(text).length + 2));
+    await expect(caption).not.toHaveAttribute("data-typing");
+    await expect.poll(() => last.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
+  });
+
   test("sondan sonra basa sariyor", async ({ page }) => {
     for (let step = 1; step <= SHOTS.length; step++) {
       await page.clock.runFor(AUTO_ADVANCE_MS);

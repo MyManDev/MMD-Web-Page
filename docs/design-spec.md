@@ -385,9 +385,15 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   **Karar sahibi görüntülerin kendiliğinden değişmesini istedi**; o gerekçeyi fare karuselin
   üzerindeyken (görüntü ve tuş satırı) veya odak içerideyken duraklama karşılıyor. Bir tuşa
   basılınca süre baştan sayılır.
-- **Geçiş.** 200ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
-  giden 200ms altta kalıp tek adımda kaybolur. Reduced-motion altında geçiş hiç yok, değişim
-  anında (§6.1).
+- **Geçiş.** 900ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
+  giden aynı süre altta kalıp tek adımda kaybolur. Önce 200ms'ydi ve görüntü bir anda değişiyor
+  gibi okunuyordu; **karar sahibi 900ms'yi seçti** (§6'daki zarfın dışında). Reduced-motion altında
+  geçiş hiç yok, değişim anında (§6.1).
+- **Daktilo.** Görüntü değişince altındaki yazı harf harf gelir (harf başına 25ms,
+  `TypedCaption.tsx`); karar sahibinin isteği: "resmin altındaki yazı resim değişince daktilo
+  olarak değişsin". Takım kartının biyografisiyle aynı ilke: gizleme CSS'te ve yalnızca
+  `[data-typing]` altında, metin DOM'da her zaman tam. Sayfa açılınca ilk yazı zaten tam durur;
+  JS yoksa ve reduced-motion'da daktilo hiç çalışmaz.
 - **Erişilebilirlik.** APG karusel deseninin rolleri ve etiketleri: kap `role="group"` ve
   `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. APG'nin
   kendiliğinden dönen karusel için istediği görünür durdur/başlat tuşu **yok** (§3.4). Görüntü alanının
@@ -843,7 +849,8 @@ aynı sınıf hatadır.
 | Prensip girişi                   | 520ms + 70ms         | kelime kelime `opacity` + `translate` + `blur`                |
 | Prensip otomatik geçişi          | 7s aralık            | etkileşimde duraklar, bırakınca sürer                         |
 | Ekran görüntüsü karuseli         | §3.4 aralığı         | desteyle aynı kanca (`lib/deck.ts`)                           |
-| Ekran görüntüsü geçişi           | 200ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
+| Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
+| Resim altı yazısı                | 25ms/harf            | daktilo, görüntü değişince (`TypedCaption`)                   |
 
 Süre sütununda "X + Y", Y'nin öğeler arası kademe olduğunu söyler; gecikme ayrıca yazılır.
 
@@ -911,7 +918,8 @@ koşulları karşıladığı için kalıyor:
   kalmadığını ölçüyor.
 - Projects yığını `position: static` — düz liste.
 - Prensip destesi ve ekran görüntüsü karuseli kendiliğinden **ilerlemez** (`lib/deck.ts`).
-- Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1).
+- Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1); resim altı
+  yazısı daktilosuz, tam gelir.
 - Bütün animasyonlar **tamamen kaldırılır**: `animation-name: none`. Bu, scroll'a bağlı olanları
   (`nav-settle`, `mark-sweep`) da zamana bağlı olanları (`reveal-in`, `reveal-on-load`,
   `principle-word-in`, `scroll-hint-travel`) da kapsar. Keyframe uygulanmaz, öğe kendi taban
