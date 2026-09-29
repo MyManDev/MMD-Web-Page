@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
 import { ArrowIcon } from "@/components/ui";
 import type { Project } from "@/content";
+import { useHydrated } from "@/lib/deck";
 import { Screenshot } from "./Screenshot";
 
 /*
@@ -72,15 +73,8 @@ export function ScreenshotCarousel({
   screenshots: Project["screenshots"];
   className: string;
 }) {
-  /* Hidrasyon olup olmadigini soyleyen kanca, PrincipleDeck'teki ile ayni.
-     Hidrasyon sunucunun degeriyle (false) yapiliyor, yani uyusmazlik yok; React
-     hemen ardindan istemcinin degeriyle (true) bir kez daha render ediyor ve
-     tuslar o render'da gorunur oluyor. */
-  const enhanced = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
+  /* Tus satiri hidrasyona kadar gorunmez; kancanin gerekcesi lib/deck.ts'te. */
+  const enhanced = useHydrated();
   const [index, setIndex] = useState(0);
 
   const total = screenshots.length;
