@@ -105,3 +105,33 @@ test("bolum numarasi kalmadi - kart ve karusel sayilari ayri", async ({ page }) 
 
   expect(markers).toEqual([]);
 });
+
+/**
+ * REDUCED-MOTION GECIKMEYI DE SIFIRLIYOR (design-spec.md §6.1). Global blok
+ * once yalnizca SUREYI kisaltiyordu ve `transition-delay` kaliyordu:
+ * TeamCard'in aciklamasi reduced-motion altinda da 100ms gec aciliyordu,
+ * ekran goruntusu karuseli de bu yuzden kendi gecisini `motion-safe:` altina
+ * almak zorunda kalmisti.
+ *
+ * Olculen sey SAYFANIN TAMAMI, tek tek component'ler degil: bir sonraki
+ * `delay-*` sinifi hangi dosyada yazilirsa yazilsin bu test onu yakalar.
+ */
+test("reduced-motion altinda hicbir ogede gecis gecikmesi kalmiyor", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const delayed = await page.evaluate(() =>
+    [...document.querySelectorAll("*")].flatMap((el) => {
+      const delay = Math.max(
+        ...getComputedStyle(el)
+          .transitionDelay.split(",")
+          .map((value) => Number.parseFloat(value)),
+      );
+      return delay > 0
+        ? [`${el.tagName.toLowerCase()} ${el.getAttribute("class") ?? ""}: ${delay}s`]
+        : [];
+    }),
+  );
+
+  expect(delayed).toEqual([]);
+});

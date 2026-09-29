@@ -609,9 +609,9 @@ test.describe("ekran goruntusu karuseli", () => {
    * degisirse test takip etmeli, ama giden slaytin bekledigi sure gelenin
    * suresinden farkli olursa arada zemin parlar ve test dusmeli.
    *
-   * Reduced-motion altinda gecis HIC yok - globals.css'in blogu yalnizca
-   * sureyi kisaltiyor, gecikmeyi degil; gecikme kalsaydi giden slayt gorunur
-   * kalirdi (CLAUDE.md kural 10).
+   * Reduced-motion altinda gecis HIC yok (CLAUDE.md kural 10): ne sure ne
+   * gecikme. Gecikme kalsaydi giden slayt gorunur kalirdi; globals.css'in blogu
+   * once yalnizca sureyi kisaltiyordu.
    */
   test("gecis capraz sonumleme, reduced-motion altinda hic yok", async ({ page }) => {
     const slides = carouselOf(page).locator(SLIDE);
