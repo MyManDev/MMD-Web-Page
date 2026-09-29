@@ -81,6 +81,9 @@ test.describe("navbar", () => {
  * Olculen sey FARK, sabit degerler degil: iki durumdaki `background-color`
  * ayni olmamali. Degeri yazsam opaklik ayarlandiginda davranis bozulmadigi
  * halde test duserdi.
+ *
+ * Tek istisna, bilerek: #106'nin tint tabani sabit bir ALT SINIR tutuyor
+ * (asagida). Opaklik o sinirin altina indiginde dusmesi gereken test o.
  */
 test.describe("navbar scroll'da yerlesiyor", () => {
   const bar = ".nav-bar";
@@ -126,21 +129,23 @@ test.describe("navbar scroll'da yerlesiyor", () => {
   });
 
   /**
-   * TINT ESIGI (#106). Bar rengi page'in kendisi, yani nav yazisinin
-   * kontrastini belirleyen tek sayi opaklik. Olculdu (yazinin arkasindaki en
-   * parlak piksel): %72'de accent aktif link 3.72:1, pasif link 4.04:1;
-   * %87'de en kotu durum 4.62:1, %85'te 4.49 (design-spec.md §3.1).
+   * TINT TABANI (#106). Bar rengi page'in kendisi, yani nav yazisinin
+   * kontrastini belirleyen tek sayi opaklik. %87, bugunku icerik uzerinde
+   * olculen her noktada AA'yi tutan deger; olcum ve sayilar design-spec.md §3.1.
    *
-   * axe bunu goremez: arkadaki fotografi ve backdrop-filter'i hesaba katmiyor.
-   * Olculen sey dinlenme halindeki alfa - reduced-motion'da animasyon yok.
+   * SINIRI: bu test yalnizca opakligi tutuyor, kontrasti degil. %87 bembeyaz
+   * bir zeminde AA'yi tutmaz; bir bolumun ust kenarina acik bir gorsel eklenirse
+   * olcum yinelenir. axe da bunu goremez: arkadaki gorseli ve backdrop-filter'i
+   * hesaba katmiyor. Olculen sey dinlenme halindeki alfa - reduced-motion'da
+   * animasyon yok.
    */
-  test("dinlenme halindeki tint nav yazisini AA'da tutacak kadar opak", async ({ page }) => {
+  test("dinlenme halindeki tint #106 tabaninin altina inmiyor", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload();
 
     const alpha = await page.locator(bar).evaluate((el) => {
       const value = getComputedStyle(el).backgroundColor;
-      // color-mix `color(srgb ... / 0.87)` diye donuyor; alfa egik cizgiden sonra.
+      // Chromium bunu `oklab(... / 0.87)` diye donduruyor; alfa egik cizgiden sonra.
       // Eski rgba() bicimi icin dorduncu bilesene dusuyoruz (team.spec.ts ile ayni).
       const slash = value.split("/")[1];
       if (slash) return Number.parseFloat(slash);

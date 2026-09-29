@@ -140,13 +140,11 @@ section[id] {
    `background-color` token'in kendisinden turetiliyor (`color-mix`), sabit bir
    rgba() yazilmiyor (CLAUDE.md kural 1).
 
-   OPAKLIK %87, OLCULDU (#106). Nav yazisinin arkasindaki en parlak tek piksel
-   (yazi gizli; 1024/1280/1440/1920, kritik bolgelerde 25px adim): %72'de
-   accent aktif link 3.72:1'e, pasif link 4.04:1'e iniyordu - Hero basligi ve
-   acik fotograflar blur'dan siziyordu. %87'de en kotu durum 4.62:1; %85 iki
-   noktada 4.49 verdi. Renk yine page'in kendisi: duz zeminde fark yok, bar
-   yalnizca acik icerigin uzerinde koyulasiyor. Esigi tests/e2e/nav.spec.ts
-   tutuyor.
+   OPAKLIK %87, OLCULDU (#106). Bunun altinda nav yazisi, Hero basligi ve acik
+   fotograflar blur'dan sizdiginda AA'nin altina iniyor. Yontem ve sayilar
+   design-spec.md §3.1'de. Renk yine page'in kendisi: duz zeminde fark yok,
+   bar yalnizca acik icerigin uzerinde koyulasiyor. tests/e2e/nav.spec.ts
+   opakligi tutuyor; icerik degisirse olcum yinelenir.
 
    `@supports` kapisi: backdrop-filter'i olmayan tarayicida bar SAYDAM DEGIL
    dolu zemine dusuyor. Okunurluk bir tercih degil; destegin yoklugunda
