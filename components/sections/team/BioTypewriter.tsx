@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { usePrefersReducedMotion } from "@/lib/deck";
+
 /**
  * DENEME - biyografinin daktilo efektiyle yazilmasi.
  *
@@ -14,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
  *
  *   JS calismazsa        isaret hic konmaz -> butun harfler gorunur
  *   reduced-motion       effect erken doner -> isaret konmaz -> gorunur
+ *   sonradan acilirsa    effect yeniden kosar -> isaret kalkar -> gorunur
  *   (hover: none)        ayni -> gorunur
  *   hover'li cihaz       isaret konur -> harfler gizli baslar, hover'da yazilir
  *
@@ -32,6 +35,11 @@ const STEP_MS = 12;
 export function BioTypewriter({ text, className }: { text: string; className?: string }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [typed, setTyped] = useState(0);
+  /* Yalnizca DEGISIMI yakalamak icin: ayar sayfa acikken acilirsa effect yeniden
+     kosar, temizligi isareti kaldirir ve metin tam gorunur. Ilk okuma yine
+     asagida dogrudan matchMedia ile - kancanin sunucu degeri false oldugu icin
+     ona guvenilseydi reduced-motion kullanicisinda harfler bir an gizlenirdi. */
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const paragraph = ref.current;
@@ -76,7 +84,7 @@ export function BioTypewriter({ text, className }: { text: string; className?: s
       card.removeEventListener("focusin", start);
       card.removeEventListener("focusout", stop);
     };
-  }, [text]);
+  }, [text, reducedMotion]);
 
   return (
     <p ref={ref} className={className}>
