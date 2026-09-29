@@ -3,8 +3,7 @@
 Bu belge **ne inşa ettiğimizi** ve hangi kararla inşa ettiğimizi yazar. Nasıl çalıştığımız
 [`working-agreement.md`](working-agreement.md)'de.
 
-Kaynak: _MyMan.dev Final Tasarım ve Teknik Plan V1_ (görsel yön ve kapsam) ve
-_Nasıl Çalıştık — Football Squad Optimizer_ (mühendislik ilkeleri).
+Kaynak: _MyMan.dev Final Tasarım ve Teknik Plan V1_ (görsel yön ve kapsam).
 
 ---
 
@@ -61,7 +60,8 @@ yitiriyor. "Project Nexus / Aurora" mockup placeholder'ıydı ve yayınlanmayaca
 ürünü vitrinde göstermek, uydurulmuş bir sayı göstermekle aynı sınıf hatadır.
 
 **V1 tasarımı:** tam genişlikte, kendi başına bir bölüm gibi duran tek proje bloğu. Büyük gerçek
-ekran görüntüsü, mono tech tag'leri, GitHub ve Live Demo aksiyonları, ve §5.4'teki dürüst sayı.
+ekran görüntüleri (birden fazlaysa karusel, `design-spec.md` §3.3.1), mono tech tag'leri, GitHub ve
+Live Demo aksiyonları, ve §4.6'daki metrik satırı.
 
 **Component `N` proje alacak şekilde yazılır.** İçerik dosyasına ikinci proje eklendiğinde
 sticky/z-index yığını devreye girer. Yani mimari bugünden çok-projeli, görünen yüz tek projeli.
@@ -242,9 +242,22 @@ token dosyasında adıyla durur.
 Bu kolektifin ayırt edici tarafı, çalışma disiplininin negatifi olduğu gibi yayınlaması. Sitede buna
 karşılık gelen bir öğe olacak: Football bloğunda gerçek ve dürüst bir sayı satırı.
 
-Kullanılabilir gerçek malzeme: 15 günde 215 commit, ~2.600 test, 17 sprint, ve **terfi eden model
-sayısı sıfır** — sistem hâlâ deterministik temelle karar veriyor. İlk canlı hafta 56.08 projekte
-edildi, 26 gerçekleşti.
+Kullanılabilir gerçek malzeme, **bu bölüm yazıldığı gün (2026-08-27):** 15 günde 215 commit,
+~2.600 test ve **terfi eden model sayısı sıfır** — sistem o gün deterministik temelle
+karar veriyordu. İlk canlı hafta 56.08 projekte edildi, 26 gerçekleşti.
+
+**2026-09-29'da bu malzemenin çoğu eskidi.** Kaynak SquadOpt deposu; sayılar her gün değişiyor,
+o yüzden buraya yazılan her sayı tarihli:
+
+- develop'ta 50 günde **787 commit** (`git rev-list --count develop`, 2026-08-11 → 2026-09-29).
+- Son kayıtlı tam koşuda **9.148 test**: 7.415 Python, 1.582 web, 151 tarayıcı (SquadOpt #888).
+- **Canlı kararı artık eğitilmiş bir model veriyor.** SquadOpt #351'den (2026-09-05) beri
+  projeksiyon bir bileşen modeli: lojistik ve ridge regresyonlar, 2021-22 – 2024-25 sezonlarında
+  eğitilmiş. SquadOpt bunu doğrulayıcı bir terfi değil, karar sahibinin geri alınabilir
+  operasyonel seçimi olarak kaydediyor (`docs/phase_c_operational_component.md`). Ama canlı kararı
+  verebilen modeller listesinde (`src/squadopt/live/recommendation.py`) artık eğitilmiş modeller
+  var, yani "sıfır terfi eden model" bugün yazılamaz.
+- İlk canlı haftanın sayıları (56.08 / 26) tarih olduğu için hâlâ doğru.
 
 **Seçilen sayı `0` — "ML models promoted to production" idi. KARAR SAHİBİ DEĞİŞTİRDİ.** Yerine üç
 kısıt geçti: `15 PLAYERS OPTIMISED`, `£100M BUDGET CONSTRAINT`, `1 OPTIMAL SQUAD`.
@@ -254,14 +267,17 @@ kısıt geçti: `15 PLAYERS OPTIMISED`, `£100M BUDGET CONSTRAINT`, `1 OPTIMAL S
 model ise ölçülmüş bir başarısızlık ve bu bölümün tarif ettiği şeyin ta kendisi. Üç yeni sayı o
 işlevi görmüyor.
 
-Üç yeni sayı **uydurma değil**, hepsi doğrulanabilir: FPL kadrosu 15 oyuncu, £100m bütçe
-uygulamanın kendi ekranında yazılı, "1 optimal squad" CP-SAT'ın döndürdüğü kanıt. Övünme de
-değiller — üçü de projenin **kısıtları**, yani "ne kadar iyiyiz" değil "hangi kutuya sığmak
-zorundaydı" diyorlar.
+Üç yeni sayı **uydurma değil**, hepsi doğrulanabilir. FPL kadrosu 15 oyuncu ve £100m bütçe
+SquadOpt'un çözücü ayarında yazılı (`src/squadopt/optimization/config.py`: `squad_size`,
+`budget_tenths`). "1 optimal squad" CP-SAT'ın döndürdüğü kanıt: sistemin canlı kararı OPTIMAL olmak
+zorunda (`src/squadopt/live/report.py`: "A live decision requires an OPTIMAL result."). Övünme de
+değiller: ikisi projenin **kısıtı**, üçüncüsü bir **kanıt şartı**. Yani "ne kadar iyiyiz" değil,
+"hangi kutuya sığmak ve neyi kanıtlamak zorundaydı" diyorlar.
 
 Yani kaybedilen şey **doğruluk değil, imza.** Bu bölümün "vitrinde ölçülmüş bir başarısızlık
 göstermek nadir ve tamamen size ait" cümlesi hâlâ doğru; sitede artık karşılığı yok. Geri gelmesi
-istenirse yapılacak şey dördüncü bir metrik eklemek.
+istenirse yapılacak şey dördüncü bir metrik eklemek. O metrik eski `0` olamaz, çünkü artık doğru
+değil (yukarıda); yerine ne konacağı karar sahibinin kararı.
 
 Gerekçe: sticky kart ödünç alınmış ve yaygın bir davranış, imza olamaz. Bir vitrinde ölçülmüş bir
 başarısızlık göstermek ise nadir ve tamamen size ait.
