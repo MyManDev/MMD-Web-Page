@@ -35,10 +35,11 @@ const STEP_MS = 12;
 export function BioTypewriter({ text, className }: { text: string; className?: string }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [typed, setTyped] = useState(0);
-  /* Yalnizca DEGISIMI yakalamak icin: ayar sayfa acikken acilirsa effect yeniden
-     kosar, temizligi isareti kaldirir ve metin tam gorunur. Ilk okuma yine
-     asagida dogrudan matchMedia ile - kancanin sunucu degeri false oldugu icin
-     ona guvenilseydi reduced-motion kullanicisinda harfler bir an gizlenirdi. */
+  /* Ayar sayfa acikken acilirsa effect yeniden kosar, temizligi isareti
+     kaldirir ve metin tam gorunur. Iki okuma birlikte: kancanin degeri (degisimi
+     getiren o) ve dogrudan matchMedia (ilk render icin - kancanin sunucu degeri
+     false, ona tek basina guvenilseydi reduced-motion kullanicisinda harfler
+     hidrasyonda bir an gizlenirdi). */
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -47,7 +48,9 @@ export function BioTypewriter({ text, className }: { text: string; className?: s
     if (!paragraph || !card) return;
 
     const staysOpen =
-      matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(hover: none)").matches;
+      reducedMotion ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      matchMedia("(hover: none)").matches;
     if (staysOpen) return;
 
     // Isaret DOM'a dogrudan konuyor: bir render durumu degil, "JS burada"

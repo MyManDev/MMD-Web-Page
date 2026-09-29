@@ -137,9 +137,11 @@ test("reduced-motion sonradan acilinca daktilo birakiyor", async ({ page }) => {
   await expect(bio).toHaveAttribute("data-typing", "");
 
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(bio).not.toHaveAttribute("data-typing");
   const lastCharacter = bio.locator("span").last();
-  expect(await lastCharacter.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
+  await expect
+    .poll(() => lastCharacter.evaluate((el) => Number(getComputedStyle(el).opacity)))
+    .toBe(1);
+  await expect(bio).not.toHaveAttribute("data-typing");
 });
 
 /**
