@@ -360,7 +360,7 @@ Ekran görüntüsü: gerçek uygulamadan. Yoksa blok yayınlanmaz — placeholde
 (`CLAUDE.md` kural 6). Düz `<img>`, elle üretilmiş webp, `width`/`height` verilir ki CLS
 oluşmasın.
 
-**Birden fazla ekran görüntüsü elle geçişli bir karuselde gösterilir.** Şemada `screenshots` en az
+**Birden fazla ekran görüntüsü, kendiliğinden geçen bir karuselde gösterilir.** Şemada `screenshots` en az
 bir öğeli bir dizi ve her öğe kendi `alt` metnini taşır: görüntüler birbirinin yerine geçtiği için
 ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek görüntüde karusel
 çizilmez; düz `<img>`, bugünkü çerçeve, tuş yok.
@@ -369,15 +369,20 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   (`visibility`). Çerçeve bir görüntü boyunda kalır; gezinirken ne çerçeve ne tuşlar oynar.
   Görüntünün altında destenin (§3.4) sayacı (`01 / 03`) ve `deck-button` tuşları var. Yeşil yok:
   bölümün tek yeşili Live Demo (§5.1).
-- **Otomatik geçiş yok.** Destenin cümlesi okunup geçilir; ekran görüntüsü ise incelenir ve
-  bakılırken değişmesi incelenen satırı elden alır. Otomatik geçiş olmayınca duraklatma yolu da
-  gerekmiyor (WCAG 2.2.2 yalnızca kendiliğinden başlayan hareketi kapsıyor).
+- **Kendiliğinden geçiş, destenin kurallarıyla (§3.4).** Aralık ve davranış aynı, kod da aynı
+  (`lib/deck.ts`): fare görüntünün üzerindeyken veya odak içerideyken durur, bırakınca kaldığı
+  yerden sürer; reduced-motion altında hiç ilerlemez; bir tuşa basılınca süre baştan sayılır.
+  Karusel önce elle geçişliydi ve gerekçe "ekran görüntüsü incelenir, bakılırken değişmemeli" idi.
+  **Karar sahibi görüntülerin kendiliğinden değişmesini istedi**; o gerekçeyi karşılayan şey
+  fareyle ve odakla duraklama. Destenin bilinen sınırı burada da geçerli: dokunmatikte hover yok ve
+  sayfayı yalnızca kaydırarak okuyan birinin duraklatma yolu yok.
 - **Geçiş.** 200ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
   giden 200ms altta kalıp tek adımda kaybolur. Reduced-motion altında geçiş hiç yok, değişim
   anında (§6.1).
 - **Erişilebilirlik.** APG karusel deseni: kap `role="group"` ve
-  `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. Görüntü alanı
-  `aria-live="polite"`, çünkü tuşa basıldığında odak tuşta kalıyor. Ok tuşu yok, destede de yok;
+  `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. Görüntü alanının
+  canlı bölgesi destedeki gibi: otomatik geçişte `off`, etkileşimde `polite` (tuşa basıldığında
+  odak tuşta kalıyor ve değişen görüntüyü canlı bölge duyuruyor). Ok tuşu yok, destede de yok;
   APG karusel deseni onları istemiyor.
 - **JS gelmezse.** Sunucu ilk görüntüyü gösterir ve tuş satırını yer tutan ama görünmeyen hâlde
   basar. Ziyaretçi çalışmayan bir tuşla karşılaşmaz; JS gelince tuşlar sayfayı kaydırmadan görünür
@@ -797,6 +802,7 @@ aynı sınıf hatadır.
 | Bölüm girişi              | scroll'a bağlı | `opacity` + `transform: translateY(16px)`      |
 | Prensip girişi            | 520ms + 70ms   | kelime kelime `opacity` + `translate` + `blur` |
 | Prensip otomatik geçişi   | 7s aralık      | etkileşimde duraklar, bırakınca sürer          |
+| Ekran görüntüsü karuseli  | 7s aralık      | desteyle aynı kanca (`lib/deck.ts`)            |
 | Ekran görüntüsü geçişi    | 200ms          | çapraz sönümleme: `opacity`, `visibility`      |
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
