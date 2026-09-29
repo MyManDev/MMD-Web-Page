@@ -7,17 +7,17 @@
 **Yer:** iş
 **Aşama:** Faz 4, site yayında. **Ekipten bir kişi ayrıldı**; site ve depo iki kişilik ekibe göre
 güncellendi (#103, #104, #105, #107, #108). Cloudflare tarafındaki temizlik 2026-09-29'da bitti.
-Açık issue: #106.
+Nav kontrastı #111 ile çözüldü (#106 kapandı). Açık issue: yok.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`f64b8fa`)
+- Dal: `main` (`6330597`)
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **49 birim, 256 E2E** (32'si viewport'a göre atlanıyor),
+- `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **49 birim, 258 E2E** (32'si viewport'a göre atlanıyor),
   payload **133.8 KiB / 150.0 KiB**
 - Açık PR: yok
-- `wip/team-section-2026-08-29`: yeniden yazılmadan önceki Team dalının yedeği; #44 merge edilmiş,
-  toplanacak bir şey yok.
+- GitHub'da yalnızca `main` var. Eski 67 dalın ucu `archive/<dal>` etiketlerinde
+  (`git tag -l 'archive/*'`); merge'de dal artık kendiliğinden siliniyor.
 
 ## Yayın
 
@@ -52,14 +52,17 @@ Açık issue: #106.
 
 ## Sıradaki iş
 
-**#106 — nav yazısı bazı scroll konumlarında AA kontrastın altına iniyor.** Karar sahibinin seçimi
-bekleniyor: bar tint'i, pasif nav rengi veya accent aktif link. Hepsi paylaşılan yüzey
-(`app/tokens.css`, `app/globals.css`).
+**SquadOpt proje kartı:** yeni ekran görüntüleri kaydırmalı olarak (karusel) ve yeni açıklama.
 
-Ölçüm yöntemi ve sayılar issue'da. En kötü noktalar: pasif linkte **4.09:1** (1440×900, Team
-kartlarının üst kenarı — iki kişilik Team'le geldi, üç kişiyken 5.30:1) ve accent aktif linkte
-**3.90:1** (1280×720, Hero — daha önce de vardı). `design-spec.md` §3.1'deki 5.49:1 bu yöntemle
-yeniden üretilemedi ve spec'te böyle yazılı.
+- **Ekranlar (karar):** bu haftanın hamlesi, saha dizilişi, haftalık öneri geçmişi. Lig tablosu
+  kullanılmıyor, çünkü 14 kişinin gerçek adını taşıyor. Karar sahibinin adı, FPL numarası
+  (#6654210) ve lig numarası (352490) görünebilir.
+- **Açıklama (karar):** uygulamadan değil, projenin deposundan (`MyManDev/football-squad-optimizer`)
+  çıkarılacak; karar sahibi onaylayacak.
+- **Karusel:** `PrincipleDeck`'in kalıbı: düğmeyle ilerleyen, scroll listener'sız, reduced-motion'a
+  uyan, `aria-roledescription="carousel"`.
+- **Dikkat:** SquadOpt'un arayüzü açık renkli. Görseller eklenince nav kontrastı yeniden ölçülmeli
+  (`design-spec.md` §3.1, "Sınırı").
 
 ## Bitmemiş iş
 
