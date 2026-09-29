@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { usePrefersReducedMotion } from "@/lib/deck";
+
 /**
  * DENEME - biyografinin daktilo efektiyle yazilmasi.
  *
@@ -14,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
  *
  *   JS calismazsa        isaret hic konmaz -> butun harfler gorunur
  *   reduced-motion       effect erken doner -> isaret konmaz -> gorunur
+ *   sonradan acilirsa    effect yeniden kosar -> isaret kalkar -> gorunur
  *   (hover: none)        ayni -> gorunur
  *   hover'li cihaz       isaret konur -> harfler gizli baslar, hover'da yazilir
  *
@@ -32,6 +35,12 @@ const STEP_MS = 12;
 export function BioTypewriter({ text, className }: { text: string; className?: string }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [typed, setTyped] = useState(0);
+  /* Ayar sayfa acikken acilirsa effect yeniden kosar, temizligi isareti
+     kaldirir ve metin tam gorunur. Iki okuma birlikte: kancanin degeri (degisimi
+     getiren o) ve dogrudan matchMedia (ilk render icin - kancanin sunucu degeri
+     false, ona tek basina guvenilseydi reduced-motion kullanicisinda harfler
+     hidrasyonda bir an gizlenirdi). */
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const paragraph = ref.current;
@@ -39,7 +48,9 @@ export function BioTypewriter({ text, className }: { text: string; className?: s
     if (!paragraph || !card) return;
 
     const staysOpen =
-      matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(hover: none)").matches;
+      reducedMotion ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      matchMedia("(hover: none)").matches;
     if (staysOpen) return;
 
     // Isaret DOM'a dogrudan konuyor: bir render durumu degil, "JS burada"
@@ -76,7 +87,7 @@ export function BioTypewriter({ text, className }: { text: string; className?: s
       card.removeEventListener("focusin", start);
       card.removeEventListener("focusout", stop);
     };
-  }, [text]);
+  }, [text, reducedMotion]);
 
   return (
     <p ref={ref} className={className}>

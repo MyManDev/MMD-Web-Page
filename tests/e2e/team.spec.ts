@@ -125,6 +125,26 @@ test("fare hover'i aciklamayi aciyor ve metni gorunur kiliyor", async ({ page })
 });
 
 /**
+ * REDUCED-MOTION SONRADAN ACILINCA daktilo birakiyor (design-spec.md §6).
+ * Efekt ayari once yalnizca yuklenirken okuyordu: sayfa acikken reduced-motion
+ * acilirsa harfler yine harf harf yaziliyordu. Olculen sey: ayar degisince
+ * isaret kalkiyor ve yazilmamis harfler de gorunur.
+ */
+test("reduced-motion sonradan acilinca daktilo birakiyor", async ({ page }) => {
+  test.skip(!(await hoverCapable(page)), "hoversiz cihazda daktilo zaten calismiyor");
+
+  const bio = page.locator(`${CARD} [data-bio] p`).first();
+  await expect(bio).toHaveAttribute("data-typing", "");
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const lastCharacter = bio.locator("span").last();
+  await expect
+    .poll(() => lastCharacter.evaluate((el) => Number(getComputedStyle(el).opacity)))
+    .toBe(1);
+  await expect(bio).not.toHaveAttribute("data-typing");
+});
+
+/**
  * Kart hover'da kalkiyor. design-spec.md §6: kalkma yasagi ProjectCard'a ait
  * ve gerekcesi sticky yigin; TeamCard yiginda degil.
  *
