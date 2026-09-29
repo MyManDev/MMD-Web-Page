@@ -180,7 +180,9 @@ söyler.
 §4.1 ve §4.2 aynen geçerli. Değişen: ölçek, hareket ve mikro detaylar. Yani bu bir tema değişikliği
 değil; aynı palet üstünde hareketin ve ayrıntının sıkılaşması.
 
-Öncelik CSS: hover, sticky, smooth scroll. Geçiş süresi 150–250ms, `ease-out`.
+Öncelik CSS: hover, sticky, smooth scroll. Etkileşim geçişleri 150–250ms, `ease-out`. Giriş
+animasyonlarından üçü bu zarfın dışında ve karar sahibi şimdilik kodu doğru sayıyor
+(`design-spec.md` §6).
 
 **Sayfa yüklenirken giriş animasyonu yasağı KALDIRILDI.** Karar sahibi kaldırdı ("her şeyde
 animasyon olabilir"). Kalkan şey yasak, **ölçü değil**: yükleme anındaki giriş de 150–250ms zarfında
@@ -190,11 +192,11 @@ olmak zorunda, ve bu bir kapıyla ölçülüyor (`tests/e2e/hero.spec.ts`).
 
 Yasağın gerekçesi geçersiz olmadı, kapsamı daraldı: Hero açılışta ekranda olduğu için scroll'a bağlı
 bir reveal orada ya hiç görünmez ya da sayfayı yanıp sönüyormuş gibi gösterir. Bu yüzden Hero
-`view()` değil **zamana bağlı** bir animasyon kullanır; scroll'a bağlı olanlar ekrana sonradan giren
-bölümlerde kalır.
+`view()` değil **zamana bağlı** bir animasyon kullanır. Ekrana sonradan giren bölümlerin girişi de
+artık zamana bağlı (aşağıda).
 
-**Hareket sistemi saf CSS.** Scroll'a bağlı hareket `animation-timeline: view()` ve `scroll()` ile
-yazılır; iki özelliğin de desteklendiği doğrulandı. Kazanç iki katmanlı: sayfaya **0 KiB JS**
+**Hareket sistemi CSS öncelikli.** Scroll'a bağlı hareket `animation-timeline: scroll()` ile
+yazılır; bugün navbar zemini ve amblem gradyanı. Kazanç iki katmanlı: sayfaya **0 KiB JS**
 eklenmiyor, ve `CLAUDE.md` kural 3 ("scroll listener yazma") değişmeden duruyor çünkü zaman
 çizelgesini tarayıcının kendisi yürütüyor.
 
@@ -222,8 +224,8 @@ dönerken zaten oradadır.
 Desteklemeyen tarayıcıda öğe **son halinde** durur. Hiçbir içerik, okunabilirlik veya aksiyon
 hareket desteğine bağlı olmaz; hareket üstüne binen bir katman, taşıyıcı değil.
 
-`prefers-reduced-motion: reduce` altında: smooth scroll kapanır, tüm geçişler 0ms'e iner,
-scroll'a bağlı animasyonlar hiç bağlanmaz, sticky yığın düz listeye döner. Bu kalite tabanının
+`prefers-reduced-motion: reduce` altında: smooth scroll kapanır, tüm geçişler 0.01ms'e iner ve
+gecikmesiz olur, bütün animasyonlar kalkar (`animation-name: none`), sticky yığın düz listeye döner. Bu kalite tabanının
 parçası, sonradan eklenecek bir iş değil.
 
 Motion kütüphanesi V1'de **yok** ve bu Zaffiro'dan sonra da geçerli — pivotun bedeli bir bağımlılık
