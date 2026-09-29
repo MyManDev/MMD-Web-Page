@@ -1168,6 +1168,12 @@ test.describe("ekran goruntusu karuseli - daktilo", () => {
   /**
    * #125'in hata sinifi (team.spec.ts'te biyografi icin ayni test): yazi
    * surerken reduced-motion acilirsa yazi yarida DONMUYOR, hemen tamamlaniyor.
+   *
+   * Harfin opakligi YENIDEN DENENEREK okunuyor, team.spec.ts'teki gibi.
+   * Reduced-motion altinda global blok her gecisi 0.01ms yapiyor ve
+   * `transition-property` `all`da kaliyor. Yani isaret kalkinca harfin 0 -> 1
+   * degisimi de bir gecis; hemen okunan deger bir kare boyunca 0. CI'da mobilde
+   * boyle dustu (#130).
    */
   test("yazarken reduced-motion acilinca yazi hemen tamamlaniyor", async ({ page }) => {
     await load(page);
@@ -1177,7 +1183,7 @@ test.describe("ekran goruntusu karuseli - daktilo", () => {
 
     await page.emulateMedia({ reducedMotion: "reduce" });
     await expect(caption).not.toHaveAttribute("data-typing");
-    expect(await opacityOf(caption.locator("span").last())).toBe(1);
+    await expect.poll(() => opacityOf(caption.locator("span").last())).toBe(1);
   });
 
   /**
