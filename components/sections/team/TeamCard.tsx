@@ -6,7 +6,7 @@ import { BioTypewriter } from "./BioTypewriter";
 /**
  * Tek kisi karti. docs/design-spec.md §3.5
  *
- * KART FOTOGRAFIN KENDISI. Kutu 5/8 oraninda ve goruntu onu tamamen kapliyor;
+ * KART FOTOGRAFIN KENDISI. Kutu 5/9 oraninda ve goruntu onu tamamen kapliyor;
  * ad ve rol altta, goruntunun uzerinde duruyor. Hover'da goruntu hayaletlesiyor
  * ve biyografi ustunde beliriyor.
  *
