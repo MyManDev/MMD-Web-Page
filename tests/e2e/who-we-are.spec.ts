@@ -412,8 +412,10 @@ test.describe("prensip destesi - kelime kelime belirme", () => {
  * tiklayip fareyi cekmek, odak iceride kaldigi halde desteyi yeniden
  * baslatiyordu.
  *
- * Sahte saat, ve `pauseAt` ile DURDURULMUS: gercek zaman akmiyor, yani zamani
- * yalnizca `runFor` ilerletiyor ve testler makinenin hizina bagli degil.
+ * Sahte saat, ve `pauseAt` ile sayfa YUKLENMEDEN ONCE DURDURULMUS: gercek
+ * zaman akmiyor, yani zamani yalnizca `runFor` ilerletiyor ve testler makinenin
+ * hizina bagli degil. Hidrasyondan sonra durdurmak yetmiyordu: ilk zamanlayici
+ * hidrasyonda, saat hala akarken kuruluyordu.
  */
 test.describe("prensip destesi - karisik etkilesim", () => {
   const counterOf = (page: import("@playwright/test").Page) =>
@@ -421,9 +423,9 @@ test.describe("prensip destesi - karisik etkilesim", () => {
 
   test.beforeEach(async ({ page }) => {
     await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 1000);
     await page.reload();
     await expect(page.getByLabel("Next principle")).toBeVisible();
-    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   });
 
   test("fare cekilince odak icerideyse duruyor", async ({ page }) => {
