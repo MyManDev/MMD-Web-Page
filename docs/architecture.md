@@ -182,7 +182,8 @@ değil; aynı palet üstünde hareketin ve ayrıntının sıkılaşması.
 
 Öncelik CSS: hover, sticky, smooth scroll. Etkileşim geçişleri 150–250ms, `ease-out`. Giriş
 animasyonlarından üçü bu zarfın dışında ve karar sahibi şimdilik kodu doğru sayıyor
-(`design-spec.md` §6).
+(`design-spec.md` §6). Ekran görüntüsü geçişi de dışında: 900ms, karar sahibinin seçimi
+(`design-spec.md` §3.3.1).
 
 **Sayfa yüklenirken giriş animasyonu yasağı KALDIRILDI.** Karar sahibi kaldırdı ("her şeyde
 animasyon olabilir"). Kalkan şey yasak, **ölçü değil**: yükleme anındaki giriş de 150–250ms zarfında
@@ -574,6 +575,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Proje ekran görüntüleri    | Birden fazlaysa karusel: elle geçişli → **kendiliğinden**; tekse düz görüntü                 | §3     |
 | Otomatik geçişte durdurma  | Görünür tuş **yok**; bazı girdilerde yol yok, kabul edilen risk (design-spec §3.4)           | —      |
 | Görüntü başlığı            | Her görüntünün altında kısa başlık, görüntüyle değişir; `alt` onu tekrarlamaz                | §3     |
+| Karusel geçişi             | 200ms → **900ms** çapraz sönümleme, zarf dışı; resim altı yazısı daktiloyla (karar sahibi)   | §4.4   |
 | Font                       | IBM Plex Sans + Mono; **display rolü de mono** (bayt farkı yok)                              | §4.2   |
 | Sayfa genişliği            | 1180 → 1320 → **1600px**; 1600'e kadar tamamen akışkan                                       | §4.3   |
 | Bölüm dikey boşluğu        | Bölüm başına 40/64; aradaki boşluk toplamı 80/128 — önceden iki katıydı                      | §4.3   |
@@ -588,7 +590,7 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Lighthouse                 | Raporlanır, kapı değil                                                                       | §8     |
 | axe taraması               | `prefers-reduced-motion` altında, sayfa duragan halde                                        | §8     |
 | Lighthouse ölçümü          | Üç koşunun medyanı, aralığıyla birlikte                                                      | §8     |
-| Daktilo efekti             | Kalıcı; `TeamCard` biyografisi harf harf yazılıyor                                           | §6     |
+| Daktilo efekti             | Kalıcı; `TeamCard` biyografisi ve karuselin resim altı yazısı harf harf yazılıyor            | §6     |
 | Bölüm numaraları           | Kaldırıldı; her bölüm kendi başlığını taşır                                                  | §3     |
 | Component render testi     | V1'de yok                                                                                    | §8     |
 | Payload ölçümü             | Sayfa başına first-load; `nomodule` script'leri hariç                                        | §8     |

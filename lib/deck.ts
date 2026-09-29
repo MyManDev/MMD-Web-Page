@@ -6,8 +6,9 @@ import { type FocusEvent, useEffect, useState, useSyncExternalStore } from "reac
  *
  * Once hepsi PrincipleDeck'in icindeydi. Ekran goruntusu karuseli (§3.3.1) de
  * ayni davranisa gecebilsin diye buraya tasindi: iki kopya, bir gun birinde
- * duzeltilip digerinde unutulan bir hata demekti. Bugun karusel buradan yalnizca
- * `useHydrated`'i kullaniyor.
+ * duzeltilip digerinde unutulan bir hata demekti. Bugun karusel
+ * `useAutoAdvancingDeck`'i, resim alti yazisi (TypedCaption.tsx)
+ * `usePrefersReducedMotion`'i kullaniyor.
  *
  * "use client" YOK ve bu bilerek: dosyayi yalnizca client component'ler ve
  * Node'daki E2E import ediyor. Yonerge konsaydi, bir Server Component'in import
@@ -97,6 +98,10 @@ export function useAutoAdvancingDeck(total: number) {
   const reducedMotion = usePrefersReducedMotion();
 
   const [index, setIndex] = useState(0);
+  /* Kac kez yer degistirildi - elle ya da kendiliginden. Degisime baglanan
+     etkiler (karuselin daktilo yazisi) ilk render'i degisimden ayirmak icin
+     buna bakiyor: 0 ise hic degisim olmadi. */
+  const [steps, setSteps] = useState(0);
   /* Fare ve odak AYRI iki sebep. Tek bir bayrakta en son gelen olay kazaniyordu:
      fare ustteyken bir tusa tiklayip fareyi cekmek, odak iceride kaldigi halde
      desteyi yeniden baslatiyordu. Deste ikisinden biri surdukce duruyor. */
@@ -107,7 +112,10 @@ export function useAutoAdvancingDeck(total: number) {
      once de oyle. Yalnizca otomatik ilerleme onu susturuyor. */
   const [announce, setAnnounce] = useState(true);
 
-  const step = (delta: number) => setIndex((current) => (current + delta + total) % total);
+  const step = (delta: number) => {
+    setIndex((current) => (current + delta + total) % total);
+    setSteps((count) => count + 1);
+  };
 
   /*
     `index` bagimlilikta: her degisiklikten sonra zamanlayici bastan kuruluyor.
@@ -126,6 +134,7 @@ export function useAutoAdvancingDeck(total: number) {
       /* Fonksiyonel guncelleyici DEGIL: `index` boylece gercekten bir
          bagimlilik oluyor ve `exhaustive-deps` onu gereksiz gormuyor. */
       setIndex((index + 1) % total);
+      setSteps((count) => count + 1);
     }, AUTO_ADVANCE_MS);
 
     return () => clearTimeout(timer);
@@ -151,6 +160,7 @@ export function useAutoAdvancingDeck(total: number) {
   return {
     hydrated,
     index,
+    steps,
     step,
     announce,
     /* `onFocus`/`onBlur` React'te baloncuklaniyor, yani kapsayicida bunlar

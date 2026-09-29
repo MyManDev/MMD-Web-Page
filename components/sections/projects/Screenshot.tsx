@@ -1,5 +1,6 @@
 import type { Project } from "@/content";
 import { screenshotSrcSet } from "@/lib/images";
+import { TypedCaption } from "./TypedCaption";
 
 /**
  * Tek ekran goruntusu ve basligi. design-spec.md §3.3.1
@@ -41,7 +42,15 @@ export function Screenshot({
   alt,
   caption,
   className = "",
-}: Project["screenshots"][number] & { className?: string }) {
+  typing,
+}: Project["screenshots"][number] & {
+  className?: string;
+  /* Karuselden: slayt etkin mi ve karusel kac kez yer degistirdi. Yoksa baslik
+     duz metin (tek goruntulu kart). */
+  typing?: { active: boolean; steps: number };
+}) {
+  const captionClass =
+    "font-sans text-body-s text-text-muted motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out";
   return (
     <figure className={`flex flex-col gap-3 ${className}`}>
       <div className="overflow-hidden rounded-card border border-border">
@@ -60,9 +69,16 @@ export function Screenshot({
       </div>
       {/* Kendi gecisi karusel icin: giden slaytin basligi beklemeden sonuyor
           (ScreenshotCarousel.tsx, SLOT). Tek goruntude hicbir sey tetiklemiyor. */}
-      <figcaption className="font-sans text-body-s text-text-muted motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out">
-        {caption}
-      </figcaption>
+      {typing ? (
+        <TypedCaption
+          className={captionClass}
+          text={caption}
+          active={typing.active}
+          steps={typing.steps}
+        />
+      ) : (
+        <figcaption className={captionClass}>{caption}</figcaption>
+      )}
     </figure>
   );
 }

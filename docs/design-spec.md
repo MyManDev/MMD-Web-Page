@@ -385,9 +385,17 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   **Karar sahibi görüntülerin kendiliğinden değişmesini istedi**; o gerekçeyi fare karuselin
   üzerindeyken (görüntü ve tuş satırı) veya odak içerideyken duraklama karşılıyor. Bir tuşa
   basılınca süre baştan sayılır.
-- **Geçiş.** 200ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
-  giden 200ms altta kalıp tek adımda kaybolur. Reduced-motion altında geçiş hiç yok, değişim
-  anında (§6.1).
+- **Geçiş.** 900ms çapraz sönümleme, yalnızca `motion-safe` altında: gelen slayt üstte belirir,
+  giden aynı süre altta kalıp tek adımda kaybolur. Önce 200ms'ydi ve görüntü bir anda değişiyor
+  gibi okunuyordu; **karar sahibi 900ms'yi seçti** (§6'daki zarfın dışında). Reduced-motion altında
+  geçiş hiç yok, değişim anında (§6.1).
+- **Daktilo.** Görüntü değişince altındaki yazı harf harf gelir (harf başına 25ms,
+  `TypedCaption.tsx`); karar sahibinin isteği: "resmin altındaki yazı resim değişince daktilo
+  olarak değişsin". Takım kartının biyografisiyle aynı ilke: gizleme CSS'te ve yalnızca
+  `[data-typing]` altında, metin DOM'da her zaman tam. Sayfa açılınca ilk yazı zaten tam durur;
+  JS yoksa ve reduced-motion'da daktilo hiç çalışmaz. Yazı bitmeden görüntü yeniden değişirse
+  giden yazının kalanı gizli kalır ve başlıkla birlikte söner; yazarken reduced-motion açılırsa
+  yazı hemen tamamlanır.
 - **Erişilebilirlik.** APG karusel deseninin rolleri ve etiketleri: kap `role="group"` ve
   `aria-roledescription="carousel"`, her slayt `"slide"` ve `"2 of 3"` etiketi. APG'nin
   kendiliğinden dönen karusel için istediği görünür durdur/başlat tuşu **yok** (§3.4). Görüntü alanının
@@ -810,7 +818,8 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 yok. **Yükleme anında giriş animasyonu yasağı kaldırıldı** (§4.4); Hero'nun yükleme girişi zarfın
 içinde (240ms, `ease-out`). **Zarfın dışında üç animasyon var:** metin girişi 520ms
 (`cubic-bezier(0.22, 0.61, 0.36, 1)`), prensip kelimeleri 520ms ve scroll göstergesi 2 × 2200ms
-`ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
+`ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29).
+Ekran görüntüsü geçişi (900ms) de zarfın dışında; onu karar sahibi kendisi seçti (§3.3.1). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
 değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
@@ -843,7 +852,8 @@ aynı sınıf hatadır.
 | Prensip girişi                   | 520ms + 70ms         | kelime kelime `opacity` + `translate` + `blur`                |
 | Prensip otomatik geçişi          | 7s aralık            | etkileşimde duraklar, bırakınca sürer                         |
 | Ekran görüntüsü karuseli         | §3.4 aralığı         | desteyle aynı kanca (`lib/deck.ts`)                           |
-| Ekran görüntüsü geçişi           | 200ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
+| Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
+| Resim altı yazısı                | 25ms/harf            | daktilo, görüntü değişince (`TypedCaption`)                   |
 
 Süre sütununda "X + Y", Y'nin öğeler arası kademe olduğunu söyler; gecikme ayrıca yazılır.
 
@@ -886,7 +896,8 @@ komşu kartlar kaymıyor.
 
 **Daktilo efekti kalıcı** (#57). Gerçek portrelerle bakıldı ve benimsendi; deneme dönemi kapandı.
 Tek dosyada duruyor (`components/sections/team/BioTypewriter.tsx`). Prensip destesi bir süre aynı
-kuralı kullandı; kelime kelime belirmeye geçince bıraktı ve kural tek kullanıcıda kaldı. Efekt şu
+kuralı kullandı; kelime kelime belirmeye geçince bıraktı. Kuralın bugünkü ikinci kullanıcısı
+karuselin resim altı yazısı (`TypedCaption.tsx`, §3.3.1). Efekt şu
 koşulları karşıladığı için kalıyor:
 
 - Bölümün client JavaScript'i **yalnızca** bu component; gerisi sunucu tarafında. Ölçülen bedel
@@ -911,7 +922,8 @@ koşulları karşıladığı için kalıyor:
   kalmadığını ölçüyor.
 - Projects yığını `position: static` — düz liste.
 - Prensip destesi ve ekran görüntüsü karuseli kendiliğinden **ilerlemez** (`lib/deck.ts`).
-- Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1).
+- Ekran görüntüsü karuselinde geçiş **hiç uygulanmaz**, slayt anında değişir (§3.3.1); resim altı
+  yazısı daktilosuz, tam gelir.
 - Bütün animasyonlar **tamamen kaldırılır**: `animation-name: none`. Bu, scroll'a bağlı olanları
   (`nav-settle`, `mark-sweep`) da zamana bağlı olanları (`reveal-in`, `reveal-on-load`,
   `principle-word-in`, `scroll-hint-travel`) da kapsar. Keyframe uygulanmaz, öğe kendi taban
