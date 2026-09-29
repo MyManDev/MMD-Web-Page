@@ -228,9 +228,15 @@ test("hayalet arka plan sayfaya yatay tasma eklemiyor", async ({ page }) => {
  *
  * Reduced-motion altinda olculuyor: metin girisi basligi 14px asagidan
  * getiriyor ve `getBoundingClientRect` o kaymayi da sayardi.
+ *
+ * Emulasyon stile BIR SONRAKI KAREDE yansiyor, yani hemen okunan stil eski
+ * olabiliyor. Olculdu: baslik gecilip ekrana hic girmemisken `emulateMedia`
+ * ardindan okunan `translate` hala `0px 14px`, 100ms sonra `none`. Bu yuzden
+ * olcmeden once basligin kendi stili yeniden denenerek bekleniyor.
  */
 test("hayalet arka plan basliga ve bolumun disina dikeyde tasmiyor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator(`${SECTION} h2`)).toHaveCSS("translate", "none");
   await expect(page.locator(`${SECTION} [data-ghost]`).first()).toBeAttached();
   const gap = await page.locator(SECTION).evaluate((section) => {
     const ghosts = [...section.querySelectorAll("article > [data-ghost]")].map((el) =>
@@ -795,8 +801,9 @@ test.describe("ekran goruntusu karuseli", () => {
     expect(expected).toBeGreaterThan(0);
     expect(await duration(ghost)).toBe(expected);
 
+    // Emulasyon bir sonraki karede yansiyor: yeniden denenerek okunuyor.
     await page.emulateMedia({ reducedMotion: "reduce" });
-    expect(await duration(ghost)).toBeLessThan(0.001);
+    await expect.poll(() => duration(ghost)).toBeLessThan(0.001);
   });
 
   /**
@@ -832,11 +839,12 @@ test.describe("ekran goruntusu karuseli", () => {
     expect(Number(incoming.zIndex)).toBeGreaterThan(0);
     expect(outgoing.zIndex).toBe("auto");
 
+    // Emulasyon bir sonraki karede yansiyor: once sure yeniden denenerek
+    // bekleniyor, gecikme ayni stil hesabinda geliyor.
     await page.emulateMedia({ reducedMotion: "reduce" });
     for (let i = 0; i < SHOTS.length; i++) {
-      const { duration, delay } = await timing(i);
-      expect(duration).toBeLessThan(0.001);
-      expect(delay).toBe(0);
+      await expect.poll(async () => (await timing(i)).duration).toBeLessThan(0.001);
+      expect((await timing(i)).delay).toBe(0);
     }
   });
 });
