@@ -16,5 +16,8 @@ coverage/
 .DS_Store
 Thumbs.db
 
+# Claude Code ajanlarinin gecici calisma agaclari
+.claude/worktrees/
+
 # lighthouse yerel kosu ciktilari
 lighthouse-run-*

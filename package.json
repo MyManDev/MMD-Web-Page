@@ -18,7 +18,8 @@
     "size": "node scripts/check-bundle-size.mjs",
     "images": "node scripts/optimize-images.mjs",
     "e2e": "playwright test",
-    "gates": "pnpm lint && pnpm format && pnpm typecheck && pnpm test && pnpm build && pnpm size && pnpm e2e"
+    "trailers": "node scripts/check-commit-trailers.mjs",
+    "gates": "pnpm trailers && pnpm lint && pnpm format && pnpm typecheck && pnpm test && pnpm build && pnpm size && pnpm e2e"
   },
   "dependencies": {
     "next": "16.3.3",
