@@ -27,8 +27,11 @@ Tek `Container` primitive'i bütün bölümlerin genişliğini belirler: `max-wi
 | `640–1023` (tablet) | 2     | eşit iki kolon                                        |
 | `≥ 1024` (desktop)  | 12    | 12 kolonluk ızgara, bölümler bunun üstünde konumlanır |
 
-Izgara boşluğu (gutter) ve kart iç boşluğu: **24px mobil / 32px `≥ lg`** — `architecture.md`
-§4.3'teki yatay padding değerleriyle aynı iki sayı, yeni bir ölçü ailesi doğurmuyor.
+Izgara boşluğu (gutter) her genişlikte **32px**: `≥ lg`'de `--spacing-gutter-lg` (Hero, Who we are,
+`ProjectCard`), Team'in ızgarasında `gap-8`. Tek kolonda üst üste gelen bloklar arasında da 32px,
+Who we are'da 40px. Kart iç boşluğu her genişlikte **24px** (`--spacing-card`, `TeamCard`). Burada
+önce "24px mobil / 32px `≥ lg`" yazıyordu; kod o değerleri hiç kullanmadı ve karar sahibi belgenin
+koda uymasını seçti (`architecture.md` §9).
 
 Bölüm arası dikey boşluk §4.3'teki iki değerden gelir: mobilde küçük olan, `lg` ve üstünde büyük
 olan. Ara breakpoint'lerde arada bir değer **uydurulmaz**, `lg`'de sıçrar.

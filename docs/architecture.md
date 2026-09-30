@@ -641,3 +641,4 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Logo işareti               | Ekip iki kişiye indi; üç kafalı işaret **olduğu gibi kaldı** (karar sahibi)                  | §4.1   |
 | Kod yorumlarının dili      | **Türkçe, ASCII**; CLAUDE.md'deki "İngilizce" kuralı depoya uyduruldu (karar sahibi)         | —      |
 | `content/index.ts`         | **Paylaşılan yüzey**; CODEOWNERS zaten öyle sayıyordu (working-agreement §1)                 | —      |
+| Izgara ve kart boşluğu     | 24/32 → **32 her genişlikte, kart içi 24**; belge koda uyduruldu (karar sahibi)              | §4.3   |
