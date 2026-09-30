@@ -27,7 +27,8 @@ pnpm typecheck    # tsc --noEmit
 pnpm test         # vitest
 pnpm size         # en ağır sayfanın JS'i (gzip) < 150 KiB
 pnpm e2e          # playwright
-pnpm gates        # lint, format, typecheck, test, build, size, e2e — PR öncesi bunu koştur
+pnpm trailers     # origin/main'den bu yana commit'lerde trailer yok (working-agreement §3.2)
+pnpm gates        # trailers, lint, format, typecheck, test, build, size, e2e — PR öncesi bunu koştur
 ```
 
 ## Dil

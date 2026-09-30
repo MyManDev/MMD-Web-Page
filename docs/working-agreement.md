@@ -148,6 +148,13 @@ editör, ajan veya araç commit mesajının konusu değildir.
 
 Aynı kural PR ve issue gövdeleri için de geçerli.
 
+**Kural iki yerde mekanik olarak tutuluyor.** `.claude/settings.json` Claude Code'un `attribution`
+ayarını boşaltıyor, yani bu depoda açılan her oturum trailer ve PR imzası eklemiyor. `pnpm gates`
+de ilk adımda `origin/main`'den bu yana atılan commit'lere bakıyor (`pnpm trailers`) ve bir trailer
+bulursa düşüyor. Yakalamanın yeri PR açılmadan önce: PR'ın ref'i (`refs/pull/N/head`) commit'i
+squash'tan sonra da tutuyor ve o ref'i kullanıcı silemiyor. Ağustos'ta böyle kalan sekiz commit
+"claude"u GitHub'ın katkıcı listesine soktu (#67).
+
 ### 3.3 PR gövdesi
 
 Aynı üçü + **preview linki** + görsel değişiklik varsa önce/sonra görüntüsü (mobil dahil).
@@ -173,16 +180,17 @@ bir sürüm yaşar; daha uzun yaşarsa kalıcılaşır ve eski sınır hiç ölm
 
 Her PR'da, istisnasız. Yerelde tek komut: `pnpm gates`.
 
-| Kapı       | Komut            | Neyi tutar                                                  |
-| ---------- | ---------------- | ----------------------------------------------------------- |
-| lint       | `pnpm lint`      | stil, Next kuralları, hooks, `next/image`                   |
-| format     | `pnpm format`    | biçim                                                       |
-| tipler     | `pnpm typecheck` | strict tip kontrolü                                         |
-| test       | `pnpm test`      | şema + `lib/`                                               |
-| build      | `pnpm build`     | derleme; içerik şeması burada da patlar                     |
-| payload    | `pnpm size`      | en ağır sayfanın JS'i gzip < 150 KiB (`architecture.md` §8) |
-| E2E + a11y | `pnpm e2e`       | davranış, erişilebilirlik, 404                              |
-| review     | —                | görsel regresyon, metin ve isim kararları (§3.1)            |
+| Kapı       | Komut            | Neyi tutar                                                       |
+| ---------- | ---------------- | ---------------------------------------------------------------- |
+| trailer    | `pnpm trailers`  | commit mesajında co-author, araç imzası, oturum linki yok (§3.2) |
+| lint       | `pnpm lint`      | stil, Next kuralları, hooks, `next/image`                        |
+| format     | `pnpm format`    | biçim                                                            |
+| tipler     | `pnpm typecheck` | strict tip kontrolü                                              |
+| test       | `pnpm test`      | şema + `lib/`                                                    |
+| build      | `pnpm build`     | derleme; içerik şeması burada da patlar                          |
+| payload    | `pnpm size`      | en ağır sayfanın JS'i gzip < 150 KiB (`architecture.md` §8)      |
+| E2E + a11y | `pnpm e2e`       | davranış, erişilebilirlik, 404                                   |
+| review     | —                | görsel regresyon, metin ve isim kararları (§3.1)                 |
 
 **`lint-imports`'un tek karşılığı:** component'ler `content/` dosyalarını doğrudan okumaz, yalnızca
 `content/index.ts` üzerinden erişir. V1'de yazılı kural + review; ihlal tekrarlarsa mekanik hale
