@@ -25,7 +25,7 @@ pnpm lint         # eslint
 pnpm format       # prettier --check
 pnpm typecheck    # tsc --noEmit
 pnpm test         # vitest
-pnpm size         # out/ altındaki JS'in gzip toplamı < 150 KB
+pnpm size         # en ağır sayfanın JS'i (gzip) < 150 KiB
 pnpm e2e          # playwright
 pnpm gates        # lint, format, typecheck, test, build, size, e2e — PR öncesi bunu koştur
 ```

@@ -154,14 +154,16 @@ söyler.
 
 **Tip ölçeği** (mobil / desktop):
 
-| Rol                       | Boyut       | Satır yüksekliği |
-| ------------------------- | ----------- | ---------------- |
-| Display XL (hero)         | 40px / 64px | 1.05             |
-| Display L (bölüm başlığı) | 28px / 40px | 1.15             |
-| Display M (kart başlığı)  | 20px / 24px | 1.25             |
-| Body                      | 15px / 16px | 1.6              |
-| Body S                    | 14px        | 1.55             |
-| Mono label                | 12px        | 1.4              |
+| Rol        | Boyut       | Satır yüksekliği |
+| ---------- | ----------- | ---------------- |
+| Display XL | 48px / 80px | 1.05             |
+| Display L  | 32px / 56px | 1.15             |
+| Display M  | 22px / 28px | 1.25             |
+| Body       | 16px / 18px | 1.6              |
+| Body S     | 15px        | 1.55             |
+| Mono label | 13px        | 1.4              |
+
+Hangi öğenin hangi rolü aldığı: `design-spec.md` §4.
 
 ### 4.3 Ölçü ve biçim
 
@@ -357,7 +359,7 @@ components/
 content/              §5
 lib/                  yardımcılar
 assets/               kaynak görüntüler (screenshots/, people/) — servis EDİLMEZ
-public/               logo, favicon, og, üretilmiş proje görselleri
+public/               logo, og, üretilmiş proje görselleri
 scripts/              optimize-images.mjs
 tests/e2e/            Playwright
 docs/                 bu belge ve kardeşleri
@@ -406,6 +408,7 @@ değil, yapının kendisi sağlıyor.
   "test": "vitest run",
   "e2e": "playwright test",
   "size": "node scripts/check-bundle-size.mjs",
+  "images": "node scripts/optimize-images.mjs",
   "gates": "pnpm lint && pnpm format && pnpm typecheck && pnpm test && pnpm build && pnpm size && pnpm e2e"
 }
 ```
