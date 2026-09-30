@@ -10,8 +10,8 @@ import { useActiveSection } from "./useActiveSection";
 /**
  * Sticky navbar. docs/design-spec.md §3.1
  *
- * Zemin saydam DEGIL: blur'lu bar altindan gecen metnin okunurlugunu bozuyor
- * ve backdrop-filter mobilde bedava degil.
+ * Zemin yari saydam + backdrop-filter; tepede saydam, scroll'da koyulasiyor.
+ * Gerekce ve olcum: globals.css .nav-bar, design-spec.md §3.1.
  *
  * Sticky davranis position:sticky ile; scroll listener yok (CLAUDE.md kural 3).
  */

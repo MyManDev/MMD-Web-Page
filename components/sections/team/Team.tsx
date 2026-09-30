@@ -13,9 +13,9 @@ type NavItem = Site["nav"][number];
  * Baslik metni uydurulmuyor: nav etiketi content/site.ts'ten geliyor, ikinci
  * kez yazilmiyor. Bolum h2, kartlar h3 - seviye atlanmiyor (§7.1).
  *
- * SectionLabel YOK. "04 TEAM" etiketi ile "Team" basligi ayni kelimeyi iki kez
- * soyluyordu; numara da tek basina kaldiginda bir sey anlatmiyordu. Projects'te
- * etiket duruyor cunku orada baslik proje adi ve etiket bilgi katiyor.
+ * SectionLabel YOK (#58'de her bolumden kalkti). "04 TEAM" etiketi ile "Team"
+ * basligi ayni kelimeyi iki kez soyluyordu; numara da tek basina kaldiginda bir
+ * sey anlatmiyordu.
  *
  * `members` bossa bolum HIC render edilmez - bos cerceve veya "coming soon"
  * yok (CLAUDE.md kural 6). Karar cagiran tarafta: app/page.tsx.
@@ -39,7 +39,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
       sigdiramaz.
 
       Zincir: bolum `h-dvh` -> Container `flex-1` -> ic sarmalayici `flex-1` ->
-      liste `flex-1`. Her halka `min-h-0` tasimak zorunda; taşimazsa flex
+      liste `flex-1`. Her halka `min-h-0` tasimak zorunda; tasimazsa flex
       cocugu icerigin dogal yuksekliginden kucuk olamiyor ve tasma geri geliyor.
 
       Yalnizca `lg`de: mobilde bolum dogal akista kaliyor ve oran token'i
@@ -55,7 +55,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
           {/*
             Basliktan karta mesafe 40/56'dan 24/32'ye indi (istek: "baslik biraz
             yukari"). Bolumun dis ritmi (py-section) DEGISMEDI - o paylasilan bir
-            olcu ve tek bir bolum icin oynatilmaz (§4.2).
+            olcu ve tek bir bolum icin oynatilmaz (architecture.md §4.3).
           */}
           <h2
             id={headingId}

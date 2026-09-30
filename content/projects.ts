@@ -119,7 +119,7 @@ export const projects: Project[] = [
       },
     ],
     order: 0,
-    /* UC SAYI, ve bu bir kararı geri aliyor. Once burada tek bir sayi vardi:
+    /* UC SAYI, ve bu bir karari geri aliyor. Once burada tek bir sayi vardi:
        `0 - ML models promoted to production`. architecture.md §4.6 onu IMZA OGE
        olarak secmisti ve gerekcesi yaziliydi: 215 commit ve 2.600 test her
        vitrinde bulunur, terfi etmemis model ise olculmus bir basarisizlik ve

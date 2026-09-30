@@ -5,10 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import { usePrefersReducedMotion } from "@/lib/deck";
 
 /**
- * DENEME - biyografinin daktilo efektiyle yazilmasi.
+ * Biyografinin daktilo efekti (kalici, #57; design-spec.md §6).
  *
- * Bolumun geri kalani sunucu component'i; client'a donen tek sey bu. Efekt
- * begenilmezse silinecek dosya bu tek dosya, TeamCard'a dokunulmadan.
+ * Bolumun geri kalani sunucu component'i; client'a donen tek sey bu.
  *
  * GIZLEME KARARI CSS'TE, BURADA DEGIL. Yazilmamis harfler `data-pending`
  * tasiyor, ama onlari gizleyen kural yalnizca `[data-typing]` altinda

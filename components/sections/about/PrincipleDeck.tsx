@@ -13,7 +13,7 @@ import { useAutoAdvancingDeck } from "@/lib/deck";
  * bicim manifestoyu ekrandan atiyor ve bolumu bos gosteriyordu. Simdi ikisi
  * ayni ekranda: manifesto solda, deste sagda.
  *
- * ILERLEME BIR KATMAN, TASIYICI DEGIL. Sunucuda `enhanced` false ve bileşen
+ * ILERLEME BIR KATMAN, TASIYICI DEGIL. Sunucuda `enhanced` false ve bilesen
  * BES PRENSIBI DE duz liste olarak basiyor - tuslar yok, hepsi okunur. `enhanced`
  * ancak mount'tan sonra true oluyor. Yani JS hic gelmezse veya hidrasyon
  * duserse sayfada eksik icerik kalmiyor; kaybedilen yalnizca gezinme.

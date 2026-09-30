@@ -12,7 +12,7 @@ type NavItem = Site["nav"][number];
  *
  * Bolum basligi HER ZAMAN var (#58). Onceden tek projede baslik proje adiydi
  * ve bolum kimligini "02 PROJECTS" etiketi tasiyordu; etiketler kalkinca o
- * kimlik bosta kaldi. Artik bolum kendi basligini tasiyor (Display L) ve proje
+ * kimlik bosta kaldi. Artik bolum kendi basligini tasiyor (Display XL) ve proje
  * adi h3 - seviye atlanmiyor, tek h1 Hero'da kaliyor (§7.1).
  *
  * Baslik metni uydurulmuyor: nav etiketi content/site.ts'ten geliyor, ikinci
@@ -42,9 +42,9 @@ export function Projects({ section, projects }: { section: NavItem; projects: Pr
           ve onu soldurmak bolumun kendisini yanip sonuyormus gibi gosterirdi.
           Kural app/globals.css'te tek yerde; burada yalnizca uygulaniyor.
 
-          Yigin uyandiginda (§3.3.2) dogrulanacak: animasyon suresince buradaki
-          transform bir kapsayici blok yaratiyor ve sticky kartlarin ona gore
-          konumlanmasi kontrol edilmeli. Bugun total === 1, sticky hic uygulanmiyor.
+          Yigin uyandiginda (§3.3.2) dogrulanacak; bugun total === 1, sticky hic
+          uygulanmiyor. Kartlarin hicbir atasi translate tasimiyor: giris sinifi
+          #93'te bu sarmalayicidan metin bloklarina tasindi.
         */}
         <div className="flex flex-col gap-10 py-section lg:gap-14 lg:py-section-lg">
           <h2

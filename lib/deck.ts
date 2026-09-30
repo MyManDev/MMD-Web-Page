@@ -36,7 +36,7 @@ const noSubscription = () => () => {};
  * `subscribe` bos: abone olunacak bir sey yok, deger mount'tan sonra bir daha
  * degismiyor.
  */
-export function useHydrated(): boolean {
+function useHydrated(): boolean {
   return useSyncExternalStore(
     noSubscription,
     () => true,

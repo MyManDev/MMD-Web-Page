@@ -57,8 +57,8 @@ export function WhoWeAre({ section, whoWeAre }: { section: NavItem; whoWeAre: Si
             ortasina kaydirip iki sutunun baslangicini birbirinden kopariyordu.
 
             Ust cizgi susleme degil, HIYERARSI duzeltmesi. Prensip de h2 de
-            ayni olcude mono (40px) ve cizgisiz halde ikisi yan yana iki BASLIK
-            gibi okunuyordu. Alternatifi denendi - prensibi 24px'e dusurmek -
+            o zaman ayni olcude monoydu ve cizgisiz halde ikisi yan yana iki
+            BASLIK gibi okunuyordu. Alternatifi denendi - prensibi 24px'e dusurmek -
             ve sag kolonu yeniden bosaltiyordu; yani bu bolumun ilk sikayetini
             geri getiriyordu. Cizgi desteyi ayri bir modul olarak isaretliyor,
             olcuyu dusurmeden.

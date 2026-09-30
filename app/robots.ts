@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 import { site } from "@/content";
 
 /**
- * robots.txt. #11'in metin gerektirmeyen yarisi - SEO aciklamasi marka metni
- * ve bekliyor (#15), ama bu dosya yalnizca kanonik adresi istiyor.
+ * robots.txt. #11'in metin gerektirmeyen yarisi; bu dosya yalnizca kanonik
+ * adresi istiyor.
  *
  * Adres content/site.ts'ten geliyor; ikinci kez yazilmiyor. architecture.md §7
  * kanonik adresi mymandev.com olarak sabitledi.
