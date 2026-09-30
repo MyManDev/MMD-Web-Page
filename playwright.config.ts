@@ -14,8 +14,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  reporter: process.env.CI ? "github" : "list",
-  use: { baseURL, trace: "on-first-retry" },
+  // CI'da dusen kosunun izi kalsin: html reporter playwright-report/ yazar ve
+  // ci.yml onu yukler; dusen testin trace'i rapora kopyalanir. "on-first-retry"
+  // retries 0 ile hic trace uretmiyordu. Yerelde reporter "list", trace yok.
+  reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
+  use: { baseURL, trace: process.env.CI ? "retain-on-failure" : "off" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
