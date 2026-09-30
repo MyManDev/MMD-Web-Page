@@ -1,3 +1,3 @@
-# MMD-Web-Page-
+# MMD-Web-Page
 
-Design,architecture and implementation of MyManDev web page.
+Design, architecture and implementation of MyManDev web page.

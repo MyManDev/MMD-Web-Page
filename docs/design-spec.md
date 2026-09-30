@@ -55,7 +55,7 @@ Onay kuralı: `working-agreement.md` §1.
 
 `Button` ölçüsü: yükseklik 44px (mobil dokunma hedefi eşiği), yatay padding 20px,
 `radius-sm`. `Tag`: yükseklik 24px, yatay padding 10px, `surface-2` zemin, `radius-sm`.
-`NavLink`: yükseklik 40px, yatay padding 16px, `radius-pill` — sayfadaki tek pill yüzeyi.
+`NavLink`: yükseklik 44px, yatay padding 16px, `radius-pill` — sayfadaki tek pill yüzeyi.
 
 **`Tag` pill yapılmadı** ve bu soru bir kez açıldı, kapandı. Zaffiro pivotu (§4.4) renk ve yazı
 ailesini değil ölçek, hareket ve mikro detayları değiştiriyor; `radius-pill`'i tag'lere yaymak ise
@@ -90,7 +90,7 @@ V1'de `disabled` kullanan bir yüzey **yok**; durum tanımlı ki sonradan uyduru
 | `TeamCard`    | Team       | **B** | `member`                        | default · hover · focus-within       |
 | `Footer`      | Footer     | **B** | `site.footer`                   | —                                    |
 
-`ProjectCard` `index` ve `total` alır çünkü yığın davranışı (§4.2) kartın kaçıncı olduğunu bilmek
+`ProjectCard` `index` ve `total` alır çünkü yığın davranışı (§3.3.2) kartın kaçıncı olduğunu bilmek
 zorunda. V1'de `total === 1` ve yığın hiç devreye girmez.
 
 Hiçbir bölüm component'i `content/` dosyalarını doğrudan okumaz; veriyi props olarak alır
@@ -280,9 +280,10 @@ Kuralları:
   bir dosyanın içine gömülü kalmıyor (`CLAUDE.md` kural 1).
 - **Rengi logonun kendi turkuazı** (`--color-mark`, `#0D9488`). Önceki sessiz ton (`#3d5a53`) amblemi
   zemine karıştırıyordu; karar sahibi orijinal rengi istedi. **Accent değil** (`#14B8A6`) ve bu ayrım
-  korunuyor: amblem tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor. Kare zemin **yok**
-  — 460px'lik dolu bir blok Hero'nun ağırlık merkezini başlıktan amblemin üstüne kaydırıyor. Şekil
-  orijinal, zemin değil. §5.1'in tek-yeşil okumasına etkisi orada yazılı.
+  korunuyor: amblem tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor. Kare zemin bir
+  süre **kaldırılmıştı** — 460px'lik dolu bir blok Hero'nun ağırlık merkezini başlıktan amblemin
+  üstüne kaydırıyordu. Gradyanlı bir plaka olarak geri geldi; gerekçesi ve tek-yeşil okumasına
+  etkisi §5.1'de yazılı.
 - **Bütün durur, taşmaz.** Yerini aldığı wordmark'ın tam tersi sözleşme: yarısı kırpılmış bir logo
   bozuk görünür.
 - **Ölçü 460px'te kapanıyor** ve bu artık bir **tasarım** sınırı, çözünürlük sınırı değil. Vektöre
@@ -400,7 +401,7 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
   değil: karusel giriş animasyonunda `translate` taşıyor ve öyle bir öğe mutlak konumlu
   torunlarının referansı olur. Bölüm yatay taşmayı kırpar (`overflow-x: clip`), yoksa dar ekranda
   sayfa 28px yana kayıyordu. Kartın yazılarının kontrastı hayaletin üstünde ölçüldü: en kötüsü
-  masaüstünde 5.92, 390px'te 6.03 (AA 4.5).
+  1440px, 390px ve Pixel 7'de 5.92; hayaletsiz 8.50 (AA 4.5).
 - **Daktilo.** Görüntü değişince altındaki yazı harf harf gelir (harf başına 25ms,
   `TypedCaption.tsx`); karar sahibinin isteği: "resmin altındaki yazı resim değişince daktilo
   olarak değişsin". Takım kartının biyografisiyle aynı ilke: gizleme CSS'te ve yalnızca
@@ -459,12 +460,12 @@ bağlanacak.
 
 `architecture.md` §3'ün dört açık sorusu burada cevaplanıyor:
 
-| Soru                     | Cevap                                                                                                                                                                                                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Mobilde davranış         | Yığın **yok**. `< lg` altında kartlar düz liste; viewport yüksekliği yığını taşımıyor ve sticky kart mobilde ekranın çoğunu yiyor.                                                                                                                                       |
-| `prefers-reduced-motion` | Yığın düz listeye döner: sticky yok, kart `position: relative` (hayalet arka plan kartın kutusuna göre konumlanıyor), kartlar arasında mobildeki 64px boşluk (§4.4).                                                                                                     |
-| Alttaki kartın focus'u   | Kart içeriği `inert` **değildir**; sticky yalnızca konumu değiştirir, kartlar DOM'da normal sırada ve klavyeyle erişilebilir. Üste binen kart alttakinin focus'unu görsel olarak kapatırsa, focus'lanan kart `z-index` sırasını geçici olarak kazanır (`:focus-within`). |
-| Yığın yüksekliği         | Kap yüksekliği = kart sayısı × viewport yüksekliği. Tek kartta kap normal akışa döner ve sticky hiç uygulanmaz.                                                                                                                                                          |
+| Soru                     | Cevap                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mobilde davranış         | Yığın **yok**. `< lg` altında kartlar düz liste; viewport yüksekliği yığını taşımıyor ve sticky kart mobilde ekranın çoğunu yiyor.                                                                                                                                                                                                                                               |
+| `prefers-reduced-motion` | Yığın düz listeye döner: sticky yok, kart `position: relative` (hayalet arka plan kartın kutusuna göre konumlanıyor), kartlar arasında mobildeki 64px boşluk (§4.4).                                                                                                                                                                                                             |
+| Alttaki kartın focus'u   | Kart içeriği `inert` **değildir**; sticky yalnızca konumu değiştirir, kartlar DOM'da normal sırada ve klavyeyle erişilebilir. Üste binen kart alttakinin focus'unu görsel olarak kapatırsa, focus'lanan kart `z-index` sırasını geçici olarak kazanır (`:focus-within`). Henüz uygulanmadı; `z-index` satır içi style'da (`ProjectCard.tsx`), bu yüzden tek bir sınıf onu ezmez. |
+| Yığın yüksekliği         | Kap yüksekliği = kart sayısı × viewport yüksekliği. Tek kartta kap normal akışa döner ve sticky hiç uygulanmaz.                                                                                                                                                                                                                                                                  |
 
 ### 3.4 Who we are — Bölge B
 
@@ -484,9 +485,9 @@ Prensip sayısı **3–5** ve bu sınır belgede değil şemada zorlanıyor
 #### Prensip destesi
 
 Prensipler **tek tek** gösterilir; kullanıcı ileri/geri tuşlarıyla gezer ve `01 / 05` sayacı
-konumu söyler. Prensip Display L'de durur — ekranı hak eden cümle Body S'te kaybolur. Ölçü
-genişliği `--max-width-statement` (22ch): `65ch` gövde metni için doğru ama `ch` yazı boyutuyla
-büyüdüğü için 40px'te sınır işlevini yitirir (§4.3).
+konumu söyler. Prensip mobilde Display M'de, lg'de Display L'de durur — ekranı hak eden cümle
+Body S'te kaybolur. Ölçü genişliği `--max-width-statement` (22ch): `65ch` gövde metni için doğru
+ama `ch` yazı boyutuyla büyüdüğü için 56px'te sınır işlevini yitirir (§4.3).
 
 **Deste kendiliğinden ilerler: 7 saniyede bir sonraki prensip.** Duraklatma mekanizması
 **etkileşim**: fare desteye girdiğinde veya içeriye odak düştüğünde durur; ikisi de bitince kaldığı
@@ -637,7 +638,7 @@ Görseller yeni oranda yeniden üretildi; `lib/image-widths.json` ile token **ay
 zorunda, yoksa `cover` sessizce kırpar ve `width`/`height` nitelikleri kutuyu yanlış tarif eder.
 
 Başlıktan karta mesafe **24/32** (önce 40/56). Bölümün dış ritmi (`py-section`) değişmedi — o
-paylaşılan bir ölçü ve tek bir bölüm için oynatılmaz (§4.2).
+paylaşılan bir ölçü ve tek bir bölüm için oynatılmaz (`architecture.md` §4.3).
 
 Bu düzen bir estetik tercih değil, **kaymayı ortadan kaldıran şeyin kendisi**: açılan her şey
 mutlak konumlu, yani kartın yüksekliği hiç değişmiyor. Biyografi akışa eklendiğinde bölüm hover'da
@@ -704,14 +705,15 @@ primitive'inden gelir ve 12px'e küçültülür, çünkü footer'ın mono satır
 Rollerin boyut ve satır yüksekliği değerleri `architecture.md` §4.2'de. Buradaki iş, hangi
 elemanın hangi rolü aldığı.
 
-| Rol        | Nerede                                                            |
-| ---------- | ----------------------------------------------------------------- |
-| Display XL | Hero başlığı **ve** bölüm başlıkları: Projects, Who we are, Team. |
-| Display L  | Prensip destesindeki cümle.                                       |
-| Display M  | Proje adı, `TeamCard` adı, `MetricRow` sayısı.                    |
-| Body       | Hero alt cümlesi, proje özeti, About manifestosu.                 |
-| Body S     | `TeamCard` biyografisi, About prensip listesi, footer telif.      |
-| Mono label | `Tag`, `MetricRow` etiketi, nav linkleri, footer linkleri.        |
+| Rol        | Nerede                                                                               |
+| ---------- | ------------------------------------------------------------------------------------ |
+| Display XL | Hero başlığı **ve** bölüm başlıkları: Projects, Who we are, Team.                    |
+| Display L  | Proje adı, prensip destesindeki cümle (`lg`).                                        |
+| Display M  | Proje özeti, `TeamCard` adı, `MetricRow` sayısı, prensip destesindeki cümle (mobil). |
+| Body       | Hero alt cümlesi, proje açıklaması, About manifestosu, prensip listesi (JS yokken).  |
+| Body S     | `TeamCard` biyografisi, resim altı yazısı.                                           |
+| Mono label | `Tag`, `MetricRow` etiketi, footer linkleri, footer telif.                           |
+| Nav        | Nav yazısı, wordmark dahil (`--text-nav`).                                           |
 
 **Ölçek bir basamak büyüdü** (istek: "yazılar çok küçük", "bu sayfa çok küçük"). Önceki değerler
 sırasıyla 40/64 · 28/40 · 20/24 · 15/16 · 14 · 12; bugün 48/80 · 32/56 · 22/28 · 16/18 · 15 · 13.
@@ -753,8 +755,7 @@ oradan gelir:
 `text-[28px]` gibi gömülü bir değer artık yok. `clamp()` de **bilerek yok**: §1 ara
 breakpoint'lerde değer uydurulmayacağını söylüyor, `lg`'de sıçrıyor.
 
-**Tek istisna navbar wordmark'ı:** 14px mono, ve bu ölçü §4.2'nin ölçeğinde yok. Token'a
-bağlanmadı çünkü bağlamak için önce ölçeğe eklenmesi gerekir; o da bir karar.
+Ölçeğin dışındaki tek rol nav yazısı (wordmark dahil): `--text-nav`, 15px mono, token'da (§3.1).
 
 ---
 
@@ -866,6 +867,7 @@ aynı sınıf hatadır.
 | Prensip otomatik geçişi          | 7s aralık            | etkileşimde duraklar, bırakınca sürer                         |
 | Ekran görüntüsü karuseli         | §3.4 aralığı         | desteyle aynı kanca (`lib/deck.ts`)                           |
 | Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
+| Giden resim altı yazısı          | 200ms                | `opacity`, beklemeden söner (`Screenshot.tsx`)                |
 | Resim altı yazısı                | 25ms/harf            | daktilo, görüntü değişince (`TypedCaption`)                   |
 | Hayalet arka plan                | 900ms                | `opacity`, görüntüyle birlikte (`ScreenshotGhost`)            |
 
@@ -952,9 +954,9 @@ koşulları karşıladığı için kalıyor:
 
 Evrensel kural global bir `@media` bloğunda **bir kez** yazılır (`app/globals.css`). Ayrı yazılan
 üç yer var: metin girişinin gizleme kuralı `no-preference` sorgusunda, Projects yığını
-`motion-reduce:` ile (`ProjectCard.tsx`), ekran görüntüsü karuselinin ve hayaletinin geçişi
-`motion-safe:` ile — sonuncusu global blok gecikmeyi sıfırlamadan önce gerekliydi, çünkü giden
-slayt gecikme süresince görünür kalırdı; bugün ikinci kat.
+`motion-reduce:` ile (`ProjectCard.tsx`, `Projects.tsx`), ekran görüntüsü karuselinin ve
+hayaletinin geçişi `motion-safe:` ile — sonuncusu global blok gecikmeyi sıfırlamadan önce
+gerekliydi, çünkü giden slayt gecikme süresince görünür kalırdı; bugün ikinci kat.
 
 ---
 
