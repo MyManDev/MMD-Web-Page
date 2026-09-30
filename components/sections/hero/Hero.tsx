@@ -16,10 +16,11 @@ type NavItem = Site["nav"][number];
  * sessizce kalkmadi: gerekce architecture.md §4.4 ile §9'da, ve eski test
  * silinmedi, yeni sozlesmeyi olcecek bicimde yeniden yazildi.
  *
- * `reveal-on-enter` DEGIL `reveal-on-load`, ve sebep teknik: `view()` cizelgesi
- * Hero'yu "gecmis" sayiyor cunku Hero acilista zaten ekranda - scroll'a bagli
- * bir reveal burada ya hic gorunmez ya da yanip sonuyormus gibi gorunur.
- * Zarf korundu: 180ms sure, 60ms kademe (§4.4'un 150-250ms sinirinin icinde).
+ * `reveal-on-enter` DEGIL `reveal-on-load`, ve sebep teknik: observer isareti
+ * mount'ta koyuyor, yani acilista ekranda olan Hero ilk boyamada gorunur,
+ * isaretle gizlenip yeniden belirirdi; isareti ilk boyamadan once koymak ise
+ * h1'i (LCP ogesi) hidrasyona kadar gizlerdi (RevealOnView.tsx).
+ * Zarf korundu: 240ms sure, 70ms kademe (§4.4'un 150-250ms sinirinin icinde).
  *
  * Sira `--reveal` ile veriliyor: baslik -> alt cumle -> aksiyonlar -> amblem.
  *

@@ -98,8 +98,9 @@ export function ScreenshotCarousel({
         {...pauseOn}
       >
         {/* Cerceve her slaytin icinde, goruntunun etrafinda (Screenshot.tsx); kap
-          yalnizca izgara. Baslik slaytin parcasi, yani gecis ikisini birlikte
-          goturuyor ve kap en uzun basliga gore sabit kaliyor. */}
+          yalnizca izgara. Baslik slaytin parcasi, yani goruntuyle birlikte
+          degisiyor (giden baslik beklemeden soner, yukaridaki SLOT notu) ve kap
+          en uzun basliga gore sabit kaliyor. */}
         <div aria-live={announce ? "polite" : "off"} className="grid">
           {screenshots.map((screenshot, slot) => (
             <div

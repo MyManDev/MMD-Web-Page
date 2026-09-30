@@ -102,9 +102,12 @@ section[id] {
 /* HERO'nun girisi - SAF CSS, JS'e bagli DEGIL. design-spec.md §3.2
 
    Ayri bir mekanizma ve gerekcesi olculdu. Metin girisi
-   `IntersectionObserver` ile calisiyor ve o yol ogeyi hidrasyona kadar gizli
-   tutuyor (olculdu: ~1.5s). Hero'nun `h1`'i sayfanin LCP ogesi; onu JS gelene
-   kadar gizlemek LCP'yi dogrudan bozardi - ve LCP zaten acik bir issue (#83).
+   `IntersectionObserver` ile calisiyor ve isaret mount'ta konuyor: acilista
+   ekranda olan bir oge once gorunur, sonra gizlenip yeniden belirirdi. Isareti
+   ilk boyamadan once koymak (denendi, RevealOnView.tsx) ogeyi hidrasyona kadar
+   gizli tutuyordu (olculdu: ~1.5s). Hero'nun `h1`'i sayfanin LCP ogesi; onu JS
+   gelene kadar gizlemek LCP'yi dogrudan bozardi - ve LCP zaten acik bir issue
+   (#83).
 
    Bu kural ilk boyamada basliyor, yani hicbir bekleme yok.
 
@@ -215,7 +218,7 @@ section[id] {
    payload'a biner; `repeating-linear-gradient` saf CSS ve 0 bayt. Aci tint ile
    ayni yonde (118deg), yani iki katman ayri iki desen gibi okunmuyor.
 
-   88px araliğin sebebi ritim: 40px'te izgara, 160px'te tesadufi gorunuyordu.
+   88px araligin sebebi ritim: 40px'te izgara, 160px'te tesadufi gorunuyordu.
    Cizgi 1px ve rengi `--hero-line` (metin renginin %6'si) - kural 2'nin
    yasakladigi parlama degil, doku. */
 .hero-field {
@@ -226,11 +229,9 @@ section[id] {
 
 /* Hero amblemi. design-spec.md §3.2
 
-   Marka isareti - uc kafa ve bir "m". Kaynak dolu turkuaz bir kare; zemin
-   `scripts/extract-mark.mjs` ile ayrildi. Renk artik logonun kendi turkuazi
-   (`--color-mark`), ama KARE hala yok: 460px'lik dolu bir blok Hero'nun
-   agirlik merkezini baslikdan amblemin ustune kaydiriyordu. Sekil orijinal,
-   zemin degil (§5.1).
+   Marka isareti - uc kafa ve bir "m". Kare, logonun kendi turkuazinda
+   (`--color-mark`) conic gradyanli bir plaka olarak asagida
+   (`.hero-mark-plate`, §5.1).
 
    `mask-image` + `background-color`, `<img>` DEGIL: renk token'dan geliyor ve
    dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).
@@ -240,7 +241,7 @@ section[id] {
    Onceki 380px tavani kaynagin 400x400 olmasindan geliyordu; vektorde
    cozunurluk tavani yok. Ust sinir hala var ama artik TASARIM sinirisi:
    amblem basligin agirligini gecmemeli. */
-/* GORULMEK ICIN (wip): logonun orijinal bicimi - turkuaz plaka + beyaz sembol.
+/* Logonun orijinal bicimi - turkuaz plaka + beyaz sembol.
    Plaka ayri bir oge cunku `mask` ogenin KENDI zeminini de kirpiyor; ayni
    ogeye hem maske hem arka plan verilemez. Maske hala `.hero-mark`ta, yani
    maske testleri oldugu gibi calisiyor. */
@@ -313,7 +314,7 @@ section[id] {
   /* Sembol beyaz: `--color-text` (#f2f5f3). Orijinal dosya #ffffff kullaniyor
      ama turkuaz uzerinde ikisi gozle ayirt edilmiyor ve renk yalnizca
      tokens.css'te yasar (CLAUDE.md kural 1) - saf beyaz icin yeni bir token
-     gerekirdi ve bu dal yalnizca GORMEK icin. */
+     gerekirdi. */
   background-color: var(--color-text);
   mask-image: url("/logo-mark.svg");
   mask-size: contain;
@@ -404,11 +405,7 @@ a:focus-visible .roll-track {
    degil tuslarla geziliyor.
 
    Silinenler: .principle-track, .principle-pin, .principle-list, .principle,
-   .principle-index ve principle-step / principle-step-last keyframe'leri.
-
-   Sabit yukseklik YOK ve bu bilerek: prensipler farkli uzunlukta, sabit bir
-   kap ya en uzununa gore fazladan bosluk birakir ya da kisasini kirpar. Kap
-   icerikle birlikte buyuyor. */
+   .principle-index ve principle-step / principle-step-last keyframe'leri. */
 /* Bes prensip de ayni izgara hucresinde ust uste. Kap yuksekligi boylece EN
    UZUN prensibe sabitleniyor ve gezinirken tuslar yerinden oynamiyor.
 
@@ -560,8 +557,8 @@ a:focus-visible .roll-track {
   opacity: 0;
 }
 
-/* prefers-reduced-motion tek yerde ele alinir, her component'te tekrar edilmez.
-   architecture.md §4.4 / design-spec.md §6.1 */
+/* prefers-reduced-motion'in evrensel kurali burada, bir kez yazilir; ayri
+   yazilan yerler design-spec.md §6.1'de sayili. architecture.md §4.4 */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

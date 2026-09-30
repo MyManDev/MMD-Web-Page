@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react";
 
 /**
- * Aktif bolum tespiti. TEK IntersectionObserver, yalnizca burada.
+ * Aktif bolum tespiti. Iki IntersectionObserver'dan biri (digeri
+ * components/ui/RevealOnView.tsx).
  * Baska hicbir yerde scroll dinlenmez (CLAUDE.md kural 3).
  *
  * rootMargin ust marji navbar'i duser, alt marj -%55 bir bolumun ekranin ust
  * yarisina girdigi anda aktif sayilmasini saglar; aksi halde iki bolum ayni
  * anda aktif gorunuyor. docs/design-spec.md §3.1
  *
- * Bolumler henuz yoksa (Faz 3 devam ediyor) hicbir link aktif olmaz.
+ * Bolumler henuz yoksa hicbir link aktif olmaz.
  */
 export function useActiveSection(ids: readonly string[]): string | null {
   const [active, setActive] = useState<string | null>(null);

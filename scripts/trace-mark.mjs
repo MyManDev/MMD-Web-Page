@@ -54,7 +54,10 @@ const ISO = 0.5;
  */
 const EPSILON = 0.1;
 
-/** Kaynagi alfa maskesine cevirir - extract-mark.mjs ile ayni renk mesafesi. */
+/**
+ * Kaynagi alfa maskesine cevirir - eski extract-mark.mjs (#79'da silindi) ile
+ * ayni renk mesafesi.
+ */
 async function readMask({ dataUrl }) {
   const image = new Image();
   image.src = dataUrl;

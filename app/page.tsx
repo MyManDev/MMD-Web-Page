@@ -19,7 +19,7 @@ import { projects, site, team } from "@/content";
  *
  * Projects yalnizca YAYINLANACAK bir proje varsa render ediliyor. Bos icerik
  * bos bir bolum uretmiyor - "coming soon" karti veya bos cerceve yok
- * (CLAUDE.md kural 6). Bolum numarasi ve etiketi content/site.ts'teki nav
+ * (CLAUDE.md kural 6). Bolum etiketi content/site.ts'teki nav
  * kaydindan geliyor; ikinci kez yazilmiyor.
  */
 export default function Home() {

@@ -32,10 +32,6 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-/**
- * NOT: `description` BILEREK yok. SEO aciklamasi marka metnidir ve paylasilan
- * karar alanina girer (CLAUDE.md kural 5). Metin yazildiginda eklenir.
- */
 export const metadata: Metadata = {
   metadataBase: new URL(site.canonicalUrl),
   title: site.wordmark,

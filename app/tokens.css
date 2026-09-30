@@ -48,9 +48,9 @@
      12.
 
      Bolum basligi 40'tan 56'ya cikarken Hero da 64'ten 80'e cikti; ikisi
-     birlikte hareket etmeseydi baslik hiyerarsisi duzlesirdi. Prensip destesi
-     Display L kullaniyor, yani o da 56'ya cikiyor ve bolum basligiyla ayni
-     olcude kaliyor - aralarindaki ayrimi §3.4'teki cizgi yapiyor, olcu degil.
+     birlikte hareket etmeseydi baslik hiyerarsisi duzlesirdi. Bolum basliklari
+     sonradan Display XL'e cikti (80px, design-spec.md §4); prensip lg'de
+     Display L'de (56px), ayrimi artik olcu yapiyor.
 
      `ch` ile tanimli olcu sinirlari (--max-width-prose, --max-width-statement)
      yazi boyutuyla birlikte buyuyor; ayrica ayarlanmalari gerekmiyor. */
@@ -140,13 +140,13 @@
   --max-width-prose: 65ch;
   /* Display olceginde okuma genisligi. 65ch govde metni icin dogru ama `ch`
      yazi boyutuyla buyudugu icin 40px'te ~2600px eder - kapsayiciyi asar ve
-     sinir islevini yitirir. Pinlenen prensip dizisi (design-spec.md §3.4) tek
+     sinir islevini yitirir. Prensip destesi (design-spec.md §3.4) tek
      cumleyi display olceginde gosteriyor ve kendi olcusune ihtiyaci var.
      Breakpoint'e bagli oldugu icin burada yasiyor (§4.3). */
   --max-width-statement: 22ch;
   --aspect-screenshot: 16 / 10;
   /* 5/8 idi, 5/9 oldu: kartlar buyusun diye (istek). Kart zaten kapsayicinin
-     tam genisligini kaplıyor, yani buyume ancak YUKSEKLIKTEN gelebiliyordu -
+     tam genisligini kapliyor, yani buyume ancak YUKSEKLIKTEN gelebiliyordu -
      olculdu, 1440'ta 708px'ten 787px'e cikti.
 
      Neden 9/16 degil: hat yarim piksel uretmemek icin genisligin orana tam

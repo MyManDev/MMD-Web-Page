@@ -8,7 +8,7 @@
  * kapi olur."
  *
  * Bu yuzden ozet MEDYANI ve ARALIGI birlikte yaziyor. Aralik gizlenirse
- * medyan da tek koşu kadar yaniltici olur - okuyan kisi sayinin ne kadar
+ * medyan da tek kosu kadar yaniltici olur - okuyan kisi sayinin ne kadar
  * oynadigini gormeli.
  *
  * Yeni bagimlilik YOK (CLAUDE.md kural 4): raporlari `lighthouse` CLI uretiyor,

@@ -6,7 +6,7 @@ import { site } from "@/content";
  * (architecture.md §2). 404 sitemap'e girmez.
  *
  * `lastModified` BILEREK yok: bugunun tarihini yazmak build'i deterministik
- * olmaktan cikarirdi - ayni kaynak her koşuda farkli bir sitemap uretirdi ve
+ * olmaktan cikarirdi - ayni kaynak her kosuda farkli bir sitemap uretirdi ve
  * fark gercek bir degisikligi degil saati gosterirdi.
  */
 /**
