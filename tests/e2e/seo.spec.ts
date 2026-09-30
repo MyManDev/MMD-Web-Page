@@ -81,7 +81,7 @@ test("aciklama meta etiketi gercekten uretiliyor", async ({ page }) => {
   const content = (await description.getAttribute("content")) ?? "";
 
   // Metne DEGIL, dolulugu ve makullugune bagli: icerik degistiginde dusmesin,
-  // etiket bosaldiginda veya kaybolduğunda dussun.
+  // etiket bosaldiginda veya kayboldugunda dussun.
   expect(content.trim().length).toBeGreaterThan(50);
 
   // Arama sonucunda kirpilmadan gorunen sinir ~160 karakter. Ustune cikmak

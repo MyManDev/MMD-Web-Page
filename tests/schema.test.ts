@@ -134,9 +134,17 @@ describe("content/index loader", () => {
     expect(() => siteSchema.parse({ ...site, email: site.email })).not.toThrow();
   });
 
-  it("projects tek gercek kaydi tasiyor", () => {
-    expect(projects).toHaveLength(1);
-    expect(projects.at(0)?.slug).toBe("football-squad-optimizer");
+  /**
+   * SAYI DEGIL SOZLESME (nav testiyle ayni gerekce). Burada `toHaveLength(1)`
+   * ve sabit bir slug yaziliydi; ikinci proje eklendiginde davranis bozulmadigi
+   * halde duserdi.
+   *
+   * Olculen sey: kayit bos degil; slug'lar TEKIL, cunku kartin React key'i
+   * slug'dan geliyor (Projects.tsx).
+   */
+  it("projects kaydi bos degil ve slug'lar tekil", () => {
+    expect(projects.length).toBeGreaterThan(0);
+    expect(new Set(projects.map((project) => project.slug)).size).toBe(projects.length);
   });
 
   /**

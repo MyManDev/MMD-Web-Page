@@ -142,17 +142,6 @@ test("Hero zemini gecisli, ama metin en kotu noktada bile okunuyor", async ({ pa
 });
 
 /**
- * YUKLEME ANINDA KADEMELI GIRIS. design-spec.md §3.2, §6 ve architecture.md §4.4
- *
- * Burada once "Hero'da acilis animasyonu yok" testi duruyordu ve yasagi
- * tutuyordu. Yasak karar sahibi tarafindan kaldirildi; test SILINMEDI, yeni
- * sozlesmeyi olcecek bicimde yeniden yazildi - cunku kalkan sey yasak, kapi
- * degil.
- *
- * `reveal-on-enter` DEGIL `reveal-on-load`: Hero acilista ekranda oldugu icin
- * `view()` cizelgesi onu "gecmis" sayiyor ve oge son halinde aciliyor.
- */
-/**
  * TAM EKRAN. design-spec.md §3.2
  *
  * Onceki hali viewport'un %53'uydu (478px / 900px) ve Projects'in ustu acilista
@@ -232,6 +221,18 @@ test.describe("scroll gostergesi", () => {
   });
 });
 
+/**
+ * YUKLEME ANINDA KADEMELI GIRIS. design-spec.md §3.2, §6 ve architecture.md §4.4
+ *
+ * Burada once "Hero'da acilis animasyonu yok" testi duruyordu ve yasagi
+ * tutuyordu. Yasak karar sahibi tarafindan kaldirildi; test SILINMEDI, yeni
+ * sozlesmeyi olcecek bicimde yeniden yazildi - cunku kalkan sey yasak, kapi
+ * degil.
+ *
+ * `reveal-on-enter` DEGIL `reveal-on-load`: observer isareti mount'ta koyuyor,
+ * yani acilista ekranda olan Hero gorunur, isaretle gizlenip yeniden belirirdi;
+ * Hero'nun h1'i de LCP ogesi (globals.css, `.reveal-on-load` ustunde).
+ */
 test.describe("Hero yukleme girisi", () => {
   const REVEAL = `${SECTION} .reveal-on-load`;
 
@@ -457,7 +458,7 @@ test.describe("hero amblemi", () => {
   });
 
   /**
-   * Hareket kalktiginda plaka BOS KALMIYOR - statik dususun kanıtı. Gradyan
+   * Hareket kalktiginda plaka BOS KALMIYOR - statik dususun kaniti. Gradyan
    * hala cizili, yalnizca aci baslangic degerinde duruyor. Ayrica zeminde duz
    * marka rengi var, yani gradyan hic cizilemese bile kutu dolu.
    */
