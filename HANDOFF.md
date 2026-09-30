@@ -11,14 +11,17 @@ olarak"). Bugün iki iş yapıldı:
 - **Temizlik:** salt okunur bir denetim 57 bulgu doğruladı. Kopyalar ayıklanınca yaklaşık 40 iş
   kaldı ve beş PR'da kapandı (#132–#136).
 - **Contributors listesi:** GitHub sayfasındaki listede `claude` görünüyor. Sebep bulundu ve
-  yenisinin oluşması mekanik olarak engellendi (#136). **Mevcut girdi hâlâ görünüyor**; kaldırma
-  adımı karar sahibinde (aşağıda).
+  yenisinin oluşması mekanik olarak engellendi (#136). Mevcut girdi için karar sahibi dalı yeniden
+  adlandırdı ve Support'a talep açtı; ikisi de sonuç vermedi. **Girdi hâlâ görünüyor** ve karar
+  sahibi "şimdilik yeni depo açmayalım" dedi (aşağıda).
+- **İki tasarım sorusu kapandı:** boşluklarda belge koda uyduruldu ve kullanılmayan iki token
+  silindi (#138); `NOTICE`'teki ikon yolu düzeltildi.
 
 Açık issue: yok.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`e061cb1`)
+- Dal: `main` (`681c17e`)
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` uçtan uca geçiyor (`EXIT=0`). İlk adım artık trailer kapısı. Sayılar:
   **62 birim, 323 E2E** (33'ü viewport'a göre atlanıyor), payload **135.3 KiB / 150.0 KiB**.
@@ -46,7 +49,7 @@ dün #129 üzerinde yapılan canlı ölçüm (geçiş, daktilo, hayalet, taşma)
 
 ## Sıradaki iş
 
-**1. Contributors'taki `claude` girdisi — karar sahibinin adımı.**
+**1. Contributors'taki `claude` girdisi — beklemede, karar sahibinin kararıyla.**
 
 Ölçülen durum (2026-09-30):
 
@@ -54,43 +57,46 @@ dün #129 üzerinde yapılan canlı ölçüm (geçiş, daktilo, hayalet, taşma)
   - `main`'deki hiçbir commit `Co-authored-by:` taşımıyor; 67 etiket de temiz.
   - REST `contributors?anon=1` ve `stats/contributors` iki kişi döndürüyor. `stats/contributors`
     co-author'ları da sayıyor, Insights grafiği onunla aynı.
-- **Hâlâ görünen:** sidebar (`contributors_list`) üç kişi gösteriyor, üçüncüsü `claude`
-  (08:42 UTC).
+- **Hâlâ görünen:** sidebar (`contributors_list`) üç kişi gösteriyor, üçüncüsü `claude`. Son ölçüm
+  09:38 UTC'de.
 - **Silemediğimiz:** trailer'lı 8 commit yalnızca PR #1–#5 ve #22'nin ref'lerinde
-  (`refs/pull/N/head`). Kullanıcı bu ref'leri silemiyor.
+  (`refs/pull/N/head`). Bu ref'ler salt okunur; force push onlara ulaşmıyor. PR'lar merge edilip
+  dalları silindiği için dal üzerinden güncellemek de mümkün değil.
 - **Muhtemel sebep:** GitHub sidebar'ın nasıl hesaplandığını belgelemiyor. Topluluktaki kanıt,
-  bunun bayat bir önbellek olduğu yönünde: PR ref'i yerinde duran bir başka depoda girdi bir süre
-  sonra kendiliğinden kalktı.
+  bunun bayat bir önbellek olduğu yönünde: PR ref'i yerinde duran bir başka depoda girdi yaklaşık
+  iki haftada kendiliğinden kalktı.
 
-Denenecek sıra:
+Denenenler:
 
-1. **Varsayılan dalı yeniden adlandırıp geri almak** (en çok doğrulanan topluluk çözümü).
-   - Nasıl: Settings → Branches'ta `main` → `main-tmp` → `main`. Ya da
-     `gh api -X POST repos/MyManDev/MMD-Web-Page/branches/main/rename -f new_name=main-tmp` ve
-     aynısı geri.
-   - Bu oturum denedi; Claude Code'un izin denetimi adımı "paylaşılan kaynak" diye durdurdu.
-     Karar sahibi yapmalı.
-   - Açık PR olmadığında yapılmalı.
-   - Ruleset `main protect` `~DEFAULT_BRANCH`'e bağlı, yani dalı takip eder. Ama `deletion` kuralı
-     adlandırmayı engelleyebilir. Engellerse ruleset birkaç dakikalığına kapatılıp geri açılır.
-2. **Ölçüm:** her adımdan hemen sonra ve birkaç dakika sonra
-   `curl -s "https://github.com/MyManDev/MMD-Web-Page/contributors_list?current_repository=MMD-Web-Page&deferred=true" | grep -o 'alt="@[^"]*"'`.
-   Tarayıcının önbelleği işe karışmaz.
-3. **Kalkmazsa:**
-   - **GitHub Community'de gönderi.** Ücretsiz planda Support bu talepleri kapatıyor; 30 Ağustos'taki
-     talebimiz de kapandı (#67).
-   - **Daha ağır seçenekler, hepsi karar sahibinin:**
-     - Görünürlüğü özel yapıp geri açmak. Yıldız ve izleyici sıfır, bedel düşük; ama ücretsiz planda
-       ruleset'ler özel depoda uygulanmayabilir.
-     - Depoyu başka bir hesaba devredip geri almak.
+- **Varsayılan dalı yeniden adlandırıp geri almak** (`main` → `main-tmp` → `main`, en çok doğrulanan
+  topluluk çözümü). Karar sahibi Settings → General → Default branch'ten yaptı; bu oturumda Claude
+  Code'un izin denetimi adımı durdurmuştu. Liste değişmedi. Dal, görünürlük ve koruma kuralı
+  sonrasında ölçüldü: `main`, public, `main protect` active.
+- **Support talebi** (support.github.com → Veri Havuzları → Veri havuzu özellikleri → Görüşler →
+  "Hatalar, sorunlar"). GitHub'ın otomatik yardımcısı vakanın Support'a gitmesi gerektiğini
+  söyledi. Talep yine de hemen kapatıldı: ücretsiz planda "GitHub Community Discussions, GitHub Docs,
+  GitHub Skills" dışında destek yok. 30 Ağustos'taki talep de aynı şekilde kapanmıştı (#67).
 
-**2. İki tasarım sorusu (denetimin reddettiği, çünkü karar insanda):**
+Kalan yollar (karar sahibinin):
 
-- **Kart iç boşluğu ve ızgara aralığı:** design-spec §1 24/32px diyor ve bunlar token olarak
-  tanımlı (`--spacing-gutter`, `--spacing-card-lg`). Kod bu token'ları kullanmıyor: mobilde
-  `gap-8`/`gap-10`, kart iç boşluğu `lg`'de de 24px. Belge mi koda uysun, kod mu belgeye?
-- **`NOTICE`:** var olmayan bir `public/favicon*` yolunu sayıyor; ikon `app/icon.png`. Hukuki
-  metin, karar sahibinin.
+- **Beklemek.** Bedelsiz; kalkıp kalkmayacağı belli değil. Ölçüm:
+  `curl -s "https://github.com/MyManDev/MMD-Web-Page/contributors_list?current_repository=MMD-Web-Page&deferred=true" | grep -o 'alt="@[^"]*"'`.
+- **Bir aylığına GitHub Team** (kişi başı aylık ~4 dolar) ve talebi yeniden açmak. Ücretli planda
+  Support vakaya bakıyor; PR'ları sildiği bildirilen örnek var, ama garanti değil.
+- **Yeni temiz depo** — elimizdeki tek kesin yol. Karar sahibi: "şimdilik yeni depo açmayalım".
+  - Eski depo `MMD-Web-Page-history` adıyla özel olur; PR'lar ve issue'lar orada kalır.
+  - Yeni depoya yalnızca `main` ve etiketler gider.
+  - Yeniden kurulacaklar: `main protect` kuralı, 15 etiket ve merge ayarları (yalnızca squash,
+    merge'de dal silinir). Secret, değişken, webhook ve ortam yok.
+  - Cloudflare Pages yeni depoya bağlanır. Bu, yeni bir Pages projesi açıp `mymandev.com`'u ona
+    taşımak demek ve karar sahibinin panelinde yapılır.
+  - PR numaraları yeni depoda 1'den başlar; eski numaralar history deposuna aittir.
+
+**Küçük bir önleme ayarı, karar sahibinin:** web arayüzünden yapılan squash merge'in varsayılan
+mesajı PR'daki bütün commit mesajlarını kopyalıyor (`squash_merge_commit_message: COMMIT_MESSAGES`).
+Trailer'lı bir commit arayüzden merge edilirse satır main'e girer. Settings → General → Pull
+Requests → "Allow squash merging" altında varsayılan mesaj "pull request title" ya da boş yapılabilir.
+CLI'dan yapılan merge'ler zaten boş gövdeyle gidiyor.
 
 **Ayar noktaları** (dünkü hareketler, beğenildi):
 
@@ -122,18 +128,26 @@ Denenecek sıra:
   kötü 5.92; hayaletsiz 8.50. design-spec §3.3.1 güncel.
 - **Dünkü "konu dışı" maddeler** #134 ve #135'te kapandı: "5/8", bekleyen biyografi satırları,
   yorum dili.
+- **Boşluklar:** design-spec §1 artık kodun kullandığı değerleri yazıyor: ızgara her genişlikte
+  32px, Who we are'da tek kolonda 40px, kart içi 24px. Kullanılmayan `--spacing-gutter` ve
+  `--spacing-card-lg` silindi (#138); build'in CSS'inde yalnızca bu iki tanım eksildi.
+- **`NOTICE`:** var olmayan `public/favicon*` yerine gerçek ikon `app/icon.png` yazıldı. Kapsam aynı.
 
 ## Alınan kararlar
 
-Kalıcı kararlar `docs/architecture.md` §9'da; bugün yeni satır yok. Bugünkü PR'lar kararları
-değil, belgeyi ve yorumları koda uydurdu.
+Kalıcı kararlar `docs/architecture.md` §9'da. Bugün bir satır eklendi: ızgara ve kart boşluğu
+(24/32 → 32 her genişlikte, kart içi 24; belge koda uyduruldu). Temizlik PR'ları kararları değil,
+belgeyi ve yorumları koda uydurdu.
 
 **Karar sahibinin bugünkü sözleri:**
 
 - İstek: "beğendim genel olarak yapmamız gereken ufak şeyler varsa yap temiz bir şkeilde bırakalım"
 - Contributors: "buna sebep olabilecek her şeyi bak bunun gözükmesini istemiyoruz. her şeyi
   denediğinden emin ol hala kalkmamış olursa ticket atarız"
-- **Onay.** #132–#136 ve bu devir PR'ı şu cevapla merge edildi: "Evet, hepsini merge et
+- Sonra: "ne yapıp ne edip bunu düzeltmeliyiz" ve talep kapanınca "şimdilik yeni depo açmayalım son
+  yapıkacaklar için 2 şey sormuştun onları söyle onları yapalım ve şimdilik bırakalım".
+- İki soru: "Belge koda uysun (Önerilen)" ve "Yolu düzelt (Önerilen)".
+- **Onay.** #132–#136, #137 ve bu günün son iki PR'ı şu cevapla merge edildi: "Evet, hepsini merge et
   (Önerilen)". Soru şuydu: "Temizlik PR'larından paylaşılan yüzeye (docs/, CLAUDE.md, .github/,
   app/globals.css) dokunanları da kapılar ve CI yeşil olunca merge edeyim mi?" Onay bu işler
   içindi; genel kural değişmedi (`working-agreement.md` §1).
