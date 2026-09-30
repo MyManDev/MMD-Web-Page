@@ -119,10 +119,8 @@
 
   /* docs/design-spec.md'de onaylanan olculer. Birden fazla yerde kullanilan
      veya breakpoint'e gore degisen her olcu burada yasar. */
-  --spacing-gutter: 24px;
   --spacing-gutter-lg: 32px;
   --spacing-card: 24px;
-  --spacing-card-lg: 32px;
 
   /* Nav bir basamak buyudu (istek: "yukaridaki bar cok kucuk"). 56/64 idi. */
   --height-nav: 72px;
