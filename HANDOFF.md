@@ -3,29 +3,35 @@
 > Bu dosya **şu anki durumu** tutar, geçmişi tutmaz — geçmiş git log'unda yaşar.
 > Her devirde üzerine yazılır. Protokol: `docs/working-agreement.md` §7.
 
-**Tarih:** 2026-09-29
+**Tarih:** 2026-09-30
 **Yer:** iş
-**Aşama:** Faz 4, site yayında. Bugün SquadOpt kartı yenilendi:
+**Aşama:** Faz 4, site yayında. Karar sahibi dünkü SquadOpt kartını beğendi ("beğendim genel
+olarak"). Bugün iki iş yapıldı:
 
-- üç ekran görüntüsü, kendiliğinden geçen bir karuselde;
-- her görüntünün altında bir yazı, görüntü değişince daktiloyla geliyor;
-- geçiş 900ms;
-- kartın arkasında etkin görüntünün hayaleti.
+- **Temizlik:** salt okunur bir denetim 57 bulgu doğruladı. Kopyalar ayıklanınca yaklaşık 40 iş
+  kaldı ve beş PR'da kapandı (#132–#136).
+- **Contributors listesi:** GitHub sayfasındaki listede `claude` görünüyor. Sebep bulundu ve
+  yenisinin oluşması mekanik olarak engellendi (#136). **Mevcut girdi hâlâ görünüyor**; kaldırma
+  adımı karar sahibinde (aşağıda).
 
-Nav tint'i %92'ye çıktı (#114). Açık issue: yok.
+Açık issue: yok.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`dfbed11`)
+- Dal: `main` (`e061cb1`)
 - Commit'lenmemiş değişiklik: yok
-- `pnpm gates` uçtan uca geçiyor (`EXIT=0`): **57 birim, 325 E2E** (33'ü viewport'a göre atlanıyor),
-  payload **135.3 KiB / 150.0 KiB**
+- `pnpm gates` uçtan uca geçiyor (`EXIT=0`). İlk adım artık trailer kapısı. Sayılar:
+  **62 birim, 323 E2E** (33'ü viewport'a göre atlanıyor), payload **135.3 KiB / 150.0 KiB**.
 - Açık PR: yok
 - GitHub'da yalnızca `main` var; merge edilen dal kendiliğinden siliniyor. Eski 67 dal
-  `archive/<dal>` etiketlerinde.
-- Yerel ek çalışma ağaçları (`MMD-work`, `MMD-docs`) kaldırıldı, merge edilmiş yerel dallar silindi.
-  Ölçüm script'leri `node_modules/.cache/mmd-measure/` altında duruyor (commit'lenmez; nav ve proje
-  kontrastı, ekran görüntüsü alma, canlı doğrulama).
+  `archive/<dal>` etiketlerinde; hiçbiri trailer'lı bir commit'e ulaşmıyor (ölçüldü).
+- **Yerel durum:**
+  - Tek çalışma ağacı ve yalnızca `main`.
+  - `refs/original/*` silindi. Bu 27 Ağustos'taki geçmiş yeniden yazımının yerel yedeğiydi ve
+    trailer'lı eski commit'leri tutuyordu; GitHub'a hiç gitmemişti.
+  - Ölçüm script'leri `node_modules/.cache/mmd-measure/` altında (commit'lenmez). İçerik: nav ve
+    proje kontrastı, `ghost-contrast.mjs` (hayalet üstünde kontrast, üç cihaz),
+    `verify-live.cjs` (canlı doğrulama), ekran görüntüsü alma.
 
 ## Yayın
 
@@ -35,23 +41,58 @@ Nav tint'i %92'ye çıktı (#114). Açık issue: yok.
 | Host            | Cloudflare Pages, proje adı `mymandev` |
 | Production dalı | `main` → otomatik deploy               |
 
-#129'un production deploy'u (`07afceb`) gerçek domain üzerinde ölçüldü, 1440 (DPR 1) ve Pixel 7
-(DPR 2.625):
-
-- **Geçiş:** etkin slayt `0.9s`, giden slaytın gecikmesi `0.9s`, hayaletin süresi `0.9s`.
-- **Daktilo:** kendiliğinden geçişten sonra yazı işaretlendi, son harf önce gizli, yazı bitince
-  görünür ve işaret kalktı.
-- **Hayalet:** görüntüyle birlikte değişiyor ve figürle aynı dosyayı seçiyor. Her görüntü tek
-  genişlikte indi: masaüstünde 896, Pixel 7'de 1792.
-- **Taşma:** yatay taşma 0. Hayalet dikeyde bölümün içinde: başlığa 8/0px, bölümün altına 16/0px
-  pay kalıyor (masaüstü/mobil).
-
-Ölçüm script'i `node_modules/.cache/mmd-measure/verify-live.cjs` (commit'lenmez).
+#136'nın production deploy'u (`e061cb1`) başarılı. Bugünkü PR'lar görsel çıktıyı değiştirmedi;
+dün #129 üzerinde yapılan canlı ölçüm (geçiş, daktilo, hayalet, taşma) geçerli.
 
 ## Sıradaki iş
 
-**Karar sahibi bugünkü hareketleri canlıda deneyip bakacak.** Beğenilmeyen bir şey olursa ayar
-noktaları:
+**1. Contributors'taki `claude` girdisi — karar sahibinin adımı.**
+
+Ölçülen durum (2026-09-30):
+
+- **Temiz olanlar:**
+  - `main`'deki hiçbir commit `Co-authored-by:` taşımıyor; 67 etiket de temiz.
+  - REST `contributors?anon=1` ve `stats/contributors` iki kişi döndürüyor. `stats/contributors`
+    co-author'ları da sayıyor, Insights grafiği onunla aynı.
+- **Hâlâ görünen:** sidebar (`contributors_list`) üç kişi gösteriyor, üçüncüsü `claude`
+  (08:42 UTC).
+- **Silemediğimiz:** trailer'lı 8 commit yalnızca PR #1–#5 ve #22'nin ref'lerinde
+  (`refs/pull/N/head`). Kullanıcı bu ref'leri silemiyor.
+- **Muhtemel sebep:** GitHub sidebar'ın nasıl hesaplandığını belgelemiyor. Topluluktaki kanıt,
+  bunun bayat bir önbellek olduğu yönünde: PR ref'i yerinde duran bir başka depoda girdi bir süre
+  sonra kendiliğinden kalktı.
+
+Denenecek sıra:
+
+1. **Varsayılan dalı yeniden adlandırıp geri almak** (en çok doğrulanan topluluk çözümü).
+   - Nasıl: Settings → Branches'ta `main` → `main-tmp` → `main`. Ya da
+     `gh api -X POST repos/MyManDev/MMD-Web-Page/branches/main/rename -f new_name=main-tmp` ve
+     aynısı geri.
+   - Bu oturum denedi; Claude Code'un izin denetimi adımı "paylaşılan kaynak" diye durdurdu.
+     Karar sahibi yapmalı.
+   - Açık PR olmadığında yapılmalı.
+   - Ruleset `main protect` `~DEFAULT_BRANCH`'e bağlı, yani dalı takip eder. Ama `deletion` kuralı
+     adlandırmayı engelleyebilir. Engellerse ruleset birkaç dakikalığına kapatılıp geri açılır.
+2. **Ölçüm:** her adımdan hemen sonra ve birkaç dakika sonra
+   `curl -s "https://github.com/MyManDev/MMD-Web-Page/contributors_list?current_repository=MMD-Web-Page&deferred=true" | grep -o 'alt="@[^"]*"'`.
+   Tarayıcının önbelleği işe karışmaz.
+3. **Kalkmazsa:**
+   - **GitHub Community'de gönderi.** Ücretsiz planda Support bu talepleri kapatıyor; 30 Ağustos'taki
+     talebimiz de kapandı (#67).
+   - **Daha ağır seçenekler, hepsi karar sahibinin:**
+     - Görünürlüğü özel yapıp geri açmak. Yıldız ve izleyici sıfır, bedel düşük; ama ücretsiz planda
+       ruleset'ler özel depoda uygulanmayabilir.
+     - Depoyu başka bir hesaba devredip geri almak.
+
+**2. İki tasarım sorusu (denetimin reddettiği, çünkü karar insanda):**
+
+- **Kart iç boşluğu ve ızgara aralığı:** design-spec §1 24/32px diyor ve bunlar token olarak
+  tanımlı (`--spacing-gutter`, `--spacing-card-lg`). Kod bu token'ları kullanmıyor: mobilde
+  `gap-8`/`gap-10`, kart iç boşluğu `lg`'de de 24px. Belge mi koda uysun, kod mu belgeye?
+- **`NOTICE`:** var olmayan bir `public/favicon*` yolunu sayıyor; ikon `app/icon.png`. Hukuki
+  metin, karar sahibinin.
+
+**Ayar noktaları** (dünkü hareketler, beğenildi):
 
 | Ne                     | Nerede                                                           | Bugün               |
 | ---------------------- | ---------------------------------------------------------------- | ------------------- |
@@ -61,90 +102,84 @@ noktaları:
 | Daktilo hızı           | `TypedCaption.tsx`, `CAPTION_STEP_MS`                            | 25ms/harf           |
 | Otomatik geçiş aralığı | `lib/deck.ts`, `AUTO_ADVANCE_MS` (desteyle ortak)                | 7s                  |
 
-Zarfın dışında kalan üç giriş animasyonu (metin girişi 520ms, prensip kelimeleri 520ms, scroll
-göstergesi): karar sahibi "şimdilik kod doğru kalsın test edeyim" dedi. Belgeler koda uyduruldu
-(#127); ölçü değişecekse karar onun.
-
 ## Bitmemiş iş
 
 - **WAF kuralı** `block removed portraits`: ~2026-10-05'ten sonra kuralı kapat ve iki adresi ölç.
   404 dönüyorsa kuralı sil; hâlâ resim dönüyorsa kuralı geri aç.
-- **Hayaletin üstündeki kontrast yüksek DPR'de yeniden ölçülmedi.** Ölçülen hâllerde (1440 DPR 1,
-  390 DPR 2) en kötü 5.92 idi. Oralarda hayalet hâlâ aynı 896 dosyasını kullanıyor. Pixel 7 gibi
-  DPR 2.625'te ise artık 1792'yi kullanıyor (#129). 6px bulanıklıkta farkın ölçülebilir olmaması
-  beklenir, ama bu bir çıkarım.
-- **İkinci proje geldiğinde yığın ölçülmeli** (`Projects.tsx`'te "yığın uyandığında doğrulanacak"
-  notu). Bugün fark edilen iki şey var, ikisi de tek projede görünmüyor:
-  - `ProjectCard`'ın kendi zemini yok. Üste binen kart alttakini örtmeyebilir; ölçülmedi.
-  - Sonraki kartın hayaleti, yaklaşırken öncekinin alt kenarına biniyor. Bu bilerek bırakıldı
-    (`ScreenshotGhost.tsx`). Reduced-motion'daki düz listede kartlar arasına 64px boşluk kondu (#129).
+- **İkinci proje geldiğinde yığın ölçülmeli.** `Projects.tsx`'teki "yığın uyandığında
+  doğrulanacak" notu bunu işaret ediyor. Tek projede görünmeyen üç şey:
+  - **Zemin:** `ProjectCard`'ın kendi zemini yok; üste binen kart alttakini örtmeyebilir. Ölçülmedi.
+  - **Odak:** odaklanan kartın `z-index` kazanması (`:focus-within`) uygulanmadı. `z-index` satır içi
+    style'da, tek bir sınıf onu ezemez. design-spec §3.3.2'de "henüz uygulanmadı" diye yazılı.
+  - **Hayalet:** sonraki kartın hayaleti, yaklaşırken öncekinin alt kenarına biniyor. Bu bilerek
+    bırakıldı (`ScreenshotGhost.tsx`). Reduced-motion'daki düz listede kartlar arasında 64px var.
 - **Git geçmişi** ayrılan kişinin fotoğrafını ve biyografisini taşıyor (depo herkese açık, #44
   dahil). Yeniden yazmak `non_fast_forward` kuralına çarpar; yalnızca kendisi talep ederse ayrı bir iş.
 
+**Bugün kapanan:**
+
+- **Yüksek DPR'de hayalet kontrastı** ölçüldü: 1440 DPR 1, 390 DPR 2 ve Pixel 7 DPR 2.625'te en
+  kötü 5.92; hayaletsiz 8.50. design-spec §3.3.1 güncel.
+- **Dünkü "konu dışı" maddeler** #134 ve #135'te kapandı: "5/8", bekleyen biyografi satırları,
+  yorum dili.
+
 ## Alınan kararlar
 
-Kalıcı kararlar `docs/architecture.md` §9'da. Bugün eklenen ya da güncellenen satırlar şunlar:
+Kalıcı kararlar `docs/architecture.md` §9'da; bugün yeni satır yok. Bugünkü PR'lar kararları
+değil, belgeyi ve yorumları koda uydurdu.
 
-- proje ekran görüntüleri (birden fazlaysa kendiliğinden geçen karusel);
-- otomatik geçişte durdurma (görünür tuş yok, kabul edilen risk);
-- görüntü başlığı;
-- karusel geçişi (900ms ve daktilo);
-- hayalet arka plan;
-- daktilo efekti (iki kullanıcı);
-- navbar tint'i (%92);
-- dal politikası;
-- kod yorumlarının dili (Türkçe, ASCII);
-- `content/index.ts`'in paylaşılan yüzey sayılması.
+**Karar sahibinin bugünkü sözleri:**
 
-**Karar sahibinin bugünkü seçimleri:**
-
-- **Karusel:** kendiliğinden geçiyor; durdurma tuşu yok ("Tuş ekleme, sınırı belgele").
-- **Kart:** adı "Football Squad Optimizer" kaldı. Doğrulanamayan iddialar çıkarıldı ("Bilmiyorum, kaldır").
-- **Görüntünün altındaki yazı:** kısa bir başlık.
-- **Geçiş:** 900ms.
-- **Hayalet:** "2 · Orta" varyantı. Karşılaştırma görseli masaüstünde:
-  `mymandev-hayalet-ekran-tasarim.png`.
-
-**Onay.** Bugünkü PR'lar karar sahibinin açık onayıyla merge edildi. #126–#130 ve bu devir PR'ı
-şu onayla merge edildi, kelimesi kelimesine: "sana tüm mergeler için izin veriyorum ben çıkıyorum
-yarın geldiğimde halletmiş ol". Onay bugünkü işler içindi; genel kural değişmedi, paylaşılan yüzey
-ve marka metni yine karar sahibinin açık onayını ister (`working-agreement.md` §1).
+- İstek: "beğendim genel olarak yapmamız gereken ufak şeyler varsa yap temiz bir şkeilde bırakalım"
+- Contributors: "buna sebep olabilecek her şeyi bak bunun gözükmesini istemiyoruz. her şeyi
+  denediğinden emin ol hala kalkmamış olursa ticket atarız"
+- **Onay.** #132–#136 ve bu devir PR'ı şu cevapla merge edildi: "Evet, hepsini merge et
+  (Önerilen)". Soru şuydu: "Temizlik PR'larından paylaşılan yüzeye (docs/, CLAUDE.md, .github/,
+  app/globals.css) dokunanları da kapılar ve CI yeşil olunca merge edeyim mi?" Onay bu işler
+  içindi; genel kural değişmedi (`working-agreement.md` §1).
 
 ## Tuzaklar ve notlar
 
 Bugün ölçümle bulunanlar:
 
-- **Sahte saatte `install` + `pauseAt` sayfa YÜKLENMEDEN önce.** `install` tek başına saati gerçek
-  zamanla akıtıyor; hidrasyondan sonra durdurmak da yetmiyor. Kalıp:
-  `projects.spec.ts`'in "otomatik geçiş" ve "daktilo" blokları.
-- **Olumsuz bir assertion gerçek saatte hiçbir şey ölçmeyebilir.** `not.toHaveAttribute` 5 saniye
-  yeniden deniyor. Kendiliğinden biten bir efekt (2 saniyelik daktilo) o sürede işaretini kaldırınca
-  test, efekti hiç engellemeyen koda karşı da geçiyordu. Durmuş saatte başlamış efekt işaretini
-  taşımaya devam eder. Guard'ı koruyan her testi bir mutasyonla dene.
-- **Reduced-motion altında HER stil değişimi bir geçiş.** Hiç geçişi olmayan bir öğede de
-  `transition-property` `all`da kalıyor ve global blok süreyi 0.01ms yapıyor. Değişimin hemen ardından
-  tek seferlik bir `getComputedStyle` bir kare boyunca eski değeri görüyor. CI bu yüzden iki kez
-  düştü: #129'da hayaletin opaklığı, #130'da daktilo harfinin opaklığı. Reduced-motion altında bir
-  değişimden sonra her zaman yeniden deneyen assertion kullan (`toHaveCSS`, `expect.poll`).
-- **`emulateMedia` stile bir sonraki karede yansıyor.** `matchMedia` hemen `true` dönse de hemen
-  okunan `getComputedStyle` eski olabiliyor (ölçüldü: 0ms'de `0px 14px`, 100ms'de `none`). Sayfa
-  açıkken emüle ettikten sonra stili yeniden denenerek oku (#130).
-- **Mutasyon kanıtında TypeScript her zaman yanlış bir koşulu reddediyor** (`false && x`): build
-  düşer, mutasyon bir şey ölçmemiş olur. Değişkene bağlı bir koşul yaz (`x && steps < 0`).
+- **Trailer'ın tek kaynağı Claude Code'un kendi yönergesi.** `.claude/settings.json`
+  (`attribution` boş) onu kapatıyor ve yönerge DALLA BİRLİKTE değişiyor (ölçüldü). Ayar dosyası
+  olmayan bir dala geçince oturum yeniden "imza satırı ekle" dedi, dosyanın olduğu dala dönünce
+  "ekleme". Yani #136'dan eski bir dalda çalışırken son savunma `pnpm gates`'in ilk adımı
+  (`pnpm trailers`). O da `origin/main` yoksa kontrolü atlar ve bunu yazar.
+- **Contributor sayımları üç ayrı yerden geliyor:**
+  - REST `/contributors` co-author'ları saymıyor. Temiz bir cevap bir şey kanıtlamaz.
+  - `stats/contributors` sayıyor.
+  - Sidebar ayrı ve belgelenmemiş; `contributors_list` uç noktasıyla ölç.
+- **Claude Code'un izin denetimi dal yeniden adlandırmayı durdurdu**, bir kez de
+  `git fetch --prune` içeren bir komutu ("paylaşılan kaynak"). Bu tür adımlar karar sahibinde.
+- **Workflow'un `isolation: 'worktree'` seçeneği:**
+  - `.claude/worktrees/` altında ağaç açıyor ve `worktree-*` dalları bırakıyor. Klasör artık
+    `.gitignore`'da; iş bitince `git worktree remove` ile kaldır ve dalları sil.
+  - Kabuğun cwd'si ağacın içindeyse Windows klasörü kilitliyor; silmeyi ana dizinden yap.
+  - Bu ağaçlarda `node_modules` yok. `../../../node_modules/.bin/<araç>` çalışıyor ama
+    `pnpm gates` çalışmıyor; kapıları ana ağaçta koş.
+- **Birden fazla PR'ı sırayla göndermek:**
+  - Dalları üst üste diz ve her birinin kapısını yığılmış ağaçta koş.
+  - Alttaki squash edilince üsttekini `git rebase --onto origin/main <eski-alt-uç>` ile taşı.
+  - Tree SHA'ları karşılaştır (`git rev-parse <uç>^{tree}`). Aynıysa koşulan kapı hâlâ geçerli.
+- **Denetim ajanları da hata yapıyor.** Gözden geçirme iki yanlış gerekçe yakaladı: "observer yolu
+  hidrasyona kadar gizler" ve "reveal deste tuşlarını oynatıyor". Yeni yazılan her gerekçeyi koda
+  karşı oku.
+- **Sahte saatte `install` + `pauseAt` sayfa YÜKLENMEDEN önce.** Olumsuz bir assertion gerçek
+  saatte hiçbir şey ölçmeyebilir: guard'ı koruyan testi bir mutasyonla dene.
+- **Reduced-motion altında HER stil değişimi bir geçiş** (0.01ms, `transition-property: all`) ve
+  **`emulateMedia` stile bir sonraki karede yansıyor.** Değişimden ya da emülasyondan sonra stili
+  yeniden deneyerek oku (`toHaveCSS`, `expect.poll`); #130 ve #133.
+- **Mutasyon kanıtında TypeScript her zaman yanlış bir koşulu reddediyor** (`false && x`); değişkene
+  bağlı bir koşul yaz.
 - **İki çalışma ağacı aynı E2E portunu (4173) paylaşıyor** ve yerelde `reuseExistingServer: true`.
-  Birinde `pnpm gates` koşarken ötekinde E2E başlatırsan, test ötekinin `out/`'unu ölçer. Sırayla koş.
-- **`translate` taşıyan bir öğe mutlak konumlu torunlarının referans kutusu olur.** Karuselin kökü
-  giriş animasyonunda `translate` taşıdığı için hayalet kartın doğrudan çocuğu.
-- **`srcset` kullanan iki `img` aynı dosyayı ancak aynı `sizes` ile seçer.** Sabit bir `src`,
-  yüksek DPR'de aynı görüntüyü ikinci kez indirir. İndirmeyi Resource Timing'den ölç, istek
-  dinleyicisinden değil; dinleyici `goto`dan sonra bağlanır ve öncekileri kaçırır.
-- **`overflow-x: clip` dikeyi kırpmıyor.** Hayaletin dikey taşması bölümün boşluklarına göre ayarlı
-  (`lg` altında 40px).
-- **Squash merge'den sonra yığılmış PR:** `git rebase --onto origin/main <eski-taban-ucu>`. Önce
-  `origin/main^{tree}` ile eski ucun ağacının aynı olduğunu doğrula.
-- **Bash aracında karmaşık heredoc bozulabiliyor** ("unexpected EOF"). Düzenleme script'lerini
-  dosyaya yazıp `node` ile çalıştır.
-  Önceki günlerden, hâlâ geçerli:
+  Birinde `pnpm gates` koşarken ötekinde E2E başlatma.
+- **`srcset` kullanan iki `img` aynı dosyayı ancak aynı `sizes` ile seçer.** İndirmeyi Resource
+  Timing'den ölç; sahte saat `performance`'ı da taklit ediyor ve orada liste boş döner.
+- **CI'da e2e düşerse** artık `playwright-report` artifact'ı ve düşen testin trace'i var (#132).
+
+Önceki günlerden, hâlâ geçerli:
 
 - **`*.pages.dev` iş ağında açılmıyor** (DNS `::1` ve `213.14.227.50`); `WebFetch` de aynı DNS'i
   kullanıyor. Preview kontrolü bu makinede aynı commit'in yerel build'inde yapılır. Cloudflare dal
@@ -153,21 +188,16 @@ Bugün ölçümle bulunanlar:
   bir commit'le geçti. `lighthouse` bir kez `next/font/google` dosyasını çekemedi,
   `gh run rerun <id> --failed` ile geçti.
 - **Silinen bir Pages dosyası Pages'in iç önbelleğinde 7 güne kadar yaşayabilir** (`s-maxage=604800`).
-  Alan adı purge'ü oraya ulaşmıyor; işareti, purge'den sonraki ilk istekte `MISS` ama büyük bir `Age`.
-  Kesin çözüm alan adında bir WAF kuralı. Silinen bir deployment'ın adresi de bir süre sunulabilir;
-  toplu silme API ile (liste sayfası en fazla 25).
+  Alan adı purge'ü oraya ulaşmıyor; kesin çözüm alan adında bir WAF kuralı.
 - **Ekip verisi yalnızca `index.html`'de değil**, üç RSC dosyasında da (`/index.txt`,
   `/__next._full.txt`, `/__next.__PAGE__.txt`). Bir şeyin yayından kalktığını dördünü birden
   ölçerek doğrula.
 - **Flex bir öğede `gridTemplateColumns` başka bir breakpoint'in iz listesini döndürüyor**; kolon
   sayan bir test hiçbir şey ölçmeden geçer.
-- **Team kartı (`article`) giriş animasyonunda `translate` taşıyor**; yerleşimi `li` üzerinden ölç.
-- **Düz bir JS Playwright config'inde `use.reducedMotion` uygulanmadı**;
-  `page.emulateMedia({ reducedMotion: "reduce" })` çalışıyor.
 - **`scripts/optimize-images.mjs` dosya silmiyor** ve `next build` `public/`'in tamamını kopyalıyor;
-  `tests/images.test.ts` artık kalan bir dosyayı yakalıyor.
+  `tests/images.test.ts` kalan bir dosyayı yakalıyor.
 - **Bir adı ağaçta ararken `git grep -w` kullanma**; `@handle`'ları ve URL'leri kaçırıyor.
-  `git grep -i -E` ve `git ls-files | grep` birlikte gerekir.
 - **`gh pr merge --match-head-commit` tam SHA istiyor**; kısa SHA GraphQL hatası verir.
 - **Bu depoda `git add -A` kullanma**, dosyaları tek tek ekle.
-- **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2).
+- **Commit mesajlarına trailer yazılmaz** (`working-agreement.md` §3.2; artık `pnpm trailers` da
+  tutuyor).
