@@ -12,8 +12,9 @@ olarak"). Bugün iki iş yapıldı:
   kaldı ve beş PR'da kapandı (#132–#136).
 - **Contributors listesi:** GitHub sayfasındaki listede `claude` görünüyor. Sebep bulundu ve
   yenisinin oluşması mekanik olarak engellendi (#136). Mevcut girdi için karar sahibi dalı yeniden
-  adlandırdı ve Support'a talep açtı; ikisi de sonuç vermedi. **Girdi hâlâ görünüyor** ve karar
-  sahibi "şimdilik yeni depo açmayalım" dedi (aşağıda).
+  adlandırdı ve Support'a talep açtı; ikisi de sonuç vermedi. **Girdi görünmeye devam ediyor ve bu
+  kabul edildi:** "contrabitor başka yol yoksa yeni kütüohane açmayacağız böyle kalsın" (karar
+  sahibi; `architecture.md` §9).
 - **İki tasarım sorusu kapandı:** boşluklarda belge koda uyduruldu ve kullanılmayan iki token
   silindi (#138); `NOTICE`'teki ikon yolu düzeltildi.
 
@@ -21,7 +22,7 @@ Açık issue: yok.
 
 ## Dal ve çalışma ağacı
 
-- Dal: `main` (`681c17e`)
+- Dal: `main` (`b96f997`)
 - Commit'lenmemiş değişiklik: yok
 - `pnpm gates` uçtan uca geçiyor (`EXIT=0`). İlk adım artık trailer kapısı. Sayılar:
   **62 birim, 323 E2E** (33'ü viewport'a göre atlanıyor), payload **135.3 KiB / 150.0 KiB**.
@@ -49,7 +50,9 @@ dün #129 üzerinde yapılan canlı ölçüm (geçiş, daktilo, hayalet, taşma)
 
 ## Sıradaki iş
 
-**1. Contributors'taki `claude` girdisi — beklemede, karar sahibinin kararıyla.**
+**1. Contributors'taki `claude` girdisi — KAPANDI, kabul edildi.** Karar sahibi: "contrabitor
+başka yol yoksa yeni kütüohane açmayacağız böyle kalsın". Yeni depo açılmıyor; bu bölüm neden ve
+neyin denendiğinin kaydı. Karar sahibi istemedikçe konu yeniden açılmaz.
 
 Ölçülen durum (2026-09-30):
 
@@ -77,13 +80,13 @@ Denenenler:
   söyledi. Talep yine de hemen kapatıldı: ücretsiz planda "GitHub Community Discussions, GitHub Docs,
   GitHub Skills" dışında destek yok. 30 Ağustos'taki talep de aynı şekilde kapanmıştı (#67).
 
-Kalan yollar (karar sahibinin):
+Denenmemiş yollar (kayıt için; karar sahibi yeni depoyu reddetti):
 
 - **Beklemek.** Bedelsiz; kalkıp kalkmayacağı belli değil. Ölçüm:
   `curl -s "https://github.com/MyManDev/MMD-Web-Page/contributors_list?current_repository=MMD-Web-Page&deferred=true" | grep -o 'alt="@[^"]*"'`.
 - **Bir aylığına GitHub Team** (kişi başı aylık ~4 dolar) ve talebi yeniden açmak. Ücretli planda
   Support vakaya bakıyor; PR'ları sildiği bildirilen örnek var, ama garanti değil.
-- **Yeni temiz depo** — elimizdeki tek kesin yol. Karar sahibi: "şimdilik yeni depo açmayalım".
+- **Yeni temiz depo** — tek kesin yol, reddedildi. Bir gün istenirse plan:
   - Eski depo `MMD-Web-Page-history` adıyla özel olur; PR'lar ve issue'lar orada kalır.
   - Yeni depoya yalnızca `main` ve etiketler gider.
   - Yeniden kurulacaklar: `main protect` kuralı, 15 etiket ve merge ayarları (yalnızca squash,
@@ -92,11 +95,11 @@ Kalan yollar (karar sahibinin):
     taşımak demek ve karar sahibinin panelinde yapılır.
   - PR numaraları yeni depoda 1'den başlar; eski numaralar history deposuna aittir.
 
-**Küçük bir önleme ayarı, karar sahibinin:** web arayüzünden yapılan squash merge'in varsayılan
-mesajı PR'daki bütün commit mesajlarını kopyalıyor (`squash_merge_commit_message: COMMIT_MESSAGES`).
-Trailer'lı bir commit arayüzden merge edilirse satır main'e girer. Settings → General → Pull
-Requests → "Allow squash merging" altında varsayılan mesaj "pull request title" ya da boş yapılabilir.
-CLI'dan yapılan merge'ler zaten boş gövdeyle gidiyor.
+**Squash ayarı yapıldı** (karar sahibi, 2026-09-30): web arayüzünden yapılan squash merge'in
+başlığı PR başlığı, gövdesi boş (`squash_merge_commit_title: PR_TITLE`,
+`squash_merge_commit_message: BLANK`; `gh api` ile ölçüldü). Önce PR'daki bütün commit mesajlarını
+kopyalıyordu (`COMMIT_MESSAGES`). Artık trailer'lı bir commit arayüzden merge edilse de satır
+main'e girmiyor. `working-agreement.md` §3.2'de üçüncü mekanik savunma olarak yazılı.
 
 **Ayar noktaları** (dünkü hareketler, beğenildi):
 

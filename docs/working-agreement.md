@@ -148,12 +148,14 @@ editör, ajan veya araç commit mesajının konusu değildir.
 
 Aynı kural PR ve issue gövdeleri için de geçerli.
 
-**Kural iki yerde mekanik olarak tutuluyor.** `.claude/settings.json` Claude Code'un `attribution`
+**Kural üç yerde mekanik olarak tutuluyor.** `.claude/settings.json` Claude Code'un `attribution`
 ayarını boşaltıyor, yani bu depoda açılan her oturum trailer ve PR imzası eklemiyor. `pnpm gates`
 de ilk adımda `origin/main`'den bu yana atılan commit'lere bakıyor (`pnpm trailers`) ve bir trailer
-bulursa düşüyor. Yakalamanın yeri PR açılmadan önce: PR'ın ref'i (`refs/pull/N/head`) commit'i
-squash'tan sonra da tutuyor ve o ref'i kullanıcı silemiyor. Ağustos'ta böyle kalan sekiz commit
-"claude"u GitHub'ın katkıcı listesine soktu (#67).
+bulursa düşüyor. Depo ayarında da web arayüzünden yapılan squash merge'in başlığı PR başlığı,
+gövdesi boş (2026-09-30), yani arayüzden merge edilen bir PR commit mesajlarını main'e taşımıyor.
+Yakalamanın yeri PR açılmadan önce: PR'ın ref'i (`refs/pull/N/head`) commit'i squash'tan sonra
+da tutuyor ve o ref'i kullanıcı silemiyor. Ağustos'ta böyle kalan sekiz commit "claude"u
+GitHub'ın katkıcı listesine soktu (#67). Girdi kaldırılamadı ve kabul edildi (`architecture.md` §9).
 
 ### 3.3 PR gövdesi
 
