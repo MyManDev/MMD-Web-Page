@@ -145,9 +145,11 @@ test.describe("prensip destesi - JS gelmezse", () => {
  * Normal yolda Playwright'in ilk tiklamasi duzenli olarak bosa dusuyor: 24
  * kosunun 7'sinde sayac ilerlemedi. Reduced-motion altinda 24/24 gecti. Sebep
  * uygulamada degil - tusun DOM'a girdigi anda calistigi ayrica olculdu (12/12,
- * olu pencere 0ms). Sorun `scroll-behavior: smooth` ve scroll'a bagli reveal
- * animasyonu: Playwright tusu goruse kaydirip kutusunu olcuyor, tiklama
- * gonderilene kadar oge hala hareket ediyor.
+ * olu pencere 0ms). Sorun `scroll-behavior: smooth` ve olcum gunu (#69)
+ * desteyi de saran scroll'a bagli reveal animasyonuydu (#93'ten beri
+ * `reveal-on-enter` yalnizca h2 ve p'de, deste tuslarinda degil): Playwright
+ * tusu goruse kaydirip kutusunu olcuyor, tiklama gonderilene kadar oge hala
+ * hareket ediyor.
  *
  * Ayni sinif mudahale depoda zaten kayitli: axe taramasi da bu yuzden
  * reduced-motion altinda kosuyor (architecture.md §9).
@@ -161,9 +163,10 @@ test.describe("prensip destesi - gezinme", () => {
   // o alan yok ve `tsc` reddediyor. Deponun kendi ornegi de bu - a11y.spec.ts ve
   // projects.spec.ts ayni sekilde `emulateMedia` kullaniyor.
   //
-  // Yeniden yuklemeye gerek yok: medya durumu aninda uygulaniyor, yani
-  // `scroll-behavior: auto` ve `animation-name: none` ilk tiklamadan once
-  // yururlukte.
+  // Yeniden yuklemeye gerek yok: emulasyon stile bir sonraki karede
+  // yansiyabilir (olcum projects.spec.ts'te) ve `click()` kararliligi beklerken
+  // o kare geciyor; yani `scroll-behavior: auto` ve `animation-name: none` ilk
+  // tiklamadan once yururlukte. Stil OKUYAN bir test yeniden denenerek okumali.
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
   });

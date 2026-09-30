@@ -49,19 +49,15 @@ test("bolum kendi basligina bagli ve baslik seviyesi atlanmiyor", async ({ page 
   await expect(heading).not.toBeEmpty();
 
   // #58: bolum kendi basligini tasiyor, proje adi bir alt seviyede.
-  await expect(section.locator("h3")).toHaveCount(1);
+  await expect(section.locator("h3")).toHaveCount(projects.length);
   await expect(section.locator("h1")).toHaveCount(0);
 });
 
 test("tech tag'leri liste olarak diziliyor", async ({ page }) => {
   const tags = page.locator(`${SECTION} ul li`);
-  await expect(tags).toHaveCount(4);
+  await expect(tags).toHaveCount(projects.flatMap((project) => project.tags).length);
 });
 
-/**
- * Imza sayisinin ifadesi yazilmadi (#17). design-spec.md §3.3.1: metrics bossa
- * satir HIC render edilmez - bos cerceve, tire veya placeholder yok.
- */
 /**
  * Imza ogesi. architecture.md §4.6, design-spec.md §3.3.1
  *
@@ -113,8 +109,9 @@ test("sayi etiketin USTUNDE gorunuyor ama DOM'da altinda", async ({ page }) => {
 
 /**
  * SAYI ICERIKTEN: karuselde goruntulerin hepsi DOM'da (gorunmeyenler
- * `visibility: hidden`), yani sayfadaki <img> sayisi icerikteki goruntu
- * sayisina esit. Tek goruntude bugun oldugu gibi bir.
+ * `visibility: hidden`), yani bolumdeki <figure> goruntulerinin sayisi
+ * icerikteki goruntu sayisina esit. Tek goruntulu kartta bir. Hayaletin
+ * kopyalari (ScreenshotGhost.tsx) figurun disinda, sayilmiyor.
  */
 test("ekran goruntuleri gercekten yukleniyor ve yerini onceden ayiriyor", async ({ page }) => {
   const images = page.locator(`${SECTION} figure img`);
@@ -568,7 +565,7 @@ test("sayfa sonuna kadar kaydirilinca gizli kalan metin yok", async ({ page }) =
     .toBe(0);
 });
 
-test("16/10 oraninda ve tasmiyor", async ({ page }) => {
+test("ekran goruntusu 16/10 oraninda", async ({ page }) => {
   const box = await page.locator(`${SECTION} figure img`).first().boundingBox();
   expect(box).not.toBeNull();
   expect(box!.width / box!.height).toBeCloseTo(1.6, 1);
@@ -644,17 +641,6 @@ test("bolumdeki tek accent kullanimi Live Demo'nun zemini", async ({ page }) => 
 });
 
 /**
- * §3.3.2: yigin ikinci proje eklendiginde devreye girer. V1'de total === 1,
- * yani sticky HIC uygulanmamali ve kap normal akista kalmali.
- */
-test("tek projede yigin devreye girmiyor", async ({ page }) => {
-  const position = await page
-    .locator(`${SECTION} article`)
-    .evaluate((el) => getComputedStyle(el).position);
-  expect(position).not.toBe("sticky");
-});
-
-/**
  * Cip ile gelen gezinmede bolum basligi sticky navbar'in ALTINDA kalmamali.
  *
  * Beklenen deger SABIT YAZILMIYOR, token'dan turetiliyor. Onceden "88px" /
@@ -678,6 +664,7 @@ test("mobilde tek kolon, lg ustunde 12 kolonluk izgara", async ({ page }, testIn
   const width = testInfo.project.use.viewport?.width ?? 0;
   const columns = await page
     .locator(`${SECTION} article`)
+    .first()
     .evaluate((el) => getComputedStyle(el).gridTemplateColumns);
   expect(columns.split(" ")).toHaveLength(width >= 1024 ? 12 : 1);
 });

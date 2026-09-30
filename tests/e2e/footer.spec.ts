@@ -144,9 +144,10 @@ test("GitHub linki hover'da alt cizgi aliyor", async ({ page }) => {
   /*
     REDUCED-MOTION ALTINDA, ve sebebi olculdu: giris animasyonu bolum
     sarmalayicisindan METIN BLOKLARINA tasindiginda bu test dustu. Footer
-    linkinin kendi `view()` cizelgesi var, yani `hover()` sayfayi kaydirirken
-    oge de hareket ediyor - Playwright kutuyu hesapladiktan sonra hedef yer
-    degistiriyor ve isaretci yanina dusuyor. Alt cizgi hic acilmiyordu (olculdu:
+    linki ekrana girince (IntersectionObserver) 520ms'lik giris animasyonu
+    oynuyor, yani `hover()` sayfayi kaydirirken oge de hareket ediyor -
+    Playwright kutuyu hesapladiktan sonra hedef yer degistiriyor ve isaretci
+    yanina dusuyor. Alt cizgi hic acilmiyordu (olculdu:
     beklenen 1, gelen 0).
 
     Depo bu sinifi zaten kaydetmis: "hareketli sayfada ilk tiklama bosa duser,

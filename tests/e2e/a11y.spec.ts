@@ -9,7 +9,8 @@ import { expect, test } from "@playwright/test";
  * kosulunun kendisi.
  *
  * Sebebi olculdu: bolum girisi (`reveal-on-enter`, design-spec.md §6)
- * opakligi scroll'a bagli animasyonla degistiriyor. axe kontrast hesabini
+ * opakligi ekrana girince (IntersectionObserver) oynayan 520ms'lik giris
+ * animasyonuyla degistiriyor. axe kontrast hesabini
  * yaparken ust ogelerin opakligini kendisi katliyor - yani sayfanin herhangi
  * bir yerinde yariya gelmis bir fade varsa, o andaki KARISMIS rengi olcuyor.
  * Hero eklendiginde Projects asagi kaydi ve tarama animasyonun ortasina denk
@@ -20,12 +21,12 @@ import { expect, test } from "@playwright/test";
  * hesaplandi), yani kusur renkte degil OLCUM ANINDA. WCAG kontrasti duragan
  * durumun ozelligidir; gecici bir animasyon karesinin degil.
  *
- * Sayfanin tamami tek seferde taraniyor ve ekranin altindaki her bolum tanimi
- * geregi girisin ortasinda oluyor - yani "once tam gorunur olmasini bekle"
- * diye bir konum yok. Animasyonu kapatmak, sayfayi duragan halinde taramanin
- * TEK deterministik yolu.
+ * Sayfanin tamami tek seferde taraniyor ve ekranin altindaki metin tanimi
+ * geregi ya henuz gizli ya da girisinin ortasinda - yani "once tam gorunur
+ * olmasini bekle" diye bir konum yok. Animasyonu kapatmak, sayfayi duragan
+ * halinde taramanin TEK deterministik yolu.
  *
- * Hareketli halin kendisi ayrica test ediliyor: projects.spec.ts "bolum
+ * Hareketli halin kendisi ayrica test ediliyor: projects.spec.ts "metin
  * girisi" testleri reduced-motion'da ve scroll sonrasi icerigin tam gorunur
  * oldugunu olcuyor.
  */

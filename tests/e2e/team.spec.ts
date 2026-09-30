@@ -155,9 +155,10 @@ test("kart hover'da kalkiyor, komsusu yerinde kaliyor", async ({ page }) => {
   test.skip(!(await hoverCapable(page)), "hoversiz cihazda hover yok");
 
   /*
-    REDUCED-MOTION ALTINDA. Giris animasyonu artik KARTIN KENDISINDE ve her
-    kartin kendi `view()` cizelgesi var; `hover()` sayfayi kaydirdigi icin komsu
-    kartin kendi giris ilerlemesi de degisiyor. Yani asagidaki "komsu yerinde
+    REDUCED-MOTION ALTINDA. Giris animasyonu artik KARTIN KENDISINDE: her kart
+    ekrana girince (IntersectionObserver) 520ms'lik giris animasyonu oynuyor;
+    `hover()` sayfayi kaydirdigi icin komsu kart da ekrana girip kendi
+    animasyonunu oynatabiliyor. Yani asagidaki "komsu yerinde
     kaldi mi" olcumu hover'i degil reveal'i olcmeye baslamisti (olculdu:
     beklenen 16, gelen 0).
 
@@ -173,13 +174,19 @@ test("kart hover'da kalkiyor, komsusu yerinde kaliyor", async ({ page }) => {
   const first = cards.first();
   const second = cards.nth(1);
 
+  /* Emulasyon stile bir sonraki karede yansiyabilir (olcum projects.spec.ts'te):
+     hemen okunan deger hala giris kaymasi olabilir. Dinlenme degeri ve komsunun
+     yeri okunmadan once iki kartin kaymasi da yeniden denenerek bekleniyor. */
+  await expect(first).toHaveCSS("translate", "none");
+  await expect(second).toHaveCSS("translate", "none");
+
   // Tailwind v4 `translate` ozelligini kullaniyor, `transform` degil.
   const resting = await first.evaluate((el) => getComputedStyle(el).translate);
   /**
    * Komsunun yeri BOLUME GORE olculuyor. Mutlak koordinat iki sebeple oynuyor:
    * hover() karti gorunur kilmak icin sayfayi kaydiriyor, ve bolum girisi
-   * animasyonu (reveal-on-enter) scroll'a bagli olarak icerigi 16px'e kadar
-   * tasiyor. Ikisi de bu testin sordugu sey degil.
+   * animasyonu (reveal-on-enter) ekrana girince (IntersectionObserver) icerigi
+   * 14px tasiyor. Ikisi de bu testin sordugu sey degil.
    *
    * Referans BOLUM DEGIL LISTE: reveal sarmalayicisi bolumun icinde, yani
    * bolume gore olcum de o 16px'i tasiyordu (olculdu). Liste ile komsu ayni

@@ -112,9 +112,9 @@ describe("portraitSrcSet", () => {
   });
 
   /**
-   * Iki tur ayni listeyi PAYLASMAMALI: portre 350px'lik bir karta, ekran
-   * goruntusu 638px'lik bir kutuya giriyor. Ayni genislikleri kullanmak
-   * birinde gereksiz buyuk dosya indirtirdi.
+   * Iki tur ayni listeyi PAYLASMAMALI: portre en fazla 491px'lik bir karta,
+   * ekran goruntusu en fazla 883px'lik bir kutuya giriyor (lib/images.ts). Ayni
+   * genislikleri kullanmak birinde gereksiz buyuk dosya indirtirdi.
    */
   it("portre ve ekran goruntusu genislikleri ayri", () => {
     expect(PORTRAIT_WIDTHS).not.toEqual(SCREENSHOT_WIDTHS);
