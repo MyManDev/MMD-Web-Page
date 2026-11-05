@@ -10,9 +10,8 @@ uyguladığımızı** yazar. Kararların kendisi orada; burada tekrar edilmez.
 - Bölge sahipliği → [`working-agreement.md` §1](working-agreement.md)
 
 **Bu belge metin içermez.** Metinler `content/site.ts`'te yaşar ve şema onları **zorunlu**
-tutar; bu belge yalnızca nereye girdiklerini söyler. Hero cümlesi, Who we are manifestosu ve
-çalışma prensipleri #15'te yazıldı; imza sayısı #17'de kapandı; ekip biyografileri ve rolleri
-#16'da yazıldı.
+tutar; bu belge yalnızca nereye girdiklerini söyler. Güncel sayfa yapısı
+`architecture.md` §2'de; MyManDev anlatımı mevcut ekip hikâyesinden kısaltılmıştır.
 
 ---
 
@@ -27,11 +26,8 @@ Tek `Container` primitive'i bütün bölümlerin genişliğini belirler: `max-wi
 | `640–1023` (tablet) | 2     | eşit iki kolon                                        |
 | `≥ 1024` (desktop)  | 12    | 12 kolonluk ızgara, bölümler bunun üstünde konumlanır |
 
-Izgara boşluğu (gutter) her genişlikte **32px**: `≥ lg`'de `--spacing-gutter-lg` (Hero, Who we are,
-`ProjectCard`), Team'in ızgarasında `gap-8`. Tek kolonda üst üste gelen bloklar arasında da 32px,
-Who we are'da 40px. Kart iç boşluğu her genişlikte **24px** (`--spacing-card`, `TeamCard`). Burada
-önce "24px mobil / 32px `≥ lg`" yazıyordu; kod o değerleri hiç kullanmadı ve karar sahibi belgenin
-koda uymasını seçti (`architecture.md` §9).
+Projects ve Team ızgara boşluğu **32px**, kart iç boşluğu **24px** kalır.
+MyManDev ana sayfasında metin ile amblem arasında 48px bulunur.
 
 Bölüm arası dikey boşluk §4.3'teki iki değerden gelir: mobilde küçük olan, `lg` ve üstünde büyük
 olan. Ara breakpoint'lerde arada bir değer **uydurulmaz**, `lg`'de sıçrar.
@@ -84,11 +80,9 @@ V1'de `disabled` kullanan bir yüzey **yok**; durum tanımlı ki sonradan uyduru
 | `Nav`         | Navigation | **B** | `items: NavItem[]`              | —                                    |
 | `NavLink`     | Navigation | **B** | `href`, `label`, `active`       | default · hover · focus · **active** |
 | `MobileMenu`  | Navigation | **B** | `items`, `open`, `onOpenChange` | kapalı · açık · focus                |
-| `Hero`        | Hero       | **A** | `site.hero`                     | —                                    |
 | `Projects`    | Projects   | **A** | `projects: Project[]`           | —                                    |
 | `ProjectCard` | Projects   | **A** | `project`, `index`, `total`     | —                                    |
 | `MetricRow`   | Projects   | **A** | `metrics: Metric[]`             | —                                    |
-| `WhoWeAre`    | Who We Are | **B** | `site.whoWeAre`                 | —                                    |
 | `Team`        | Team       | **B** | `members: TeamMember[]`         | —                                    |
 | `TeamCard`    | Team       | **B** | `member`                        | default · hover · focus-within       |
 | `Footer`      | Footer     | **B** | `site.footer`                   | —                                    |
@@ -112,7 +106,7 @@ Sticky, sayfanın en üstünde, `position: sticky; top: 0`. **Scroll listener yo
 | --------- | ------------------- | ----------------------------------------------- |
 | Yükseklik | 72px                | 88px                                            |
 | Sol       | wordmark `MyManDev` | wordmark                                        |
-| Orta      | —                   | dört nav linki, pill radius                     |
+| Orta      | —                   | üç sayfa linki, pill radius                     |
 | Sağ       | menü düğmesi        | Contact + GitHub aksiyonları (ikisi de `ghost`) |
 | Zemin     | blur + hafif tint   | blur + hafif tint                               |
 | Alt kenar | **yok**             | **yok**                                         |
@@ -214,100 +208,25 @@ mono, nav'ı başka bir aileye geçirmek kimliği bölerdi — ihtiyaç olan şe
 yeni font eklenmedi. Daha önce `Nav.tsx` içinde `text-sm tracking-[0.08em]` diye **satır içi**
 duruyordu; #46 diğer her şeyi token'a taşırken bu satır atlanmıştı.
 
-**Aktif link tespiti:** tek bir `IntersectionObserver`, yalnızca `Nav` içinde. Başka hiçbir yerde
-scroll dinlenmez. Gözlem ayarı: `rootMargin: '-<navbar>px 0px -55% 0px'`, `threshold: 0`.
-Alt marj −%55, bir bölümün ekranın üst yarısına girdiği anda aktif sayılmasını sağlıyor;
-aksi halde iki bölüm aynı anda aktif görünüyor.
+**Aktif link tespiti:** URL pathname'i nav kaydının `href` değeriyle eşleşir.
+Aktif bağlantı `aria-current="page"` taşır. Bölüm gözlemcisi yoktur.
+Wordmark `/` adresine döner; mobil menü sayfa geçişinde kapanır.
 
-**Mobil menü** `< lg` (1024px) altında devreye girer: dört nav linki + wordmark + GitHub
+**Mobil menü** `< lg` (1024px) altında devreye girer: üç sayfa linki + wordmark + GitHub
 aksiyonu `md` genişlikte sıkışıyor. Menü düğmesi `aria-expanded` taşır ve `MobileMenu`'yü `aria-controls` ile
 işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Klavye davranışı §7.4.
 
-### 3.2 Hero — Bölge A
+### 3.2 MyManDev ana sayfası — Bölge A
 
-|             | Mobil   | `md` | `≥ lg`                         |
-| ----------- | ------- | ---- | ------------------------------ |
-| Kolon       | 1       | 1    | 2 — metin solda, işaret sağda  |
-| Kolon oranı | —       | —    | 7 / 5, arada 1 kolon boşluk    |
-| Sağ kolon   | **yok** | yok  | wordmark işareti, dikey ortalı |
-| Hizalama    | sola    | sola | sola                           |
+`/` varsayılan sayfadır. Başlık MyManDev; altında kısa giriş ve ekip hikâyesi bulunur.
+İki aksiyon `/projects` ve `/team` sayfalarına gider. Eski Hero kaldırılmıştır.
 
-Sıra: başlık (Display XL) → alt cümle (Body) → iki aksiyon
-(`primary` Projects CTA + `ghost` About CTA).
+Mobilde tek kolon ve tam genişlikte aksiyonlar; `md` üstünde metin solda, mevcut marka
+amblemi sağdadır. Sayfa yüksekliği nav ve footer arasında kalan alanı doldurur; eski
+Hero'nun tam ekran zorunluluğu, tint zemini ve scroll göstergesi yoktur.
 
-- Başlık metni: `site.hero.title` — #15'te yazıldı
-- Alt cümle: `site.hero.subtitle`
-
-Aksiyonlar mobilde alt alta ve tam genişlik, `sm`'den itibaren yan yana.
-
-**Hero yüklenirken kademeli belirir:** başlık → alt cümle → aksiyonlar → amblem, 240ms süre ve
-kelime başına değil öğe başına 70ms kademe. Bu, "sayfa yüklenirken giriş animasyonu yok" yasağını
-geri alıyor (§4.4) — yasak kaldırıldı, zarf korundu.
-
-Sınıf `reveal-on-enter` **değil** `reveal-on-load` ve sebep teknik: Hero açılışta ekranda olduğu için
-`animation-timeline: view()` onu "geçmiş" sayar ve öğe son hâlinde açılır. Hero'daki efekt yükleme
-anına bağlı olmak zorunda.
-
-Keyframe'de **yalnızca `from`** tanımlı. `prefers-reduced-motion` bloğu `animation-name: none`
-uyguladığında öğe tam görünür hâline döner; `to` yazılsaydı aynı blok onu `from` karesinde dondurur
-ve **Hero hiç görünmezdi**.
-
-**Bölüm bir ekran yüksekliğinde** (`min-h-dvh`), içerik dikeyde ortalı. Önceki hâli **478px**, yani
-900px'lik bir ekranın %53'ü — Projects'in üstü açılışta ekrana giriyordu. Yan fayda: metin giriş
-efekti artık Projects'te de çalışıyor, çünkü o öğeler ilk ekranın altına indi.
-
-**Zemin iki katmanlı:** ince çizgiler (`repeating-linear-gradient`, 118 derece, 1px, 88px aralık) ve
-altında tint. Çizgiler **noise değil** ve bu bir seçim — noise bir görsel dosya ister ve payload'a
-biner; çizgi deseni saf CSS ve 0 bayt. Rengi `--hero-line`, metin renginin **%6'sı**: %10'da bir
-ızgara gibi okunuyor, %3'te hiç görünmüyor.
-
-**Alt kenarda scroll göstergesi:** ince dikey bir çizgi ve içinde aşağı inen küçük bir işaret.
-**Metin yok** — "SCROLL" yazmak yeni bir UI metni uydurmak olurdu, ve `aria-hidden` bir metin
-kontrast için yine tartılır (depo bunu bir kez yaşadı). `aria-hidden`, yeşil değil, ve **iki tur**
-oynayıp duruyor: iki kez 2200ms, yani 4400ms — WCAG 2.2.2'nin beş saniye çizgisinin altında, o
-yüzden duraklatma mekanizması maddesi hiç tetiklenmiyor.
-
-**Sağ kolonda amblem var.** Markanın kendi işareti — üç kafa ve bir "m", yani üç kişi.
-
-Orada bir zamanlar **büyütülmüş wordmark** duruyordu ve kaldırıldı. Bir kelime ancak kenardan
-taşarsa grafik gibi okunuyor (çerçeveye sığan bir metin ikinci bir başlıktır), taşınca da **yarım
-bir kelime** olarak görünüyordu — "MyManD". Amblem o ikilemi taşımıyor.
-
-Kuralları:
-
-- **Kaynak vektör** (#18): `public/logo-mark.svg`. Orijinal 400×400 PNG'den
-  `scripts/trace-mark.mjs` ile türetildi — başka bir vektör kaynağı yok, PNG'nin kendisi orijinal.
-  Zemini **saydam**: markanın dolu turkuaz karesini olduğu gibi koymak ekran boyunda ikinci bir
-  yeşil odak eklerdi (§5.1). Tam logo ayrı dosyada: `public/logo.svg`.
-- **`mask-image` + `background-color`, `<img>` değil.** Renk token'dan (`--color-mark`) geliyor ve
-  bir dosyanın içine gömülü kalmıyor (`CLAUDE.md` kural 1).
-- **Rengi logonun kendi turkuazı** (`--color-mark`, `#0D9488`). Önceki sessiz ton (`#3d5a53`) amblemi
-  zemine karıştırıyordu; karar sahibi orijinal rengi istedi. **Accent değil** (`#14B8A6`) ve bu ayrım
-  korunuyor: amblem tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor. Kare zemin bir
-  süre **kaldırılmıştı** — 460px'lik dolu bir blok Hero'nun ağırlık merkezini başlıktan amblemin
-  üstüne kaydırıyordu. Gradyanlı bir plaka olarak geri geldi; gerekçesi ve tek-yeşil okumasına
-  etkisi §5.1'de yazılı.
-- **Bütün durur, taşmaz.** Yerini aldığı wordmark'ın tam tersi sözleşme: yarısı kırpılmış bir logo
-  bozuk görünür.
-- **Ölçü 460px'te kapanıyor** ve bu artık bir **tasarım** sınırı, çözünürlük sınırı değil. Vektöre
-  geçmeden önce tavan 380px'ti ve sebebi kaynağın 400×400 olmasıydı; vektörde öyle bir tavan yok.
-  Bugünkü sınırın gerekçesi: amblem başlığın ağırlığını geçmemeli. **Ölçü %18 küçüldü** (istek:
-  "biraz fazla büyük, ayrı bir banner görseli gibi duruyor"): `clamp(220px, 26vw, 460px)` yerine
-  `clamp(180px, 21vw, 380px)`, 1440'ta 374px'ten **302px**'e.
-- **`aria-hidden`.** Marka adı sayfada zaten navbar ve footer'da okunuyor; amblem bilgi değil
-  ağırlık taşıyor.
-- **Yalnızca `lg` üstünde.** Dar ekranda metnin yanına değil, yerine geçerdi.
-
-**Başlık `text-wrap: balance` kullanır.** Süsleme değil: başlığın anlamı iki cümlenin
-karşıtlığında ve tarayıcı onu ortasından bölüyordu — 390, 1024, 1920 ve 2560'ta satır
-`changed. We / didn't.` diye kırılıyor, "We" önceki cümlenin kuyruğuna takılıyordu. Balance ile
-altı genişlikte de çift bozulmuyor. **Genişlik sınırı eklenmedi:** denendi, 768'i bozuyor — orada
-başlık tek satıra sığıyor ve bir `22ch` capı onu gereksiz yere ikiye bölüyordu.
-
-**İki aksiyon da çiziliyor.** Burada bir zamanlar "tek aksiyon" sapması yazılıydı: ikinci düğme
-Who we are'a gidiyordu ve o bölüm henüz yoktu (#9). #9 kapandı, bölüm sayfada, düğme çiziliyor —
-sapma bitti. `Hero`'nun `secondary` prop'u yine de opsiyonel kalıyor; hiçbir yere götürmeyen bir
-düğme çizilmemesi kuralı ("`projects` boşsa bölüm render edilmez"in aynısı) hâlâ geçerli.
+Başlık ve giriş ilk boyamada `reveal-on-load` kullanır. Amblemin mevcut maskesi,
+turkuazı ve conic gradyanı korunur; sınıfları `brand-mark` / `brand-mark-plate` olmuştur.
 
 ### 3.3 Projects — Bölge A
 
@@ -470,117 +389,19 @@ bağlanacak.
 | Alttaki kartın focus'u   | Kart içeriği `inert` **değildir**; sticky yalnızca konumu değiştirir, kartlar DOM'da normal sırada ve klavyeyle erişilebilir. Üste binen kart alttakinin focus'unu görsel olarak kapatırsa, focus'lanan kart `z-index` sırasını geçici olarak kazanır (`:focus-within`). Henüz uygulanmadı; `z-index` satır içi style'da (`ProjectCard.tsx`), bu yüzden tek bir sınıf onu ezmez. |
 | Yığın yüksekliği         | Kap yüksekliği = kart sayısı × viewport yüksekliği. Tek kartta kap normal akışa döner ve sticky hiç uygulanmaz.                                                                                                                                                                                                                                                                  |
 
-### 3.4 Who we are — Bölge B
+### 3.4 Karusel davranışı ve kaldırılan Who We Are
 
-Kolektifi **birlikte** anlatır; kişiler bir sonraki bölümde tek tek geliyor. Genelden tekile.
+Who We Are ve prensip destesi 2026-11-05 sayfa ayrımında kaldırıldı. Kısa ekip hikâyesi
+`/` sayfasındadır. Proje karuselinin kullandığı `lib/deck.ts` korunur:
 
-**İki kolon (`lg` üstünde).** Solda başlık (Display XL) → manifesto (Body), sağda prensip destesi.
-Mobilde alt alta. Metin genişliği okunabilirlik için `65ch` ile sınırlı — sınır kapsayıcıdan değil
-okunabilirlikten geliyor, kapsayıcı 1600px.
-
-Bölüm başlığı (Display XL) doğrudan manifestonun üstünde; ayrı bir etiket yok (§9, #58).
-
-- Manifesto ve prensipler: `site.whoWeAre` — #15'te yazıldı
-
-Prensip sayısı **3–5** ve bu sınır belgede değil şemada zorlanıyor
-(`content/schema.ts`, `.min(3).max(5)`): altıncı bir madde eklenirse `pnpm build` patlar.
-
-#### Prensip destesi
-
-Prensipler **tek tek** gösterilir; kullanıcı ileri/geri tuşlarıyla gezer ve `01 / 05` sayacı
-konumu söyler. Prensip mobilde Display M'de, lg'de Display L'de durur — ekranı hak eden cümle
-Body S'te kaybolur. Ölçü genişliği `--max-width-statement` (22ch): `65ch` gövde metni için doğru
-ama `ch` yazı boyutuyla büyüdüğü için 56px'te sınır işlevini yitirir (§4.3).
-
-**Deste kendiliğinden ilerler: 7 saniyede bir sonraki prensip.** Duraklatma mekanizması
-**etkileşim**: fare desteye girdiğinde veya içeriye odak düştüğünde durur; ikisi de bitince kaldığı
-yerden sürer. Kalıcı durdurma değil. Ekran görüntüsü karuseli (§3.3.1) aynı kodu ve aynı sınırları
-taşıyor.
-
-**Görünür bir durdur/başlat tuşu yok ve bu karar sahibinin kararı (2026-09-29).** İlk gerekçe
-"burada olmayan bir kontrol demekti ve klavye turunu bir durak uzatırdı" idi. APG'den iki sapma var:
-APG kendiliğinden dönen bir karusel için böyle bir tuş istiyor; ayrıca odak içeri girince dönmenin
-durmasını ve kullanıcı istemeden **yeniden başlamamasını** istiyor, buradaki deste ise odak çıkınca
-kendiliğinden sürüyor. Sonuç olarak duraklatma yolu herkes için aynı değil:
-
-- **Dokunmatik:** hover yok; desteye ya da görüntüye dokunmak bir an girip çıkmak demek, süre
-  yalnızca baştan başlar. Bir tuşa dokunmak Android'de odağı tuşa verdiği için duraklatır; iOS'ta
-  WebKit dokunulan tuşa odak vermiyor, orada duraklatmaz (MDN'de belgeli, burada ölçülmedi).
-- **macOS Safari:** fare üzerindeyken duraklar. Tıklanan tuş odak almadığı için fare çekilince
-  sürer; varsayılan ayarda Tab tuşlara uğramıyor (Option+Tab gerekir).
-- **Yalnızca kaydırarak okuyan dokunmatik kullanıcısı:** duraklatma yolu yok.
-- **Ekran okuyucu:** yalnızca sanal imleçle okuyan kullanıcıda duraklama olmuyor. Tuşlara Tab ile
-  gelmek ya da tuşa basmak duraklatır, ama bunu duyuran bir şey yok.
-
-WCAG 2.2.2, kendiliğinden başlayan ve başka içerikle birlikte sunulan otomatik güncellemede bir
-durdurma, duraklatma, gizleme ya da güncelleme sıklığını denetleme yolu istiyor. Mekanizma yukarıdaki
-durumlarda yok; bir denetim sayfayı 2.2.2'den (A düzeyi) düşmüş sayabilir. **Kabul edilmiş risk**
-(`architecture.md` §9). Görünür bir tuş eklenirse açık kapanır.
-
-**Geçiş, prensibin kelime kelime belirmesidir.** İki biçim denendi ve bırakıldı: bloğun tamamını
-birlikte kaydıran giriş animasyonu (240ms, sonra 600ms) bir geçiş değil sıçrama gibi okunuyordu,
-harf harf daktilo ise fazla sade okundu. Şimdi her kelime sırayla, hafif yükselerek ve netleşerek
-geliyor: 520ms süre, kelime başına 70ms kademe. On kelimelik en uzun prensipte son kelime 630ms'de
-başlıyor ve 1.15s'de bitiyor, yani 7 saniyelik aralığın belirgin şekilde altında.
-
-**Efekt saf CSS, sıfır JS.** Animasyonu tetikleyen şey bir zamanlayıcı değil, **selektörün
-eşleşmesi**: `data-active` bir slot'a geçtiği anda kural o slot'un kelimelerine uymaya başlıyor ve
-animasyon baştan çalışıyor. Daktilo için bir `useEffect`, bir zamanlayıcı ve bir `matchMedia`
-okuması gerekiyordu; hiçbiri kalmadı. `prefers-reduced-motion` da bedelsiz çözülüyor — evrensel blok
-`animation-name: none` uyguluyor ve keyframe yalnızca `from` tanımladığı için kelimeler tam görünür
-hâline dönüyor. Metin DOM'da her zaman tam, gizleme yalnızca `opacity` ile.
-
-**Canlı bölge otomatik geçişte susar.** `aria-live` her değişikliği duyurursa ekran okuyucu
-kullanıcısı yedi saniyede bir, istemediği hâlde sözünün kesildiğini yaşar. Otomatik ilerleme
-`off` yazar; kullanıcı etkileşimi `polite`'a döndürür. Sıra çalışır durumda: odak olayı tıklamadan
-önce geldiği için kullanıcının adımı zaten canlı bir bölgede iner.
-
-**Burada pinlenen bir dizi vardı (#56) ve kaldırıldı.** O biçim bölümü bir viewport'a sabitleyip
-prensipleri scroll'la değiştiriyordu. Kusuru yapısaldı, ayarla düzelmiyordu: **manifestoyu ekrandan
-atıyordu.** Geriye bir viewport dolusu boşlukta tek bir cümle kalıyordu — bölümün boş görünmesinin
-sebebi buydu. Manifesto ve prensipler artık aynı ekranda: biri kolektifin ne olduğunu, diğeri nasıl
-çalıştığını söylüyor ve ikisi birlikte okunuyor.
-
-**İlerleme bir katman, taşıyıcı değil.** Sunucu çıktısı **beş prensibi de** düz liste olarak
-basar; tuşlar yoktur. Deste ancak hidrasyondan sonra devreye girer.
-
-| JS durumu           | Sonuç                                                      |
-| ------------------- | ---------------------------------------------------------- |
-| Hiç gelmedi / düştü | Beş prensip de okunur düz liste, gezinme tuşu **çizilmez** |
-| Geldi               | Tek prensip + ileri/geri tuşları + sayaç                   |
-
-Tersini yazmak (sunucuda tek prensip, gerisini JS açar) beş cümlenin dördünü JS'e rehin verirdi.
-Aynı gerekçe daktilo efektinde de yazılı (§6): gizleyen taraf, gelmeyebilecek olan taraf olmalı.
-Çalışmayan bir tuş da çizilmez — hiçbir yere gitmeyen düğme çizmemekle aynı kural (§3.2).
-
-**Beş prensip de aynı ızgara hücresinde üst üste durur**, yalnızca aktif olan görünür. Sebep
-ölçüldü: tek prensip basıldığında kap yüksekliği prensibin uzunluğuyla değişiyor, iki satırdan üç
-satıra geçerken **tuşlar aşağı kayıyordu**. Art arda tıklamaların biri boşa düştü — beş tıklamada
-sayaç 01 yerine 05'te kaldı. Gerçek kullanıcıda bu "tuşa bastım, bir şey olmadı" olur. Üst üste
-yığmak kap yüksekliğini en uzun prensibe sabitliyor; ölçüldü, tuş konumu beş adımda da aynı.
-
-Görünmeyenler `visibility: hidden`. `display: none` yüksekliği de götürür ve sabitleme bozulur;
-`opacity: 0` ise öğeyi erişilebilirlik ağacında ve odak sırasında bırakırdı.
-
-**Erişilebilirlik.** Sahne `aria-live="polite"`: odak tuşta kaldığı için değişen metin
-kendiliğinden duyulmaz ve canlı bölge olmadan ekran okuyucu kullanıcısı tuşun bir şey yaptığını
-anlamaz. Deste `role="group"` + `aria-roledescription="carousel"`; erişilebilir adı `Principles` ve
-bu **uydurulmuş marka metni değil** — alanın `content/site.ts`'teki adı zaten o. Görünür bir başlık
-yazmak yeni bir marka cümlesi yazmak olurdu (`CLAUDE.md` kural 5).
-
-Gezinme **başa sarar**. Sonu olan bir gezinmede son tuş devre dışı kalır ve odak boşa düşer; beş
-öğede sarma yönü kaybettirmiyor, sayaç konumu zaten söylüyor.
-
-**Destenin üstünde ince bir çizgi var ve bu süsleme değil, hiyerarşi düzeltmesi.** Prensip de
-bölüm başlığı bir zamanlar aynı ölçüde mono'ydu (40px) ve çizgisiz hâlde ikisi yan yana iki
-**başlık** gibi okunuyordu. Başlık Display XL'e çıktıktan sonra ölçü farkı bu işi tek başına da
-yapıyor; çizgi yine de duruyor çünkü mobilde kolonlar yığıldığında ayıran tek şey o. Alternatifi denendi — prensibi 24px'e düşürmek — ve sağ kolonu yeniden boşaltıyordu,
-yani bu bölümün ilk şikâyetini geri getiriyordu. Çizgi desteyi ayrı bir modül olarak işaretliyor,
-ölçüyü düşürmeden. Mobilde de durur; orada işi daha açık, kolonlar yığıldığında manifestoyla
-prensipleri ayıran tek şey odur.
-
-**Bölümde yeşil yok** (§5.1). Birincil aksiyon olmadığı için accent kotası sıfır; tuşlar ince
-border ve renk değişimiyle çalışır. Tek istisna focus halkası ve o kotaya sayılmıyor (§7.2).
+- Otomatik ilerleme 7 saniyede bir; son slayttan sonra ilkine döner.
+- Fare içerideyken veya klavye odağı karuseldeyken duraklar; iki koşul ayrı izlenir.
+- Elle adım sonrası süre baştan başlar. Reduced-motion altında otomatik ilerleme yoktur.
+- JS yokken ilk proje görüntüsü ve başlığı görünür; gezinme tuşları gizlidir.
+- Otomatik adımda canlı bölge `off`, kullanıcı etkileşiminde `polite` olur.
+- Görünür durdur/başlat tuşu yoktur; önceki tasarımın kabul edilen erişilebilirlik sınırı
+  devam eder. Dokunmatik cihazda kalıcı durdurma garanti edilmez; hover/focus kalıcı
+  durdurma düğmesinin eşdeğeri değildir.
 
 ### 3.5 Team — Bölge B
 
@@ -611,14 +432,9 @@ numara tek başına kaldığında da bir şey anlatmıyordu. Projects'te etiket 
 başlık proje adı ve "02 PROJECTS" bilgi katıyor. Etiket, tekrar ettiği yerde değil **bilgi kattığı
 yerde** durur.
 
-**Bölüm `lg`de bir ekran yüksekliğinde.** Önceki hâli viewport'un **%115'i** (1600x900'de %125),
-yani kartların altı her zaman kesiliyordu.
-
-**Yükseklik orandan değil kalan alandan gelir** ve bu hesaplanarak seçildi: 1440x900'de 2/3 oranı
-sığdırıyor, ama 1600x900'de kart genişliği 490px'e çıktığı için yine %109 taşıyor. Kart genişliği
-kapsayıcıyla büyürken ekran yüksekliği sabit kalıyor — yani **tek bir sabit oran her viewport'ta
-sığdıramaz.** Zincir: bölüm `h-dvh`, `Container` `flex-1`, sarmalayıcı `flex-1`, liste `flex-1` — her
-halkada `min-h-0`. Ölçüldü: 1440x900, 1600x900 ve 1920x1080'de bölüm tam %100 ve iki kart da içinde.
+**Team `lg`de navbar sonrası kalan ekrana sığar:** `100dvh - var(--nav-height)`.
+Container, iç sarmalayıcı ve liste `flex-1` / `min-h-0` zincirini korur. Mobilde doğal
+akış devam eder. Kartlar mevcut üç kolonluk iz genişliğiyle ortada kalır.
 
 Oran token'ı (`--aspect-portrait`, 5/9) **mobilde** geçerli kalır; `tests/portrait-aspect.test.ts`
 anlamını korur çünkü görsel hattı ile token hâlâ aynı sayıyı söylüyor. Görseller yeniden üretilmedi.
@@ -706,28 +522,23 @@ Bu, imza için seçilen özel süredir; genel hareket zarfını değiştirmez. Y
 Rollerin boyut ve satır yüksekliği değerleri `architecture.md` §4.2'de. Buradaki iş, hangi
 elemanın hangi rolü aldığı.
 
-| Rol        | Nerede                                                                               |
-| ---------- | ------------------------------------------------------------------------------------ |
-| Display XL | Hero başlığı **ve** bölüm başlıkları: Projects, Who we are, Team.                    |
-| Display L  | Proje adı, prensip destesindeki cümle (`lg`).                                        |
-| Display M  | Proje özeti, `TeamCard` adı, `MetricRow` sayısı, prensip destesindeki cümle (mobil). |
-| Body       | Hero alt cümlesi, proje açıklaması, About manifestosu, prensip listesi (JS yokken).  |
-| Body S     | `TeamCard` biyografisi, resim altı yazısı.                                           |
-| Mono label | `Tag`, `MetricRow` etiketi, footer linkleri, footer telif.                           |
-| Nav        | Nav yazısı, wordmark dahil (`--text-nav`).                                           |
+| Rol        | Nerede                                                                     |
+| ---------- | -------------------------------------------------------------------------- |
+| Display XL | MyManDev, Projects ve Team sayfa başlıkları.                               |
+| Display L  | Proje adı.                                                                 |
+| Display M  | MyManDev giriş cümlesi, proje özeti, `TeamCard` adı ve `MetricRow` sayısı. |
+| Body       | MyManDev ekip anlatımı ve proje açıklaması.                                |
+| Body S     | `TeamCard` biyografisi, resim altı yazısı.                                 |
+| Mono label | `Tag`, `MetricRow` etiketi, footer linkleri, footer telif.                 |
+| Nav        | Nav yazısı, wordmark dahil (`--text-nav`).                                 |
 
 **Ölçek bir basamak büyüdü** (istek: "yazılar çok küçük", "bu sayfa çok küçük"). Önceki değerler
 sırasıyla 40/64 · 28/40 · 20/24 · 15/16 · 14 · 12; bugün 48/80 · 32/56 · 22/28 · 16/18 · 15 · 13.
 Component'lerin hiçbirine dokunulmadı — hepsi zaten bu token'ları okuyor, yani büyüme tek yerden
 geldi.
 
-**Bölüm başlığı Display L'den Display XL'e çıktı ve bu ayrı bir karar.** Yalnızca ölçeği büyütmek
-yetmedi: Who we are'da başlık ile yanındaki prensip **aynı ölçüye** düşüyor ve hiyerarşi
-düzleşiyordu — şikâyet zaten tam olarak buydu. Başlık 80px, prensip 56px; artık hangisinin başlık
-olduğu ölçüden okunuyor.
-
-Bunun sonucu olarak Display XL **sayfada bir kez değil**, her bölüm başlığında görünüyor. Hero'nun
-h1'i yerini ölçüyle değil **bağlamla** koruyor: sayfanın ilk ekranı ve tek `h1`'i (§7.1).
+**Sayfa başlıkları Display XL kullanır.** Her sayfada tek `h1`; kart başlıkları
+bir alt seviyede `h2` olarak yer alır (§7.1).
 
 `ch` ile tanımlı ölçü sınırları (`--max-width-prose`, `--max-width-statement`) yazı boyutuyla
 birlikte büyüdüğü için ayrıca ayarlanmadı.
@@ -784,14 +595,13 @@ Component'te literal renk yok (`CLAUDE.md` kural 1).
 | Bölüm      | **Tek** yeşil odak              | Yeşil **olmayan**                                                  |
 | ---------- | ------------------------------- | ------------------------------------------------------------------ |
 | Navigation | aktif nav linki                 | wordmark, diğer linkler, GitHub aksiyonu                           |
-| Hero       | `primary` CTA zemini            | başlık, alt cümle, `ghost` CTA — amblem ayrı, aşağıdaki nota bakın |
+| MyManDev   | `primary` CTA zemini            | başlık, alt cümle, `ghost` CTA — amblem ayrı, aşağıdaki nota bakın |
 | Projects   | Live Demo `primary` zemini      | başlık, proje adı, `Tag`'ler, `MetricRow` sayısı, GitHub aksiyonu  |
-| Who we are | yok                             | başlık, manifesto, liste madde işaretleri                          |
 | Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                              |
 | Footer     | yok                             | wordmark, linkler, telif                                           |
 
-**Hero amblemi bu okumayı gevşetti ve bu sessizce olmadı.** Amblem artık logonun kendi turkuazını
-taşıyor (`#0D9488`), yani Hero'da **iki yeşil** var: CTA'nın accent'i ve amblem. §4.1'in "ekran
+**MyManDev amblemi eski Hero tasarımındaki renk istisnasını korur.** Amblem artık logonun kendi turkuazını
+taşıyor (`#0D9488`), yani MyManDev sayfasında **iki yeşil** var: CTA'nın accent'i ve amblem. §4.1'in "ekran
 başına tek yeşil odak" cümlesi harfiyen okunursa bu bir ihlal.
 
 Kararı karar sahibi verdi; azaltıcı ölçüler ölçüldü ve yazılı:
@@ -799,20 +609,8 @@ Kararı karar sahibi verdi; azaltıcı ölçüler ölçüldü ve yazılı:
 - Amblemin turkuazı (`#0D9488`) accent'ten (`#14B8A6`) **daha koyu**, yani ikisi aynı tonda yarışmıyor.
 - Amblem **tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor** — `aria-hidden`, saf dekorasyon.
   Accent hâlâ ekrandaki tek etkileşimli yeşil.
-- **Hero'nun zemini de geçişli** (`.hero-field`): sayfa renginden marka rengine doğru `118deg`'lik
-  bir tint, yönü amblemin durduğu köşeye bakıyor — plaka sayfanın üzerinde duran ayrı bir blok
-  olmaktan çıkıp zeminin koyulaştığı yerde oturuyor. **Bu bir glow değil:** ölçüldü, iki ucun
-  kontrastı 1.6'nın altında ve bir kapı bunu tutuyor. Metin solda, orada zemin saf `page` rengi;
-  en kötü noktada bile başlık ve alt cümle AA'yı geçiyor (ölçüldü: 11.9:1 ve 6.5:1).
-- **Kare zemin geri geldi ve artık gradyanlı.** Plaka üç tonlu bir conic gradyan taşıyor ve açısı
-  scroll'a bağlı dönüyor. Durakları uydurulmadı: `--color-mark`tan `color-mix` ile türetildi (§4.5),
-  biri sayfa zeminine biri metin rengine doğru. Yani palet büyümedi, aynı renk derinlik kazandı.
-- **Sonsuz döngü yok.** Gradyan yalnızca kullanıcı kaydırdıkça dönüyor; sayfa dururken plaka sakin.
-  WCAG 2.2.2'nin duraklatma mekanizması istediği durum hiç doğmuyor.
-- `tests/e2e/hero.spec.ts` "amblem accent renk kullanmiyor" testi **duruyor ve hâlâ anlamlı**: accent'in
-  amblemde kullanılmasını engelliyor.
 
-Who we are, Team ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve o üç bölümde
+Team ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve bu iki bölümde
 birincil aksiyon yok. Her bölüme bir yeşil serpmek §4.1'in tarif ettiği hatanın kendisi.
 
 **Tek istisna — focus halkası** (§7.2). Halka accent renklidir ve bölüm kotasına sayılmaz; bir
@@ -828,14 +626,10 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 
 ## 6 · Etkileşim ve motion
 
-§4.4 sınırları: CSS öncelikli, etkileşim geçişleri 150–250ms ve `ease-out`, motion kütüphanesi
-yok. **Yükleme anında giriş animasyonu yasağı kaldırıldı** (§4.4); Hero'nun yükleme girişi zarfın
-içinde (240ms, `ease-out`). **Zarfın dışında üç animasyon var:** metin girişi 520ms
-(`cubic-bezier(0.22, 0.61, 0.36, 1)`), prensip kelimeleri 520ms ve scroll göstergesi 2 × 2200ms
-`ease-in-out`. Karar sahibi şimdilik kodu doğru sayıyor ve deneyip bakacak (2026-09-29).
-Ekran görüntüsü geçişi ve onunla değişen hayalet arka plan (900ms) de zarfın dışında; süreyi
-karar sahibi kendisi seçti (§3.3.1). Zaffiro etkileşim dili §4.4'te benimsendi; **renk ve yazı ailesi
-değişmiyor**, değişen ölçek, hareket ve mikro detaylar.
+§4.4 sınırları: CSS öncelikli; etkileşim geçişleri 150–250ms, motion kütüphanesi yok.
+Sayfa başlığı ilk boyamada 240ms giriş kullanır. Metin girişi 520ms,
+ekran görüntüsü ve hayalet arka plan geçişi 900ms olarak korunur. Eski prensip animasyonları
+ve scroll göstergesi kaldırılmıştır.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
 `animation-timeline: scroll()` ile yazılır ve sıfır JS'e mal olur (§4.4); bugün iki tane var:
@@ -859,14 +653,11 @@ aynı sınıf hatadır.
 | `TeamCard` biyografi alanı       | 200ms, 100ms gecikme | `grid-template-rows: 0fr → 1fr`                               |
 | `TeamCard` biyografisi           | ~12ms/harf           | daktilo — aşağıdaki nota bakın                                |
 | Anchor scroll                    | —                    | `scroll-behavior: smooth` (CSS)                               |
-| Hero yükleme girişi              | 240ms + 70ms         | `opacity` + `translate: 0 10px`, öğe öğe                      |
+| Sayfa başlığı girişi             | 240ms + 70ms         | `opacity` + `translate: 0 10px`, öğe öğe                      |
 | Metin girişi (`reveal-on-enter`) | 520ms + 90ms         | `opacity` + `translate: 0 14px`, ekrana girince bir kez       |
 | Navbar zemini                    | scroll'a bağlı       | `background-color` + `backdrop-filter`, ilk 120px             |
 | Amblem gradyanı                  | scroll'a bağlı       | `--mark-angle` 0 → 360deg, sayfa boyunca bir tur              |
-| Scroll göstergesi                | 2200ms × 2           | `translate` — işaret çizgide aşağı iner, iki turda durur      |
-| Prensip girişi                   | 520ms + 70ms         | kelime kelime `opacity` + `translate` + `blur`                |
-| Prensip otomatik geçişi          | 7s aralık            | etkileşimde duraklar, bırakınca sürer                         |
-| Ekran görüntüsü karuseli         | §3.4 aralığı         | desteyle aynı kanca (`lib/deck.ts`)                           |
+| Ekran görüntüsü karuseli         | 7s aralık            | `lib/deck.ts`; hover/focus sırasında duraklar                 |
 | Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
 | Giden resim altı yazısı          | 200ms                | `opacity`, beklemeden söner (`Screenshot.tsx`)                |
 | Resim altı yazısı                | 25ms/harf            | daktilo, görüntü değişince (`TypedCaption`)                   |
@@ -890,7 +681,7 @@ okur.
 `NavLink`'in markup'ı client component olan `Nav`'ın içinde yaşıyor, yani ikinci etiket birkaç bayt
 JavaScript'e mal oluyor. Aynı `rule` Footer'da — sunucu component'i — hiçbir şeye mal olmuyor.
 
-**Metin girişi zamana bağlı.** Tetikleyici `IntersectionObserver` (`components/ui/RevealOnView.tsx`,
+**Metin girişi zamana bağlı.** Tetikleyici `IntersectionObserver` (`components/ui/RevealOnView.tsx`, sayfa kabuğuyla birlikte kurulur;
 eşik `0.12`, `rootMargin: 0px`): öğe görünür olunca `data-reveal-shown` alır ve `reveal-in` 520ms'de
 `cubic-bezier(0.22, 0.61, 0.36, 1)` ile oynar. Aynı karede açılan öğeler 90ms kademeyle gelir;
 kademe beşte sabitlenir. Bir kez oynar, yukarı dönerken metin zaten oradadır. `@supports` yok: JS
@@ -900,8 +691,8 @@ gelmezse ya da reduced-motion açıksa işaret konmaz ve öğe son hâlinde duru
 Hareket **bölümün zeminine değil içeriğine** uygulanır. Zemin viewport genişliğinde (§1) ve onu
 soldurmak bölümün kendisini yanıp sönüyormuş gibi gösterir.
 
-Hiçbir hareket `transform` kullanmıyor: metin girişi, Hero girişi, prensip kelimeleri, scroll
-göstergesi, `roll` ve `TeamCard` `translate`, `rule` `scale` kullanır.
+Metin girişi, sayfa başlığı, `roll` ve `TeamCard` hareketi `translate`; `rule` `scale`
+kullanır. Footer imzasının eğimi kendi CSS modülündedir.
 
 **Kalkma kuralı bölüm bazına ayrıldı.** `ProjectCard`'da hover'da büyüme/kalkma **yok** — sticky
 yığınla birlikte katman sırasını okunmaz hale getiriyor (§3.3.2). `TeamCard` yığında değil, yani o
@@ -968,14 +759,14 @@ gerekliydi, çünkü giden slayt gecikme süresince görünür kalırdı; bugün
 
 ### 7.1 Landmark'lar ve belge yapısı
 
-| Landmark      | Eleman                                         |
-| ------------- | ---------------------------------------------- |
-| `banner`      | `<header>` — navbar                            |
-| `main`        | `<main>` — Hero + Projects + Who we are + Team |
-| `contentinfo` | `<footer>`                                     |
+| Landmark      | Eleman                           |
+| ------------- | -------------------------------- |
+| `banner`      | `<header>` — navbar              |
+| `main`        | `<main>` — açık sayfanın içeriği |
+| `contentinfo` | `<footer>`                       |
 
 Her bölüm `<section>` ve `aria-labelledby` ile kendi başlığına bağlanır. Başlık hiyerarşisi:
-sayfada tek `h1` (Hero başlığı), bölüm başlıkları `h2`, kart başlıkları `h3`. Seviye atlanmaz.
+her sayfada tek `h1`; proje ve ekip kartı başlıkları `h2`. Seviye atlanmaz.
 
 Bölüm numaraları (`01`–`04`) **kaldırıldı** (#58). Etiket, tekrar ettiği yerde değil bilgi kattığı
 yerde durur (§3.5); Hero, Who we are ve Team'de kalktıktan sonra Projects'teki tek başına kaldı ve
@@ -994,19 +785,13 @@ değil), çünkü Windows yüksek kontrast modunda `box-shadow` kaybolur.
 
 DOM sırası = görsel sıra. Hiçbir yerde pozitif `tabindex` yok.
 
-1. **Skip link** — `<body>`nin ilk odaklanabilir elemanı, normalde görünmez, focus alınca
-   görünür. `#main`'e atlar. Sticky navbar'da dört link + GitHub aksiyonunu her sayfada geçmek
-   zorunda kalmamak için gerekli.
-2. Wordmark → nav linkleri (`01`–`04` sırasıyla) → GitHub aksiyonu
-3. Hero: Projects CTA → About CTA
-4. Projects: her kart için GitHub → Live Demo
-5. Who we are: gövde içi linkler
-6. Team: kart sırasıyla linkler
-7. Footer: linkler
+1. **Skip link** — ilk odaklanabilir öğe; `#main`'e atlar.
+2. Wordmark → MyManDev / Projects / Team → Contact / GitHub.
+3. Açık sayfanın aksiyonları ve kart bağlantıları.
+4. Footer bağlantıları.
 
-**Sticky navbar focus'u kapatmamalı.** Anchor hedefine atlandığında hedef başlık sabit bar'ın
-altında kalır. Çözüm: her `<section>`a `scroll-margin-top: calc(var(--nav-height) + 24px)`. Bu bir E2E kapısıdır —
-`architecture.md` §8'deki "klavye ile tüm bölüm ve aksiyonlar erişilebilir" satırı bunu kapsar.
+İç sayfa linkleri URL değiştirir; bölüm kaydırmaz. Skip link ve doğrudan bölüm hash'i
+kullanıldığında `scroll-margin-top` sticky navbar için boşluk bırakır.
 
 ### 7.4 Mobil menü klavye davranışı
 
@@ -1014,7 +799,7 @@ altında kalır. Çözüm: her `<section>`a `scroll-margin-top: calc(var(--nav-h
 - Açılınca focus menünün ilk linkine geçer.
 - Menü açıkken focus menü içinde döner (focus trap); arkadaki sayfa `inert`.
 - `Escape` menüyü kapatır ve focus'u **menü düğmesine geri verir**.
-- Kapanınca `inert` kalkar.
+- Kapanınca veya sayfa değişince `inert` ve scroll kilidi kalkar.
 - Menü açıkken sayfa scroll'u kilitlenir; kilit `overflow: hidden` ile, scroll pozisyonu
   korunarak.
 
@@ -1025,7 +810,7 @@ altında kalır. Çözüm: her `<section>`a `scroll-margin-top: calc(var(--nav-h
 - Görsellerde gerçek `alt`; dekoratif olanlarda `alt=""`.
 - `Tag` listesi `<ul>`/`<li>`; ekran okuyucu öğe sayısını duyurur.
 - Renk tek başına bilgi taşımaz: aktif nav linki yalnızca yeşil değil, aynı zamanda
-  `aria-current="true"`.
+  `aria-current="page"`.
 
 ---
 

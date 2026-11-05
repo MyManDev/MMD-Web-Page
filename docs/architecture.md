@@ -9,10 +9,10 @@ Kaynak: _MyMan.dev Final Tasarım ve Teknik Plan V1_ (görsel yön ve kapsam).
 
 ## 1 · Ürün ve kapsam
 
-Tek sayfa, statik, İngilizce bir vitrin ve proje hub'ı. Projeler kendi repo ve deployment'larında
+Üç sayfalı, statik, İngilizce bir vitrin ve proje hub'ı. Projeler kendi repo ve deployment'larında
 bağımsız yaşar; bu site onlara işaret eder, onları barındırmaz.
 
-**V1'de var:** Hero, Projects, Team, About, Footer. Anchor + smooth scroll. Sticky navbar. SEO
+**V1'de var:** MyManDev, Projects ve Team sayfaları; ortak navbar ve footer. SEO
 metadata, Open Graph, sitemap, robots. Responsive. Gerçek 404.
 
 **V1'de YOK:** veritabanı, auth, CMS, admin panel, contact form, blog, i18n switcher, tema toggle,
@@ -29,21 +29,25 @@ kapılar geçiyor; `mymandev.com` yayında.
 
 ## 2 · Bilgi mimarisi
 
-Header linkleri yeni sayfa açmaz. Tek sayfa, dört bölüm, anchor + smooth scroll.
+Üst menü aynı sekmede ayrı sayfalara gider. Varsayılan açılış MyManDev'dir.
 
-| #   | Bölüm      | İş                                                                |
-| --- | ---------- | ----------------------------------------------------------------- |
-| 01  | Hero       | Kim olduğumuzu tek cümlede anlat. Projects CTA + About CTA.       |
-| 02  | Projects   | Sitenin ana vitrini.                                              |
-| 03  | Who we are | Kolektifi birlikte anlatan kısa manifesto ve çalışma prensipleri. |
-| 04  | Team       | Kişileri tek tek tanıtan kartlar.                                 |
+| Yol         | Sayfa    | İçerik                                                   |
+| ----------- | -------- | -------------------------------------------------------- |
+| `/`         | MyManDev | Ekip hikâyesi ve çalışma alanlarının kısa anlatımı.      |
+| `/projects` | Projects | Mevcut proje kartları, ekran görüntüleri ve bağlantılar. |
+| `/team`     | Team     | Ekip üyelerinin mevcut kartları ve biyografileri.        |
 
-**Navigation:** sticky navbar; aktif bölüm linki yeşil; GitHub sağda sabit aksiyon; mobilde kompakt
-menü. Aktif link tespiti için tek bir `IntersectionObserver`, başka hiçbir yerde scroll listener yok.
+Hero, Who We Are ve prensip destesi kaldırıldı. `SitePage` ortak nav, main ve footer'ı
+kurar. İç bağlantılar Next Link kullanır; aktif sayfa URL'den belirlenir ve
+`aria-current="page"` taşır. Mobil menü geçişte kapanır; odak ve scroll kilidi temizlenir.
 
-**Responsive:** desktop iki kolon hero; tablet kontrollü daralma; mobilde tek kolon, proje görseli
-alt satıra iner. Kırılma noktaları Tailwind varsayılanları (`sm 640 / md 768 / lg 1024 / xl 1280`),
-özel breakpoint tanımlanmaz.
+Her sayfanın başlığı, canonical ve paylaşım metadata'sı kendine aittir; sitemap üç adresi
+sayar. Doğrudan URL, reload ve geri/ileri gezinme statik çıktıda test edilir.
+
+**Responsive:** ana sayfa `md` altında tek kolon, amblem gizli; `md` üstünde metin ve amblem.
+Projects görseli mobilde alt satıra iner. Team `lg` altında doğal yükseklikte, üstünde
+navbar sonrası kalan ekranı (`100dvh - nav-height`) kullanır. Kırılma noktaları
+Tailwind varsayılanlarıdır.
 
 **Proje detay sayfaları V1'de yok.** İçerik şemasında `slug` alanı bulunur, böylece
 `/projects/[slug]` route'ları sonradan şemayı değiştirmeden eklenebilir.
@@ -132,7 +136,7 @@ build sırasında gömülür; runtime'da dış istek yok).
 
 | Rol     | Yüz                                                      | Kullanım                                                  |
 | ------- | -------------------------------------------------------- | --------------------------------------------------------- |
-| Display | IBM Plex Mono 500, `letter-spacing: -0.02em`             | Hero, bölüm başlıkları                                    |
+| Display | IBM Plex Mono 500, `letter-spacing: -0.02em`             | MyManDev, Projects ve Team başlıkları                     |
 | Body    | IBM Plex Sans 400/500                                    | paragraf, kart açıklamaları                               |
 | Utility | IBM Plex Mono 500, `uppercase`, `letter-spacing: 0.08em` | bölüm etiketleri, tech tag'leri, proje numaraları, footer |
 
@@ -195,35 +199,14 @@ animasyonlarından üçü bu zarfın dışında ve karar sahibi şimdilik kodu d
 (`design-spec.md` §6). Ekran görüntüsü geçişi ve hayalet arka plan da dışında: 900ms, karar
 sahibinin seçimi (`design-spec.md` §3.3.1).
 
-**Sayfa yüklenirken giriş animasyonu yasağı KALDIRILDI.** Karar sahibi kaldırdı ("her şeyde
-animasyon olabilir"). Kalkan şey yasak, **ölçü değil**: yükleme anındaki giriş de 150–250ms zarfında
-kalır ve `ease-out` kullanır — bugünkü uygulama 240ms süre, 70ms kademe. "Hareket taşıyıcı değil,
-üstüne binen bir katman" ilkesi aynen geçerli: animasyon çalışmadığı her durumda içerik tam görünür
-olmak zorunda, ve bu bir kapıyla ölçülüyor (`tests/e2e/hero.spec.ts`).
+**Sayfa başlıkları** ilk boyamada CSS ile belirir (`reveal-on-load`, 240ms).
+Başlıklar JS veya görünürlük gözlemcisini beklemez. Reduced-motion altında animasyon yoktur.
 
-Yasağın gerekçesi geçersiz olmadı, kapsamı daraldı: Hero açılışta ekranda olduğu için scroll'a bağlı
-bir reveal orada ya hiç görünmez ya da sayfayı yanıp sönüyormuş gibi gösterir. Bu yüzden Hero
-`view()` değil **zamana bağlı** bir animasyon kullanır. Ekrana sonradan giren bölümlerin girişi de
-artık zamana bağlı (aşağıda).
-
-**Hareket sistemi CSS öncelikli.** Scroll'a bağlı hareket `animation-timeline: scroll()` ile
-yazılır; bugün navbar zemini ve amblem gradyanı. Kazanç iki katmanlı: sayfaya **0 KiB JS**
-eklenmiyor, ve `CLAUDE.md` kural 3 ("scroll listener yazma") değişmeden duruyor çünkü zaman
-çizelgesini tarayıcının kendisi yürütüyor.
-
-**Metin girişi `animation-timeline: view()` ile YAZILDI VE BIRAKILDI.** O hareket scroll
-**konumuna** bağlı: scroll durunca animasyon da donuyor, hızlı kaydırınca atlıyor. Aralık iki kez
-ayarlandı (`entry 45%`, sonra `cover 50%`) ve ölçüm her seferinde "çalışıyor" dedi — ama hareket
-"yazı geldi" hissi vermedi ve geri bildirim bunu söyledi.
-
-Referans davranış **zamana** bağlı: öğe görünür olduğu an animasyon başlıyor ve kendi süresinde
-bitiyor. Bunu CSS ile yazmanın yolu yok, çünkü "görünür oldu" bir **olaydır**, bir scroll konumu
-değil. Tetikleyici bu yüzden `IntersectionObserver` oldu ve `CLAUDE.md` kural 3 genişletildi:
-gözlemci artık iki yerde, ikisi de tek dosyada.
-
-**Hero bu mekanizmayı kullanmıyor** ve gerekçesi ölçüldü: gözlemci yolu öğeyi hidrasyona kadar gizli
-tutuyor, ve Hero'nun `h1`'i sayfanın **LCP öğesi** — onu JS gelene kadar gizlemek LCP'yi doğrudan
-bozardı (§8, ve LCP zaten açık bir issue). Hero'nun girişi saf CSS ve ilk boyamada başlıyor.
+Navbar zemini ve amblem gradyanı CSS scroll timeline kullanır. Kart/footer metni için tek
+`IntersectionObserver` vardır: `RevealOnView`, `SitePage` içinde yeni sayfanın DOM'u ile
+birlikte mount olur. Kalıcı layout'ta yalnız pathname değişimini izlemek yeterli değildir:
+yeni route içeriği sonra geldiğinde metin gizli kalabiliyordu. Gezinme regresyon testi bu
+geçişi masaüstü ve mobilde doğrular. Gözlemci sayfa bırakıldığında temizlenir.
 
 **İşaret sırası ters:** gizleyen CSS kuralı yalnızca JS'in koyduğu işaretin altında çalışıyor. JS
 gelmezse, `prefers-reduced-motion` açıksa veya gözlemci düşerse işaret hiç konmaz ve bütün metin
@@ -306,7 +289,7 @@ başarısızlık göstermek ise nadir ve tamamen size ait.
 
 **Karar: MDX yok. Tipli TypeScript içerik dosyaları + Zod.**
 
-Gerekçe: V1'de dört bölüm, bir proje, iki kişi var. MDX'in kazandırdığı şey uzun gövde metni içinde
+Gerekçe: V1'de üç sayfa, bir proje, iki kişi var. MDX'in kazandırdığı şey uzun gövde metni içinde
 component kullanmak; burada uzun gövde metni yok. Bir derleme bağımlılığı, bir loader
 yapılandırması ve bir tip köprüsü ekliyor, karşılığında bugün hiçbir şey vermiyor. Case-study
 route'ları geldiğinde MDX o zaman eklenir — o zaman gerçekten gerekecek.
@@ -361,14 +344,17 @@ yazılır. Güncelleme bilinçli bir `chore:` PR'ıdır, sessiz bir sürüklenme
 ```
 app/
   layout.tsx          root layout, font ve metadata
-  page.tsx            tek sayfa, bölümleri sırayla dizer
+  page.tsx            varsayılan MyManDev sayfası
+  projects/page.tsx   Projects sayfası
+  team/page.tsx       Team sayfası
   tokens.css          @theme token'ları (TEK renk kaynağı)
   globals.css         reset ve taban stiller
   not-found.tsx       404
 components/
+  SitePage.tsx        ortak sayfa kabuğu ve reveal yaşam döngüsü
   ui/                 Button, Tag, ExternalIcon, Container ...
   sections/
-    hero/  projects/  nav/  team/  about/  footer/
+    projects/  nav/  team/  footer/
 content/              §5
 lib/                  yardımcılar
 assets/               kaynak görüntüler (screenshots/, people/) — servis EDİLMEZ
@@ -516,7 +502,7 @@ medyanı 3754–3921 ms bandında, CI'da 2382–3063 ms. İkisi de simülasyon �
 sentetik throttling, yani gerçek domain çift cezalı. Saha verisi (CrUX/RUM) yeni bir domainde henüz
 yok.
 
-**LCP hangi öğe üzerinde:** bugün **navbar'ın wordmark linki** (`a[href="#main"]`), Hero'nun `h1`'i
+**Önceki tek sayfa sürümünün LCP ölçümü:** **navbar'ın wordmark linki** (`a[href="#main"]`), Hero'nun `h1`'i
 değil. Sebebi bir tasarım kararı: Hero başlığı yükleme animasyonuyla `opacity: 0`'dan geliyor ve
 tarayıcı saydam bir öğeyi LCP adayı saymıyor. Karar sahibi efektin kalmasını seçti.
 
@@ -527,7 +513,7 @@ ve elde duran bir seçenek.
 
 **Eşik tutulmuyor ve sayı REVIZE EDILMEDI.** On bir okumada eşiği tutan tek bir medyan yok
 (CI 2382–3063, gerçek domain 3754–3921, aday değiştikten sonra 2950–3156). §8'in kendi ilk cümlesi
-"sonradan seçilen eşik, eşiğe fit etmektir" diyor ve sitede yayınlanan prensiplerden biri de
+"sonradan seçilen eşik, eşiğe fit etmektir" diyor ve önceki tek sayfada yayımlanan prensiplerden biri de
 "Thresholds are written before the work, never fitted to it" — bu yüzden **2.0 s hedef olarak
 duruyor** ve tutulmadığı burada yazılı. Kapatılan şey eşik değil, eşiğin **eksik tanımı**.
 
@@ -567,7 +553,7 @@ girişi fade'inin ortasına denk gelebiliyor. O anda üst öğe opaklığı renk
 kontrastı duragan durumun özelliğidir, geçici bir animasyon karesinin değil. Yani o satır bir
 kusuru değil, **ölçüm anını** gösteriyor.
 
-**Playwright kapsamı:** navigation + anchor scroll + aktif link; Projects bölümü davranışı; mobil
+**Playwright kapsamı:** sayfa gezinmesi + geri/ileri + aktif link; Projects bölümü davranışı; mobil
 menü; dış linkler (Live Demo ve GitHub gerçekten açılıyor mu); 404; ve desktop + mobil viewport'ta
 axe taraması.
 
@@ -583,6 +569,7 @@ o zaman eklenir.
 ## 9 · Karar kaydı
 
 Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
+Eski satırlar karar geçmişidir; güncel sayfa yapısı §2 ve en yeni tarihli satırdadır.
 
 | Konu                       | Karar                                                                                        | Nerede |
 | -------------------------- | -------------------------------------------------------------------------------------------- | ------ |
@@ -658,3 +645,5 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | Katkıcı listesi            | `claude` kalıyor; PR ref'leri silinemiyor, yeni depo **açılmıyor** (karar sahibi)            | —      |
 | SquadOpt vitrini           | 2026-11-05: güncel GW10 görüntüleri, kısa açıklama; kısıt metrikleri kaldırıldı              | §4.6   |
 | Footer imzası              | 2026-11-05: sağ altta iki satırlı Allura; mavi-mor marka rengi, tek giriş                    | §4.2   |
+| Sayfa ayrımı               | 2026-11-05: `/`, `/projects`, `/team`; Hero ve Who We Are kaldırıldı, açılış MyManDev        | §2     |
+| Sayfa geçişinde motion     | Reveal gözlemcisi kalıcı layout yerine sayfa içeriğiyle mount olur                           | §4.4   |

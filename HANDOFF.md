@@ -4,32 +4,42 @@
 
 **Tarih:** 2026-11-05
 **Yer:** yerel Windows çalışma alanı
-**Aşama:** MyManDev vitrini güncellendi. SquadOpt içerik PR'ı #143 ve footer imzası #144
-`main` ile birleşti. Kalıcı tasarım kararları `docs/architecture.md` §9'da.
+**Aşama:** Üç sayfalı vitrin yayında. Kaynak PR #147, `c54bc3e` ile `main`'e birleşti.
 
 ## Dal ve çalışma ağacı
 
-- Kaynak temeli: `main`, #143 ve #144.
-- Bu devir ve tasarım notları ayrı doküman dalında; uygulama değişikliği içermez.
-- Uygulamanın son birleşik ağacında `pnpm gates` geçti: **62 birim, 323 E2E**,
-  33 viewport atlaması; JS **135.3 KiB / 150 KiB**.
-- Her iki kaynak PR'ının zorunlu `gates` ve `e2e` işleri başarılı.
-- İlgili takip: #142. Yeni SquadOpt görüntüleri, kısa açıklama ve imza bu kapsamda.
+- Kaynak #147; belge ve görsel karşılaştırmalar ayrı doküman PR'ında.
+- Yerel `pnpm gates`: **62 birim, 246 E2E**, 22 viewport atlaması.
+- En ağır sayfa `/projects`: **138.3 KiB / 150 KiB**. Diğerleri: ana sayfa 136.5, Team 137.1 KiB.
+- #147 zorunlu `gates` ve `e2e` başarılı. İlk gates denemesinde mevcut Google font/Turbopack
+  hatası oluştu; yalnız başarısız işin aynı SHA ile tekrarı geçti. Cloudflare ve E2E ilkinde geçti.
+- İlgili takip: #146. Önceki SquadOpt ve footer işleri #142–145'te tamamlandı.
+
+## Sayfa sözleşmesi
+
+- `/`: MyManDev, kısa ekip ve çalışma alanı anlatımı; varsayılan açılış.
+- `/projects`: mevcut SquadOpt kartı, güncel görüntüler ve bağlantılar.
+- `/team`: mevcut ekip kartları ve biyografiler.
+- Hero / Who We Are / prensip destesi kaldırıldı. Menü gerçek sayfa bağlantıları ve
+  `aria-current="page"` kullanır. Ortak kabuk `components/SitePage.tsx`.
+- Reveal gözlemcisini kalıcı layout'a taşıma: yeni route DOM'undan önce kurulursa metin
+  gizli kalabiliyor. Sayfa içeriğiyle mount olması gezinme testinde doğrulanıyor.
+- Proje görüntü karuseli ve mavi-mor footer imzası korunuyor.
 
 ## Yayın
 
-- Kanonik adres: `https://mymandev.com`.
-- Cloudflare Pages projesi: `mymandev`; `main` otomatik production deploy üretir.
-- Canlı kontrol başarılı: masaüstü 1440×900 ve mobil 390×844, yeni metin ve imza,
-  altı görsel ve fontun kaynakla SHA-256 eşleşmesi, gerçek HTTP 404. Production deployment:
-  `69a92908-b9a8-4971-877e-84372e962380`, kaynak `5719167` (#144).
-- Görsel karşılaştırma: `docs/review/footer-2026-11-05/` (1440×900 ve 390×844).
-- #144 Lighthouse medyanları: Performance / Accessibility / Best Practices / SEO **100**;
-  Performance aralığı **87–100**, LCP medyanı **918ms**, CLS **0**. Bunlar CI localhost ölçümüdür.
+- Kanonik adres: `https://mymandev.com`; Cloudflare Pages projesi `mymandev`.
+- Kaynak production deployment: `136f4244-8f08-4d68-a475-aa761d3d233b`, kaynak `c54bc3e`.
+- Canlı HTTP doğrulaması: üç sayfa 200, her birinde doğru başlık/canonical ve tek h1;
+  13 JS/CSS dosyası 200, sitemap üç adres, bilinmeyen yol gerçek 404.
+- Tarayıcı incelemesi: 1440×900 masaüstü ve 390×844 mobil; sayfa bağlantıları,
+  mobil menü, geri dönüş, metin görünürlüğü ve footer. Cloudflare preview'da tarayıcı hatası yok.
+- Görsel karşılaştırma: `docs/review/pages-2026-11-05/`. Önceki footer karşılaştırması
+  `docs/review/footer-2026-11-05/` altında duruyor.
 
 ## Sıradaki tek iş
 
-Yeni ürün veya görünüm isteğiyle ilerle. Bu teslimin kapsamı SquadOpt vitrini ve footer imzası.
+Yeni kullanıcı talebiyle ilerle. Bu teslimde ek özellik veya metin kalabalığı eklenmedi.
 
 ## Bitmemiş ve kapsam dışı işler
 

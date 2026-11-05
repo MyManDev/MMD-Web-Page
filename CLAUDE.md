@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-MyManDev'in tanıtım sitesi. Tek sayfa, statik, İngilizce. Projeler (Football Squad Optimizer gibi)
+MyManDev'in tanıtım sitesi. Üç sayfa, statik, İngilizce. Projeler (Football Squad Optimizer gibi)
 kendi repolarında yaşar; bu repo yalnızca vitrin.
 
 **Bu dosya kısadır ve kural kopyalamaz.** Tek kayıt kuralı: aynı olgu iki yerde yaşamaz.
@@ -44,11 +44,9 @@ pnpm gates        # trailers, lint, format, typecheck, test, build, size, e2e �
 app/                           layout + page                    PAYLAŞILAN
 app/tokens.css                 tasarım token'ları               PAYLAŞILAN
 components/ui/                 paylaşılan primitive'ler         PAYLAŞILAN
-components/sections/hero/      Hero                             BÖLGE A
 components/sections/projects/  Projects + kart + etkileşim      BÖLGE A
-components/sections/nav/       navbar, anchor scroll, mobil menü BÖLGE B
+components/sections/nav/       navbar, sayfa linkleri, mobil menü BÖLGE B
 components/sections/team/      Team                             BÖLGE B
-components/sections/about/     About                            BÖLGE B
 components/sections/footer/    Footer                           BÖLGE B
 content/                       içerik + Zod şeması              BÖLGE A
 lib/                           yardımcılar                      dosya bazında
@@ -70,10 +68,9 @@ Bölge A ve B: İbrahim. Detay ve paylaşılan yüzey listesi:
 2. **Büyük neon glow yok.** Yeşil accent: CTA, aktif nav, ikon, ince border, mikro highlight.
    Ekran başına tek yeşil odak.
 3. **Scroll listener yazma.** Yığın ve sticky davranış `position: sticky` + z-index ile.
-   `IntersectionObserver` **iki** yerde: aktif nav linki, ve metin bloklarının ekrana girince
-   belirmesi (`components/ui/RevealOnView.tsx`). Her ikisi de tek bir dosyada tanımlı ve hiçbiri
-   scroll listener değil. Üçüncüsü için sor — bu iki kullanımın gerekçesi
-   [`docs/architecture.md`](docs/architecture.md) §4.4'te yazılı.
+   `IntersectionObserver` yalnızca metin bloklarının ekrana girişinde kullanılır
+   (`components/ui/RevealOnView.tsx`); sayfa kabuğuyla birlikte kurulur. Aktif nav URL'den
+   belirlenir. Yeni gözlemci kullanımını önce konuş; gerekçe `docs/architecture.md` §4.4'te.
 4. **Yeni bağımlılık eklemeden önce sor.** Gerekçesi yazılı olmayan paket eklenmez.
 5. **Marka metni, proje açıklaması, ekip biyografisi veya sayı uydurma.** Bunlar paylaşılan karar
    alanı. Eksikse boş bırak ve sor. Uydurulmuş bir metin, hatadan kötüdür; çünkü makul görünür.
