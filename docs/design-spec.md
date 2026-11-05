@@ -215,6 +215,8 @@ Wordmark `/` adresine döner; mobil menü sayfa geçişinde kapanır.
 **Mobil menü** `< lg` (1024px) altında devreye girer: üç sayfa linki + wordmark + GitHub
 aksiyonu `md` genişlikte sıkışıyor. Menü düğmesi `aria-expanded` taşır ve `MobileMenu`'yü `aria-controls` ile
 işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Klavye davranışı §7.4.
+Panel header'ın kardeşi olan bir gövde çocuğudur; header'ın `backdrop-filter` etkisinin
+içine konmaz. Nav'ın altından ekranın sonuna uzanır; kısa ekranda kendi içinde kayar.
 
 ### 3.2 MyManDev ana sayfası — Bölge A
 
@@ -807,6 +809,7 @@ kullanıldığında `scroll-margin-top` sticky navbar için boşluk bırakır.
 - Menü açıkken focus menü içinde döner (focus trap); arkadaki sayfa `inert`.
 - `Escape` menüyü kapatır ve focus'u **menü düğmesine geri verir**.
 - Kapanınca veya sayfa değişince `inert` ve scroll kilidi kalkar.
+- `lg` genişliğine çıkınca da menü kapanır, kilit kalkar ve odak masaüstü aktif linkine geçer.
 - Menü açıkken sayfa scroll'u kilitlenir; kilit `overflow: hidden` ile, scroll pozisyonu
   korunarak.
 

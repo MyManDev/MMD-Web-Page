@@ -4,20 +4,18 @@
 
 **Tarih:** 2026-11-05
 **Yer:** yerel Windows çalışma alanı
-**Aşama:** Üç sayfalı vitrin ve #150 görsel iyileştirmeleri yayında. Son kaynak
-PR #153, `a895b41` ile `main`'e birleşti; görüntüleyicinin klavye ve odak davranışını tamamlıyor.
+**Aşama:** Üç sayfalı vitrin ve görsel iyileştirmeler yayında. Son kaynak PR #156,
+`1c27e1c` ile `main`'e birleşti; mobil menünün sayfa metnine binmesini düzeltiyor.
 
 ## Dal ve çalışma ağacı
 
-- Kaynak #150 ve #153; devir ve tasarım sözleşmesi ayrı doküman PR'larında.
-- Son yerel `pnpm gates`: **62 birim, 256 E2E**, 22 viewport atlaması.
-- Son CI'da da 256 E2E geçti. Yakınlaştırılmış resimde iki yönde klavye kaydırması,
-  aynı slaytın korunması ve bağlantıya kendiliğinden odak vermeyen tıklama kapsanıyor.
-- En ağır sayfa `/projects`: **139.3 KiB / 150 KiB**. Ana sayfa 136.0, Team 137.0 KiB.
-- #153 `gates`, `e2e`, `lighthouse` ve Cloudflare kontrolleri başarılı.
-- İlk CI mobil büyütme ölçümü başarısızdı. Açık minimum genişlik, büyütmeye uygun
-  `sizes` ve render edilmiş boyutu bekleyen kontrolle düzeltildi; test atlanmadı.
-- İlgili #149 ve #152 kapandı. Önceki sayfa ayrımı #147 ve imza #144'te tamamlandı.
+- Kaynak #156; devir ve tasarım sözleşmesi ayrı doküman PR'ında.
+- Son yerel `pnpm gates`: **62 birim, 260 E2E**, 26 viewport atlaması.
+- Dört yeni mobil test önce mevcut kodda başarısız oldu, düzeltmeden sonra geçti:
+  normal/reduced-motion örtü geometrisi, masaüstüne genişletince kilit temizliği,
+  kısa ekranda son menü aksiyonuna kaydırma. Geometri üç sayfada ve kaydırılmış halde ölçülüyor.
+- En ağır sayfa `/projects`: **139.4 KiB / 150 KiB**. Ana sayfa 136.2, Team 137.1 KiB.
+- #156 `gates`, `e2e`, `lighthouse` ve Cloudflare kontrolleri başarılı; #155 kapandı.
 
 ## Sayfa sözleşmesi
 
@@ -26,6 +24,9 @@ PR #153, `a895b41` ile `main`'e birleşti; görüntüleyicinin klavye ve odak da
 - `/team`: mevcut ekip kartları ve biyografiler.
 - Hero / Who We Are / prensip destesi kaldırıldı. Menü gerçek sayfa bağlantıları ve
   `aria-current="page"` kullanır. Kalıcı layout nav/footer'ı; `SitePage` main'i taşır.
+- Mobil örtü header'ın kardeşidir; bulanıklık filtresinin içine geri koyma. Panel nav'ın
+  altından ekranın sonuna uzanır, kısa ekranda kendi içinde kayar. Masaüstüne genişletince
+  kapanır, sayfa kilidi kalkar ve odak masaüstü aktif linkine geçer.
 - Reveal gözlemcisini kalıcı layout'a taşıma: yeni route DOM'undan önce kurulursa metin
   gizli kalabiliyor. Sayfa içeriğiyle mount olması gezinme testinde doğrulanıyor.
 - Sayfa girişleri ve kayan aktif menü çizgisi 200ms. Amblem zemine karışır; hafif ışığı
@@ -39,15 +40,14 @@ PR #153, `a895b41` ile `main`'e birleşti; görüntüleyicinin klavye ve odak da
 ## Yayın
 
 - Kanonik adres: `https://mymandev.com`; Cloudflare Pages projesi `mymandev`.
-- Son kaynak production deployment: `7e027275-15fc-4a0e-90fd-5cc0fce827e1`, kaynak `a895b41`.
-- Son kaynak preview: `https://4d4a4acc.mymandev.pages.dev`, PR head `74d5786`.
-- Canlı tarayıcı doğrulaması: 390×844 mobil görüntüleyici ve yakınlaştırma, Escape ile
-  bağlantıya odak dönüşü, mobil menüden Team'e geçiş ve menünün kapanması; masaüstü
-  Team ve ana sayfa. Kaydedilen tarayıcı hatası yok.
-- #153 için 390×600 dar görünümde gerçek tarayıcı kontrolü: resim odağı, yatay/dikey
-  klavye kaydırması, aynı slayt ve Escape sonrası açan bağlantının odağı.
-- Görsel karşılaştırma: `docs/review/polish-2026-11-05/`; önceki sayfa ve footer
-  karşılaştırmaları kendi dizinlerinde korunuyor.
+- Son kaynak production deployment: `c8fb6ae8-0b78-46d2-b553-ba1eebb4bef4`, kaynak `1c27e1c`.
+- Son kaynak preview: `https://8e660b8b.mymandev.pages.dev`, PR head `295fb43`.
+- Menü hatası canlı 390×844 görünümde yeniden üretildi: panel top=72, height=32,
+  bottom=104. Düzeltmenin aynı boyuttaki yerel kontrolü: top=72, height=772, bottom=844;
+  menü dışındaki sayfa görünmüyor. 1280×900'e geçişte kilit ve odak kontrolü başarılı.
+- Canlı yayında da 390×844 panel top=72, height=772, bottom=844 doğrulandı. Menüden
+  Team'e geçişte menü kapalı, sayfa kilidi ve `inert` kalkmış; konsol hatası yok.
+- Görsel karşılaştırma: `docs/review/menu-2026-11-05/`; önceki karşılaştırmalar korunuyor.
 
 ## Sıradaki tek iş
 
@@ -67,6 +67,8 @@ Yeni kullanıcı talebiyle ilerle. Bu teslimde ek özellik veya metin kalabalı�
 
 ## Tuzaklar ve notlar
 
+- `backdrop-filter` sabit çocuklar için containing block oluşturur. Eski menü testleri
+  bağlantı ve odağı tutarken örtünün yüksekliğini ölçmediği için #155'i kaçırdı.
 - Node **24.15.0**, pnpm **11.24.0**; sürümler `.nvmrc` ve `package.json` ile sabit.
 - `pnpm gates` çalışırken **4173 portunda başka çalışma ağacının preview'u açık olmasın**.
   Yerel Playwright `reuseExistingServer` yüzünden yanlış build'i test edebilir.
