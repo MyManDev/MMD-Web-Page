@@ -30,7 +30,7 @@ import { expect, test } from "@playwright/test";
  * girisi" testleri reduced-motion'da ve scroll sonrasi icerigin tam gorunur
  * oldugunu olcuyor.
  */
-for (const path of ["/", "/bu-yol-yok-12345"]) {
+for (const path of ["/", "/projects", "/team", "/bu-yol-yok-12345"]) {
   test(`axe ihlali yok: ${path}`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(path);
@@ -80,7 +80,7 @@ test("skip link klavyeyle erisilebilir ve gorunur oluyor", async ({ page }) => {
  * birakirdi - bu dersi ayni test bir kez ogrendi.
  */
 test("bolum numarasi kalmadi - kart ve karusel sayilari ayri", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/projects");
 
   const markers = await page.evaluate(() =>
     [...document.querySelectorAll("main section")].flatMap((section) =>

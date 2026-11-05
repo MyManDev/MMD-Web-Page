@@ -3,18 +3,6 @@ import AxeBuilder from "@axe-core/playwright";
 import { site } from "@/content/site";
 import { expect, test } from "@playwright/test";
 
-/**
- * Navigation davranisi. docs/design-spec.md §3.1 ve §7.4
- *
- * KAPSAM NOTU: anchor scroll ve aktif link testleri artik VAR (#7). Gozlenecek
- * bir bolum ciktigi anda yazildilar; oncesinde yazilmis olsalari var olmayan
- * bir davranisi test ediyor gorunurlerdi.
- *
- * Testler bolum ADINA bagli DEGIL: hangi bolumlerin var oldugunu sayfadan
- * okuyorlar. Bolum sirasi veya etiketleri degistiginde dusmemeliler; nav ile
- * bolumler arasindaki bag bozuldugunda dusmeliler.
- */
-
 const isDesktop = (width: number) => width >= 1024;
 
 /**
@@ -39,7 +27,7 @@ test.describe("navbar", () => {
   test("sticky ve wordmark tasiyor", async ({ page }) => {
     const header = page.getByRole("banner");
     await expect(header).toBeVisible();
-    await expect(header.getByRole("link", { name: "MyManDev" })).toBeVisible();
+    await expect(header.getByRole("link", { name: "MyManDev home" })).toBeVisible();
     await expect(header).toHaveCSS("position", "sticky");
   });
 
@@ -52,12 +40,16 @@ test.describe("navbar", () => {
     expect(bg).not.toBe("transparent");
   });
 
-  test("dort bolum linki dogru anchor'a isaret ediyor", async ({ page }, testInfo) => {
+  test("uc sayfa kendi adresine baglaniyor", async ({ page }, testInfo) => {
     const width = testInfo.project.use.viewport?.width ?? 0;
-    const scope = isDesktop(width) ? page.getByLabel("Sections") : (await openMenu(page)).panel;
-    // Bolum sirasi: architecture.md §2. 03 kolektifi, 04 kisileri anlatir.
-    for (const id of ["hero", "projects", "who-we-are", "team"]) {
-      await expect(scope.locator(`a[href="#${id}"]`)).toBeVisible();
+    const scope = isDesktop(width)
+      ? page.getByLabel("Pages", { exact: true })
+      : (await openMenu(page)).panel;
+    for (const item of site.nav) {
+      await expect(scope.getByRole("link", { name: item.label, exact: true })).toHaveAttribute(
+        "href",
+        item.href,
+      );
     }
   });
 
@@ -94,7 +86,7 @@ test.describe("navbar scroll'da yerlesiyor", () => {
      demiyor, "timeout" diyor; kalibi bilmeyen biri buna bakip animasyonda
      sorun arar. */
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/team");
   });
 
   test("scroll 0 ile scroll sonrasi ayni degil", async ({ page }) => {
@@ -266,7 +258,7 @@ test.describe("mobil menu", () => {
 
   test("acilinca focus ilk linke geciyor", async ({ page }) => {
     const { panel } = await openMenu(page);
-    await expect(panel.locator('a[href="#hero"]')).toBeFocused();
+    await expect(panel.locator('a[href="/"]')).toBeFocused();
   });
 
   test("Escape kapatiyor ve focus'u dugmeye GERI VERIYOR", async ({ page }) => {
@@ -281,7 +273,7 @@ test.describe("mobil menu", () => {
 
   test("focus menu icinde donuyor", async ({ page }) => {
     const { panel } = await openMenu(page);
-    const firstLink = panel.locator('a[href="#hero"]');
+    const firstLink = panel.locator('a[href="/"]');
     await expect(firstLink).toBeFocused();
 
     /*
@@ -323,138 +315,56 @@ test.describe("mobil menu", () => {
   });
 });
 
-/**
- * Anchor scroll ve aktif link (#7). docs/design-spec.md §3.1 ve §7.3
- *
- * Hangi bolumlerin YAYINDA oldugunu sayfadan okuyoruz. Faz 3 boyunca bolumler
- * tek tek geliyor; testin bilmesi gereken sey hangi bolumun var oldugu degil,
- * var olan her bolumun nav'la dogru baglanmis olmasi.
- */
-async function liveSections(page: import("@playwright/test").Page) {
-  return page.evaluate(() =>
-    // YALNIZCA bolum navigasyonu. `header a[href^='#']` demek wordmark'in
-    // #main linkini de toplardi ve #main gercekten var - test nav'da olmayan
-    // bir linke tiklamaya calisirdi. Desktop nav mobilde CSS ile gizli ama
-    // DOM'da duruyor, o yuzden kesif her viewport'ta buradan yapiliyor.
-    Array.from(document.querySelectorAll("nav[aria-label='Sections'] a[href^='#']"))
-      .map((link) => link.getAttribute("href")!.slice(1))
-      .filter((id) => document.getElementById(id) !== null),
-  );
-}
-
-test.describe("anchor scroll ve aktif link", () => {
-  test.beforeEach(async ({ page }) => {
+test.describe("sayfalar arasi gezinme", () => {
+  test("sayfa linkleri, aktif durum ve geri-ileri calisiyor", async ({ page }, testInfo) => {
+    const desktop = isDesktop(testInfo.project.use.viewport?.width ?? 0);
     await page.goto("/");
+    for (const [href, title] of [
+      ["/projects", "Projects"],
+      ["/team", "Team"],
+      ["/", "MyManDev"],
+    ]) {
+      const scope = desktop
+        ? page.getByLabel("Pages", { exact: true })
+        : (await openMenu(page)).panel;
+      await scope.locator(`a[href="${href}"]`).click();
+      await expect(page).toHaveURL(new RegExp(`${href}$`));
+      await expect(page.getByRole("heading", { level: 1, name: title, exact: true })).toBeVisible();
+      await expect(page.getByRole("main")).not.toHaveAttribute("inert", "");
+      await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+      if (!desktop)
+        await expect(page.getByRole("button", { name: "Menu" })).toHaveAttribute(
+          "aria-expanded",
+          "false",
+        );
+      const nav = page.getByLabel("Pages", { exact: true });
+      await expect(nav.locator('[aria-current="page"]')).toHaveCount(1);
+      await expect(nav.locator('[aria-current="page"]')).toHaveAttribute("href", href!);
+      const main = page.locator("main");
+      await expect(main.locator("#hero, #who-we-are")).toHaveCount(0);
+      if (href !== "/projects") await expect(main.locator("#projects")).toHaveCount(0);
+      if (href !== "/team") await expect(main.locator("#team")).toHaveCount(0);
+      const reveal = main.locator(".reveal-on-enter").first();
+      if (await reveal.count()) {
+        await reveal.scrollIntoViewIfNeeded();
+        await expect(reveal).toHaveCSS("opacity", "1");
+      }
+    }
+    await page.goBack();
+    await expect(page).toHaveURL(/\/team$/);
+    await expect(
+      page.getByLabel("Pages", { exact: true }).locator('[aria-current="page"]'),
+    ).toHaveAttribute("href", "/team");
+    await page.goForward();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("heading", { level: 1, name: "MyManDev" })).toBeVisible();
   });
 
-  test("en az bir bolum yayinda - yoksa asagidaki testler bos gecerdi", async ({ page }) => {
-    expect((await liveSections(page)).length).toBeGreaterThan(0);
-  });
-
-  /**
-   * Sticky navbar hedef basligi KAPATMAMALI. design-spec.md §7.3 bunu
-   * scroll-margin-top ile cozuyor ve §8'in "klavye ile tum bolum ve aksiyonlar
-   * erisilebilir" satiri bunu kapsiyor.
-   *
-   * Olculen sey CSS degeri degil SONUC: bolumun ust kenari navbar'in altinda mi.
-   * projects.spec.ts scroll-margin-top'un degerini zaten okuyor; burada o degerin
-   * ise yarayip yaramadigina bakiliyor.
-   */
-  test("anchor'a gidince bolum sticky navbar'in altinda kalmiyor", async ({ page }, testInfo) => {
-    const width = testInfo.project.use.viewport?.width ?? 0;
-    const [id] = await liveSections(page);
-    expect(id).toBeTruthy();
-
-    const scope = isDesktop(width) ? page.getByLabel("Sections") : (await openMenu(page)).panel;
-    await scope.locator(`a[href="#${id}"]`).click();
-
-    await expect
-      .poll(async () => {
-        const header = await page.getByRole("banner").evaluate((el) => el.getBoundingClientRect());
-        const section = await page.locator(`#${id}`).evaluate((el) => el.getBoundingClientRect());
-        return Math.round(section.top - header.bottom);
-      })
-      // scroll-margin-top navbar + 24px; birkac pikselik yuvarlama payi birakiyoruz.
-      .toBeGreaterThanOrEqual(0);
-  });
-
-  test("anchor tiklamasi URL'e bolum id'sini yaziyor", async ({ page }, testInfo) => {
-    const width = testInfo.project.use.viewport?.width ?? 0;
-    const [id] = await liveSections(page);
-
-    const scope = isDesktop(width) ? page.getByLabel("Sections") : (await openMenu(page)).panel;
-    await scope.locator(`a[href="#${id}"]`).click();
-
-    await expect(page).toHaveURL(new RegExp(`#${id}$`));
-  });
-
-  /**
-   * Aktif link tespiti tek bir IntersectionObserver ile yapiliyor
-   * (useActiveSection). Renk TEK BASINA bilgi tasimaz (§7.5): aktif link ayni
-   * zamanda aria-current="true" tasimak zorunda.
-   */
-  test("bolume gidince o linkin aria-current'i aciliyor, digerlerininki kapali", async ({
-    page,
-  }, testInfo) => {
-    const width = testInfo.project.use.viewport?.width ?? 0;
-    test.skip(!isDesktop(width), "aktif link yalnizca desktop nav'da gorunur");
-
-    const [id] = await liveSections(page);
-    const nav = page.getByLabel("Sections");
-
-    // Acilis durumu VARSAYILMIYOR: hangi bolumun ilk ekranda gozlem bandina
-    // girdigi sayfa yuksekligine bagli ve bolumler geldikce degisecek.
-    // Olculen sey scroll SONRASI durum.
-    await page.locator(`#${id}`).scrollIntoViewIfNeeded();
-
-    await expect(nav.locator(`a[href="#${id}"]`)).toHaveAttribute("aria-current", "true");
-    await expect(nav.locator("[aria-current]")).toHaveCount(1);
-  });
-
-  test("aktif link accent rengini aliyor - renk aria-current'a EK", async ({ page }, testInfo) => {
-    const width = testInfo.project.use.viewport?.width ?? 0;
-    test.skip(!isDesktop(width), "aktif link yalnizca desktop nav'da gorunur");
-
-    const [id] = await liveSections(page);
-    await page.locator(`#${id}`).scrollIntoViewIfNeeded();
-
-    const link = page.getByLabel("Sections").locator(`a[href="#${id}"]`);
-    await expect(link).toHaveAttribute("aria-current", "true");
-
-    const accentColor = await page.evaluate(() => {
-      const probe = document.createElement("span");
-      probe.style.color = getComputedStyle(document.documentElement)
-        .getPropertyValue("--color-accent")
-        .trim();
-      document.body.appendChild(probe);
-      const rgb = getComputedStyle(probe).color;
-      probe.remove();
-      return rgb;
-    });
-
-    // Tek okuma YETMEZ: NavLink'te transition-colors 150ms var ve rengi gecis
-    // ortasinda okumak ara bir ton veriyor (olculdu: rgb(130, 215, 134)).
-    // Beklenen sey gecisin BITTIGI deger.
-    await expect.poll(() => link.evaluate((el) => getComputedStyle(el).color)).toBe(accentColor);
-  });
-
-  test("mobil menude bir linke tiklayinca menu kapaniyor", async ({ page }, testInfo) => {
-    const width = testInfo.project.use.viewport?.width ?? 0;
-    test.skip(isDesktop(width), "yalnizca < lg viewport");
-
-    const [id] = await liveSections(page);
-    const { toggle, panel } = await openMenu(page);
-    await expect(toggle).toHaveAttribute("aria-expanded", "true");
-
-    await panel.locator(`a[href="#${id}"]`).click();
-
-    await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await expect(page).toHaveURL(new RegExp(`#${id}$`));
-
-    // NOT: link tiklamasindan SONRA focus'un nereye gittigi §7.4'te YAZILI
-    // DEGIL - orada yalnizca Escape'in focus'u dugmeye geri verdigi belirtiliyor.
-    // Olculdu: tiklamadan sonra focus dugmede DEGIL. Burada bir sozlesme
-    // uydurmuyoruz; davranis once yazilmali, sonra test edilmeli. Bolge B.
+  test("wordmark ana sayfaya geri donuyor", async ({ page }) => {
+    await page.goto("/projects");
+    await page.getByRole("link", { name: "MyManDev home", exact: true }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("heading", { level: 1, name: "MyManDev" })).toBeVisible();
   });
 });
 
@@ -465,7 +375,7 @@ test.describe("anchor scroll ve aktif link", () => {
  * Kural app/globals.css'te; burada davranisi olculuyor.
  */
 test.describe("nav mikro etkilesimleri", () => {
-  const NAV = 'nav[aria-label="Sections"]';
+  const NAV = 'nav[aria-label="Pages"]';
 
   test.beforeEach(async ({ page }, testInfo) => {
     const width = testInfo.project.use.viewport?.width ?? 0;

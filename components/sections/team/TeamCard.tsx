@@ -90,12 +90,12 @@ export function TeamCard({ member }: { member: TeamMember }) {
           aria-hidden="true"
           className="absolute inset-x-0 bottom-full h-20 bg-gradient-to-t from-surface/92 to-transparent"
         />
-        <h3
+        <h2
           id={`${member.slug}-name`}
           className="font-mono text-display-m font-medium lg:text-display-m-lg"
         >
           {member.name}
-        </h3>
+        </h2>
 
         <p className="font-mono text-mono text-text-muted uppercase">{member.role}</p>
 

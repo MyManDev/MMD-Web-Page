@@ -4,25 +4,7 @@ import { TeamCard } from "./TeamCard";
 
 type NavItem = Site["nav"][number];
 
-/**
- * Team bolumu - kisileri tek tek tanitan kartlar. design-spec.md §3.5
- *
- * Kolektifi anlatan metin bir onceki bolumde (03 Who we are); burasi tekil.
- * Genelden tekile, architecture.md §2.
- *
- * Baslik metni uydurulmuyor: nav etiketi content/site.ts'ten geliyor, ikinci
- * kez yazilmiyor. Bolum h2, kartlar h3 - seviye atlanmiyor (§7.1).
- *
- * SectionLabel YOK (#58'de her bolumden kalkti). "04 TEAM" etiketi ile "Team"
- * basligi ayni kelimeyi iki kez soyluyordu; numara da tek basina kaldiginda bir
- * sey anlatmiyordu.
- *
- * `members` bossa bolum HIC render edilmez - bos cerceve veya "coming soon"
- * yok (CLAUDE.md kural 6). Karar cagiran tarafta: app/page.tsx.
- *
- * Kartlar <ul>/<li>: ekran okuyucu kac kisi oldugunu duyurur (§7.5, Tag
- * listesiyle ayni gerekce).
- */
+/** Team sayfasi; baslik nav kaydindan, kartlar ekip iceriginden gelir. */
 export function Team({ section, members }: { section: NavItem; members: TeamMember[] }) {
   const headingId = `${section.id}-title`;
 
@@ -38,7 +20,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
       yuksekligi sabit kaliyor, yani TEK BIR SABIT ORAN her viewport'ta
       sigdiramaz.
 
-      Zincir: bolum `h-dvh` -> Container `flex-1` -> ic sarmalayici `flex-1` ->
+      Zincir: bolum `100dvh - nav-height` -> Container `flex-1` -> ic sarmalayici `flex-1` ->
       liste `flex-1`. Her halka `min-h-0` tasimak zorunda; tasimazsa flex
       cocugu icerigin dogal yuksekliginden kucuk olamiyor ve tasma geri geliyor.
 
@@ -48,7 +30,7 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
     <section
       id={section.id}
       aria-labelledby={headingId}
-      className="section-edge lg:flex lg:h-dvh lg:flex-col"
+      className="section-edge lg:flex lg:h-[calc(100dvh-var(--nav-height))] lg:flex-col"
     >
       <Container className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
         <div className="flex flex-col gap-6 py-section lg:min-h-0 lg:flex-1 lg:gap-8 lg:py-section-lg">
@@ -57,12 +39,12 @@ export function Team({ section, members }: { section: NavItem; members: TeamMemb
             yukari"). Bolumun dis ritmi (py-section) DEGISMEDI - o paylasilan bir
             olcu ve tek bir bolum icin oynatilmaz (architecture.md §4.3).
           */}
-          <h2
+          <h1
             id={headingId}
-            className="reveal-on-enter font-mono text-display-xl font-medium lg:text-display-xl-lg"
+            className="reveal-on-load font-mono text-display-xl font-medium lg:text-display-xl-lg"
           >
             {section.label}
-          </h2>
+          </h1>
 
           {/*
             lg'de her kart UC KOLONLUK IZIN genisliginde: (liste - 2 x gap) / 3.

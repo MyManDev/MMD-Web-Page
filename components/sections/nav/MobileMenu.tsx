@@ -105,7 +105,7 @@ export function MobileMenu({
         {items.map((item) => (
           <li key={item.id}>
             <NavLink
-              href={`#${item.id}`}
+              href={item.href}
               label={item.label}
               active={activeId === item.id}
               onNavigate={onClose}

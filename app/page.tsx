@@ -1,55 +1,47 @@
-import { Footer } from "@/components/sections/footer";
-import { Hero } from "@/components/sections/hero";
-import { Nav } from "@/components/sections/nav";
-import { WhoWeAre } from "@/components/sections/about";
-import { Projects } from "@/components/sections/projects";
-import { Team } from "@/components/sections/team";
-import { projects, site, team } from "@/content";
+import { SitePage } from "@/components/SitePage";
+import { Button, Container } from "@/components/ui";
+import { site } from "@/content";
 
-/**
- * Bolumler Faz 3'te tek tek geliyor. Faz 3 bu bolumle kapaniyor: Navigation,
- * Hero, Projects, Who we are, Team ve Footer.
- *
- * CONTACT BIR BOLUM DEGIL. Bir sure oyleydi ve kaldirildi: tek bir adres icin
- * kendi basligi olan bir bolum fazla agirdi. Iletisim artik bir OLANAK - nav'da
- * bir aksiyon ve footer'da adresin kendisi.
- *
- * Nav layout'ta degil burada duruyor: anchor linkleri (#hero, #projects ...)
- * yalnizca tek sayfada anlamli, 404'te degil.
- *
- * Projects yalnizca YAYINLANACAK bir proje varsa render ediliyor. Bos icerik
- * bos bir bolum uretmiyor - "coming soon" karti veya bos cerceve yok
- * (CLAUDE.md kural 6). Bolum etiketi content/site.ts'teki nav
- * kaydindan geliyor; ikinci kez yazilmiyor.
- */
 export default function Home() {
-  const heroSection = site.nav.find((item) => item.id === "hero");
-  const projectsSection = site.nav.find((item) => item.id === "projects");
-  const whoWeAreSection = site.nav.find((item) => item.id === "who-we-are");
-  const teamSection = site.nav.find((item) => item.id === "team");
-
   return (
-    <>
-      <Nav site={site} />
-      <main id="main">
-        {heroSection && projectsSection ? (
-          <Hero
-            section={heroSection}
-            hero={site.hero}
-            primary={projectsSection}
-            secondary={whoWeAreSection}
-          />
-        ) : null}
-
-        {projectsSection && projects.length > 0 ? (
-          <Projects section={projectsSection} projects={projects} />
-        ) : null}
-
-        {whoWeAreSection ? <WhoWeAre section={whoWeAreSection} whoWeAre={site.whoWeAre} /> : null}
-
-        {teamSection && team.length > 0 ? <Team section={teamSection} members={team} /> : null}
-      </main>
-      <Footer site={site} />
-    </>
+    <SitePage>
+      <section
+        aria-labelledby="mymandev-title"
+        className="flex flex-1 items-center py-section lg:py-section-lg"
+      >
+        <Container>
+          <div className="grid items-center gap-12 md:grid-cols-12">
+            <div className="flex flex-col gap-6 md:col-span-8 lg:col-span-7">
+              <h1
+                id="mymandev-title"
+                className="reveal-on-load font-mono text-display-xl font-medium lg:text-display-xl-lg"
+              >
+                {site.wordmark}
+              </h1>
+              <p className="reveal-on-load font-mono text-display-m text-balance lg:text-display-m-lg">
+                {site.home.lead}
+              </p>
+              <p className="reveal-on-load max-w-prose text-body text-text-muted lg:text-body-lg">
+                {site.home.story}
+              </p>
+              <div className="reveal-on-load mt-2 flex flex-col gap-3 sm:flex-row">
+                <Button href="/projects">Projects</Button>
+                <Button href="/team" variant="ghost">
+                  Team
+                </Button>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              className="reveal-on-load hidden md:col-span-4 md:block lg:col-span-5"
+            >
+              <div className="brand-mark-plate grid place-items-center">
+                <div className="brand-mark" />
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </SitePage>
   );
 }

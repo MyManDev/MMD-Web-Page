@@ -99,22 +99,7 @@ section[id] {
   animation-delay: calc(var(--reveal, 0) * 90ms);
 }
 
-/* HERO'nun girisi - SAF CSS, JS'e bagli DEGIL. design-spec.md §3.2
-
-   Ayri bir mekanizma ve gerekcesi olculdu. Metin girisi
-   `IntersectionObserver` ile calisiyor ve isaret mount'ta konuyor: acilista
-   ekranda olan bir oge once gorunur, sonra gizlenip yeniden belirirdi. Isareti
-   ilk boyamadan once koymak (denendi, RevealOnView.tsx) ogeyi hidrasyona kadar
-   gizli tutuyordu (olculdu: ~1.5s). Hero'nun `h1`'i sayfanin LCP ogesi; onu JS
-   gelene kadar gizlemek LCP'yi dogrudan bozardi - ve LCP zaten acik bir issue
-   (#83).
-
-   Bu kural ilk boyamada basliyor, yani hicbir bekleme yok.
-
-   YALNIZCA `from` TANIMLI ve bu kritik. reduced-motion evrensel blogu
-   `animation-name: none` uyguladiginda oge dinlenme haline - yani tam gorunur
-   haline - donuyor. `to` yazilsaydi ayni blok onu `from` karesinde dondurur ve
-   HERO HIC GORUNMEZDI. Depo bu hatayi daha once yasadi. */
+/* Sayfa basliklari ilk boyamada CSS ile belirir; JS beklemez. */
 @keyframes reveal-on-load {
   from {
     opacity: 0;
@@ -194,44 +179,11 @@ section[id] {
   }
 }
 
-/* HERO ZEMINI - tema uyumlu renk gecisi. design-spec.md §3.2
-
-   Istek "temayi uygun yapacak bir renk gecisi" idi ve onceki tur bunu
-   karsilamiyordu: plakanin gradyani vardi ama duraklari o kadar zayifti ki
-   (olculdu: %72 ve %86 karisim) bir tasarim hareketi olarak okunmuyordu.
-
-   Burada sayfanin kendi zemininden marka rengine dogru bir gecis var ve YONU
-   tesadufi degil: aci amblemin durdugu sag ust kosere bakiyor, yani plaka
-   sayfanin uzerinde duran ayri bir blok olmaktan cikip zeminin koyulastigi
-   yerde oturuyor.
-
-   BU BIR GLOW DEGIL ve olcusu bunun icin secildi: kural 2 "buyuk neon glow
-   yok" diyor. Radyal bir parlama degil, dogrusal bir TINT - luminans farki
-   kucuk, ama alan buyuk oldugu icin gorunuyor. Metin solda ve orada zemin saf
-   `page` rengi, yani baslikla alt cumlenin kontrasti HIC degismiyor (olculdu).
-
-   Ilk durak iki kez yaziliyor: gecisin ilk %40'i tamamen duz kalsin, renk
-   ancak metnin bittigi yerden sonra donmeye baslasin. */
-/* IKI KATMAN: ustte ince cizgiler, altta tint.
-
-   Cizgiler NOISE DEGIL ve bu bir secim: noise bir gorsel dosya ister ve
-   payload'a biner; `repeating-linear-gradient` saf CSS ve 0 bayt. Aci tint ile
-   ayni yonde (118deg), yani iki katman ayri iki desen gibi okunmuyor.
-
-   88px araligin sebebi ritim: 40px'te izgara, 160px'te tesadufi gorunuyordu.
-   Cizgi 1px ve rengi `--hero-line` (metin renginin %6'si) - kural 2'nin
-   yasakladigi parlama degil, doku. */
-.hero-field {
-  background-image:
-    repeating-linear-gradient(118deg, var(--hero-line) 0 1px, transparent 1px 88px),
-    linear-gradient(118deg, var(--color-page) 0%, var(--color-page) 40%, var(--hero-field-far) 100%);
-}
-
-/* Hero amblemi. design-spec.md §3.2
+/* MyManDev ana sayfa amblemi.
 
    Marka isareti - uc kafa ve bir "m". Kare, logonun kendi turkuazinda
    (`--color-mark`) conic gradyanli bir plaka olarak asagida
-   (`.hero-mark-plate`, §5.1).
+   (`.brand-mark-plate`, §5.1).
 
    `mask-image` + `background-color`, `<img>` DEGIL: renk token'dan geliyor ve
    dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).
@@ -243,7 +195,7 @@ section[id] {
    amblem basligin agirligini gecmemeli. */
 /* Logonun orijinal bicimi - turkuaz plaka + beyaz sembol.
    Plaka ayri bir oge cunku `mask` ogenin KENDI zeminini de kirpiyor; ayni
-   ogeye hem maske hem arka plan verilemez. Maske hala `.hero-mark`ta, yani
+   ogeye hem maske hem arka plan verilemez. Maske hala `.brand-mark`ta, yani
    maske testleri oldugu gibi calisiyor. */
 /* Plakanin acisi. `@property` sart: ozel bir ozellik ancak TIPI bildirilmisse
    animasyonlanabilir - bildirilmezse tarayici onu metin gibi gorur ve aradaki
@@ -254,7 +206,7 @@ section[id] {
   inherits: false;
 }
 
-.hero-mark-plate {
+.brand-mark-plate {
   aspect-ratio: 1;
   /* %18 KUCULDU (istek: "biraz fazla buyuk, ayri bir banner gibi duruyor").
      Onceki olcu clamp(220px, 26vw, 460px) idi; 1440'ta 374px'ten ~307px'e
@@ -301,13 +253,13 @@ section[id] {
 }
 
 @supports (animation-timeline: scroll()) {
-  .hero-mark-plate {
+  .brand-mark-plate {
     animation: mark-sweep linear both;
     animation-timeline: scroll();
   }
 }
 
-.hero-mark {
+.brand-mark {
   aspect-ratio: 1;
   width: 100%;
   margin-inline: auto;
@@ -395,89 +347,6 @@ a:focus-visible .roll-track {
   translate: 0 -50%;
 }
 
-/* Prensip destesi - components/sections/about/PrincipleDeck.tsx
-   design-spec.md §3.4
-
-   Burada pinlenen bir dizi VARDI (#56) ve kaldirildi. Sebebi olculdu degil
-   gorulduydu: dizi manifestoyu ekrandan atiyor, geriye bir viewport'ta tek bir
-   satir kaliyordu - bolumun bos gorunmesinin sebebi oydu. Yerine gecen bicimde
-   manifesto ve prensipler ayni ekranda duruyor ve prensipler arasinda scroll
-   degil tuslarla geziliyor.
-
-   Silinenler: .principle-track, .principle-pin, .principle-list, .principle,
-   .principle-index ve principle-step / principle-step-last keyframe'leri. */
-/* Bes prensip de ayni izgara hucresinde ust uste. Kap yuksekligi boylece EN
-   UZUN prensibe sabitleniyor ve gezinirken tuslar yerinden oynamiyor.
-
-   Onceki bicim tek prensip basip `min-height` veriyordu ve yetmedi: iki
-   satirdan uc satira gecerken kap yine buyuyor, tuslar asagi kayiyor ve ard
-   arda tiklamalarin biri bosa dusuyordu. Olculdu - bes tiklamada sayac 01
-   yerine 05'te kaldi. */
-.principle-stage {
-  display: grid;
-}
-
-.principle-slot {
-  grid-area: 1 / 1;
-  /* `display: none` DEGIL - yuksekligi de goturur ve sabitleme bozulur.
-     `opacity: 0` DA DEGIL - oge erisilebilirlik agacinda ve odak sirasinda
-     kalirdi. `visibility` ikisini birden cozuyor. */
-  visibility: hidden;
-}
-
-.principle-slot[data-active] {
-  visibility: visible;
-}
-
-/* SCROLL GOSTERGESI. design-spec.md §3.2
-
-   Hero'nun alt kenarinda ince bir dikey cizgi; icinde asagi dogru inen kucuk
-   bir isaret. Ne oldugunu soyluyor: "asagida devam ediyor".
-
-   METIN YOK. "SCROLL" yazmak yeni bir UI metni uydurmak olurdu; ayrica
-   `aria-hidden` bir metin kontrast icin yine tartiliyor (depo bunu bir kez
-   yasadi). Cizgi ve nokta metin dugumu tasimiyor, yani o siniftan tumden
-   cikiyor.
-
-   YESIL DEGIL (§5.1): Hero'nun accent kotasi CTA'da.
-
-   Yalnizca `from` tanimli: reduced-motion animasyonu kaldirdiginda isaret
-   dinlenme yerinde - yani GORUNUR - kaliyor. `to` yazilsaydi ayni blok onu
-   cizginin ustunde dondurur veya gorunmez birakirdi. */
-.scroll-hint {
-  position: relative;
-  width: 1px;
-  height: 56px;
-  overflow: hidden;
-  background-color: var(--color-border);
-}
-
-.scroll-hint::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 18px;
-  background-color: var(--color-text-muted);
-  /* IKI TUR, `infinite` DEGIL. WCAG 2.2.2 kendiliginden baslayan ve BES
-     SANIYEDEN uzun suren hareket icin duraklatma mekanizmasi istiyor;
-     2 x 2200ms = 4400ms o cizginin altinda kaliyor, yani madde hic
-     tetiklenmiyor. Gosterge isini ilk saniyelerde yapiyor: "asagida devam
-     ediyor". Sonsuz donen bir isaret ayni bilgiyi vermiyor, yalnizca
-     tekrar ediyor. */
-  animation: scroll-hint-travel 2200ms ease-in-out 2;
-}
-
-@keyframes scroll-hint-travel {
-  from {
-    translate: 0 -100%;
-  }
-
-  to {
-    translate: 0 340%;
-  }
-}
-
 /* Bolum siniri. design-spec.md §3.2
 
    Ince bir cizgi: Hero -> Projects gecisi bugun yalnizca renk degistiriyor ve
@@ -485,38 +354,6 @@ a:focus-visible .roll-track {
    kalip tutuyor. */
 .section-edge {
   border-top: 1px solid var(--color-border);
-}
-
-/* Prensip KELIME KELIME beliriyor. design-spec.md §6
-
-   Iki bicim denendi ve birakildi: blogun tamamini birlikte kaydiran
-   `principle-enter` (240ms, sonra 600ms) bir gecis degil sicrama gibi
-   okunuyordu; harf harf daktilo ise fazla sade okundu. Simdi her kelime
-   sirayla, hafif yukselerek ve netleserek geliyor.
-
-   ANIMASYONU TETIKLEYEN SEY SELEKTORUN ESLESMESI, bir JS zamanlayicisi degil.
-   `data-active` bir slot'a gectigi anda bu kural o slot'un kelimelerine
-   UYMAYA BASLIYOR ve animasyon bastan calisiyor - yani giris her el
-   degisiminde kendiliginden yeniden tetikleniyor. Daktilo icin bir
-   `useEffect`, bir zamanlayici ve bir `matchMedia` okumasi gerekiyordu.
-
-   Yalnizca `from` tanimli ve bu onemli: reduced-motion evrensel blogu
-   `animation-name: none` uyguladiginda kelimeler dinlenme haline - yani tam
-   gorunur haline - donuyor. `to` yazilsaydi ayni blok onlari `from` karesinde
-   dondurur ve prensip HIC gorunmezdi. */
-@keyframes principle-word-in {
-  from {
-    opacity: 0;
-    translate: 0 12px;
-    filter: blur(3px);
-  }
-}
-
-.principle-slot[data-active] > span {
-  animation: principle-word-in 520ms ease-out both;
-  /* Kademe: 10 kelimelik en uzun prensipte son kelime 630ms'de basliyor,
-     1.15s'de bitiyor. AUTO_ADVANCE_MS'in (7s) belirgin sekilde altinda. */
-  animation-delay: calc(var(--word) * 70ms);
 }
 
 /* Deste tuslari. Yesil YOK - §5.1 bu bolume accent kotasi vermiyor; tuslar

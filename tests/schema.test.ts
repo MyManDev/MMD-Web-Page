@@ -89,11 +89,15 @@ describe("siteSchema", () => {
    * ikisi de zorunlu; bu test o sozlesmeyi tutuyor ki `number` gidince nav
    * testsiz kalmasin.
    */
-  it("nav kaydi id ve label ister", () => {
-    expect(() => siteSchema.parse({ ...site, nav: [{ id: "hero" }] })).toThrow();
-    expect(() => siteSchema.parse({ ...site, nav: [{ label: "Hero" }] })).toThrow();
-    expect(() => siteSchema.parse({ ...site, nav: [{ id: "", label: "Hero" }] })).toThrow();
-    expect(() => siteSchema.parse({ ...site, nav: [{ id: "hero", label: "Hero" }] })).not.toThrow();
+  it("nav kaydi id, label ve site ici href ister", () => {
+    const entry = { id: "mymandev", label: "MyManDev", href: "/" };
+    for (const key of ["id", "label", "href"] as const) {
+      expect(() => siteSchema.parse({ ...site, nav: [{ ...entry, [key]: "" }] })).toThrow();
+    }
+    expect(() =>
+      siteSchema.parse({ ...site, nav: [{ ...entry, href: "https://example.com" }] }),
+    ).toThrow();
+    expect(() => siteSchema.parse({ ...site, nav: [entry] })).not.toThrow();
   });
 
   it("nav bos olamaz", () => {

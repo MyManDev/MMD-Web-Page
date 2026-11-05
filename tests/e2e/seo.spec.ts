@@ -22,14 +22,16 @@ test("robots.txt gercekten yayinlaniyor ve sitemap'i gosteriyor", async ({ page 
   expect(body).toMatch(/Sitemap:\s*https:\/\/\S+\/sitemap\.xml/i);
 });
 
-test("sitemap.xml gecerli ve tek sayfayi sayiyor", async ({ page }) => {
+test("sitemap.xml gecerli ve uc sayfayi sayiyor", async ({ page }) => {
   const response = await page.request.get("/sitemap.xml");
   expect(response.status()).toBe(200);
 
   const body = await response.text();
   expect(body).toContain("<urlset");
-  // Tek sayfa, tek giris: bolumler anchor, ayri URL degil (architecture.md §2).
-  expect(body.match(/<loc>/g)).toHaveLength(1);
+  const paths = [...body.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => new URL(match[1]!).pathname,
+  );
+  expect(paths.sort()).toEqual(["/", "/projects", "/team"]);
 
   // 404 sitemap'e girmez.
   expect(body).not.toContain("_not-found");
@@ -168,3 +170,22 @@ test.describe("paylasim karti", () => {
     );
   });
 });
+
+for (const [path, title] of [
+  ["/", "MyManDev"],
+  ["/projects", "Projects | MyManDev"],
+  ["/team", "Team | MyManDev"],
+]) {
+  test(`${path} dogrudan aciliyor ve kendine ait metadata tasiyor`, async ({ page }) => {
+    const response = await page.goto(path!);
+    expect(response?.status()).toBe(200);
+    await expect(page).toHaveTitle(title!);
+    const canonical = `https://mymandev.com${path === "/" ? "" : path}`;
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", canonical);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", canonical);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", title!);
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", title!);
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+}
