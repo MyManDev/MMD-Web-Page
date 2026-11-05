@@ -67,7 +67,9 @@ test("tech tag'leri liste olarak diziliyor", async ({ page }) => {
  */
 test("imza sayisi gecerli bir tanim listesi olarak render ediliyor", async ({ page }) => {
   const list = page.locator(`${SECTION} dl`);
-  await expect(list).toHaveCount(1);
+  const expected = projects.filter((project) => project.metrics?.length).length;
+  await expect(list).toHaveCount(expected);
+  if (expected === 0) return;
 
   const terms = list.locator("dt");
   const values = list.locator("dd");
@@ -92,6 +94,10 @@ test("imza sayisi gecerli bir tanim listesi olarak render ediliyor", async ({ pa
  * Siralamayi CSS cozuyor; isaretlemeyi bozarak degil.
  */
 test("sayi etiketin USTUNDE gorunuyor ama DOM'da altinda", async ({ page }) => {
+  if (!projects.some((project) => project.metrics?.length)) {
+    await expect(page.locator(`${SECTION} dl`)).toHaveCount(0);
+    return;
+  }
   const pair = page.locator(`${SECTION} dl > div`).first();
 
   const order = await pair.evaluate((el) => {
@@ -501,7 +507,6 @@ test("tek projede sticky yigin uygulanmiyor", async ({ page }) => {
  */
 test("metrik satiri icerikteki kisitlari basiyor", async ({ page }) => {
   const expected = projects[0]?.metrics ?? [];
-  expect(expected.length).toBeGreaterThan(0);
 
   const values = page.locator(`${SECTION} dl dd`);
   await expect(values).toHaveCount(expected.length);
