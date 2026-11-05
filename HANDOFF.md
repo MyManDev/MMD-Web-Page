@@ -16,8 +16,9 @@
   kısa ekranda son menü aksiyonuna kaydırma. Geometri üç sayfada ve kaydırılmış halde ölçülüyor.
 - En ağır sayfa `/projects`: **139.4 KiB / 150 KiB**. Ana sayfa 136.2, Team 137.1 KiB.
 - #156 `gates`, `e2e`, `lighthouse` ve Cloudflare kontrolleri başarılı; #155 kapandı.
-- Ek görsel test önkoşulu #158'de: sentetik tıklama karuselin hazır sinyalini bekler.
-  20 hedefli tekrar ve tam `pnpm gates` başarılı; uygulama kodu değişmedi.
+- Görsel test önkoşulları #158 ve #160'ta: karuselin hazır sinyali ve yakınlaştırmada
+  iki yönde taşma beklenir. Görüntüleyici senaryolarının 100 tekrarı ve tam `pnpm gates`
+  başarılı; uygulama kodu değişmedi.
 
 ## Sayfa sözleşmesi
 
@@ -72,7 +73,9 @@ Yeni kullanıcı talebiyle ilerle. Bu teslimde ek özellik veya metin kalabalı�
 - `backdrop-filter` sabit çocuklar için containing block oluşturur. Eski menü testleri
   bağlantı ve odağı tutarken örtünün yüksekliğini ölçmediği için #155'i kaçırdı.
 - Sentetik `dispatchEvent` hidrasyonu beklemez: #157'de resmin JS'siz bağlantısına gitti.
-  Görsel testi önce mevcut Next screenshot düğmesinin görünmesini bekler; sabit süre yok.
+  Görsel testleri önce mevcut Next screenshot düğmesinin görünmesini bekler; sabit süre yok.
+- Klavye kaydırma testi, büyütülen resmin iki yönde taşmasını bekler (#159). Görünür
+  dialog ve odak tek başına resmin kaydırma ölçülerinin hazır olduğunu göstermiyor.
 - Node **24.15.0**, pnpm **11.24.0**; sürümler `.nvmrc` ve `package.json` ile sabit.
 - `pnpm gates` çalışırken **4173 portunda başka çalışma ağacının preview'u açık olmasın**.
   Yerel Playwright `reuseExistingServer` yüzünden yanlış build'i test edebilir.
