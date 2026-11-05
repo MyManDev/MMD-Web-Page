@@ -125,7 +125,7 @@ export function ScreenshotLightbox({
             <img
               src={screenshot.src}
               srcSet={screenshotSrcSet(screenshot.src)}
-              sizes="96vw"
+              sizes={zoomed ? "(min-width: 1250px) 96vw, 1200px" : "96vw"}
               alt={screenshot.alt}
               width={1792}
               height={1120}

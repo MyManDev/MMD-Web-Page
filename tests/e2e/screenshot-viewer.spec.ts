@@ -69,7 +69,7 @@ test("mobil surukleme ilerletir, dikey hareket ilerletmez ve goruntu ekrana siga
     "aria-pressed",
     "true",
   );
-  expect(await image.evaluate((el) => el.scrollWidth >= 1200)).toBe(true);
+  await expect.poll(() => image.evaluate((el) => el.scrollWidth)).toBeGreaterThanOrEqual(1200);
   expect(await viewer.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
   await viewer.getByRole("button", { name: "Fit screenshot to screen" }).click();
   await expect(viewer.getByRole("button", { name: "Zoom into screenshot" })).toHaveAttribute(
