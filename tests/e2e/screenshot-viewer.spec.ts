@@ -4,6 +4,9 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/projects");
+  await expect(
+    page.getByRole("button", { name: "Next screenshot", exact: true }).first(),
+  ).toBeVisible();
 });
 
 test("goruntu buyur, klavyeyle gezinilir ve kapaninca odak geri gelir", async ({ page }) => {
@@ -89,6 +92,11 @@ test("buyutulen goruntu klavyeyle kayar ve slayt degismez", async ({ page }) => 
   await viewer.getByRole("button", { name: "Zoom into screenshot" }).click();
   const pane = viewer.getByRole("group", { name: "Enlarged screenshot" });
   await expect(pane).toBeFocused();
+  await expect
+    .poll(() =>
+      pane.evaluate((el) => el.scrollWidth > el.clientWidth && el.scrollHeight > el.clientHeight),
+    )
+    .toBe(true);
   await page.keyboard.press("ArrowRight");
   await expect.poll(() => pane.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
   await page.keyboard.press("ArrowDown");
@@ -99,10 +107,6 @@ test("buyutulen goruntu klavyeyle kayar ve slayt degismez", async ({ page }) => 
 });
 
 test("odak almayan tiklamada da acan baglantiya doner", async ({ page }) => {
-  // Sentetik tiklama hidrasyondan once resim baglantisinin JS'siz yolunu acar.
-  await expect(
-    page.getByRole("button", { name: "Next screenshot", exact: true }).first(),
-  ).toBeVisible();
   const trigger = page.getByRole("link", { name: /^Enlarge screenshot:/ }).first();
   await trigger.dispatchEvent("click");
   await expect(page.getByRole("dialog")).toBeVisible();
