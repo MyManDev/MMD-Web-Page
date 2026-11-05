@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Project } from "@/content";
 import { ArrowIcon } from "@/components/ui";
 import { screenshotSrcSet } from "@/lib/images";
@@ -18,6 +18,7 @@ export function ScreenshotLightbox({
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+  const closing = useRef<Animation | null>(null);
   const gesture = useRef<{ x: number; y: number; id: number } | null>(null);
   const [index, setIndex] = useState(initialIndex);
   const [zoomed, setZoomed] = useState(false);
@@ -27,6 +28,29 @@ export function ScreenshotLightbox({
     setIndex((current) => (current + delta + screenshots.length) % screenshots.length);
   };
 
+  const close = useCallback(() => {
+    if (closing.current) return;
+    const dialog = dialogRef.current;
+    if (!dialog?.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onClose();
+      return;
+    }
+    dialog.dataset.closing = "";
+    closing.current = dialog.animate(
+      [{ opacity: getComputedStyle(dialog).opacity }, { opacity: 0 }],
+      {
+        duration: 160,
+        easing: "ease-in",
+        fill: "forwards",
+      },
+    );
+    void closing.current.finished
+      .then(() => {
+        if (dialog.isConnected) onClose();
+      })
+      .catch(() => {});
+  }, [onClose]);
+
   useEffect(() => {
     const dialog = dialogRef.current!;
     const previousOverflow = document.body.style.overflow;
@@ -34,6 +58,7 @@ export function ScreenshotLightbox({
     dialog.showModal();
     document.body.style.overflow = "hidden";
     return () => {
+      closing.current?.cancel();
       document.body.style.overflow = previousOverflow;
       dialog.close();
       if (previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus();
@@ -50,10 +75,28 @@ export function ScreenshotLightbox({
       className="screenshot-lightbox"
       aria-label={`${name} screenshot viewer`}
       onClose={onClose}
+      onCancel={(event) => {
+        event.preventDefault();
+        close();
+      }}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget) close();
       }}
       onKeyDown={(event) => {
+        const x = event.key === "ArrowRight" ? 48 : event.key === "ArrowLeft" ? -48 : 0;
+        const y = event.key === "ArrowDown" ? 48 : event.key === "ArrowUp" ? -48 : 0;
+        if (
+          zoomed &&
+          event.target === imageRef.current &&
+          (x || y) &&
+          !event.altKey &&
+          !event.ctrlKey &&
+          !event.metaKey
+        ) {
+          event.preventDefault();
+          imageRef.current.scrollBy({ left: x, top: y, behavior: "instant" });
+          return;
+        }
         if (!zoomed && (event.key === "ArrowRight" || event.key === "ArrowLeft")) {
           event.preventDefault();
           step(event.key === "ArrowRight" ? 1 : -1);
@@ -67,7 +110,7 @@ export function ScreenshotLightbox({
           </p>
           <button
             type="button"
-            className="lightbox-button"
+            className="pressable lightbox-button"
             aria-label={zoomed ? "Fit screenshot to screen" : "Zoom into screenshot"}
             aria-pressed={zoomed}
             onClick={() => setZoomed((value) => !value)}
@@ -88,9 +131,9 @@ export function ScreenshotLightbox({
           </button>
           <button
             type="button"
-            className="lightbox-button"
+            className="pressable lightbox-button"
             aria-label="Close screenshot viewer"
-            onClick={onClose}
+            onClick={close}
           >
             <svg
               aria-hidden="true"
@@ -132,6 +175,7 @@ export function ScreenshotLightbox({
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- statik export, mevcut srcset */}
             <img
+              key={screenshot.src}
               src={screenshot.src}
               srcSet={screenshotSrcSet(screenshot.src)}
               sizes={zoomed ? "(min-width: 1250px) 96vw, 1200px" : "96vw"}
@@ -149,7 +193,7 @@ export function ScreenshotLightbox({
           <div className="lightbox-controls">
             <button
               type="button"
-              className="lightbox-button"
+              className="pressable lightbox-button"
               aria-label="Previous enlarged screenshot"
               onClick={() => step(-1)}
             >
@@ -157,7 +201,7 @@ export function ScreenshotLightbox({
             </button>
             <button
               type="button"
-              className="lightbox-button"
+              className="pressable lightbox-button"
               aria-label="Next enlarged screenshot"
               onClick={() => step(1)}
             >

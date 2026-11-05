@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { MotionLink } from "./MotionLink";
 import type { ReactNode } from "react";
 import { ExternalIcon } from "./ExternalIcon";
 
@@ -18,7 +18,7 @@ type ButtonProps = {
 };
 
 const base =
-  "inline-flex h-[var(--height-button)] items-center justify-center gap-2 rounded-sm px-5 font-mono text-mono uppercase transition-colors duration-150 ease-out";
+  "pressable inline-flex h-[var(--height-button)] items-center justify-center gap-2 rounded-sm px-5 font-mono text-mono uppercase transition-colors duration-150 ease-out";
 
 const variants = {
   primary: "bg-accent text-page hover:bg-accent/90",
@@ -37,7 +37,7 @@ export function Button({
   const className = `${base} ${disabled ? disabledStyle : variants[variant]}`;
 
   if (href && !disabled) {
-    const Element = href.startsWith("/") ? Link : "a";
+    const Element = href.startsWith("/") ? MotionLink : "a";
     return (
       <Element
         href={href}

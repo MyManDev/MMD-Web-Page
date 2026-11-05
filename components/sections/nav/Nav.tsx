@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { MotionLink } from "@/components/ui/MotionLink";
 import { usePathname } from "next/navigation";
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import type { Site } from "@/content";
@@ -44,13 +44,13 @@ function Navigation({ site, pathname }: { site: Site; pathname: string }) {
       <header ref={headerRef} className="nav-bar sticky top-0 z-40">
         <Container>
           <div className="flex h-[var(--nav-height)] items-center justify-between gap-4">
-            <Link
+            <MotionLink
               href="/"
               aria-label="MyManDev home"
-              className="rule font-mono text-nav font-medium text-text uppercase"
+              className="pressable rule font-mono text-nav font-medium text-text uppercase"
             >
               {site.wordmark}
-            </Link>
+            </MotionLink>
             <nav aria-label="Pages" className="hidden lg:block">
               <ul
                 className="nav-pages"
@@ -86,7 +86,7 @@ function Navigation({ site, pathname }: { site: Site; pathname: string }) {
               aria-expanded={open}
               aria-controls={menuId}
               onClick={() => (open ? close() : setOpenPath(pathname))}
-              className="inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-nav text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
+              className="pressable inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-nav text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
             >
               Menu
             </button>

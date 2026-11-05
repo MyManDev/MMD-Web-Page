@@ -227,12 +227,44 @@ section[id] {
 @keyframes page-enter {
   from {
     opacity: 0;
-    translate: 0 6px;
+    transform: translateY(14px);
   }
 }
 
 .page-enter {
-  animation: page-enter 200ms ease-out;
+  animation: page-enter 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.mobile-menu {
+  clip-path: inset(0);
+  transition:
+    clip-path 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    display 260ms allow-discrete;
+}
+.mobile-menu[hidden] {
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
+  transition-duration: 200ms;
+}
+@starting-style {
+  .mobile-menu:not([hidden]) {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+@keyframes menu-item-enter {
+  from {
+    opacity: 0;
+    translate: 0 -8px;
+  }
+}
+.mobile-menu:not([hidden]) .menu-item {
+  animation: menu-item-enter 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: calc(var(--menu-order, 0) * 25ms);
+}
+@media (min-width: 1024px) {
+  .mobile-menu {
+    transition: none;
+  }
 }
 
 .nav-pages {
@@ -249,7 +281,7 @@ section[id] {
   width: calc(100% / var(--page-count));
   height: 2px;
   transform: translateX(calc(var(--active-page) * 100%));
-  transition: transform 200ms ease-out;
+  transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
   pointer-events: none;
 }
 
@@ -301,7 +333,30 @@ section[id] {
   overscroll-behavior: contain;
 }
 .screenshot-lightbox::backdrop {
-  background: var(--color-surface);
+  background: transparent;
+}
+.screenshot-lightbox[open] {
+  animation: viewer-enter 220ms ease-out;
+}
+.screenshot-lightbox[data-closing] {
+  pointer-events: none;
+}
+@keyframes viewer-enter {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes photo-enter {
+  from {
+    opacity: 0.5;
+    transform: translateY(6px) scale(0.985);
+  }
+}
+@keyframes photo-zoom {
+  from {
+    opacity: 0.6;
+    transform: scale(0.985);
+  }
 }
 .lightbox-content {
   width: min(100%, 1600px);
@@ -349,6 +404,7 @@ section[id] {
   max-height: calc(100dvh - 200px);
   object-fit: contain;
   user-select: none;
+  animation: photo-enter 220ms ease-out;
 }
 .lightbox-controls {
   display: flex;
@@ -367,6 +423,7 @@ section[id] {
   min-width: 1200px;
   max-width: none;
   max-height: none;
+  animation: photo-zoom 220ms ease-out;
 }
 
 /* Zaffiro mikro etkilesimleri - `rule` ve `roll`. design-spec.md §6 (#55)
@@ -489,9 +546,36 @@ a:focus-visible .roll-track {
   opacity: 0;
 }
 
+.pressable {
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    scale 180ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 160ms ease-out,
+    color 150ms ease-out,
+    background-color 150ms ease-out,
+    border-color 150ms ease-out;
+}
+@media (hover: hover) {
+  .pressable:not(:disabled):not([aria-disabled="true"]):hover {
+    scale: var(--press-hover, 1.025);
+  }
+}
+.pressable:not(:disabled):not([aria-disabled="true"]):active {
+  scale: var(--press-active, 0.97);
+  opacity: 0.92;
+  transition-duration: 90ms;
+}
+.screenshot-open {
+  --press-hover: 1.005;
+  --press-active: 0.992;
+}
+
 /* prefers-reduced-motion'in evrensel kurali burada, bir kez yazilir; ayri
    yazilan yerler design-spec.md §6.1'de sayili. architecture.md §4.4 */
 @media (prefers-reduced-motion: reduce) {
+  .pressable:not(:disabled):not([aria-disabled="true"]) {
+    scale: none !important;
+  }
   html {
     scroll-behavior: auto;
   }

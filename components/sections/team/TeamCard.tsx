@@ -124,7 +124,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-describedby={`${member.slug}-name`}
-                className="inline-flex items-center gap-2 font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
+                className="pressable inline-flex items-center gap-2 font-mono text-mono text-text-muted uppercase transition-colors duration-150 ease-out hover:text-text"
               >
                 {link.label}
                 <ExternalIcon className="h-3 w-3" />

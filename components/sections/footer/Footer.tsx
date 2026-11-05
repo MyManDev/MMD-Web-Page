@@ -18,7 +18,7 @@ export function Footer({ site }: { site: Site }) {
             href={site.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="reveal-on-enter inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
+            className="pressable reveal-on-enter inline-flex items-center gap-2 text-text-muted transition-colors duration-150 ease-out hover:text-text"
           >
             <span className="rule">GitHub</span>
             <ExternalIcon className="h-3 w-3" />
@@ -29,7 +29,7 @@ export function Footer({ site }: { site: Site }) {
             <span className="text-text-muted">Contact</span>
             <a
               href={`mailto:${site.email}`}
-              className="text-text transition-colors duration-150 ease-out hover:text-text-muted"
+              className="pressable text-text transition-colors duration-150 ease-out hover:text-text-muted"
             >
               <span className="rule">{site.email}</span>
             </a>
