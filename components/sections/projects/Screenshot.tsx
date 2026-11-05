@@ -75,7 +75,7 @@ export function Screenshot({
               }
             : undefined
         }
-        className="screenshot-open overflow-hidden rounded-card border border-border"
+        className="pressable screenshot-open overflow-hidden rounded-card border border-border"
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */}
         <img

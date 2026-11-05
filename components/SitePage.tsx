@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
 import { RevealOnView } from "@/components/ui";
+import { PageMotion } from "@/components/ui/PageMotion";
 
 export function SitePage({ children }: { children: ReactNode }) {
   return (
     <>
-      <main id="main" tabIndex={-1} className="page-enter flex flex-1 flex-col">
-        {children}
-      </main>
+      <PageMotion>{children}</PageMotion>
       <RevealOnView />
     </>
   );

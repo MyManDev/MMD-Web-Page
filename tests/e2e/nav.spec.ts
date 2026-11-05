@@ -16,7 +16,13 @@ async function openMenu(page: import("@playwright/test").Page) {
   const id = await toggle.getAttribute("aria-controls");
   expect(id).toBeTruthy();
   await toggle.click();
-  return { toggle, panel: page.locator(`#${id}`) };
+  const panel = page.locator(`#${id}`);
+  await panel.evaluate(async (el) => {
+    await Promise.all(
+      el.getAnimations({ subtree: true }).map((animation) => animation.finished.catch(() => {})),
+    );
+  });
+  return { toggle, panel };
 }
 
 test.describe("navbar", () => {

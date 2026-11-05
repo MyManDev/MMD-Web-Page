@@ -139,7 +139,7 @@ export function ScreenshotCarousel({
             <div className="flex items-center gap-2">
               <button
                 aria-label="Previous screenshot"
-                className="deck-button"
+                className="pressable deck-button"
                 onClick={() => step(-1)}
                 type="button"
               >
@@ -147,7 +147,7 @@ export function ScreenshotCarousel({
               </button>
               <button
                 aria-label="Next screenshot"
-                className="deck-button"
+                className="pressable deck-button"
                 onClick={() => step(1)}
                 type="button"
               >

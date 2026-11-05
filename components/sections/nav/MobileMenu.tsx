@@ -1,6 +1,6 @@
 "use client";
 
-import { type RefObject, useEffect, useRef } from "react";
+import { type CSSProperties, type RefObject, useEffect, useRef } from "react";
 import type { Site } from "@/content";
 import { Button } from "@/components/ui";
 import { NavLink } from "./NavLink";
@@ -100,11 +100,16 @@ export function MobileMenu({
       id={id}
       ref={panelRef}
       hidden={!open}
-      className="fixed inset-x-0 top-[var(--nav-height)] bottom-0 z-50 overflow-y-auto overscroll-contain bg-surface px-5 py-8 lg:hidden"
+      inert={!open}
+      className="mobile-menu fixed inset-x-0 top-[var(--nav-height)] bottom-0 z-50 overflow-y-auto overscroll-contain bg-surface px-5 py-8 lg:hidden"
     >
       <ul className="flex flex-col gap-2">
-        {items.map((item) => (
-          <li key={item.id}>
+        {items.map((item, index) => (
+          <li
+            key={item.id}
+            className="menu-item"
+            style={{ "--menu-order": index } as CSSProperties}
+          >
             <NavLink
               href={item.href}
               label={item.label}
@@ -116,7 +121,10 @@ export function MobileMenu({
       </ul>
       {/* Masaustu nav ile ayni iki aksiyon: menu bir kisayol degil, ayni
           olanaklarin dar ekrandaki hali. */}
-      <div className="mt-8 flex flex-col items-start gap-3">
+      <div
+        className="menu-item mt-8 flex flex-col items-start gap-3"
+        style={{ "--menu-order": items.length } as CSSProperties}
+      >
         <Button href={`mailto:${email}`} variant="ghost">
           Contact
         </Button>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { MotionLink } from "@/components/ui/MotionLink";
 
 export function NavLink({
   href,
@@ -12,11 +12,11 @@ export function NavLink({
   onNavigate?: () => void;
 }) {
   return (
-    <Link
+    <MotionLink
       href={href}
-      onClick={onNavigate}
+      onNavigate={onNavigate}
       aria-current={active ? "page" : undefined}
-      className={`inline-flex h-[var(--height-nav-link)] items-center rounded-[var(--radius-pill)] px-4 font-mono text-nav uppercase transition-colors duration-150 ease-out ${
+      className={`pressable inline-flex h-[var(--height-nav-link)] items-center rounded-[var(--radius-pill)] px-4 font-mono text-nav uppercase transition-colors duration-150 ease-out ${
         active ? "text-accent" : "text-text-muted hover:text-text"
       }`}
     >
@@ -26,6 +26,6 @@ export function NavLink({
           <span aria-hidden="true">{label}</span>
         </span>
       </span>
-    </Link>
+    </MotionLink>
   );
 }

@@ -101,6 +101,9 @@ test("buyutulen goruntu klavyeyle kayar ve slayt degismez", async ({ page }) => 
   await expect.poll(() => pane.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
   await page.keyboard.press("ArrowDown");
   await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowUp");
+  await expect.poll(() => pane.evaluate((el) => [el.scrollLeft, el.scrollTop])).toEqual([0, 0]);
   await expect(viewer.getByRole("img")).toHaveAttribute("src", source!);
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
