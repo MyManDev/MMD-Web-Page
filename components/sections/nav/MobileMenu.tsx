@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 import type { Site } from "@/content";
 import { Button } from "@/components/ui";
 import { NavLink } from "./NavLink";
@@ -19,6 +19,7 @@ export function MobileMenu({
   email,
   githubUrl,
   activeId,
+  headerRef,
   onClose,
 }: {
   id: string;
@@ -27,6 +28,7 @@ export function MobileMenu({
   email: string;
   githubUrl: string;
   activeId: string | null;
+  headerRef: RefObject<HTMLElement | null>;
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -47,19 +49,18 @@ export function MobileMenu({
     };
   }, [open]);
 
-  // Arkadaki sayfa inert. Menu <header> icinde yasadigi icin header disindaki
-  // govde cocuklari isaretlenir; kapaninca geri alinir.
+  // Menu, header'in backdrop-filter sinirindan bagimsiz bir govde cocugu.
   useEffect(() => {
     if (!open) return;
-    const header = panelRef.current?.closest("header");
     const siblings = Array.from(document.body.children).filter(
-      (el) => el !== header && el instanceof HTMLElement,
+      (el) => el !== headerRef.current && el !== panelRef.current && el instanceof HTMLElement,
     ) as HTMLElement[];
+    const previous = siblings.map((el) => [el, el.inert] as const);
     for (const el of siblings) el.inert = true;
     return () => {
-      for (const el of siblings) el.inert = false;
+      for (const [el, inert] of previous) el.inert = inert;
     };
-  }, [open]);
+  }, [open, headerRef]);
 
   // Escape kapatir; Tab focus'u menu icinde dondurur.
   useEffect(() => {
@@ -99,7 +100,7 @@ export function MobileMenu({
       id={id}
       ref={panelRef}
       hidden={!open}
-      className="fixed inset-x-0 top-[var(--nav-height)] bottom-0 z-50 bg-surface px-5 pt-8 lg:hidden"
+      className="fixed inset-x-0 top-[var(--nav-height)] bottom-0 z-50 overflow-y-auto overscroll-contain bg-surface px-5 py-8 lg:hidden"
     >
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
