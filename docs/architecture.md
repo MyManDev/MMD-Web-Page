@@ -37,8 +37,9 @@ kapılar geçiyor; `mymandev.com` yayında.
 | `/projects` | Projects | Mevcut proje kartları, ekran görüntüleri ve bağlantılar. |
 | `/team`     | Team     | Ekip üyelerinin mevcut kartları ve biyografileri.        |
 
-Hero, Who We Are ve prensip destesi kaldırıldı. `SitePage` ortak nav, main ve footer'ı
-kurar. İç bağlantılar Next Link kullanır; aktif sayfa URL'den belirlenir ve
+Hero, Who We Are ve prensip destesi kaldırıldı. Kalıcı layout nav ve footer'ı kurar;
+`SitePage` main içeriğini ve sayfayla kurulan reveal gözlemcisini taşır.
+İç bağlantılar Next Link kullanır; aktif sayfa URL'den belirlenir ve
 `aria-current="page"` taşır. Mobil menü geçişte kapanır; odak ve scroll kilidi temizlenir.
 
 Her sayfanın başlığı, canonical ve paylaşım metadata'sı kendine aittir; sitemap üç adresi
@@ -202,7 +203,9 @@ sahibinin seçimi (`design-spec.md` §3.3.1).
 **Sayfa başlıkları** ilk boyamada CSS ile belirir (`reveal-on-load`, 240ms).
 Başlıklar JS veya görünürlük gözlemcisini beklemez. Reduced-motion altında animasyon yoktur.
 
-Navbar zemini ve amblem gradyanı CSS scroll timeline kullanır. Kart/footer metni için tek
+Navbar zemini CSS scroll timeline kullanır. Amblemin arkasındaki hafif ışık açılışta
+4 saniyede bir kez yerleşir; sayfa girişi ve kalıcı menünün aktif çizgisi 200ms sürer.
+Kart/footer metni için tek
 `IntersectionObserver` vardır: `RevealOnView`, `SitePage` içinde yeni sayfanın DOM'u ile
 birlikte mount olur. Kalıcı layout'ta yalnız pathname değişimini izlemek yeterli değildir:
 yeni route içeriği sonra geldiğinde metin gizli kalabiliyordu. Gezinme regresyon testi bu

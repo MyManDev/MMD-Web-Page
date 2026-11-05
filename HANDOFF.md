@@ -4,16 +4,19 @@
 
 **Tarih:** 2026-11-05
 **Yer:** yerel Windows çalışma alanı
-**Aşama:** Üç sayfalı vitrin yayında. Kaynak PR #147, `c54bc3e` ile `main`'e birleşti.
+**Aşama:** Üç sayfalı vitrin ve görsel iyileştirmeler yayında. Kaynak PR #150,
+`6cc5388` ile `main`'e birleşti.
 
 ## Dal ve çalışma ağacı
 
-- Kaynak #147; belge ve görsel karşılaştırmalar ayrı doküman PR'ında.
-- Yerel `pnpm gates`: **62 birim, 246 E2E**, 22 viewport atlaması.
-- En ağır sayfa `/projects`: **138.3 KiB / 150 KiB**. Diğerleri: ana sayfa 136.5, Team 137.1 KiB.
-- #147 zorunlu `gates` ve `e2e` başarılı. İlk gates denemesinde mevcut Google font/Turbopack
-  hatası oluştu; yalnız başarısız işin aynı SHA ile tekrarı geçti. Cloudflare ve E2E ilkinde geçti.
-- İlgili takip: #146. Önceki SquadOpt ve footer işleri #142–145'te tamamlandı.
+- Kaynak #150; bu devir ve tasarım sözleşmesi ayrı doküman PR'ında.
+- Yerel `pnpm gates`: **62 birim, 252 E2E**, 22 viewport atlaması.
+- Son mobil düzeltme: 24 tekrarlı görüntüleyici testi; son CI'da 252 E2E geçti.
+- En ağır sayfa `/projects`: **139.2 KiB / 150 KiB**. Ana sayfa 136.0, Team 137.0 KiB.
+- #150 `gates`, `e2e`, `lighthouse` ve Cloudflare kontrolleri başarılı.
+- İlk CI mobil büyütme ölçümü başarısızdı. Açık minimum genişlik, büyütmeye uygun
+  `sizes` ve render edilmiş boyutu bekleyen kontrolle düzeltildi; test atlanmadı.
+- İlgili #149 kapandı. Önceki sayfa ayrımı #147 ve imza #144'te tamamlandı.
 
 ## Sayfa sözleşmesi
 
@@ -21,21 +24,26 @@
 - `/projects`: mevcut SquadOpt kartı, güncel görüntüler ve bağlantılar.
 - `/team`: mevcut ekip kartları ve biyografiler.
 - Hero / Who We Are / prensip destesi kaldırıldı. Menü gerçek sayfa bağlantıları ve
-  `aria-current="page"` kullanır. Ortak kabuk `components/SitePage.tsx`.
+  `aria-current="page"` kullanır. Kalıcı layout nav/footer'ı; `SitePage` main'i taşır.
 - Reveal gözlemcisini kalıcı layout'a taşıma: yeni route DOM'undan önce kurulursa metin
   gizli kalabiliyor. Sayfa içeriğiyle mount olması gezinme testinde doğrulanıyor.
-- Proje görüntü karuseli ve mavi-mor footer imzası korunuyor.
+- Sayfa girişleri ve kayan aktif menü çizgisi 200ms. Amblem zemine karışır; hafif ışığı
+  yalnız açılışta 4 saniyede yerleşir. Reduced-motion altında hareket yoktur.
+- Proje görüntüleri yerel dialog içinde açılır: Escape, odak dönüşü, yön tuşları,
+  mobil kaydırma ve en az 1200px yakınlaştırma. Açıkken arka sayfa ve karusel durur.
+- Team fotoğraflarında karartma %10, odak `center 65%`; metin perdesi %92 korunur.
+- Sayfa metinleri, proje içeriği ve mavi-mor footer imzası korunuyor.
 
 ## Yayın
 
 - Kanonik adres: `https://mymandev.com`; Cloudflare Pages projesi `mymandev`.
-- Kaynak production deployment: `136f4244-8f08-4d68-a475-aa761d3d233b`, kaynak `c54bc3e`.
-- Canlı HTTP doğrulaması: üç sayfa 200, her birinde doğru başlık/canonical ve tek h1;
-  13 JS/CSS dosyası 200, sitemap üç adres, bilinmeyen yol gerçek 404.
-- Tarayıcı incelemesi: 1440×900 masaüstü ve 390×844 mobil; sayfa bağlantıları,
-  mobil menü, geri dönüş, metin görünürlüğü ve footer. Cloudflare preview'da tarayıcı hatası yok.
-- Görsel karşılaştırma: `docs/review/pages-2026-11-05/`. Önceki footer karşılaştırması
-  `docs/review/footer-2026-11-05/` altında duruyor.
+- Kaynak production deployment: `e1096fb6-00f9-4139-9423-af0db8acf5fc`, kaynak `6cc5388`.
+- Son kaynak preview: `https://9e2d141d.mymandev.pages.dev`, PR head `ad3e473`.
+- Canlı tarayıcı doğrulaması: 390×844 mobil görüntüleyici ve yakınlaştırma, Escape ile
+  bağlantıya odak dönüşü, mobil menüden Team'e geçiş ve menünün kapanması; masaüstü
+  Team ve ana sayfa. Kaydedilen tarayıcı hatası yok.
+- Görsel karşılaştırma: `docs/review/polish-2026-11-05/`; önceki sayfa ve footer
+  karşılaştırmaları kendi dizinlerinde korunuyor.
 
 ## Sıradaki tek iş
 
