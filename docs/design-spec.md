@@ -389,11 +389,19 @@ bağlanacak.
 | Alttaki kartın focus'u   | Kart içeriği `inert` **değildir**; sticky yalnızca konumu değiştirir, kartlar DOM'da normal sırada ve klavyeyle erişilebilir. Üste binen kart alttakinin focus'unu görsel olarak kapatırsa, focus'lanan kart `z-index` sırasını geçici olarak kazanır (`:focus-within`). Henüz uygulanmadı; `z-index` satır içi style'da (`ProjectCard.tsx`), bu yüzden tek bir sınıf onu ezmez. |
 | Yığın yüksekliği         | Kap yüksekliği = kart sayısı × viewport yüksekliği. Tek kartta kap normal akışa döner ve sticky hiç uygulanmaz.                                                                                                                                                                                                                                                                  |
 
-### 3.4 Kaldırılan Who We Are bölümü
+### 3.4 Karusel davranışı ve kaldırılan Who We Are
 
-2026-11-05 sayfa ayrımında kaldırıldı. Kısa ekip hikâyesi `/` sayfasındadır;
-prensip destesi, ona özel CSS ve testler kaldırılmıştır. Proje ekran görüntüsü karuseli
-kendi davranışını korur.
+Who We Are ve prensip destesi 2026-11-05 sayfa ayrımında kaldırıldı. Kısa ekip hikâyesi
+`/` sayfasındadır. Proje karuselinin kullandığı `lib/deck.ts` korunur:
+
+- Otomatik ilerleme 7 saniyede bir; son slayttan sonra ilkine döner.
+- Fare içerideyken veya klavye odağı karuseldeyken duraklar; iki koşul ayrı izlenir.
+- Elle adım sonrası süre baştan başlar. Reduced-motion altında otomatik ilerleme yoktur.
+- JS yokken ilk proje görüntüsü ve başlığı görünür; gezinme tuşları gizlidir.
+- Otomatik adımda canlı bölge `off`, kullanıcı etkileşiminde `polite` olur.
+- Görünür durdur/başlat tuşu yoktur; önceki tasarımın kabul edilen erişilebilirlik sınırı
+  devam eder. Dokunmatik cihazda kalıcı durdurma garanti edilmez; hover/focus kalıcı
+  durdurma düğmesinin eşdeğeri değildir.
 
 ### 3.5 Team — Bölge B
 
@@ -649,7 +657,7 @@ aynı sınıf hatadır.
 | Metin girişi (`reveal-on-enter`) | 520ms + 90ms         | `opacity` + `translate: 0 14px`, ekrana girince bir kez       |
 | Navbar zemini                    | scroll'a bağlı       | `background-color` + `backdrop-filter`, ilk 120px             |
 | Amblem gradyanı                  | scroll'a bağlı       | `--mark-angle` 0 → 360deg, sayfa boyunca bir tur              |
-| Ekran görüntüsü karuseli         | 7s aralık            | `lib/deck.ts`; hover/focus/arka planda duraklar               |
+| Ekran görüntüsü karuseli         | 7s aralık            | `lib/deck.ts`; hover/focus sırasında duraklar                 |
 | Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
 | Giden resim altı yazısı          | 200ms                | `opacity`, beklemeden söner (`Screenshot.tsx`)                |
 | Resim altı yazısı                | 25ms/harf            | daktilo, görüntü değişince (`TypedCaption`)                   |
