@@ -677,29 +677,27 @@ saklanmaz, çünkü ekran okuyucu onu okuyabilmeli.
 
 Navbar'ın aynası: `surface` zemin, üstte 1px `border`.
 
-|      | Mobil            | `≥ md`                        |
-| ---- | ---------------- | ----------------------------- |
-| Yapı | tek kolon, dikey | wordmark solda, linkler sağda |
+|             | Mobil                               | `≥ md`                            |
+| ----------- | ----------------------------------- | --------------------------------- |
+| Üst sıra    | tagline, telif ve GitHub dikey      | tagline/telif solda, GitHub sağda |
+| Alt sıra    | iletişim, ardından sağa hizalı imza | iletişim solda, imza sağ altta    |
+| İmza yazısı | 34px / 17px                         | 44px / 21px                       |
 
-İçerik: wordmark, **tagline**, telif satırı, GitHub linki, **iletişim satırı** ve ayrı bir satırda
-**kapanış cümlesi**. Tamamı mono rolü. Sosyal ikon duvarı yok.
+İletişim satırı `CONTACT team@mymandev.com`; etiket ve adres aynı satırda, gerektiğinde
+sarılır. GitHub düz mono dış bağlantıdır ve 12px `ExternalIcon` taşır. Sosyal ikon duvarı yok.
 
-**İletişim satırı adresin okunduğu yer:** `CONTACT team@mymandev.com`. Nav'daki aksiyonun etiketi
-kısa; tam adres burada yazılı, yani ziyaretçi tıklamadan da görüyor ve kopyalayabiliyor. Etiket ve
-adres **aynı satırda** — "CONTACT" tek başına bir başlık olsaydı footer'da ikinci bir hiyerarşi
-katmanı açardı.
+İmza **MyManDev**, alt satırda **Still Building**. Metin `content/site.ts` içindeki `wordmark`
+ve `footer.closing` alanlarından gelir; `footer.tagline` hâlâ **Built by friends.** İmza dışında
+footer mono rolünü korur. Yeni açıklama eklenmez.
 
-İki cümle de **marka metni** ve ikisini karar sahibi yazdı (`CLAUDE.md` kural 5).
-`content/site.ts`te `footer.tagline` ("Built by friends.") ve `footer.closing`
-("Still building.") olarak yaşıyorlar; component onları okur, yeniden yazmaz. Şemada `.optional()`
-yok (kural 7) — bir footer cümlesinin sessizce kaybolması, olmamasından kötüdür çünkü kimse fark
-etmez.
+İmza self-host Allura 400 kullanır, 6 derece sola eğilir. Mavi-mor gradyanın üç rengi
+`app/tokens.css` içindeki `--signature-*` tokenlarından gelir. Font lisansı `public/fonts/` ve
+`NOTICE` içinde kayıtlıdır.
 
-Kapanış cümlesi **ayrı bir satırda**: üstteki satırın içine sıkıştırmak onu bir etikete çevirirdi.
-
-GitHub linki `Button` **değil**, düz mono `<a>` — footer'da 44px'lik bir dokunma hedefi fazla
-ağır durur. Ama dış link olduğu için §7.5'in görünür ikonunu taşır; ikon `ExternalIcon`
-primitive'inden gelir ve 12px'e küçültülür, çünkü footer'ın mono satırı `Button`'ınkinden küçük.
+Mevcut `RevealOnView` işaretiyle bir kez yazılır: üst satır 1.7s, alt satır 0.6s gecikmeyle 1.2s.
+Bu, imza için seçilen özel süredir; genel hareket zarfını değiştirmez. Yeni JS veya gözlemci yok.
+`prefers-reduced-motion` altında hareketsiz ve görünürdür; JS yokken içerik görünür kalır.
+`forced-colors` altında gradyan ve gölge yerine sistemin yazı rengi kullanılır.
 
 ---
 

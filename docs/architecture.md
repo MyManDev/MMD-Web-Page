@@ -54,24 +54,25 @@ alt satıra iner. Kırılma noktaları Tailwind varsayılanları (`sm 640 / md 7
 
 **Karar: V1'de yığın yok, tek proje bloğu var.**
 
-Gerekçe: gerçek projeniz bir tane (Football Squad Optimizer). Tasarım referansındaki
+Gerekçe: gerçek projeniz bir tane (SquadOpt). Tasarım referansındaki
 stacked/sticky yığın üç kart varsayıyor; tek kartla üst üste gelecek bir şey yok, davranış anlamını
 yitiriyor. "Project Nexus / Aurora" mockup placeholder'ıydı ve yayınlanmayacak — var olmayan bir
 ürünü vitrinde göstermek, uydurulmuş bir sayı göstermekle aynı sınıf hatadır.
 
 **V1 tasarımı:** tam genişlikte, kendi başına bir bölüm gibi duran tek proje bloğu. Büyük gerçek
 ekran görüntüleri (birden fazlaysa karusel, `design-spec.md` §3.3.1), mono tech tag'leri, GitHub ve
-Live Demo aksiyonları, ve §4.6'daki metrik satırı.
+Live Demo aksiyonları. Metrikler isteğe bağlı; güncel SquadOpt kartında yok (§4.6).
 
 **Component `N` proje alacak şekilde yazılır.** İçerik dosyasına ikinci proje eklendiğinde
 sticky/z-index yığını devreye girer. Yani mimari bugünden çok-projeli, görünen yüz tek projeli.
 
-**Football Squad Optimizer kartı — gerçek veriler:**
+**SquadOpt kartı — gerçek veriler (2026-11-05):**
 
 - Repo: `https://github.com/MyManDev/football-squad-optimizer`
 - Live Demo: `https://squadopt.mymandev.com/`
-- Tech tag'leri: `Python` · `OR-Tools CP-SAT` · `ML` · `React`
-- Ekran görüntüsü: gerçek uygulamadan, mockup'tan değil
+- Tech tag'leri: `Python` · `React` · `TypeScript` · `HiGHS`
+- Ekran görüntüleri: gerçek GW10 uygulamasından transfer planı, fikstür ve mini lig.
+- Kısa açıklama mevcut lig kullanımını ve genel erişim planını belirtir; araştırma özeti içermez.
 
 Bu kart **baştan gerçek veriyle** bağlanır. Optimizer'ın kendi dersi: ön yüz ile üretici
 birbirlerinin tarifine karşı geliştirildiği için ilk gerçek yayında üç uyuşmazlık birden çıkmıştı,
@@ -120,6 +121,10 @@ olurdu — `--width-prose` bu hatayı bir kez yaptı. Token, onu ilk kullanan y�
 CTA'da, ikonlarda ve hover'da vardı; dördü birden olunca hiçbiri vurgu olmuyor. Bir bölümde CTA
 yeşilse eyebrow beyaz kalır.
 
+Footer imzası ayrı bir marka öğesi: `--signature-blue`, `--signature-violet` ve
+`--signature-purple` yalnızca bu iki satırda kullanılır. Yerleşim ve hareket `design-spec.md`
+§3.6'da; genel accent rengi değişmedi.
+
 ### 4.2 Tipografi
 
 **Karar: IBM Plex Sans + IBM Plex Mono**, `next/font` ile self-host (Google Fonts kaynağından,
@@ -151,6 +156,9 @@ kullanılmayan 700 için de kural çıkıyor. Bayt değişmemesinin sebebi ağı
 altı `.woff2` dosyasını işaret ediyor. Yani ağırlık listesini uzatmak da kısaltmak da bedava.
 Listeyi kısaltmak bayt kazandırmaz; yalnızca hangi ağırlıkların kullanılmasının beklendiğini
 söyler.
+
+**Footer imzasının istisnası:** MyManDev / Still Building, self-host Allura 400 ile yazılır.
+Font `public/fonts/` altında, OFL lisansı yanında; diğer yazı rolleri IBM Plex olarak kalır.
 
 **Tip ölçeği** (mobil / desktop):
 
@@ -237,12 +245,17 @@ değil. CSS yetmediği bir yer çıkarsa issue açılır.
 ### 4.5 Türetilmiş değerler
 
 Palet altı değer veriyor; ara tonlar gerektiğinde **yeni hex uydurulmaz**, mevcut token'ın opaklığı
-kullanılır (`color-mix` veya Tailwind `/60` sözdizimi). Tek istisna `Text muted` (`#A9B8B2`), o da
-token dosyasında adıyla durur.
+kullanılır (`color-mix` veya Tailwind `/60` sözdizimi). İstisnalar `Text muted` ve §4.1’deki footer imzasının üç marka
+rengidir; hepsi token dosyasında adıyla durur.
 
-### 4.6 İmza öğe — dürüst sayı
+### 4.6 Proje metrikleri
 
-**Karar: benimsendi.**
+**Güncel karar (2026-11-05, #143):** SquadOpt kartındaki 15 / £100m / 1 satırı kaldırıldı.
+Ürün kısa açıklama ve güncel ekran görüntüleriyle anlatılıyor. `metrics` şemada isteğe bağlı
+kalır; başka bir proje doğrulanmış bir sayı kullanabilir.
+
+**Önceki kararın gerekçesi (2026-08-27 – 2026-09-29):**
+Aşağıdaki kayıt o tarihlerdeki kararları açıklar; güncel ürün durumu veya sayıları değildir.
 
 Bu kolektifin ayırt edici tarafı, çalışma disiplininin negatifi olduğu gibi yayınlaması. Sitede buna
 karşılık gelen bir öğe olacak: Football bloğunda gerçek ve dürüst bir sayı satırı.
@@ -643,3 +656,5 @@ Bir kararı değiştirirsen bu tabloya satır ekle; sessizce değiştirme.
 | `content/index.ts`         | **Paylaşılan yüzey**; CODEOWNERS zaten öyle sayıyordu (working-agreement §1)                 | —      |
 | Izgara ve kart boşluğu     | 24/32 → **32 her genişlikte, kart içi 24**; belge koda uyduruldu (karar sahibi)              | §4.3   |
 | Katkıcı listesi            | `claude` kalıyor; PR ref'leri silinemiyor, yeni depo **açılmıyor** (karar sahibi)            | —      |
+| SquadOpt vitrini           | 2026-11-05: güncel GW10 görüntüleri, kısa açıklama; kısıt metrikleri kaldırıldı              | §4.6   |
+| Footer imzası              | 2026-11-05: sağ altta iki satırlı Allura; mavi-mor marka rengi, tek giriş                    | §4.2   |
