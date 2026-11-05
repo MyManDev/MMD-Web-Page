@@ -70,6 +70,7 @@ export function Screenshot({
           onOpen
             ? (event) => {
                 event.preventDefault();
+                event.currentTarget.focus({ preventScroll: true });
                 onOpen();
               }
             : undefined

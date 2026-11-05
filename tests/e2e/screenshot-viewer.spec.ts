@@ -98,6 +98,14 @@ test("buyutulen goruntu klavyeyle kayar ve slayt degismez", async ({ page }) => 
   await expect(trigger).toBeFocused();
 });
 
+test("odak almayan tiklamada da acan baglantiya doner", async ({ page }) => {
+  const trigger = page.getByRole("link", { name: /^Enlarge screenshot:/ }).first();
+  await trigger.dispatchEvent("click");
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(trigger).toBeFocused();
+});
+
 test("goruntu JavaScript olmadan da acilabilir", async ({ browser, baseURL }) => {
   const context = await browser.newContext({
     javaScriptEnabled: false,
