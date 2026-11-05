@@ -1,3 +1,7 @@
-# MMD-Web-Page
+# MyManDev
 
-Design, architecture and implementation of MyManDev web page.
+Ekibin ve projelerin statik vitrini.
+
+[MyManDev](https://mymandev.com) · [Projects](https://mymandev.com/projects) · [Team](https://mymandev.com/team)
+
+Geliştirme ve kontroller: [CLAUDE.md](CLAUDE.md). Güncel durum: [HANDOFF.md](HANDOFF.md).
