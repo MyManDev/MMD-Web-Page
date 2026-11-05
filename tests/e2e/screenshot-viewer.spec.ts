@@ -80,6 +80,24 @@ test("mobil surukleme ilerletir, dikey hareket ilerletmez ve goruntu ekrana siga
   await expect(viewer).toHaveCount(0);
 });
 
+test("buyutulen goruntu klavyeyle kayar ve slayt degismez", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 600 });
+  const trigger = page.getByRole("link", { name: /^Enlarge screenshot:/ }).first();
+  await trigger.click();
+  const viewer = page.getByRole("dialog");
+  const source = await viewer.getByRole("img").getAttribute("src");
+  await viewer.getByRole("button", { name: "Zoom into screenshot" }).click();
+  const pane = viewer.getByRole("group", { name: "Enlarged screenshot" });
+  await expect(pane).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => pane.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+  await page.keyboard.press("ArrowDown");
+  await expect.poll(() => pane.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  await expect(viewer.getByRole("img")).toHaveAttribute("src", source!);
+  await page.keyboard.press("Escape");
+  await expect(trigger).toBeFocused();
+});
+
 test("goruntu JavaScript olmadan da acilabilir", async ({ browser, baseURL }) => {
   const context = await browser.newContext({
     javaScriptEnabled: false,

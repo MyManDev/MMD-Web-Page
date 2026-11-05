@@ -17,6 +17,7 @@ export function ScreenshotLightbox({
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
   const gesture = useRef<{ x: number; y: number; id: number } | null>(null);
   const [index, setIndex] = useState(initialIndex);
   const [zoomed, setZoomed] = useState(false);
@@ -39,6 +40,10 @@ export function ScreenshotLightbox({
     };
   }, []);
 
+  useEffect(() => {
+    if (zoomed) imageRef.current?.focus({ preventScroll: true });
+  }, [zoomed]);
+
   return (
     <dialog
       ref={dialogRef}
@@ -49,7 +54,7 @@ export function ScreenshotLightbox({
         if (event.target === event.currentTarget) onClose();
       }}
       onKeyDown={(event) => {
-        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        if (!zoomed && (event.key === "ArrowRight" || event.key === "ArrowLeft")) {
           event.preventDefault();
           step(event.key === "ArrowRight" ? 1 : -1);
         }
@@ -102,7 +107,11 @@ export function ScreenshotLightbox({
         </div>
         <figure className="lightbox-figure">
           <div
+            ref={imageRef}
             className="lightbox-image"
+            role="group"
+            aria-label="Enlarged screenshot"
+            tabIndex={zoomed ? 0 : -1}
             data-zoomed={zoomed ? "" : undefined}
             onPointerDown={(event) => {
               gesture.current = event.isPrimary
