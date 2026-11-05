@@ -56,7 +56,7 @@ Son kaynak PR #163, `7bae2c6` ile main'e birleşti ve production kabulü tamamla
 - İlk canlı kontrolde iki yeni JS dosyasının `Origin: https://mymandev.com` cache varyantı
   404 döndü; Origin'siz istek 200'dü. Yalnız `3_kxxqkmxdoq6.js` ve `26n-4cng_zf7n.js`
   için tam dosya yolu prefix purge uygulandı. Ardından üç sayfanın tüm JS dosyaları
-  Origin başlığıyla 200/application-javascript, canlı kabul testleri başarılı.
+  Origin başlığıyla 200 ve `application/javascript`, canlı kabul testleri başarılı.
 - Menü hatası canlı 390×844 görünümde yeniden üretildi: panel top=72, height=32,
   bottom=104. Düzeltmenin aynı boyuttaki yerel kontrolü: top=72, height=772, bottom=844;
   menü dışındaki sayfa görünmüyor. 1280×900'e geçişte kilit ve odak kontrolü başarılı.
