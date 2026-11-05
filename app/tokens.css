@@ -160,6 +160,10 @@
 /* Navbar yuksekligi breakpoint'e gore degistigi icin @theme disinda,
    :root uzerinde tanimlanir - scroll-margin-top hesabi buna bagli. */
 :root {
+  --signature-blue: #51a9ff;
+  --signature-violet: #9a85ff;
+  --signature-purple: #d090ff;
+
   --nav-height: var(--height-nav);
 
   /* Amblem plakasinin gradyan duraklari. architecture.md §4.5

@@ -41,7 +41,7 @@ export const site: Site = {
   email: "team@mymandev.com",
   footer: {
     tagline: "Built by friends.",
-    closing: "Still building.",
+    closing: "Still Building",
   },
   copyrightYear: 2026,
   nav: [
