@@ -256,6 +256,65 @@ test.describe("mobil menu", () => {
     await expect(toggle).toHaveAttribute("aria-controls", /.+/);
   });
 
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    test(`panel sayfayi tamamen ortuyor (${reducedMotion})`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion });
+      for (const route of ["/", "/projects", "/team"]) {
+        await page.goto(route);
+        for (const scrollY of [0, 400]) {
+          await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), scrollY);
+          const { panel } = await openMenu(page);
+          await expect
+            .poll(async () => {
+              const rect = await panel.boundingBox();
+              return rect ? Math.round(rect.y + rect.height) : null;
+            })
+            .toBe(page.viewportSize()!.height);
+          const rect = (await panel.boundingBox())!;
+          const header = (await page.getByRole("banner").boundingBox())!;
+          expect(rect.y).toBeCloseTo(header.y + header.height, 0);
+          expect(rect.x).toBe(0);
+          expect(rect.width).toBe(page.viewportSize()!.width);
+          expect(
+            await panel.evaluate((el) =>
+              el.contains(document.elementFromPoint(innerWidth / 2, innerHeight - 1)),
+            ),
+          ).toBe(true);
+          await page.keyboard.press("Escape");
+        }
+      }
+    });
+  }
+
+  test("masaustune genisletince menu ve sayfa kilidi kalkiyor", async ({ page }) => {
+    const { panel } = await openMenu(page);
+    await page.setViewportSize({ width: 1280, height: 844 });
+    await expect(panel).toBeHidden();
+    await expect(page.getByRole("main")).not.toHaveAttribute("inert", "");
+    await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+    await page
+      .getByLabel("Pages", { exact: true })
+      .getByRole("link", { name: "Team", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/team$/);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.getByRole("button", { name: "Menu" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  test("kisa ekranda son menu aksiyonuna kaydirilabiliyor", async ({ page }) => {
+    await page.setViewportSize({ width: 667, height: 320 });
+    const { panel } = await openMenu(page);
+    const last = panel.getByRole("link", { name: "GitHub", exact: true });
+    await last.scrollIntoViewIfNeeded();
+    await expect(last).toBeInViewport();
+    expect(await panel.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    await page.keyboard.press("Escape");
+    await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+  });
+
   test("acilinca focus ilk linke geciyor", async ({ page }) => {
     const { panel } = await openMenu(page);
     await expect(panel.locator('a[href="/"]')).toBeFocused();
