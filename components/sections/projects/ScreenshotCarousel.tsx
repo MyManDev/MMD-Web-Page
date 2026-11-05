@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { ArrowIcon } from "@/components/ui";
 import type { Project } from "@/content";
 import { useAutoAdvancingDeck } from "@/lib/deck";
 import { Screenshot } from "./Screenshot";
 import { ScreenshotGhost } from "./ScreenshotGhost";
+import { ScreenshotLightbox } from "./ScreenshotLightbox";
 
 /*
   Slaytlarin hepsi AYNI izgara hucresinde ust uste; yalnizca `data-active`
@@ -81,8 +83,16 @@ export function ScreenshotCarousel({
   className: string;
 }) {
   const total = screenshots.length;
+  const [expanded, setExpanded] = useState(false);
   /* `enhanced`: tus satiri hidrasyona kadar gorunmez (yukarida). */
-  const { hydrated: enhanced, index, steps, step, announce, pauseOn } = useAutoAdvancingDeck(total);
+  const {
+    hydrated: enhanced,
+    index,
+    steps,
+    step,
+    announce,
+    pauseOn,
+  } = useAutoAdvancingDeck(total, expanded);
   const pad = (value: number) => String(value).padStart(2, "0");
 
   /* Hayalet arka plan karuselin KARDESI: kartin dogrudan cocugu olmali, cunku
@@ -111,36 +121,50 @@ export function ScreenshotCarousel({
               data-active={slot === index ? "" : undefined}
               role="group"
             >
-              <Screenshot {...screenshot} typing={{ active: slot === index, steps }} />
+              <Screenshot
+                {...screenshot}
+                typing={{ active: slot === index, steps }}
+                onOpen={enhanced ? () => setExpanded(true) : undefined}
+              />
             </div>
           ))}
         </div>
 
-        <div className={`flex items-center gap-4 ${enhanced ? "" : "invisible"}`}>
-          <p className="font-mono text-mono text-text-muted tabular-nums">
-            <span className="text-text">{pad(index + 1)}</span> / {pad(total)}
-          </p>
+        {total > 1 && (
+          <div className={`flex items-center gap-4 ${enhanced ? "" : "invisible"}`}>
+            <p className="font-mono text-mono text-text-muted tabular-nums">
+              <span className="text-text">{pad(index + 1)}</span> / {pad(total)}
+            </p>
 
-          <div className="flex items-center gap-2">
-            <button
-              aria-label="Previous screenshot"
-              className="deck-button"
-              onClick={() => step(-1)}
-              type="button"
-            >
-              <ArrowIcon direction="left" />
-            </button>
-            <button
-              aria-label="Next screenshot"
-              className="deck-button"
-              onClick={() => step(1)}
-              type="button"
-            >
-              <ArrowIcon direction="right" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                aria-label="Previous screenshot"
+                className="deck-button"
+                onClick={() => step(-1)}
+                type="button"
+              >
+                <ArrowIcon direction="left" />
+              </button>
+              <button
+                aria-label="Next screenshot"
+                className="deck-button"
+                onClick={() => step(1)}
+                type="button"
+              >
+                <ArrowIcon direction="right" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
+      {expanded && (
+        <ScreenshotLightbox
+          name={name}
+          screenshots={screenshots}
+          initialIndex={index}
+          onClose={() => setExpanded(false)}
+        />
+      )}
     </>
   );
 }

@@ -1,9 +1,7 @@
 import type { Project } from "@/content";
 import { Button, Tag } from "@/components/ui";
 import { MetricRow } from "./MetricRow";
-import { Screenshot } from "./Screenshot";
 import { ScreenshotCarousel } from "./ScreenshotCarousel";
-import { ScreenshotGhost } from "./ScreenshotGhost";
 
 /**
  * Tek proje blogu. design-spec.md §3.3.1
@@ -139,24 +137,11 @@ export function ProjectCard({
         </div>
       </div>
 
-      {/*
-        Birden fazla goruntu -> kendiliginden gecen karusel (design-spec.md §3.3.1).
-        Tek goruntu -> ayni figur (goruntu ve basligi), tus satiri yok: gidilecek
-        ikinci goruntu yokken tus cizmek, hicbir yere gitmeyen bir dugme cizmek
-        olurdu. Figurun kendisi ve olculmus gerekceleri Screenshot.tsx'te.
-      */}
-      {project.screenshots.length > 1 ? (
-        <ScreenshotCarousel
-          className="reveal-on-enter lg:col-span-7"
-          name={project.name}
-          screenshots={project.screenshots}
-        />
-      ) : (
-        <>
-          <ScreenshotGhost screenshots={project.screenshots} index={0} />
-          <Screenshot {...project.screenshots[0]} className="reveal-on-enter lg:col-span-7" />
-        </>
-      )}
+      <ScreenshotCarousel
+        className="reveal-on-enter lg:col-span-7"
+        name={project.name}
+        screenshots={project.screenshots}
+      />
     </article>
   );
 }

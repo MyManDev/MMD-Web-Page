@@ -93,7 +93,7 @@ export function usePrefersReducedMotion(): boolean {
  * Basa saran gezinme (sondan sonra ilk): sonu olan bir gezinmede son tus devre
  * disi kalir ve odak bosa duser. Sayac konumu zaten soyluyor.
  */
-export function useAutoAdvancingDeck(total: number) {
+export function useAutoAdvancingDeck(total: number, suspended = false) {
   const hydrated = useHydrated();
   const reducedMotion = usePrefersReducedMotion();
 
@@ -107,7 +107,7 @@ export function useAutoAdvancingDeck(total: number) {
      desteyi yeniden baslatiyordu. Deste ikisinden biri surdukce duruyor. */
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
-  const paused = hovered || focused;
+  const paused = hovered || focused || suspended;
   /* Baslangicta `true`: ilk render'da bolge canli, kullanici bir sey yapmadan
      once de oyle. Yalnizca otomatik ilerleme onu susturuyor. */
   const [announce, setAnnounce] = useState(true);
@@ -127,7 +127,7 @@ export function useAutoAdvancingDeck(total: number) {
     biriktirip birden fazla atlama uretebilir.
   */
   useEffect(() => {
-    if (!hydrated || reducedMotion || paused) return;
+    if (!hydrated || reducedMotion || paused || total < 2) return;
 
     const timer = setTimeout(() => {
       setAnnounce(false);

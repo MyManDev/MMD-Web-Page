@@ -1,6 +1,8 @@
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { site } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
+import { Nav } from "@/components/sections/nav";
+import { Footer } from "@/components/sections/footer";
 import "./tokens.css";
 import "./globals.css";
 
@@ -43,7 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <Nav site={site} />
         {children}
+        <Footer site={site} />
       </body>
     </html>
   );

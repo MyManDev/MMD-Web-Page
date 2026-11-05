@@ -179,83 +179,37 @@ section[id] {
   }
 }
 
-/* MyManDev ana sayfa amblemi.
-
-   Marka isareti - uc kafa ve bir "m". Kare, logonun kendi turkuazinda
-   (`--color-mark`) conic gradyanli bir plaka olarak asagida
-   (`.brand-mark-plate`, §5.1).
-
-   `mask-image` + `background-color`, `<img>` DEGIL: renk token'dan geliyor ve
-   dosyanin icine gomulu kalmiyor (CLAUDE.md kural 1).
-
-   Kaynak artik VEKTOR (#18): `public/logo-mark.svg`, `scripts/trace-mark.mjs`
-   ile orijinal PNG'den turetildi ve sapmasi olculdu - en kotu 0.098px.
-   Onceki 380px tavani kaynagin 400x400 olmasindan geliyordu; vektorde
-   cozunurluk tavani yok. Ust sinir hala var ama artik TASARIM sinirisi:
-   amblem basligin agirligini gecmemeli. */
-/* Logonun orijinal bicimi - turkuaz plaka + beyaz sembol.
-   Plaka ayri bir oge cunku `mask` ogenin KENDI zeminini de kirpiyor; ayni
-   ogeye hem maske hem arka plan verilemez. Maske hala `.brand-mark`ta, yani
-   maske testleri oldugu gibi calisiyor. */
-/* Plakanin acisi. `@property` sart: ozel bir ozellik ancak TIPI bildirilmisse
-   animasyonlanabilir - bildirilmezse tarayici onu metin gibi gorur ve aradaki
-   kareleri hesaplamaz, yani gradyan donmez, sicrardi. */
-@property --mark-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
+/* Amblem zemine karisir; isik yalnizca acilista bir kez yerlesir. */
 .brand-mark-plate {
+  position: relative;
+  isolation: isolate;
   aspect-ratio: 1;
-  /* %18 KUCULDU (istek: "biraz fazla buyuk, ayri bir banner gibi duruyor").
-     Onceki olcu clamp(220px, 26vw, 460px) idi; 1440'ta 374px'ten ~307px'e
-     iniyor. Ust sinir hala TASARIM sinirisi: amblem basligin agirligini
-     gecmemeli. */
   width: clamp(180px, 21vw, 380px);
   margin-inline: auto;
-  /* Duz renk DEGIL: uc tonlu conic gradyan, acisi `--mark-angle`den geliyor.
-     Duraklar tokens.css'te `color-mix` ile turetildi (§4.5). */
-  background-image: conic-gradient(
-    from var(--mark-angle),
-    var(--mark-sweep-deep),
-    var(--color-mark),
-    var(--mark-sweep-lift),
-    var(--color-mark),
-    var(--mark-sweep-deep)
+}
+
+.brand-mark-plate::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--color-mark) 24%, transparent),
+    transparent 67%
   );
-  /* Gradyan cizilemezse ardinda duz marka rengi kaliyor - plaka hicbir durumda
-     bos kalmiyor. */
-  background-color: var(--color-mark);
-  /* `display` BURADA VERILMEZ. Verildiginde Tailwind'in `hidden` utility'siyle
-     ayni specificity'de oluyor ve sira karar veriyor: globals.css sonra
-     geldigi icin `display: grid` `hidden`i sessizce yeniyor ve amblem MOBILDE
-     de gorunur hale geliyor. Olculdu - uc mobil amblem testi `skip` olmaktan
-     cikip kosmaya basladi, ve bunu yakalayan tek sinyal atlama sayisiydi.
-     Yerlesim utility'leri markup'ta. */
+  animation: mark-light 4s ease-out;
 }
 
-/* Gradyan SCROLL'A BAGLI doniyor - zamana degil. Sayfa dururken plaka sakin,
-   kaydirdikca aci ilerliyor ve bir tam tur atiyor.
-
-   Sonsuz dongu YOK ve bu kasitli: sayfada kalici olarak oynayan bir sey
-   olmuyor, yani WCAG 2.2.2'nin duraklatma mekanizmasi istedigi durum hic
-   dogmuyor. Hareketi kullanici yurutuyor.
-
-   UC KATMANLI DUSUS, hicbirinde icerik kaybi yok:
-     `animation-timeline` desteklenmiyor  -> aci 0deg, STATIK gradyan
-     reduced-motion acik                  -> `animation-name: none`, STATIK gradyan
-     `@property` desteklenmiyor           -> gradyan cizilir, yalnizca donmez */
-@keyframes mark-sweep {
-  to {
-    --mark-angle: 360deg;
+@keyframes mark-light {
+  from {
+    opacity: 0.35;
+    transform: translate(-10%, 6%) scale(0.9);
   }
-}
-
-@supports (animation-timeline: scroll()) {
-  .brand-mark-plate {
-    animation: mark-sweep linear both;
-    animation-timeline: scroll();
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
   }
 }
 
@@ -263,15 +217,154 @@ section[id] {
   aspect-ratio: 1;
   width: 100%;
   margin-inline: auto;
-  /* Sembol beyaz: `--color-text` (#f2f5f3). Orijinal dosya #ffffff kullaniyor
-     ama turkuaz uzerinde ikisi gozle ayirt edilmiyor ve renk yalnizca
-     tokens.css'te yasar (CLAUDE.md kural 1) - saf beyaz icin yeni bir token
-     gerekirdi. */
   background-color: var(--color-text);
   mask-image: url("/logo-mark.svg");
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+.page-enter {
+  animation: page-enter 200ms ease-out;
+}
+
+.nav-pages {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--page-count), 1fr);
+  text-align: center;
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(100% / var(--page-count));
+  height: 2px;
+  transform: translateX(calc(var(--active-page) * 100%));
+  transition: transform 200ms ease-out;
+  pointer-events: none;
+}
+
+.nav-indicator::after {
+  content: "";
+  display: block;
+  height: 100%;
+  margin-inline: 1rem;
+  background: var(--color-accent);
+}
+
+.screenshot-open {
+  position: relative;
+  display: block;
+  cursor: zoom-in;
+}
+.screenshot-expand {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  opacity: 0.8;
+  transition: opacity 150ms ease-out;
+}
+.screenshot-open:hover .screenshot-expand,
+.screenshot-open:focus-visible .screenshot-expand {
+  opacity: 1;
+}
+
+.screenshot-lightbox {
+  position: fixed;
+  inset: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  border: 0;
+  background: color-mix(in srgb, var(--color-surface) 97%, transparent);
+  color: var(--color-text);
+  overscroll-behavior: contain;
+}
+.screenshot-lightbox::backdrop {
+  background: var(--color-surface);
+}
+.lightbox-content {
+  width: min(100%, 1600px);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+}
+.lightbox-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lightbox-button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.lightbox-button:hover {
+  background: var(--color-surface-2);
+}
+.lightbox-figure {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-height: 0;
+  margin: 0;
+}
+.lightbox-image {
+  touch-action: pan-y pinch-zoom;
+}
+.lightbox-image img {
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 200px);
+  object-fit: contain;
+  user-select: none;
+}
+.lightbox-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.lightbox-image[data-zoomed] {
+  overflow: auto;
+  max-height: calc(100dvh - 200px);
+  touch-action: pan-x pan-y pinch-zoom;
+  overscroll-behavior: contain;
+}
+.lightbox-image[data-zoomed] img {
+  width: max(100%, 1200px);
+  max-width: none;
+  max-height: none;
 }
 
 /* Zaffiro mikro etkilesimleri - `rule` ve `roll`. design-spec.md §6 (#55)
