@@ -46,23 +46,11 @@ export function TeamCard({ member }: { member: TeamMember }) {
         height={1800}
         loading="lazy"
         decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-[center_65%]"
       />
 
-      {/*
-        TEK VE AYNI KARARTMA - butun kartlarda birebir ayni oran. Istek kartlar
-        icin "ayni sistemin parcasi gibi gorunsun" idi ve olculdu: en koyu
-        portrenin ortalama parlakligi digerlerinden ~30 birim (0-255) dusuk,
-        yani o fotograf gercekten belirgin daha koyu.
-
-        DURUST SINIR: bu perde kartlari ayni MUAMELEDEN geciriyor, pozlamayi
-        esitlemiyor. Fark orani korunuyor; gercek cozum o fotografi daha
-        aydinlik yeniden disa aktarmak. Kisi basina `filter: brightness()`
-        yazmak paletin disinda, kisiye gomulu bir sayi uretirdi - yapilmadi.
-
-        Renk token'dan (`--color-page`), sabit rgba() degil (kural 1).
-      */}
-      <div aria-hidden="true" className="absolute inset-0 bg-page/25" />
+      {/* Portreler ayni hafif katmani kullanir; metin paneli opak kalir. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-page/10" />
 
       {/*
         Hover perdesi: kartin tamami. Goruntu ardinda hayalet gibi kaliyor.
@@ -88,7 +76,7 @@ export function TeamCard({ member }: { member: TeamMember }) {
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-surface/92 p-[var(--spacing-card)]">
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-full h-20 bg-gradient-to-t from-surface/92 to-transparent"
+          className="absolute inset-x-0 bottom-full h-8 bg-gradient-to-t from-surface/92 to-transparent"
         />
         <h2
           id={`${member.slug}-name`}

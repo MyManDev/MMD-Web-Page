@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useRef, useState } from "react";
 import type { Site } from "@/content";
 import { Button, Container } from "@/components/ui";
 import { MobileMenu } from "./MobileMenu";
@@ -10,16 +10,18 @@ import { NavLink } from "./NavLink";
 
 export function Nav({ site }: { site: Site }) {
   const pathname = usePathname().replace(/\/$/, "") || "/";
-  return <Navigation key={pathname} site={site} pathname={pathname} />;
+  return <Navigation site={site} pathname={pathname} />;
 }
 
 function Navigation({ site, pathname }: { site: Site; pathname: string }) {
-  const [open, setOpen] = useState(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const open = openPath === pathname;
+  if (openPath !== null && openPath !== pathname) setOpenPath(null);
   const menuId = "mobile-menu";
   const toggleRef = useRef<HTMLButtonElement>(null);
   const active = site.nav.find((item) => item.href === pathname)?.id ?? null;
   const close = useCallback(() => {
-    setOpen(false);
+    setOpenPath(null);
     toggleRef.current?.focus();
   }, []);
 
@@ -35,12 +37,24 @@ function Navigation({ site, pathname }: { site: Site; pathname: string }) {
             {site.wordmark}
           </Link>
           <nav aria-label="Pages" className="hidden lg:block">
-            <ul className="flex items-center gap-1">
+            <ul
+              className="nav-pages"
+              style={
+                {
+                  "--active-page": Math.max(
+                    0,
+                    site.nav.findIndex((item) => item.id === active),
+                  ),
+                  "--page-count": site.nav.length,
+                } as CSSProperties
+              }
+            >
               {site.nav.map((item) => (
                 <li key={item.id}>
                   <NavLink href={item.href} label={item.label} active={active === item.id} />
                 </li>
               ))}
+              {active && <li aria-hidden="true" className="nav-indicator" />}
             </ul>
           </nav>
           <div className="hidden items-center gap-2 lg:flex">
@@ -56,7 +70,7 @@ function Navigation({ site, pathname }: { site: Site; pathname: string }) {
             type="button"
             aria-expanded={open}
             aria-controls={menuId}
-            onClick={() => (open ? close() : setOpen(true))}
+            onClick={() => (open ? close() : setOpenPath(pathname))}
             className="inline-flex h-[var(--height-nav-link)] items-center rounded-sm border border-border px-4 font-mono text-nav text-text uppercase transition-colors duration-150 ease-out hover:bg-surface-2 lg:hidden"
           >
             Menu

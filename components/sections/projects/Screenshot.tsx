@@ -51,8 +51,10 @@ export function Screenshot({
   caption,
   className = "",
   typing,
+  onOpen,
 }: Project["screenshots"][number] & {
   className?: string;
+  onOpen?: () => void;
   /* Karuselden: slayt etkin mi ve karusel kac kez yer degistirdi. Yoksa baslik
      duz metin (tek goruntulu kart). */
   typing?: { active: boolean; steps: number };
@@ -61,7 +63,19 @@ export function Screenshot({
     "font-sans text-body-s text-text-muted motion-safe:transition-opacity motion-safe:duration-200 motion-safe:ease-out";
   return (
     <figure className={`flex flex-col gap-3 ${className}`}>
-      <div className="overflow-hidden rounded-card border border-border">
+      <a
+        href={src}
+        aria-label={`Enlarge screenshot: ${alt}`}
+        onClick={
+          onOpen
+            ? (event) => {
+                event.preventDefault();
+                onOpen();
+              }
+            : undefined
+        }
+        className="screenshot-open overflow-hidden rounded-card border border-border"
+      >
         {/* eslint-disable-next-line @next/next/no-img-element -- gerekce yukarida: olculmus 5.5 KiB */}
         <img
           src={src}
@@ -74,7 +88,19 @@ export function Screenshot({
           decoding="async"
           className="aspect-screenshot h-full w-full object-cover"
         />
-      </div>
+        <span aria-hidden="true" className="screenshot-expand">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6" />
+          </svg>
+        </span>
+      </a>
       {/* Kendi gecisi karusel icin: giden slaytin basligi beklemeden sonuyor
           (ScreenshotCarousel.tsx, SLOT). Tek goruntude hicbir sey tetiklemiyor. */}
       {typing ? (
