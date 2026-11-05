@@ -291,9 +291,11 @@ ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek gö
 figür ve büyütme bağlantısı basılır; otomatik geçiş, sayaç ve gezinme tuşu yoktur.
 
 Görüntü bağlantısı tam ekran yerel `dialog` açar. Escape ve kapatma tuşu odağı açan
-bağlantıya döndürür; arka sayfanın kaydırması ve etkileşimi kilitlenir. Yön tuşları,
-önceki/sonraki düğmeleri ve yatay dokunma hareketi görüntüyü değiştirir. Yakınlaştırma
-görüntüyü en az 1200px açar; bu durumda resim alanında kaydırılır ve slayt hareketi durur.
+bağlantıya döndürür; arka sayfanın kaydırması ve etkileşimi kilitlenir. Sığdırılmış
+görünümde sağ/sol tuşları, önceki/sonraki düğmeleri ve yatay dokunma görüntüyü değiştirir.
+Yakınlaştırma görüntüyü en az 1200px açar ve odağı resim alanına getirir; yön tuşları
+ve dokunma aynı resimde kaydırma yapar. Açan bağlantı, tarayıcı tıklamayla kendiliğinden
+odak vermese de açıkça odaklanır; Escape bu bağlantıya döner.
 Kaynak seçimi büyütme genişliğine göre yapılır. Görüntüleyici açıkken karusel durur.
 JavaScript yoksa bağlantı doğrudan resim dosyasını açar.
 
