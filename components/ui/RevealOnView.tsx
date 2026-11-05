@@ -2,56 +2,7 @@
 
 import { useEffect } from "react";
 
-/**
- * Metin bloklari ekrana girdiginde belirir. design-spec.md §6
- *
- * NEDEN `IntersectionObserver` VE NEDEN CSS YETMEDI. Once `animation-timeline:
- * view()` ile yazildi ve o hareket scroll KONUMUNA baglidir: scroll durunca
- * animasyon da donuyor, hizli kaydirinca atliyor. Olculdu ve "hicbir degisiklik
- * fark etmedim" geri bildirimi bununla geldi. Referans alinan davranis
- * (zaffiro-tambe.framer.website) ise ZAMANA bagli: oge gorunur oldugu an
- * animasyon basliyor ve kendi suresinde bitiyor. Bunu CSS ile yazmanin yolu yok.
- *
- * `CLAUDE.md` kural 3 bu yuzden genisletildi: `IntersectionObserver` artik iki
- * yerde - aktif nav linki ve burasi. Ikisi de TEK yerde tanimli, ve hicbiri
- * scroll listener degil.
- *
- * GIZLEME KARARI CSS'TE, BURADA DEGIL. Bu dosyanin yaptigi tek sey isaret
- * koymak: `<html>` uzerine `data-reveal` ("JS burada ve hareket isteniyor"),
- * sonra her ogeye `data-reveal-shown` ("bu gorundu"). Gizleyen kural
- * `globals.css`'te ve yalnizca ilk isaretin altinda calisiyor. Sonuc:
- *
- *   JS gelmezse       isaret hic konmaz -> butun metin gorunur
- *   reduced-motion    erken donulur     -> isaret konmaz -> gorunur
- *   observer duserse  cleanup isareti kaldirir -> gorunur
- *
- * Tersi yazilsaydi (CSS gizler, JS gosterir) JS'in gelmedigi bir sayfada metin
- * gorunmez kalirdi. Ayni gerekce `BioTypewriter`'da da yazili.
- *
- * ILK BOYAMADAN ONCE ISARET KONMUYOR ve bu olcumle alinmis bir karar. Once
- * `app/layout.tsx`'e satir ici bir script koyup isareti ilk boyamadan once
- * koymayi denedim - flash'i onluyordu ama iki bedeli vardi:
- *
- *   1. Metin HIDRASYONA KADAR gizli kaliyor. Olculdu: bu ortamda ~1.5s. JS
- *      yavas gelirse sayfa o kadar sure bos gorunur.
- *   2. Hero'nun `h1`'i sayfanin LCP ogesi. Onu JS gelene kadar gizlemek LCP'yi
- *      dogrudan bozar - ve LCP zaten acik bir issue (#83).
- *
- * Bu yuzden HERO BU MEKANIZMAYI KULLANMIYOR: onun girisi saf CSS
- * (`reveal-on-load`), ilk boyamada basliyor ve JS'e hic bagli degil. Observer
- * yalnizca ekran ALTINDAKI metni yonetiyor - o ogeler isaret kondugunda
- * ekranda olmadigi icin gizlenmeleri hicbir seyi kirpmiyor.
- *
- * Yan fayda: failsafe'e de gerek kalmadi. JS hic gelmezse isaret hic konmaz ve
- * butun metin gorunur kalir; bir zaman asimiyla kendini kurtarmaya calisan bir
- * kod yok.
- */
-
-/**
- * Kademe tavani. Kademenin suresi globals.css'te
- * (`.reveal-on-enter[data-reveal-shown]`). Bir bolumde on iki blok birden
- * gorunur olursa on ikinci 990ms bekler ve bu artik kademe degil gecikme olur.
- */
+/** Sayfa icerigiyle birlikte mount olur, yeni metinleri gozlemler; JS yokken icerik gorunur kalir. */
 const STAGGER_CAP = 5;
 
 export function RevealOnView() {
@@ -59,8 +10,7 @@ export function RevealOnView() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const root = document.documentElement;
-    /* Isaret burada, mount aninda konuyor (ilk boyamadan once DEGIL -
-       yukaridaki gerekce). */
+    // JS calismadiginda CSS metinleri gizlemez.
     root.dataset.reveal = "";
 
     const observer = new IntersectionObserver(

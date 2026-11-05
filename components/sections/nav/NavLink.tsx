@@ -1,16 +1,5 @@
-/**
- * Tek nav linki. Pill yuzeyi (docs/design-spec.md §3.1).
- *
- * Aktif durum renkle YALNIZ BASINA anlatilmaz: accent renk + aria-current
- * birlikte. Renk tek basina bilgi tasimaz (§7.5).
- *
- * `roll` (#55): etiket iki kez yaziliyor ve hover/focus'ta dikey kayiyor.
- * Kural app/globals.css'te tek yerde; burada yalnizca yapisi kuruluyor.
- *
- * IKINCI KOPYA aria-hidden: erisilebilir ad TEK kalmali. Aksi halde ekran
- * okuyucu her nav linkini iki kez okurdu - gorsel bir detay, gezinmeyi
- * bozardi.
- */
+import Link from "next/link";
+
 export function NavLink({
   href,
   label,
@@ -23,10 +12,10 @@ export function NavLink({
   onNavigate?: () => void;
 }) {
   return (
-    <a
+    <Link
       href={href}
       onClick={onNavigate}
-      aria-current={active ? "true" : undefined}
+      aria-current={active ? "page" : undefined}
       className={`inline-flex h-[var(--height-nav-link)] items-center rounded-[var(--radius-pill)] px-4 font-mono text-nav uppercase transition-colors duration-150 ease-out ${
         active ? "text-accent" : "text-text-muted hover:text-text"
       }`}
@@ -37,6 +26,6 @@ export function NavLink({
           <span aria-hidden="true">{label}</span>
         </span>
       </span>
-    </a>
+    </Link>
   );
 }

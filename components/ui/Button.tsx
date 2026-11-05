@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { ExternalIcon } from "./ExternalIcon";
 
@@ -36,15 +37,16 @@ export function Button({
   const className = `${base} ${disabled ? disabledStyle : variants[variant]}`;
 
   if (href && !disabled) {
+    const Element = href.startsWith("/") ? Link : "a";
     return (
-      <a
+      <Element
         href={href}
         className={className}
         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       >
         {children}
         {external ? <ExternalIcon /> : null}
-      </a>
+      </Element>
     );
   }
 

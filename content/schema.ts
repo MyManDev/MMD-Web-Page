@@ -100,17 +100,7 @@ export const teamMemberSchema = z.object({
   order: z.number().int().nonnegative(),
 });
 
-/**
- * Marka, metin ve navigasyon.
- *
- * `description`, `hero` ve `whoWeAre` #15'te yazildi ve buraya ZORUNLU alan
- * olarak girdi - `.optional()` degil. Metin silinirse `pnpm build` patlar;
- * istenen de bu (CLAUDE.md kural 7).
- *
- * Olcu belgede DEGIL burada zorlaniyor: `principles` 3-5 madde alir, cunku
- * design-spec.md §3.4 boyle diyor - ve uygulanan bir kural, yazili bir
- * kuraldan daha uzun yasar.
- */
+/** Marka metinleri ve sayfa baglantilari build sirasinda dogrulanir. */
 export const siteSchema = z.object({
   wordmark: z.literal("MyManDev"),
   canonicalUrl: httpsUrl,
@@ -120,15 +110,9 @@ export const siteSchema = z.object({
   githubUrl: httpsUrl,
   /** SEO aciklamasi. Marka metni - paylasilan karar alani. */
   description: z.string().min(1),
-  /** Hero basligi ve alt cumlesi. design-spec.md §3.2 */
-  hero: z.object({
-    title: z.string().min(1),
-    subtitle: z.string().min(1),
-  }),
-  /** Kolektifi birlikte anlatan bolum. design-spec.md §3.4 */
-  whoWeAre: z.object({
-    manifesto: z.string().min(1),
-    principles: z.array(z.string().min(1)).min(3).max(5),
+  home: z.object({
+    lead: z.string().min(1),
+    story: z.string().min(1),
   }),
   /** NOTICE dosyasindaki telif satirinin yili. Footer cumleyi bundan kurar,
       metni ikinci kez yazmaz. */
@@ -158,6 +142,7 @@ export const siteSchema = z.object({
       z.object({
         id: z.string().min(1),
         label: z.string().min(1),
+        href: z.string().regex(/^\/(?:[a-z0-9-]+)?$/, "site ici sayfa yolu olmali"),
       }),
     )
     .min(1),

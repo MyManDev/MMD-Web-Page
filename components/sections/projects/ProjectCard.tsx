@@ -94,12 +94,12 @@ export function ProjectCard({
           {String(index + 1).padStart(2, "0")}
         </p>
 
-        <h3
+        <h2
           id={`${project.slug}-title`}
           className="reveal-on-enter font-mono text-display-l font-medium lg:text-display-l-lg"
         >
           {project.name}
-        </h3>
+        </h2>
 
         {/*
           Ozet CENGEL, aciklama GOVDE. Ikisi ayri tipografik rolde: ozet

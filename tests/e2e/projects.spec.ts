@@ -21,7 +21,7 @@ const SECTION = "section#projects";
 const SCREENSHOTS = projects.flatMap((project) => project.screenshots);
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/projects");
 });
 
 /**
@@ -45,12 +45,12 @@ test("bolum kendi basligina bagli ve baslik seviyesi atlanmiyor", async ({ page 
 
   const heading = page.locator(`#${labelledby}`);
   await expect(heading).toBeVisible();
-  expect(await heading.evaluate((el) => el.tagName)).toBe("H2");
+  expect(await heading.evaluate((el) => el.tagName)).toBe("H1");
   await expect(heading).not.toBeEmpty();
 
   // #58: bolum kendi basligini tasiyor, proje adi bir alt seviyede.
-  await expect(section.locator("h3")).toHaveCount(projects.length);
-  await expect(section.locator("h1")).toHaveCount(0);
+  await expect(section.locator("h2")).toHaveCount(projects.length);
+  await expect(section.locator("h1")).toHaveCount(1);
 });
 
 test("tech tag'leri liste olarak diziliyor", async ({ page }) => {
@@ -239,13 +239,13 @@ test("hayalet arka plan sayfaya yatay tasma eklemiyor", async ({ page }) => {
  */
 test("hayalet arka plan basliga ve bolumun disina dikeyde tasmiyor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator(`${SECTION} h2`)).toHaveCSS("translate", "none");
+  await expect(page.locator(`${SECTION} h1`)).toHaveCSS("translate", "none");
   await expect(page.locator(`${SECTION} [data-ghost]`).first()).toBeAttached();
   const gap = await page.locator(SECTION).evaluate((section) => {
     const ghosts = [...section.querySelectorAll("article > [data-ghost]")].map((el) =>
       el.getBoundingClientRect(),
     );
-    const heading = section.querySelector("h2")!.getBoundingClientRect();
+    const heading = section.querySelector("h1")!.getBoundingClientRect();
     const box = section.getBoundingClientRect();
     return {
       belowHeading: Math.min(...ghosts.map((g) => g.top)) - heading.bottom,
@@ -468,7 +468,7 @@ test("sira numarasi erisilebilir ada karismiyor", async ({ page }) => {
   const number = page.locator(`${SECTION} article > div > p.text-mono`).first();
   await expect(number).toHaveAttribute("aria-hidden", "true");
 
-  const heading = page.locator(`${SECTION} article h3`).first();
+  const heading = page.locator(`${SECTION} article h2`).first();
   const name = await heading.evaluate((el) => el.textContent?.trim() ?? "");
   expect(name).not.toMatch(/^0\d/);
 });

@@ -18,7 +18,7 @@ const hoverCapable = (page: import("@playwright/test").Page) =>
   page.evaluate(() => matchMedia("(hover: hover)").matches);
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/team");
 });
 
 test("bolum main icinde, kendi basligina bagli, seviye atlanmiyor", async ({ page }) => {
@@ -30,10 +30,10 @@ test("bolum main icinde, kendi basligina bagli, seviye atlanmiyor", async ({ pag
 
   const labelledby = await section.getAttribute("aria-labelledby");
   const heading = page.locator(`#${labelledby}`);
-  expect(await heading.evaluate((el) => el.tagName)).toBe("H2");
+  expect(await heading.evaluate((el) => el.tagName)).toBe("H1");
 
-  await expect(section.locator("h1")).toHaveCount(0);
-  await expect(section.locator("h3")).toHaveCount(await page.locator(CARD).count());
+  await expect(section.locator("h1")).toHaveCount(1);
+  await expect(section.locator("h2")).toHaveCount(await page.locator(CARD).count());
 });
 
 test("kartlar liste olarak diziliyor - ekran okuyucu sayiyi duyurur", async ({ page }) => {
@@ -264,7 +264,7 @@ test("linkler hangi kisiye ait oldugunu ekran okuyucuya soyluyor", async ({ page
 
   for (let i = 0; i < total; i += 1) {
     const card = cards.nth(i);
-    const nameId = await card.locator("h3").getAttribute("id");
+    const nameId = await card.locator("h2").getAttribute("id");
     expect(nameId).toBeTruthy();
 
     const links = card.getByRole("link");
@@ -327,7 +327,7 @@ test("bolumde accent renk kullanilmiyor - hover'da bile", async ({ page }) => {
  * oldugu icin goz bunu yakalamiyordu.
  */
 test("ad ve rolun zemini fotograftan bagimsiz okunabilir", async ({ page }) => {
-  const panel = page.locator(`${CARD} h3`).first();
+  const panel = page.locator(`${CARD} h2`).first();
 
   const alpha = await panel.evaluate((el) => {
     const box = el.closest("div")!;
@@ -366,7 +366,8 @@ test("lg'de bolum bir ekrana sigiyor ve butun kartlar gorunuyor", async ({ page 
 
   const section = await page.locator("#team").evaluate((el) => el.getBoundingClientRect().height);
   /* 2px tolerans: `dvh` ve piksel yuvarlanmasi. */
-  expect(Math.abs(section - height)).toBeLessThanOrEqual(2);
+  const header = await page.getByRole("banner").evaluate((el) => el.getBoundingClientRect().height);
+  expect(Math.abs(section + header - height)).toBeLessThanOrEqual(2);
 
   const fits = await page.evaluate(() => {
     /* `!` yerine kontrol: `strictNullChecks` altinda `querySelector` null
