@@ -99,6 +99,10 @@ test("buyutulen goruntu klavyeyle kayar ve slayt degismez", async ({ page }) => 
 });
 
 test("odak almayan tiklamada da acan baglantiya doner", async ({ page }) => {
+  // Sentetik tiklama hidrasyondan once resim baglantisinin JS'siz yolunu acar.
+  await expect(
+    page.getByRole("button", { name: "Next screenshot", exact: true }).first(),
+  ).toBeVisible();
   const trigger = page.getByRole("link", { name: /^Enlarge screenshot:/ }).first();
   await trigger.dispatchEvent("click");
   await expect(page.getByRole("dialog")).toBeVisible();
