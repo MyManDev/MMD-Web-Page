@@ -225,8 +225,10 @@ Mobilde tek kolon ve tam genişlikte aksiyonlar; `md` üstünde metin solda, mev
 amblemi sağdadır. Sayfa yüksekliği nav ve footer arasında kalan alanı doldurur; eski
 Hero'nun tam ekran zorunluluğu, tint zemini ve scroll göstergesi yoktur.
 
-Başlık ve giriş ilk boyamada `reveal-on-load` kullanır. Amblemin mevcut maskesi,
-turkuazı ve conic gradyanı korunur; sınıfları `brand-mark` / `brand-mark-plate` olmuştur.
+Başlık ve giriş ilk boyamada `reveal-on-load` kullanır. Amblemin mevcut SVG maskesi
+`text` token rengiyle görünür. `brand-mark-plate` ayrı bir yüzey çizmez; arkasındaki
+hafif radyal ışık `mark` token'ından gelir ve açılışta 4 saniyede bir kez yerleşir.
+Reduced-motion altında ışık sabittir.
 
 ### 3.3 Projects — Bölge A
 
@@ -285,8 +287,15 @@ oluşmasın.
 
 **Birden fazla ekran görüntüsü, kendiliğinden geçen bir karuselde gösterilir.** Şemada `screenshots` en az
 bir öğeli bir dizi ve her öğe kendi `alt` metnini taşır: görüntüler birbirinin yerine geçtiği için
-ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek görüntüde karusel
-çizilmez; aynı figür (görüntü ve başlığı) basılır, tuş yok.
+ortak bir "X screenshot" metni hangisinin ekranda olduğunu söylemezdi. Tek görüntüde aynı
+figür ve büyütme bağlantısı basılır; otomatik geçiş, sayaç ve gezinme tuşu yoktur.
+
+Görüntü bağlantısı tam ekran yerel `dialog` açar. Escape ve kapatma tuşu odağı açan
+bağlantıya döndürür; arka sayfanın kaydırması ve etkileşimi kilitlenir. Yön tuşları,
+önceki/sonraki düğmeleri ve yatay dokunma hareketi görüntüyü değiştirir. Yakınlaştırma
+görüntüyü en az 1200px açar; bu durumda resim alanında kaydırılır ve slayt hareketi durur.
+Kaynak seçimi büyütme genişliğine göre yapılır. Görüntüleyici açıkken karusel durur.
+JavaScript yoksa bağlantı doğrudan resim dosyasını açar.
 
 - **Başlık.** Her görüntünün altında kendi kısa başlığı var (`caption`, şemada zorunlu):
   `<figure>` + `<figcaption>`, Body S, `text-muted`; dar ekranda iki satıra kırılabilir. Başlık
@@ -405,7 +414,8 @@ Who We Are ve prensip destesi 2026-11-05 sayfa ayrımında kaldırıldı. Kısa 
 
 ### 3.5 Team — Bölge B
 
-İki kişiyi tek tek tanıtan kartlar.
+İki kişiyi tek tek tanıtan kartlar. Fotoğraf odağı `center 65%`, sabit karartma %10 ve
+alt geçiş alanı 32px'tir. Biyografinin %92 opak okunurluk perdesi korunur.
 
 |                | Mobil | `sm`                | `≥ lg`                                  |
 | -------------- | ----- | ------------------- | --------------------------------------- |
@@ -600,15 +610,9 @@ Component'te literal renk yok (`CLAUDE.md` kural 1).
 | Team       | yok — bölümde yeşil kullanılmaz | fotoğraf, ad, rol, biyografi, linkler                              |
 | Footer     | yok                             | wordmark, linkler, telif                                           |
 
-**MyManDev amblemi eski Hero tasarımındaki renk istisnasını korur.** Amblem artık logonun kendi turkuazını
-taşıyor (`#0D9488`), yani MyManDev sayfasında **iki yeşil** var: CTA'nın accent'i ve amblem. §4.1'in "ekran
-başına tek yeşil odak" cümlesi harfiyen okunursa bu bir ihlal.
-
-Kararı karar sahibi verdi; azaltıcı ölçüler ölçüldü ve yazılı:
-
-- Amblemin turkuazı (`#0D9488`) accent'ten (`#14B8A6`) **daha koyu**, yani ikisi aynı tonda yarışmıyor.
-- Amblem **tıklanmıyor, metin taşımıyor, hiçbir aksiyonu işaret etmiyor** — `aria-hidden`, saf dekorasyon.
-  Accent hâlâ ekrandaki tek etkileşimli yeşil.
+**MyManDev amblemi `text` rengindedir.** Arkasındaki hafif ışık `mark` token'ını %24
+opaklıkla kullanır. Amblem tıklanmaz ve `aria-hidden` dekorasyondur; sayfanın etkileşimli
+yeşil odağı CTA olarak kalır.
 
 Team ve Footer'da bilinçli olarak yeşil yok: yeşil bir aksiyon rengi ve bu iki bölümde
 birincil aksiyon yok. Her bölüme bir yeşil serpmek §4.1'in tarif ettiği hatanın kendisi.
@@ -632,8 +636,8 @@ ekran görüntüsü ve hayalet arka plan geçişi 900ms olarak korunur. Eski pre
 ve scroll göstergesi kaldırılmıştır.
 
 Aşağıdaki tablo **bugün uygulanmış** geçişleri sayar. Scroll'a bağlı hareketler
-`animation-timeline: scroll()` ile yazılır ve sıfır JS'e mal olur (§4.4); bugün iki tane var:
-navbar zemini ve amblem gradyanı. Metin girişi zamana bağlı ve `IntersectionObserver` ile
+`animation-timeline: scroll()` ile yazılır ve sıfır JS'e mal olur (§4.4); bugün navbar
+zemininde kullanılır. Metin girişi zamana bağlı ve `IntersectionObserver` ile
 tetikleniyor (aşağıda). Hangi öğenin
 nasıl hareket ettiği, o bölümün PR'ında **bu tabloya satır olarak** eklenir. Önceden bir satır
 uydurulmaz — yazılmamış bir hareketi belgede tarif etmek, `content/` altına placeholder koymakla
@@ -644,7 +648,8 @@ aynı sınıf hatadır.
 | Button hover                     | 150ms                | `background-color`, `border-color`                            |
 | Menu düğmesi hover               | 150ms                | `background-color`                                            |
 | NavLink hover / focus            | 150ms                | `translate` — etiket rulosu (`roll`); hover'da `color`        |
-| NavLink aktif geçişi             | 150ms                | `color`                                                       |
+| NavLink aktif geçişi             | 150ms / 200ms        | `color`; kalıcı menüde kayan alt çizgi `transform`            |
+| Sayfa girişi                     | 200ms                | `opacity` + `translate: 0 6px`                                |
 | Metin linki hover / focus        | 150ms                | `scale` — alt çizgi soldan açılır (`rule`)                    |
 | Düz link hover                   | 150ms                | `color` — footer ve `TeamCard` linkleri                       |
 | Deste tuşu hover / focus         | 150ms                | `color`, `border-color` (`deck-button`)                       |
@@ -656,7 +661,7 @@ aynı sınıf hatadır.
 | Sayfa başlığı girişi             | 240ms + 70ms         | `opacity` + `translate: 0 10px`, öğe öğe                      |
 | Metin girişi (`reveal-on-enter`) | 520ms + 90ms         | `opacity` + `translate: 0 14px`, ekrana girince bir kez       |
 | Navbar zemini                    | scroll'a bağlı       | `background-color` + `backdrop-filter`, ilk 120px             |
-| Amblem gradyanı                  | scroll'a bağlı       | `--mark-angle` 0 → 360deg, sayfa boyunca bir tur              |
+| Amblem ışığı                     | 4s, bir kez          | `opacity` + `transform`; reduced-motion altında sabit         |
 | Ekran görüntüsü karuseli         | 7s aralık            | `lib/deck.ts`; hover/focus sırasında duraklar                 |
 | Ekran görüntüsü geçişi           | 900ms                | çapraz sönümleme: `opacity`, `visibility`; başlık hemen söner |
 | Giden resim altı yazısı          | 200ms                | `opacity`, beklemeden söner (`Screenshot.tsx`)                |
