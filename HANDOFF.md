@@ -4,19 +4,20 @@
 
 **Tarih:** 2026-11-05
 **Yer:** yerel Windows çalışma alanı
-**Aşama:** Üç sayfalı vitrin ve görsel iyileştirmeler yayında. Kaynak PR #150,
-`6cc5388` ile `main`'e birleşti.
+**Aşama:** Üç sayfalı vitrin ve #150 görsel iyileştirmeleri yayında. Son kaynak
+PR #153, `a895b41` ile `main`'e birleşti; görüntüleyicinin klavye ve odak davranışını tamamlıyor.
 
 ## Dal ve çalışma ağacı
 
-- Kaynak #150; bu devir ve tasarım sözleşmesi ayrı doküman PR'ında.
-- Yerel `pnpm gates`: **62 birim, 252 E2E**, 22 viewport atlaması.
-- Son mobil düzeltme: 24 tekrarlı görüntüleyici testi; son CI'da 252 E2E geçti.
-- En ağır sayfa `/projects`: **139.2 KiB / 150 KiB**. Ana sayfa 136.0, Team 137.0 KiB.
-- #150 `gates`, `e2e`, `lighthouse` ve Cloudflare kontrolleri başarılı.
+- Kaynak #150 ve #153; devir ve tasarım sözleşmesi ayrı doküman PR'larında.
+- Son yerel `pnpm gates`: **62 birim, 256 E2E**, 22 viewport atlaması.
+- Son CI'da da 256 E2E geçti. Yakınlaştırılmış resimde iki yönde klavye kaydırması,
+  aynı slaytın korunması ve bağlantıya kendiliğinden odak vermeyen tıklama kapsanıyor.
+- En ağır sayfa `/projects`: **139.3 KiB / 150 KiB**. Ana sayfa 136.0, Team 137.0 KiB.
+- #153 `gates`, `e2e`, `lighthouse` ve Cloudflare kontrolleri başarılı.
 - İlk CI mobil büyütme ölçümü başarısızdı. Açık minimum genişlik, büyütmeye uygun
   `sizes` ve render edilmiş boyutu bekleyen kontrolle düzeltildi; test atlanmadı.
-- İlgili #149 kapandı. Önceki sayfa ayrımı #147 ve imza #144'te tamamlandı.
+- İlgili #149 ve #152 kapandı. Önceki sayfa ayrımı #147 ve imza #144'te tamamlandı.
 
 ## Sayfa sözleşmesi
 
@@ -31,17 +32,20 @@
   yalnız açılışta 4 saniyede yerleşir. Reduced-motion altında hareket yoktur.
 - Proje görüntüleri yerel dialog içinde açılır: Escape, odak dönüşü, yön tuşları,
   mobil kaydırma ve en az 1200px yakınlaştırma. Açıkken arka sayfa ve karusel durur.
+  Yakınlaştırınca odak resim alanına gelir; yön tuşları slaytı değiştirmeden resmi kaydırır.
 - Team fotoğraflarında karartma %10, odak `center 65%`; metin perdesi %92 korunur.
 - Sayfa metinleri, proje içeriği ve mavi-mor footer imzası korunuyor.
 
 ## Yayın
 
 - Kanonik adres: `https://mymandev.com`; Cloudflare Pages projesi `mymandev`.
-- Kaynak production deployment: `e1096fb6-00f9-4139-9423-af0db8acf5fc`, kaynak `6cc5388`.
-- Son kaynak preview: `https://9e2d141d.mymandev.pages.dev`, PR head `ad3e473`.
+- Son kaynak production deployment: `7e027275-15fc-4a0e-90fd-5cc0fce827e1`, kaynak `a895b41`.
+- Son kaynak preview: `https://4d4a4acc.mymandev.pages.dev`, PR head `74d5786`.
 - Canlı tarayıcı doğrulaması: 390×844 mobil görüntüleyici ve yakınlaştırma, Escape ile
   bağlantıya odak dönüşü, mobil menüden Team'e geçiş ve menünün kapanması; masaüstü
   Team ve ana sayfa. Kaydedilen tarayıcı hatası yok.
+- #153 için 390×600 dar görünümde gerçek tarayıcı kontrolü: resim odağı, yatay/dikey
+  klavye kaydırması, aynı slayt ve Escape sonrası açan bağlantının odağı.
 - Görsel karşılaştırma: `docs/review/polish-2026-11-05/`; önceki sayfa ve footer
   karşılaştırmaları kendi dizinlerinde korunuyor.
 
