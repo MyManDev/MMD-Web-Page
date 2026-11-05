@@ -211,12 +211,19 @@ duruyordu; #46 diğer her şeyi token'a taşırken bu satır atlanmıştı.
 **Aktif link tespiti:** URL pathname'i nav kaydının `href` değeriyle eşleşir.
 Aktif bağlantı `aria-current="page"` taşır. Bölüm gözlemcisi yoktur.
 Wordmark `/` adresine döner; mobil menü sayfa geçişinde kapanır.
+`MotionLink` iç gezinmede çıkışı tamamlayıp Next router'a geçer; `PageMotion` yeni
+sayfanın girişini taşır. Hızlı seçimlerde son tıklama kazanır, geçmişe ara seçim eklenmez.
+Ctrl/Meta tıklaması ve dış bağlantılar tarayıcıya bırakılır; aynı sayfayı seçmek bekleyen
+çıkışı iptal eder. Geri/ileri gezinme bekleyen çıkışı temizler. Süreler §6'da.
 
 **Mobil menü** `< lg` (1024px) altında devreye girer: üç sayfa linki + wordmark + GitHub
 aksiyonu `md` genişlikte sıkışıyor. Menü düğmesi `aria-expanded` taşır ve `MobileMenu`'yü `aria-controls` ile
 işaret eder. Açıkken tam ekran örtü, `surface` zemin, linkler tek kolon. Klavye davranışı §7.4.
 Panel header'ın kardeşi olan bir gövde çocuğudur; header'ın `backdrop-filter` etkisinin
 içine konmaz. Nav'ın altından ekranın sonuna uzanır; kısa ekranda kendi içinde kayar.
+Panel `clip-path` ile açılıp kapanır; linkler sıralı belirir. Kapanan panel hemen `inert`
+olur ve işaretçi olaylarını bırakır; CSS çıkışı sürerken sayfa kilidi temizlenir.
+Discrete display geçişini desteklemeyen tarayıcıda menü anında kapanabilir.
 
 ### 3.2 MyManDev ana sayfası — Bölge A
 
@@ -295,8 +302,10 @@ figür ve büyütme bağlantısı basılır; otomatik geçiş, sayaç ve gezinme
 Görüntü bağlantısı tam ekran yerel `dialog` açar. Escape ve kapatma tuşu odağı açan
 bağlantıya döndürür; arka sayfanın kaydırması ve etkileşimi kilitlenir. Sığdırılmış
 görünümde sağ/sol tuşları, önceki/sonraki düğmeleri ve yatay dokunma görüntüyü değiştirir.
-Yakınlaştırma görüntüyü en az 1200px açar ve odağı resim alanına getirir; yön tuşları
-ve dokunma aynı resimde kaydırma yapar. Açan bağlantı, tarayıcı tıklamayla kendiliğinden
+Yakınlaştırma görüntüyü en az 1200px açar ve odağı resim alanına getirir; odak bu alandayken
+dört yön tuşu 48px adımla aynı resmi kaydırır. Yerel tarayıcı kaydırmasının hızlı eksen
+değişiminde hareket kaçırmaması için tuş adımları doğrudan uygulanır; dokunma yerel kaydırmadır.
+Açan bağlantı, tarayıcı tıklamayla kendiliğinden
 odak vermese de açıkça odaklanır; Escape bu bağlantıya döner.
 Kaynak seçimi büyütme genişliğine göre yapılır. Görüntüleyici açıkken karusel durur.
 JavaScript yoksa bağlantı doğrudan resim dosyasını açar.
@@ -634,7 +643,10 @@ anda yalnızca tek eleman focus'lu olur ve bu durum kalıcı değil geçicidir.
 
 ## 6 · Etkileşim ve motion
 
-§4.4 sınırları: CSS öncelikli; etkileşim geçişleri 150–250ms, motion kütüphanesi yok.
+§4.4 sınırları: CSS öncelikli, motion kütüphanesi yok. 150–250ms varsayılan zarfın dışında,
+kullanıcının akıcı PC/mobil etkileşim talebiyle sayfa çıkışı 120ms, girişi 300ms;
+mobil panel 260ms ve aktif menü çizgisi 280ms kullanır. Çıkışın gezinme/unmount ile
+eşgüdümü tarayıcının Web Animations API'siyle yapılır; reduced-motion altında atlanır.
 Sayfa başlığı ilk boyamada 240ms giriş kullanır. Metin girişi 520ms,
 ekran görüntüsü ve hayalet arka plan geçişi 900ms olarak korunur. Eski prensip animasyonları
 ve scroll göstergesi kaldırılmıştır.
@@ -652,8 +664,13 @@ aynı sınıf hatadır.
 | Button hover                     | 150ms                | `background-color`, `border-color`                            |
 | Menu düğmesi hover               | 150ms                | `background-color`                                            |
 | NavLink hover / focus            | 150ms                | `translate` — etiket rulosu (`roll`); hover'da `color`        |
-| NavLink aktif geçişi             | 150ms / 200ms        | `color`; kalıcı menüde kayan alt çizgi `transform`            |
-| Sayfa girişi                     | 200ms                | `opacity` + `translate: 0 6px`                                |
+| NavLink aktif geçişi             | 150ms / 280ms        | `color`; kalıcı menüde kayan alt çizgi `transform`            |
+| Sayfa çıkışı / girişi            | 120ms / 300ms        | `opacity`; çıkış `translateY(-8px)`, giriş `translateY(14px)` |
+| Mobil panel açılışı / kapanışı   | 260ms / 200ms        | `clip-path`; `display` için discrete transition               |
+| Mobil menü öğeleri               | 280ms + 25ms         | `opacity` + `translate: 0 -8px`                               |
+| Tıklanabilir aksiyonlar          | 180ms / 90ms         | hover `scale: 1.025`, basılı `0.97`; opacity 160ms / 90ms     |
+| Görüntüleyici açılışı / kapanışı | 220ms / 160ms        | `opacity`; kapanış bitince dialog kaldırılır ve odak döner    |
+| Büyük resim değişimi / zoom      | 220ms                | `opacity` + `transform`; `scale: 0.985` başlangıcı            |
 | Metin linki hover / focus        | 150ms                | `scale` — alt çizgi soldan açılır (`rule`)                    |
 | Düz link hover                   | 150ms                | `color` — footer ve `TeamCard` linkleri                       |
 | Deste tuşu hover / focus         | 150ms                | `color`, `border-color` (`deck-button`)                       |
@@ -673,6 +690,10 @@ aynı sınıf hatadır.
 | Hayalet arka plan                | 900ms                | `opacity`, görüntüyle birlikte (`ScreenshotGhost`)            |
 
 Süre sütununda "X + Y", Y'nin öğeler arası kademe olduğunu söyler; gecikme ayrıca yazılır.
+Görüntüyü açan büyük yüzeyde ölçek daha hafiftir: hover `1.005`, basılı `0.992`.
+Hover ölçeği yalnız `(hover: hover)` altında çalışır. Yavaş veya kesilen iç gezinmede
+700ms sonra çıkış kaldırılır; eski sayfa soluk kalmaz. Yeni sayfa geldiğinde ve
+geri/ileri gezinmede bekleyen animasyon temizlenir.
 
 **`rule` ve `roll` (#55).** İkisi de `:hover` **ve** `:focus-visible` altında çalışır — yalnızca
 hover'a bağlanan bir detayı klavye kullanıcısı hiç görmez, yani detay olmaktan çıkıp fare
@@ -732,6 +753,7 @@ koşulları karşıladığı için kalıyor:
 §4.4'ün gereği, sonradan eklenecek iş değil (`CLAUDE.md` kural 10):
 
 - `scroll-behavior: auto` — smooth scroll kapanır.
+- `pressable` ölçeği kaldırılır; sayfa ve görüntüleyici çıkışları beklemeden tamamlanır.
 - Tüm `transition-duration` ve `animation-duration` `0.01ms`'e iner. (`0ms` yerine `0.01ms`,
   çünkü bazı tarayıcılar `transitionend` beklerken 0'da olayı hiç üretmiyor.)
 - `transition-delay` `0`'a iner. Önce yalnızca süre kısalıyordu ve gecikme kalıyordu: `TeamCard`'ın

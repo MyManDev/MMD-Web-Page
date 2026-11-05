@@ -196,7 +196,7 @@ Hangi öğenin hangi rolü aldığı: `design-spec.md` §4.
 değil; aynı palet üstünde hareketin ve ayrıntının sıkılaşması.
 
 Öncelik CSS: hover, sticky, smooth scroll. Etkileşim geçişleri 150–250ms, `ease-out`. Giriş
-animasyonlarından üçü bu zarfın dışında ve karar sahibi şimdilik kodu doğru sayıyor
+animasyonlarının bir kısmı bu zarfın dışında ve karar sahibi şimdilik kodu doğru sayıyor
 (`design-spec.md` §6). Ekran görüntüsü geçişi ve hayalet arka plan da dışında: 900ms, karar
 sahibinin seçimi (`design-spec.md` §3.3.1).
 
@@ -204,7 +204,10 @@ sahibinin seçimi (`design-spec.md` §3.3.1).
 Başlıklar JS veya görünürlük gözlemcisini beklemez. Reduced-motion altında animasyon yoktur.
 
 Navbar zemini CSS scroll timeline kullanır. Amblemin arkasındaki hafif ışık açılışta
-4 saniyede bir kez yerleşir; sayfa girişi ve kalıcı menünün aktif çizgisi 200ms sürer.
+4 saniyede bir kez yerleşir. Sayfa, mobil panel, aksiyon ve görüntüleyici geçişlerinin
+güncel süreleri `design-spec.md` §6'da tutulur. #162'de istenen PC/mobil akıcılığı için
+sayfa çıkışı ile router geçişi ve dialog çıkışı ile unmount, yerel Web Animations API'siyle
+eşgüdümlenir. Yeni bir motion bağımlılığı yoktur; hareket azaltma tercihinde çıkış beklenmez.
 Kart/footer metni için tek
 `IntersectionObserver` vardır: `RevealOnView`, `SitePage` içinde yeni sayfanın DOM'u ile
 birlikte mount olur. Kalıcı layout'ta yalnız pathname değişimini izlemek yeterli değildir:
@@ -650,3 +653,4 @@ Eski satırlar karar geçmişidir; güncel sayfa yapısı §2 ve en yeni tarihli
 | Footer imzası              | 2026-11-05: sağ altta iki satırlı Allura; mavi-mor marka rengi, tek giriş                    | §4.2   |
 | Sayfa ayrımı               | 2026-11-05: `/`, `/projects`, `/team`; Hero ve Who We Are kaldırıldı, açılış MyManDev        | §2     |
 | Sayfa geçişinde motion     | Reveal gözlemcisi kalıcı layout yerine sayfa içeriğiyle mount olur                           | §4.4   |
+| Tıklama hareketi           | 2026-11-05: PC/mobil ortak geri bildirim; CSS giriş, yerel WAAPI çıkış; reduced-motion anlık | §4.4   |
